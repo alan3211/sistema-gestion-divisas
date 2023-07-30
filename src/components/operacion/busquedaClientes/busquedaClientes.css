@@ -1,0 +1,14 @@
+.search-options {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.radio-options {
+    display: flex;
+    gap: 10px;
+}
+
+.radio-options label {
+    margin-right: 10px;
+}
