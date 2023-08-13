@@ -1,44 +1,39 @@
+import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
+import {useState} from "react";
+
 import {HeaderComponent} from "./components/shared/header/HeaderComponent";
 import {AsideComponent} from "./components/shared/aside/AsideComponent";
 import {FooterComponent} from "./components/shared/footer/FooterComponent";
 import {MainComponent} from "./components/shared/main/MainComponent";
-import {BrowserRouter as Router,Route, Routes} from "react-router-dom";
-import {AltaClientesComponent} from "./components/operacion/altaClientes/AltaClientesComponent";
-import {CompraVentaComponent} from "./components/operacion/compraVenta/CompraVentaComponent";
-import {LoginComponent} from "./components/login/LoginComponent";
-import {useState} from "react";
-import {getUser} from "./services/login-services";
-import {CajaComponent} from "./components/operacion/caja/CajaComponent";
 
-export const dataG = {
+import {AltaClientesComponent} from "./components/operacion/altaClientes";
+import {CompraVentaComponent} from "./components/operacion/compraVenta";
+import {LoginComponent} from "./components/login";
+import {CajaComponent} from "./components/operacion/caja";
+import {getUser} from "./services";
+import {toast, ToastContainer} from "react-toastify";
+import {Usuarios} from "./components/administracion/Usuarios";
+import {Sucursales} from "./components/administracion/Sucursales";
+import {Catalogo} from "./components/administracion/Catalogo";
+import {CargaTipoCambioTab} from "./components/administracion/cargaTipoCambio/CargaTipoCambioTab";
+import {AltaClienteProvider} from "./context/AltaCliente/AltaClienteProvider";
+import {CompraVentaProvider} from "./context/compraVenta/CompraVentaProvider";
+
+export let dataG = {
     sucursal:0,
     username:"",
     perfil:"",
     usuario:"",
     direccion:"",
-    nombre_sucursal:""
+    nombre_sucursal:"",
+    limite_diario:'',
+    limite_mensual:''
 };
 
 const App = () => {
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-
-    // Función para manejar el inicio de sesión
-    const handleLogin = async(username, password) => {
-        const datos = await getUser(username,password);
-        if (datos) {
-            dataG.sucursal = parseInt(datos.sucursal);
-            dataG.username = datos.nombre;
-            dataG.perfil = datos.perfil;
-            dataG.usuario = datos.usuario;
-            dataG.direccion = datos.direccion;
-            dataG.nombre_sucursal = datos.nombre_sucursal;
-            setIsLoggedIn(true);
-        } else {
-            alert('Credenciales incorrectas');
-        }
-    };
+    const [token,setToken] = useState({});
 
     return (
         <Router>
@@ -48,23 +43,28 @@ const App = () => {
                 <Route
                     exact
                     path="/"
-                    element={<LoginComponent onLogin={handleLogin} isLoggedIn={isLoggedIn} />}
+                    element={<LoginComponent isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
                 />
 
                 {
                     isLoggedIn ? (
-                        <Route exact path="/inicio" element={<MainComponent />} />
+                        <Route exact path="/inicio" element={<MainComponent/>} />
                     )
                     : null
                 }
 
-                <Route exact path="/altaClientes" element={<AltaClientesComponent />} />
-                <Route exact path="/compraVenta" element={<CompraVentaComponent />} />
+                <Route exact path="/altaClientes" element={<AltaClienteProvider><AltaClientesComponent /></AltaClienteProvider>} />
+                <Route exact path="/compraVenta" element={<CompraVentaProvider><CompraVentaComponent /></CompraVentaProvider>} />
                 <Route exact path="/caja" element={<CajaComponent />} />
+                <Route exact path="/cargaTipoCambio" element={<CargaTipoCambioTab />} />
+                <Route exact path="/usuarios" element={<Usuarios />} />
+                <Route exact path="/sucursales" element={<Sucursales />} />
+                <Route exact path="/catalogos" element={<Catalogo />} />
 
-                <Route element={<MainComponent />} />
+                <Route path="/*" element={<Navigate to="/inicio"/>} />
             </Routes>
             {isLoggedIn && <FooterComponent />}
+            <ToastContainer />
         </Router>
   );
 }

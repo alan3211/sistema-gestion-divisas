@@ -3,8 +3,15 @@ import {useEffect, useState} from "react";
 import USASVG from "../assets/USA.svg";
 import EuroSVG from "../assets/Europa.svg";
 import LibraSVG from "../assets/GranBretana.svg";
+import {dataG} from "../App";
+import {encryptRequest, formattedDate} from "../utils";
 
-export const useFetchTipoCambio = (formValues) => {
+export const useFetchTipoCambio = () => {
+
+    const formValues = {
+        "sucursal": dataG.sucursal,
+        "fechaCambio": formattedDate
+    }
 
     const [valorTipoCambio,setValorTipoCambio] =  useState([]);
 
@@ -15,7 +22,9 @@ export const useFetchTipoCambio = (formValues) => {
     };
 
     const obtieneTipoCambio = async () => {
-        const  valoresTipoCambio = await getTipoCambio(formValues);
+
+        const encryptedData = encryptRequest(formValues);
+        const  valoresTipoCambio = await getTipoCambio(encryptedData);
 
         if(valoresTipoCambio === null){
             setValorTipoCambio([]);

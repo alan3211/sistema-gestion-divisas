@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
+import {Link } from 'react-router-dom';
 
 export const AsideComponent = () => {
     return (
@@ -7,7 +7,7 @@ export const AsideComponent = () => {
                <ul className="sidebar-nav" id="sidebar-nav">
 
                    <li className="nav-item">
-                       <Link className="nav-link " to="/">
+                       <Link className="nav-link " to="/inicio">
                            <i className="bi bi-grid"></i>
                            <span>Inicio</span>
                        </Link>
@@ -19,8 +19,17 @@ export const AsideComponent = () => {
                        </a>
                        <ul id="components-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
                            <li>
-                               <Link to="/administracion/usuarios">
-                                   <i className="bi bi-circle"></i><span>Administración</span>
+                               <Link to="/cargaTipoCambio">
+                                   <i className="bi bi-circle"></i><span>Carga Tipo de Cambio</span>
+                               </Link>
+                               <Link to="/usuarios">
+                                   <i className="bi bi-circle"></i><span>Usuarios</span>
+                               </Link>
+                               <Link to="/sucursales">
+                                   <i className="bi bi-circle"></i><span>Sucursales</span>
+                               </Link>
+                               <Link to="/catalogos">
+                                   <i className="bi bi-circle"></i><span>Catalogos</span>
                                </Link>
                            </li>
                        </ul>

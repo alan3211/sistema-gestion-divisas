@@ -1,4 +1,4 @@
-import {formattedDateDD} from "../../utils/utils";
+import {formattedDateDD} from "../../utils";
 
 export const TitleComponent = ({title,icon,fecha})=>{
 

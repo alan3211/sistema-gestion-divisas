@@ -1,53 +1,47 @@
 import {TipoCambioComponent} from "./TipoCambioComponent";
 import {CalculadoraDivisasComponent} from "./CalculadoraDivisasComponent";
-import {useEffect, useState} from "react";
-import {BusquedaClientesComponent} from "../busquedaClientes/busquedaClientesComponent";
+import {useContext, useEffect} from "react";
+import {BusquedaClientesComponent} from "../busquedaClientes";
 import { useLocation } from 'react-router-dom';
-
+import {Layout} from "../../commons";
+import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
 export const CompraVentaComponent = () =>{
 
-    const [continuaOperacion,setContinuaOperacion] = useState(false);
+    const compraVentaProvider = useContext(CompraVentaContext);
+
     const location = useLocation();
     const { cliente={},clienteActivo } = location.state;
-    const [operacion,setOperacion] = useState({});
-    const [tipoDivisa,setTipoDivisa] =  useState([]);
 
     useEffect(() => {
+        console.log("COMPRAVENTACOMPONENT",cliente)
         if (clienteActivo) {
-            setContinuaOperacion(true);
+            compraVentaProvider.setContinuaOperacion(true);
         }
     }, [clienteActivo, cliente]);
 
+    const moduleName = {
+        title: 'Operación',
+        module: 'Compra/Venta'
+    }
+
     return (
-            <main id="main" className="h-100">
-
-            <div className="pagetitle">
-                <h1>Operación</h1>
-                <nav>
-                    <ol className="breadcrumb">
-                        <li className="breadcrumb-item active">Compra/Venta</li>
-                    </ol>
-                </nav>
+        <Layout moduleName={moduleName}>
+            <div className="row">
+                <div className="col-md-6">
+                    <CalculadoraDivisasComponent/>
+                </div>
+                <div className="col-md-6">
+                    <TipoCambioComponent />
+                </div>
             </div>
-
-            <section className="section">
-                <div className="row">
-                    <div className="col-md-6">
-                        <CalculadoraDivisasComponent tipoDivisa={tipoDivisa} setOperacion={setOperacion} setContinuaOperacion={setContinuaOperacion} />
-                    </div>
-                    <div className="col-md-6">
-                        <TipoCambioComponent setTipoDivisa={setTipoDivisa} />
-                    </div>
+            <div className="row">
+                <div className="col-md-12">
+                    {
+                        compraVentaProvider.continuaOperacion && <BusquedaClientesComponent cliente={cliente}/>
+                    }
                 </div>
-                <div className="row">
-                    <div className="col-md-12">
-                        {
-                            continuaOperacion && <BusquedaClientesComponent operacion={operacion} cliente={cliente}/>
-                        }
-                    </div>
-                </div>
-            </section>
-        </main>
+            </div>
+        </Layout>
     );
 }

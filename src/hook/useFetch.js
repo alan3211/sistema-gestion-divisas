@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-export const useFetch = ({funcionAsync,values}) => {
+export const useFetch = ({funcionAsync,values={}}) => {
 
     const [state,setState] = useState({
         isLoading: false,

@@ -11,7 +11,7 @@ export const DenominacionComponent = ({title,handleInputChange,moneda,importe,se
         console.log("DATA", data)
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
-                if (parseFloat(data[key].denominacion).toPrecision(1) >= importe) {
+                if (parseFloat(data[key].denominacion).toPrecision(1) > importe) {
                     delete data[key];
                 }
             }

@@ -1,6 +1,11 @@
-const URL = 'http://localhost:8080/';
+const URL = 'http://grocery-back.gvf9fnhhekg4cgaz.eastus.azurecontainer.io:9000/';
+//const URL = 'http://localhost:8000/';
 
 export const LOGIN_URL = `${URL}login/`;
+export const LOGIN_KEY_URL = `${URL}login/key/`;
+
+
+export const INICIO_URL = `${URL}inicio/`;
 export const CATALOGOS_URL = `${URL}catalogos/`;
 export const CATALOGOSUSUARIOS_URL = `${URL}catalogos/usuarios/`;
 export const OPERACIONES_URL = `${URL}operaciones/`;

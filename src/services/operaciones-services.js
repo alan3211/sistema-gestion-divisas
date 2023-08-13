@@ -17,7 +17,7 @@ export const validaCliente = async (formValues) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {
@@ -41,7 +41,7 @@ export const guardaCliente = async (formValues) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {
@@ -65,7 +65,7 @@ export const getTipoCambio =  async(formValues) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {
@@ -89,7 +89,7 @@ export const realizaConversion =  async(formValues) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {
@@ -113,7 +113,7 @@ export const buscaCliente = async (formValues) =>{
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {

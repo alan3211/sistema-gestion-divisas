@@ -1,3 +1,5 @@
+import CryptoJS from "crypto-js";
+
 const currentDate = new Date();
 
 export const year = currentDate.getFullYear();
@@ -78,4 +80,18 @@ export const getDenominacion = (divisa='MXP') =>{
             moneda: divisa,
         }
     }
+}
+
+export const encryptRequest = (data) => {
+    const jsonDataString = JSON.stringify(data);
+    const key = CryptoJS.enc.Utf8.parse('KtsmylMOoT735gRWHUFj7alBJypXlVNw');
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const pad = "aqswedrftgyhujio";
+    const encryptedData = CryptoJS.AES.encrypt(pad.concat(jsonDataString), key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+    });
+    const encryptedBase64 = encryptedData.toString();
+    return encryptedBase64
 }

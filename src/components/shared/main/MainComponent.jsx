@@ -1,7 +1,55 @@
+import {dataG} from "../../../App";
+import {getValidaTipoCambioDia} from "../../../services/inicio-services";
+import {toast} from "react-toastify";
+import {useEffect} from "react";
+
+
 export const MainComponent = () => {
+
+    const formValue ={
+        sucursal: dataG.sucursal,
+        usuario: dataG.usuario
+    };
+
+    const validaTipoCambio = async() =>{
+        console.log("Entre a tipo de cambio")
+        formValue.id = 1;
+        const {resultado} = await getValidaTipoCambioDia(formValue);
+        if(resultado){
+            toast.error(resultado, {
+                position: "top-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "light",
+            });
+        }
+    }
+
+    const validaDotacion = async() =>{
+        console.log("Entre a dotacion")
+        formValue.id = 2;
+        const {resultado} = await getValidaTipoCambioDia(formValue);
+        if(resultado){
+            toast.warn(resultado, {
+                position: "top-center",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "light",
+            });
+        }
+
+    }
+    useEffect(()=>{
+        validaTipoCambio();
+        validaDotacion();
+    },[])
+
     return (
         <main id="main" className="main">
-
             <div className="pagetitle">
                 <h1>Tablero</h1>
                 <nav>
@@ -502,6 +550,7 @@ export const MainComponent = () => {
                     </div>
                 </div>
             </section>
+
 
         </main>
     );

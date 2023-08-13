@@ -162,6 +162,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
                         cambio={(operacion.cantidad_entregada - parseInt(operacion.cantidad_entregada)).toPrecision(1)}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
+                        operacion={operacion}
+                        data={data}
                     />
             }
 

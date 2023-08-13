@@ -1,11 +1,12 @@
 import {Button, Modal} from "react-bootstrap";
 
-export const ModalConfirm = ({showModal,closeModal,selectedItem,hacerOperacion,title,setData}) => {
+export const ModalConfirm = ({showModal,closeModal,selectedItem,hacerOperacion,title,icon,closeModalAndReturn}) => {
+
     return(
-        <Modal show={showModal} onHide={closeModal}>
+        <Modal centered show={showModal} onHide={closeModal}>
         <Modal.Header closeButton>
             <Modal.Title>
-                <i className="ri-error-warning-fill text-warning m-2"></i>
+                <i className={icon}></i>
                 Alerta
             </Modal.Title>
         </Modal.Header>
@@ -14,7 +15,7 @@ export const ModalConfirm = ({showModal,closeModal,selectedItem,hacerOperacion,t
         </Modal.Body>
 
         <Modal.Footer>
-            <Button variant="secondary" onClick={closeModal}>
+            <Button variant="secondary" onClick={closeModalAndReturn}>
                 No
             </Button>
             <Button variant="primary" onClick={()=> hacerOperacion(selectedItem)}>
