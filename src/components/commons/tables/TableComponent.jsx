@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import {useOperaCliente} from "../../../hook/useOperaCliente";
-import {ModalConfirm} from "../modals/ModalConfirm";
 import {toast} from "react-toastify";
 
 export const TableComponent = ({ data, tools,hacerOperacion}) => {
@@ -9,9 +7,6 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [sortColumn, setSortColumn] = useState("");
     const [sortDirection, setSortDirection] = useState("asc");
-
-    const {showModal,selectedItem,setSelectedItem,openModal,closeModal} =  useOperaCliente();
-
 
     if (data.length === 0) {
         return <p>No hay datos disponibles</p>;
@@ -71,7 +66,6 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
     };
 
     const {selecciona} = tools;
-
 
     return (
         <>
@@ -176,8 +170,7 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
                         ))}
                     </ul>
                 </nav>
-                {
-                 data.length !== 1 && <nav aria-label="Page navigation">
+                <nav aria-label="Page navigation">
                     <ul className="pagination">
                         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                             <button
@@ -209,8 +202,7 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
                         </li>
                     </ul>
                 </nav>
-                }
-                </div>
+            </div>
         </div>
         </>
     );

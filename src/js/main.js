@@ -1,9 +1,8 @@
+import Quill from "quill/quill";
+import tinymce from "tinymce";
 
-import bootstrap from '../vendor/bootstrap/js/bootstrap.bundle';
-import echarts from '../vendor/echarts/echarts.min.js';
-import Quill from '../vendor/quill/quill.min.js';
-import simpleDatatables from '../vendor/simple-datatables/simple-datatables.js';
-import tinymce from '../vendor/tinymce/tinymce.min.js';
+import echarts from "echarts/dist/echarts.min";
+import * as simpleDatatables from "simple-datatables";
 
   /**
    * Easy selector helper function
@@ -104,14 +103,6 @@ import tinymce from '../vendor/tinymce/tinymce.min.js';
     window.addEventListener('load', toggleBacktotop)
     onscroll(document, toggleBacktotop)
   }
-
-  /**
-   * Initiate tooltips
-   */
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
 
   /**
    * Initiate quill editors

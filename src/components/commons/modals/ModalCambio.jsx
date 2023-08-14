@@ -2,7 +2,7 @@ import {Button, Modal} from "react-bootstrap";
 import {DenominacionComponent} from "../../operacion/denominacion/DenominacionComponent";
 import {useState} from "react";
 import {useForm} from "../../../hook/useForm";
-import {eliminarDenominacionesConCantidadCero, obtenerObjetoDenominaciones} from "../../../utils";
+import {eliminarDenominacionesConCantidadCero, encryptRequest, obtenerObjetoDenominaciones} from "../../../utils";
 import {dataG} from "../../../App";
 import {realizarOperacion} from "../../../services";
 import {useNavigate} from "react-router-dom";
@@ -58,10 +58,9 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                 obtenerObjetoDenominaciones(formValues),
             ]
         }
+        const encryptedData = encryptRequest(values);
 
-        console.log("Antes de Enviar: ",values)
-
-        const resultado = await realizarOperacion(values);
+        const resultado = await realizarOperacion(encryptedData);
 
         // Validar si tenemos que darle cambio
         if(resultado){

@@ -10,12 +10,9 @@ import {encryptRequest, validarMoneda, validarNumeroTelefono} from "../../../uti
 
 export const CalculadoraFormComponent = () => {
 
-    const {tipoDivisa,setOperacion,setContinuaOperacion,register,handleSubmit,errors,reset,watch,busquedaCliente:{setShowCliente}} = useContext(CompraVentaContext);
+    const {cantidad,setCantidad,showModal,setShowModal,showCantidadEntregada,setShowCantidadEntregada,tipoDivisa,setOperacion,setContinuaOperacion,register,handleSubmit,errors,reset,watch,busquedaCliente:{setShowCliente}} = useContext(CompraVentaContext);
     const catalogo = useCatalogo([9,4])
 
-    const [cantidad, setCantidad] = useState('');
-    const [showCantidadEntregada, setShowCantidadEntregada] = useState(false);
-    const [showModal, setShowModal] = useState(false);
 
     const closeModal = () => {
         setContinuaOperacion(false);

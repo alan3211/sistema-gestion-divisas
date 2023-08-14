@@ -160,7 +160,7 @@ export const hacerOperacion =  async(formValues) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {
@@ -184,7 +184,7 @@ export const realizarOperacion =  async(formValues) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {

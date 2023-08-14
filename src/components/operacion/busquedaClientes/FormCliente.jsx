@@ -8,6 +8,8 @@ import {toast} from "react-toastify";
 export const FormCliente = ({tipo}) => {
 
     const {
+        setCantidad,
+        setShowCantidadEntregada,
         operacion,
         setContinuaOperacion,
         reset,
@@ -41,8 +43,8 @@ export const FormCliente = ({tipo}) => {
 
         if (dataClientes) {
             if (dataClientes.length === 1) {
-                const mensaje = dataClientes[0].mensaje;
-                if (mensaje !== '') {
+                if(dataClientes[0].hasOwnProperty('resultado')){
+                    const mensaje = dataClientes[0].resultado;
                     const toastOptions = {
                         position: "top-center",
                         autoClose: 10000,
@@ -57,10 +59,13 @@ export const FormCliente = ({tipo}) => {
                     } else {
                         toast.error(mensaje, toastOptions);
                         reset();
+                        setCantidad('');
+                        setShowCantidadEntregada(false);
                     }
                     setShowCliente(false);
                     setContinuaOperacion(false);
-                }else{
+                }
+                else{
                     setShowCliente(true);
                 }
             } else {

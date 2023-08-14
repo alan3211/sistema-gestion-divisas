@@ -6,6 +6,9 @@ export const CompraVentaProvider = ({children}) => {
 
     const {register,handleSubmit,formState:{errors},reset,watch} = useForm();
 
+    const [cantidad, setCantidad] = useState('');
+    const [showCantidadEntregada, setShowCantidadEntregada] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [continuaOperacion,setContinuaOperacion] = useState(false);
     const [operacion,setOperacion] = useState({});
     const [tipoDivisa,setTipoDivisa] =  useState([]);
@@ -28,6 +31,12 @@ export const CompraVentaProvider = ({children}) => {
     }
 
     const compraVentaProvider = {
+        cantidad,
+        setCantidad,
+        showCantidadEntregada,
+        setShowCantidadEntregada,
+        showModal,
+        setShowModal,
         continuaOperacion,
         setContinuaOperacion,
         operacion,

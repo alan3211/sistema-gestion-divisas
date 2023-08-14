@@ -3,23 +3,20 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 import 'react-toastify/dist/ReactToastify.css';
-import './vendor/bootstrap/css/bootstrap.min.css';
-import './vendor/bootstrap-icons/bootstrap-icons.css';
-import './vendor/boxicons/css/boxicons.min.css';
-import './vendor/quill/quill.snow.css';
-import './vendor/quill/quill.bubble.css';
-import './vendor/remixicon/remixicon.css';
-import './vendor/simple-datatables/style.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle';
+
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'boxicons/css/boxicons.min.css';
+import 'remixicon/fonts/remixicon.css';
+
 import './style.css';
 
-
-//import './vendor/apexcharts/apexcharts.min.js';
-import './vendor/bootstrap/js/bootstrap.bundle.min.js';
-import './vendor/chart.js/chart.umd.js';
-import './vendor/echarts/echarts.min.js';
-import './vendor/quill/quill.min.js';
-import './vendor/simple-datatables/simple-datatables.js';
-import './vendor/tinymce/tinymce.min.js';
+import 'apexcharts/dist/apexcharts';
+import 'echarts/dist/echarts.min';
+import 'quill/dist/quill.min';
+import 'simple-datatables/dist/index';
+import 'tinymce/tinymce';
 import './js/main';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -2,7 +2,7 @@ import {useOperaCliente} from "../../../hook/useOperaCliente";
 import {ModalDeliverComponent} from "../../commons/modals/ModalDeliverComponent";
 import {useEffect, useState} from "react";
 import {dataG} from "../../../App";
-import {formattedDate, hora} from "../../../utils/utils";
+import {encryptRequest, formattedDate, hora} from "../../../utils/utils";
 import {hacerOperacion} from "../../../services/operaciones-services";
 import {CardLayout} from "../../commons";
 
@@ -32,12 +32,15 @@ export const DatosClientes = ({operacion, cliente}) => {
             nombre_operador: dataG.usuario,
             fecha_operacion: formattedDate,
             hora_operacion: hora,
-            monto: operacion.monto,
+            monto: parseInt(operacion.monto),
             divisa: operacion.moneda,
             tipo_cambio: operacion.tipo_cambio,
             cantidad_entregar: operacion.cantidad_entregada
         }
-        const pre_operacion = await hacerOperacion(operacionEnvia);
+
+        const encryptedData = encryptRequest(operacionEnvia);
+
+        const pre_operacion = await hacerOperacion(encryptedData);
         return pre_operacion;
     }
 
@@ -116,7 +119,20 @@ export const DatosClientes = ({operacion, cliente}) => {
                     </div>
                     <div className="col-md-3">
                         <div className="form-floating m-2">
-                            <button className="btn btn-primary" onClick={continuaOperacion}>Continuar</button>
+                            <button
+                                type="button"
+                                onClick={continuaOperacion}
+                                className="m-2 btn btn-primary d-grid gap-2"
+                            >
+                                <span className="me-2">
+                                    Continuar
+                                      <span
+                                          className="bi bi-arrow-right-circle-fill ms-2"
+                                          role="status"
+                                          aria-hidden="true">
+                                      </span>
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </div>
