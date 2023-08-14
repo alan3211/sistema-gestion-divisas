@@ -1,19 +1,12 @@
-import 'simple-datatables/dist/css/style.css';
-import 'simple-datatables/dist/index';
-
 import React, { useState } from "react";
-import {useOperaCliente} from "../../../hook/useOperaCliente";
-import {ModalConfirm} from "../modals/ModalConfirm";
+import {toast} from "react-toastify";
 
-export const TableComponent = ({ data, tools, setData,hacerOperacion}) => {
+export const TableComponent = ({ data, tools,hacerOperacion}) => {
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const [sortColumn, setSortColumn] = useState("");
     const [sortDirection, setSortDirection] = useState("asc");
-
-    const {showModal,selectedItem,setSelectedItem,openModal,closeModal} =  useOperaCliente();
-
 
     if (data.length === 0) {
         return <p>No hay datos disponibles</p>;
@@ -74,7 +67,6 @@ export const TableComponent = ({ data, tools, setData,hacerOperacion}) => {
 
     const {selecciona} = tools;
 
-
     return (
         <>
         <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
@@ -134,11 +126,24 @@ export const TableComponent = ({ data, tools, setData,hacerOperacion}) => {
                                 <td key={index} className="text-center">
                                     {
                                         (selecciona && key==='cliente')
-                                        && <span className="badge bg-primary m-2 cursor-pointer" onClick={() => {
-                                            openModal(item);
+                                        && <span className="badge bg-primary m-2 p-2 cursor-pointer" onClick={() => {
+                                            navigator.clipboard.writeText(item.cliente)
+                                                .then(() => {
+                                                    toast.info('Cliente copiado al portapapeles', {
+                                                        position: "top-center",
+                                                        autoClose: 3000,
+                                                        hideProgressBar: false,
+                                                        closeOnClick: true,
+                                                        pauseOnHover: true,
+                                                        theme: "colored",
+                                                    });
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error al copiar al portapapeles: ', error);
+                                                });
                                         }}>
-                                            <i className="bi bi-currency-exchange me-1"></i>
-                                            Seleccionar
+                                            <i className="ri-file-copy-line me-2"></i>
+                                            Copiar
                                            </span>
                                     }
                                     {item[key]}
@@ -199,7 +204,6 @@ export const TableComponent = ({ data, tools, setData,hacerOperacion}) => {
                 </nav>
             </div>
         </div>
-            <ModalConfirm title="" showModal={showModal} closeModal={closeModal} selectedItem={selectedItem} hacerOperacion={hacerOperacion} />
         </>
     );
 };

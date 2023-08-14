@@ -6,14 +6,15 @@ export const ToastComponent = ({type,title}) => {
 
     const configuration = {
         position: "top-center",
-        autoClose: 3000,
+        autoClose: 10000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
-        theme: "colored",
+        theme: "light",
     }
 
     useEffect(() => {
+        console.log(type);
         if (type) {
             const toastFunction = toast[type];
             if (toastFunction) {

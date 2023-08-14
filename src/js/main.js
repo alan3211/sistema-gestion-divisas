@@ -1,20 +1,38 @@
-/**
-* Template Name: NiceAdmin
-* Updated: May 30 2023 with Bootstrap v5.3.0
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
 import Quill from "quill/quill";
 import tinymce from "tinymce";
 
 import echarts from "echarts/dist/echarts.min";
 import * as simpleDatatables from "simple-datatables";
 
-import {select,on,onscroll} from "./selectores";
+  /**
+   * Easy selector helper function
+   */
+  export const select = (el, all = false) => {
+    el = el.trim()
+    if (all) {
+      return [...document.querySelectorAll(el)]
+    } else {
+      return document.querySelector(el)
+    }
+  }
 
-(function() {
-  "use strict";
+  /**
+   * Easy event listener function
+   */
+  export const on = (type, el, listener, all = false) => {
+    if (all) {
+      select(el, all).forEach(e => e.addEventListener(type, listener))
+    } else {
+      select(el, all).addEventListener(type, listener)
+    }
+  }
+
+  /**
+   * Easy on scroll event listener 
+   */
+  export const onscroll = (el, listener) => {
+    el.addEventListener('scroll', listener)
+  }
 
   /**
    * Sidebar toggle
@@ -38,7 +56,7 @@ import {select,on,onscroll} from "./selectores";
    * Navbar links active state on scroll
    */
   let navbarlinks = select('#navbar .scrollto', true)
-  const navbarlinksActive = () => {
+  export const navbarlinksActive = () => {
     let position = window.scrollY + 200
     navbarlinks.forEach(navbarlink => {
       if (!navbarlink.hash) return
@@ -71,13 +89,20 @@ import {select,on,onscroll} from "./selectores";
   }
 
   /**
-   * Initiate tooltips
+   * Back to top button
    */
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-    // eslint-disable-next-line no-undef
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
+  export let backtotop = select('.back-to-top')
+  if (backtotop) {
+    const toggleBacktotop = () => {
+      if (window.scrollY > 100) {
+        backtotop.classList.add('active')
+      } else {
+        backtotop.classList.remove('active')
+      }
+    }
+    window.addEventListener('load', toggleBacktotop)
+    onscroll(document, toggleBacktotop)
+  }
 
   /**
    * Initiate quill editors
@@ -242,22 +267,7 @@ import {select,on,onscroll} from "./selectores";
     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
   });
 
-  /**
-   * Initiate Bootstrap validation check
-   */
-  var needsValidation = document.querySelectorAll('.needs-validation')
 
-  Array.prototype.slice.call(needsValidation)
-    .forEach(function(form) {
-      form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
-
-        form.classList.add('was-validated')
-      }, false)
-    })
 
   /**
    * Initiate Datatables
@@ -280,5 +290,3 @@ import {select,on,onscroll} from "./selectores";
       }).observe(mainContainer);
     }, 200);
   }
-
-})();

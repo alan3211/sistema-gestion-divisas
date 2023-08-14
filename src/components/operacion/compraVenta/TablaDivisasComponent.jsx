@@ -2,17 +2,14 @@ import {formattedDate, formattedDateDD, mensajeSinElementos} from "../../../util
 import {dataG} from "../../../App";
 import {useFetchTipoCambio} from "../../../hook/useFetchTipoCambio";
 import {MessageComponent} from "../../commons/MessageComponent";
+import {useContext} from "react";
+import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
 
-export const TablaDivisasComponent = ({setTipoDivisa}) => {
+export const TablaDivisasComponent = () => {
 
-    const formValues = {
-        "sucursal": dataG.sucursal,
-        "fechaCambio": formattedDate
-    }
-
-    const {valoresTipoCambio} = useFetchTipoCambio(formValues);
-
+    const {setTipoDivisa} = useContext(CompraVentaContext);
+    const {valoresTipoCambio} = useFetchTipoCambio();
     setTipoDivisa(valoresTipoCambio);
 
     if(valoresTipoCambio.length === 0){

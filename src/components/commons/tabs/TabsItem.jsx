@@ -1,0 +1,18 @@
+import {useContext} from "react";
+import {CargaTipoCambioContext} from "../../../context/CargaTipoCambio/CargaTipoCambioContext";
+
+export const TabsItem = ({name,icon,id,pestania}) => {
+
+    const {setTipo} = useContext(CargaTipoCambioContext);
+
+    return (
+        <li className="nav-item flex-fill" role="presentation">
+            <button className="nav-link w-100" id={`${id}-tab`} data-bs-toggle="tab"
+                    data-bs-target="#bordered-justified-home" type="button" role="tab"
+                    aria-controls={id} aria-selected="true" onClick={()=> setTipo(pestania)}>
+                <i className={icon}></i>
+                <strong>{name}</strong>
+            </button>
+        </li>
+    )
+}

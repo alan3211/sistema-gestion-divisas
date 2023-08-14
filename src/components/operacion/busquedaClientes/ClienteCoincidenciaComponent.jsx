@@ -1,31 +1,39 @@
-import {TableComponent} from "../../commons/tables/TableComponent";
-import {InputComponent} from "../../commons/inputs/InputComponent";
+import {TableComponent} from "../../commons/tables";
+import {CardLayout} from "../../commons";
 
-export const ClienteCoincidenciaComponent = ({dataClientes,tools,showAddCliente,addCliente,setData,setShowCliente}) =>{
+export const ClienteCoincidenciaComponent = ({dataClientes,tools,showAddCliente,addCliente,setDataClientes}) =>{
 
     const hacerOperacion = (item) => {
-        setData(item);
-        setShowCliente(true);
+        setDataClientes(item);
     }
 
     return(
-        <div className="card">
-            <div className="card-body">
-                <h5 className="card-title">
-                    <i className="bx bxs-user-detail p-2"></i>
-                    <strong>Clientes con coincidencias</strong>
-                </h5>
-                <TableComponent data={dataClientes} tools={tools} setData={setData} hacerOperacion={hacerOperacion}/>
-                {
-                    showAddCliente && <InputComponent key="nuevoRegistro"
-                                                      nombre="Nuevo Cliente"
-                                                      tipo="button"
-                                                      estilo="col-md-4"
-                                                      estiloBtn="m-2 btn btn-primary d-grid gap-2"
-                                                      fn={addCliente}
-                    />
-                }
-            </div>
-        </div>
+        <CardLayout title="Clientes con coincidencias" icon="bx bxs-user-detail p-2">
+            <TableComponent data={dataClientes} tools={tools} hacerOperacion={hacerOperacion}/>
+            {
+                showAddCliente &&
+                (
+                    <div className="col-md-4">
+                        <div className="form-floating">
+                            <button
+                                type="button"
+                                className="m-2 btn btn-primary d-grid gap-2"
+                                onClick={addCliente}>
+
+                                <span
+                                    className="bi bi-person-plus-fill me-2"
+                                    role="status"
+                                    aria-hidden="true">
+
+                                    <span className="ms-2">
+                                        Nuevo Cliente
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
+        </CardLayout>
     );
 }

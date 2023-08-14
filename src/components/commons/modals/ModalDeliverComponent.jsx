@@ -6,10 +6,12 @@ import {dataG} from "../../../App";
 import {realizarOperacion} from "../../../services/operaciones-services";
 import {ModalCambio} from "./ModalCambio";
 import {
-    eliminarDenominacionesConCantidadCero,
+    eliminarDenominacionesConCantidadCero, encryptRequest,
     getDenominacion,
     obtenerObjetoDenominaciones
 } from "../../../utils/utils";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 export const ModalDeliverComponent = ({configuration}) =>{
 
@@ -17,11 +19,11 @@ export const ModalDeliverComponent = ({configuration}) =>{
     const [isOkRecibido,setIsOkRecibido] = useState(true);
     const [isOkEntregado,setIsOkEntregado] = useState(true);
     const [showCambio,setShowCambio] = useState(false);
+    const navigator = useNavigate();
 
     const calculaValorMonto = () => {
         return parseFloat(operacion.monto-(operacion.cantidad_entregada - parseInt(operacion.cantidad_entregada))).toFixed(2);
     }
-
 
     const muestraDivisa = () => {
         if(operacion.tipo_operacion === "1"){
@@ -82,14 +84,27 @@ export const ModalDeliverComponent = ({configuration}) =>{
             ]
         }
 
-        const resultado = await realizarOperacion(values);
+        const encryptedData = encryptRequest(values);
+        console.log(encryptedData);
 
+        const resultado = await realizarOperacion(encryptedData);
         // Validar si tenemos que darle cambio
         if(resultado){
 
-            setShowCambio(true)
+            if(parseFloat(operacion.monto)-parseFloat(calculaValorMonto()) > 0){
+                setShowCambio(true);
+            }else{
+                toast.success('La operación fue exitosa.', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    theme: "light",
+                });
+                navigator("/inicio");
+            }
             console.log(resultado);
-
         }
 
 
@@ -135,13 +150,24 @@ export const ModalDeliverComponent = ({configuration}) =>{
                     <div className="row">
                         <div className="col-md-6">
                             <div className="form-group">
-                                <DenominacionComponent title={`Recibido del cliente (${muestraDivisa()})`} handleInputChange={handleInputChange} moneda={muestraDivisa()} importe={calculaValorMonto()} setIsOkRecibido={setIsOkRecibido} type/>
+                                <DenominacionComponent
+                                    title={`Recibido del cliente (${muestraDivisa()})`}
+                                    handleInputChange={handleInputChange}
+                                    moneda={muestraDivisa()} importe={calculaValorMonto()}
+                                    setIsOkRecibido={setIsOkRecibido}
+                                    type/>
                             </div>
                         </div>
 
                         <div className="col-md-6">
                             <div className="form-group">
-                                <DenominacionComponent title={`Entregado del cliente (${operacion.moneda === "MXP" ? `MXP`:operacion.moneda})`} handleInputChange={denominacion_USD.handleInputChange} moneda={operacion.moneda === "MXP" ? `MXP`:operacion.moneda} importe={parseInt(operacion.cantidad_entregada)} setIsOkEntregado={setIsOkEntregado} type={false}/>
+                                <DenominacionComponent
+                                    title={`Entregado del cliente (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`}
+                                    handleInputChange={denominacion_USD.handleInputChange}
+                                    moneda={operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda}
+                                    importe={parseInt(operacion.cantidad_entregada)}
+                                    setIsOkEntregado={setIsOkEntregado}
+                                />
                             </div>
                     </div>
 
@@ -162,6 +188,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
                         cambio={(operacion.cantidad_entregada - parseInt(operacion.cantidad_entregada)).toPrecision(1)}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
+                        operacion={operacion}
+                        data={data}
                     />
             }
 
