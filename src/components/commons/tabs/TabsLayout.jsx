@@ -1,7 +1,10 @@
 import {TabsItem} from "./TabsItem";
 
 export const TabsLayout =  ({options,children}) => {
-   return(
+
+    const activeTab = options.find((option) => option.defecto);
+
+    return(
        <>
            <ul className="nav nav-tabs nav-tabs-bordered d-flex" id="borderedTabJustified" role="tablist">
                {
@@ -11,16 +14,9 @@ export const TabsLayout =  ({options,children}) => {
                }
            </ul>
            <div className="tab-content" id="borderedTabJustifiedContent">
-               {
-                   options.map((element,idx) => {
-                       return(
-                           <div className="tab-pane fade show" id="bordered-justified-home" role="tabpanel"
-                            aria-labelledby={`${element.id}-tab`} key={`${element.id}-${idx}`}>
-                               {children}
-                            </div>
-                       )
-                   })
-               }
+               <div className={`tab-pane fade show active`} id={`bordered-justified-${activeTab.id}`} role="tabpanel" aria-labelledby={`${activeTab.id}-tab`}>
+                   {children}
+               </div>
            </div>
        </>
    )

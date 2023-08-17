@@ -1,9 +1,9 @@
-import {useOperaCliente} from "../../../hook/useOperaCliente";
-import {ModalDeliverComponent} from "../../commons/modals/ModalDeliverComponent";
-import {useEffect, useState} from "react";
+import {useOperaCliente} from "../../../hook";
+import {ModalDeliverComponent} from "../../commons/modals";
+import {useState} from "react";
 import {dataG} from "../../../App";
-import {encryptRequest, formattedDate, hora} from "../../../utils/utils";
-import {hacerOperacion} from "../../../services/operaciones-services";
+import {encryptRequest, formattedDate, hora} from "../../../utils";
+import {hacerOperacion} from "../../../services";
 import {CardLayout} from "../../commons";
 
 export const DatosClientes = ({operacion, cliente}) => {
@@ -19,7 +19,6 @@ export const DatosClientes = ({operacion, cliente}) => {
         setShowCustomModal,
         selectedItem,
         closeModal,
-        title: '¿Desea realizar una cotización con este cliente?',
         operacion,
         data,
     }

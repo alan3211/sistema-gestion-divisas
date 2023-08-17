@@ -14,7 +14,6 @@ export const CompraVentaComponent = () =>{
     const { cliente={},clienteActivo } = location.state;
 
     useEffect(() => {
-        console.log("COMPRAVENTACOMPONENT",cliente)
         if (clienteActivo) {
             compraVentaProvider.setContinuaOperacion(true);
         }
