@@ -10,14 +10,14 @@ import {AltaClientesComponent} from "./components/operacion/altaClientes";
 import {CompraVentaComponent} from "./components/operacion/compraVenta";
 import {LoginComponent} from "./components/login";
 import {CajaComponent} from "./components/operacion/caja";
-import {getUser} from "./services";
-import {toast, ToastContainer} from "react-toastify";
+import {ToastContainer} from "react-toastify";
 import {Usuarios} from "./components/administracion/Usuarios";
 import {Sucursales} from "./components/administracion/Sucursales";
 import {Catalogo} from "./components/administracion/Catalogo";
-import {CargaTipoCambioTab} from "./components/administracion/cargaTipoCambio/CargaTipoCambioTab";
 import {AltaClienteProvider} from "./context/AltaCliente/AltaClienteProvider";
 import {CompraVentaProvider} from "./context/compraVenta/CompraVentaProvider";
+import {CargaTipoCambio} from "./components/administracion/cargaTipoCambio/CargaTipoCambio";
+import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambioProvider";
 
 export let dataG = {
     sucursal:0,
@@ -56,7 +56,7 @@ const App = () => {
                 <Route exact path="/altaClientes" element={<AltaClienteProvider><AltaClientesComponent /></AltaClienteProvider>} />
                 <Route exact path="/compraVenta" element={<CompraVentaProvider><CompraVentaComponent /></CompraVentaProvider>} />
                 <Route exact path="/caja" element={<CajaComponent />} />
-                <Route exact path="/cargaTipoCambio" element={<CargaTipoCambioTab />} />
+                <Route exact path="/cargaTipoCambio" element={<CargaTipoCambioProvider><CargaTipoCambio /></CargaTipoCambioProvider>} />
                 <Route exact path="/usuarios" element={<Usuarios />} />
                 <Route exact path="/sucursales" element={<Sucursales />} />
                 <Route exact path="/catalogos" element={<Catalogo />} />

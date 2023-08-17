@@ -97,7 +97,6 @@ export const FormCliente = ({tipo}) => {
     });
 
     const clearBuscaCliente = () =>{
-        console.log("limpia");
         formBuscarCliente.reset();
     }
 

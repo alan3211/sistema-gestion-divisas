@@ -1,7 +1,6 @@
-import {formattedDate, formattedDateDD, mensajeSinElementos} from "../../../utils/utils";
-import {dataG} from "../../../App";
-import {useFetchTipoCambio} from "../../../hook/useFetchTipoCambio";
-import {MessageComponent} from "../../commons/MessageComponent";
+import {formattedDateDD, mensajeSinElementos} from "../../../utils";
+import {useFetchTipoCambio} from "../../../hook";
+import {MessageComponent} from "../../commons";
 import {useContext} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
@@ -33,7 +32,7 @@ export const TablaDivisasComponent = () => {
                 {valoresTipoCambio.map((ele, index) => (
                     <tr key={index}>
                         <td>
-                            <img src={ele.icon} width={30} height={30} className="m-2"/>
+                            <img src={ele.icon} width={30} height={30} className="m-2" alt={ele.nombre_divisa}/>
                             {ele.nombre_divisa}
                         </td>
                         <td>{ele.compra}</td>

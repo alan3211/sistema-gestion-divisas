@@ -1,5 +1,5 @@
-const URL = 'http://grocerys-centro-cambiario.f7aae8b7e5akc0a9.eastus.azurecontainer.io:9000/';
-//const URL = 'http://localhost:9000/';
+//const URL = 'http://grocerys-centro-cambiario.f7aae8b7e5akc0a9.eastus.azurecontainer.io:9000/';
+const URL = 'http://192.168.101.45:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 export const LOGIN_KEY_URL = `${URL}login/key/`;

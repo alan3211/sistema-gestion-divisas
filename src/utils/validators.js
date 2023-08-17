@@ -37,8 +37,8 @@ export const validaFechas = (fecha) => {
         return "El mes debe estar entre 1 y 12.";
     }
     if (
-        dayNacimiento < 1 ||
-        dayNacimiento > 31 ||
+        (dayNacimiento < 1) ||
+        (dayNacimiento > 31) ||
         (monthNacimiento === 2 && (!esBisiesto(yearNacimiento) && dayNacimiento > 28) || dayNacimiento > 29) ||
         ((monthNacimiento === 4 || monthNacimiento === 6 || monthNacimiento === 9 || monthNacimiento === 11) && dayNacimiento > 30)
     ) {
@@ -80,7 +80,7 @@ export const validarNumeroTelefono = (name,value) => {
     return true;
 }
 export const validarMoneda = (name, value) => {
-    const monedaNumberRegex = /^-?\d+(\.\d{1,2})?$/;
+    const monedaNumberRegex = /^$|^-?\d+(\.\d{1,5})?$/;
     if (!monedaNumberRegex.test(value)) {
         return `El campo ${name} no corresponde a una moneda válida.`;
     }

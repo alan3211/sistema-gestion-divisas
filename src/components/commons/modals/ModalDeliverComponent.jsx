@@ -15,41 +15,32 @@ import {useNavigate} from "react-router-dom";
 
 export const ModalDeliverComponent = ({configuration}) =>{
 
-    const {showModal,setShowModal,closeModal,selectedItem,showCustomModal,setShowCustomModal,operacion,data} = configuration;
+    const {showCustomModal,setShowCustomModal,operacion,data} = configuration;
     const [isOkRecibido,setIsOkRecibido] = useState(true);
     const [isOkEntregado,setIsOkEntregado] = useState(true);
     const [showCambio,setShowCambio] = useState(false);
     const navigator = useNavigate();
 
-    const calculaValorMonto = () => {
-        return parseFloat(operacion.monto-(operacion.cantidad_entregada - parseInt(operacion.cantidad_entregada))).toFixed(2);
-    }
+    // Calcula el valor del monto de la parte decimal con 2 digitos
+    const calculaValorMonto = () => parseFloat(operacion.monto-(operacion.cantidad_entregada - parseInt(operacion.cantidad_entregada))).toFixed(2);
 
-    const muestraDivisa = () => {
-        if(operacion.tipo_operacion === "1"){
-            return operacion.moneda;
-        }else{
-            return 'MXP';
-        }
-    }
-
+    // Muestra la divisa correspondiente
+    const muestraDivisa = () => operacion.tipo_operacion === "1" ? operacion.moneda : 'MXP';
+    
     const {formValues,handleInputChange} = useForm(getDenominacion(muestraDivisa()));
+    
+    const denominacion = useForm(getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda));
 
-
-    const denominacion_USD = useForm(getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda));
-
-    const closeCustomModal = () => {
-        setShowCustomModal(false);
-    }
+    const closeCustomModal = () => setShowCustomModal(false);
 
     const hacerOperacion = async () => {
 
         if(operacion.tipo_operacion === '1') {
             formValues.tipoOperacion = "COMPRA";
-            denominacion_USD.formValues.tipoOperacion = "COMPRA";
+            denominacion.formValues.tipoOperacion = "COMPRA";
         }else{
             formValues.tipoOperacion = "VENTA";
-            denominacion_USD.formValues.tipoOperacion = "VENTA";
+            denominacion.formValues.tipoOperacion = "VENTA";
         }
 
         if(formValues.divisa === "MXP" && operacion.tipo_operacion === '1'){
@@ -58,14 +49,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
             formValues.movimiento = "RECIBE CLIENTE";
         }
 
-        if( denominacion_USD.formValues.divisa !== "MXP" && operacion.tipo_operacion === '1'){
-            denominacion_USD.formValues.movimiento = "RECIBE CLIENTE";
-        }else if(denominacion_USD.formValues.divisa !== "MXP" && operacion.tipo_operacion === '2'){
-            denominacion_USD.formValues.movimiento = "ENTREGA CLIENTE";
+        if( denominacion.formValues.divisa !== "MXP" && operacion.tipo_operacion === '1'){
+            denominacion.formValues.movimiento = "RECIBE CLIENTE";
+        }else if(denominacion.formValues.divisa !== "MXP" && operacion.tipo_operacion === '2'){
+            denominacion.formValues.movimiento = "ENTREGA CLIENTE";
         }
 
         eliminarDenominacionesConCantidadCero(formValues);
-        eliminarDenominacionesConCantidadCero(denominacion_USD.formValues);
+        eliminarDenominacionesConCantidadCero(denominacion.formValues);
 
 
         const values = {
@@ -80,7 +71,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
             diferencia:0.0,
             denominacion:[
                 obtenerObjetoDenominaciones(formValues),
-                obtenerObjetoDenominaciones(denominacion_USD.formValues),
+                obtenerObjetoDenominaciones(denominacion.formValues),
             ]
         }
 
@@ -109,8 +100,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
 
     }
-
-
 
     return(
         <>
@@ -163,7 +152,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                             <div className="form-group">
                                 <DenominacionComponent
                                     title={`Entregado del cliente (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`}
-                                    handleInputChange={denominacion_USD.handleInputChange}
+                                    handleInputChange={denominacion.handleInputChange}
                                     moneda={operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda}
                                     importe={parseInt(operacion.cantidad_entregada)}
                                     setIsOkEntregado={setIsOkEntregado}
