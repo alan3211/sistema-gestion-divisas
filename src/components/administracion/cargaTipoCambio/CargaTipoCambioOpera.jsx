@@ -2,24 +2,28 @@ import {useContext} from "react";
 import {CargaTipoCambioContext} from "../../../context/CargaTipoCambio/CargaTipoCambioContext";
 import {AltaDivisas} from "./AltaDivisas";
 import {useCatalogo} from "../../../hook/useCatalogo";
-import USASVG from "../../../assets/USA.svg";
-import EuroSVG from "../../../assets/Europa.svg";
-import LibraSVG from "../../../assets/GranBretana.svg";
+import {getCargaTipoCambio} from "../../../services/administracion-services";
+import {encryptRequest, formattedDate} from "../../../utils";
+import {toast} from "react-toastify";
 
 export const CargaTipoCambioOpera = () => {
 
-    const {showTab, register,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
+    const {showTab,tipo, register,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
     const catalogo = useCatalogo([16, 17])
 
-    const onSubmit = handleSubmit((data) => {
+    const onSubmit = handleSubmit(async(data) => {
+
         const updatedTipoCambio = currencies.map((currency) => {
+
             const compraValue = data[`compra_${currency.divisa}`];
             const ventaValue = data[`venta_${currency.divisa}`];
 
             if (compraValue !== "" || ventaValue !== "") {
                 return {
-                    [`compra_${currency.divisa}`]: compraValue === "" ? 0.0 : parseFloat(compraValue),
-                    [`venta_${currency.divisa}`]: ventaValue === "" ? 0.0 : parseFloat(ventaValue),
+                    compra: compraValue === "" ? 0.0 : compraValue,
+                    venta: ventaValue === "" ? 0.0 : ventaValue,
+                    divisa: currency.divisa,
+                    fecha: formattedDate,
                 };
             } else {
                 return null; // No agrega al arreglo si ambos valores son vacíos
@@ -33,23 +37,33 @@ export const CargaTipoCambioOpera = () => {
 
         // Elimina las propiedades vacías en "updatedData" que comienzan con "compra_" o "venta_"
         for (const key in updatedData) {
-            if (key.startsWith("compra_") || key.startsWith("venta_")) {
+            if (key.startsWith("compra") || key.startsWith("venta") || key.startsWith("divisa")) {
                 delete updatedData[key];
             }
         }
 
-        console.log(updatedData);
+        updatedData.opcion = tipo;
+
+        const respuesta = await getCargaTipoCambio(encryptRequest(updatedData));
+
+        toast.success(respuesta.mensaje,{
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            theme: "light",
+        });
 
     });
 
-
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={onSubmit}>
                 {
                     showTab.tab2
                     && (
-                        <div className="col-md-3">
+                        <div className="d-flex align-items-center justify-content-center mt-5">
                             <div className="form-floating mb-3">
                                 <select
                                     {...register("region", {
@@ -88,7 +102,7 @@ export const CargaTipoCambioOpera = () => {
                 {
                     showTab.tab3
                     && (
-                        <div className="col-md-3">
+                        <div className="d-flex align-items-center justify-content-center mt-5">
                             <div className="form-floating mb-3">
                                 <select
                                     {...register("sucursal", {
@@ -125,11 +139,12 @@ export const CargaTipoCambioOpera = () => {
                     )
                 }
                 <AltaDivisas/>
-                <button type="submit" className="btn btn-primary">
-                    <i className="bi bi-save me-1"></i> Guardar
-                </button>
+                <div className="d-flex justify-content-center">
+                    <button type="submit" className="btn btn-primary">
+                        <i className="bi bi-save me-1"></i> Guardar
+                    </button>
+                </div>
             </form>
-
         </>
     )
 }

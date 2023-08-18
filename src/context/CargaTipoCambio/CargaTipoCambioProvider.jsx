@@ -12,6 +12,7 @@ export const CargaTipoCambioProvider = ({children}) => {
         tab3: false,
     });
 
+    const [tipo,setTipo] = useState(3);
 
     const {register, handleSubmit,formState:{errors}} = useForm({
         defaultValues:{
@@ -26,6 +27,7 @@ export const CargaTipoCambioProvider = ({children}) => {
             ]
         }
     });
+
     const currencies = [
         {divisa: "USD"},
         {divisa: "EUR"},
@@ -42,19 +44,22 @@ export const CargaTipoCambioProvider = ({children}) => {
         switch (pestania) {
             case 0:
                 showTabObj.tab1 = true;
+                setTipo(3);
                 break;
             case 1:
                 showTabObj.tab2 = true;
+                setTipo(2);
                 break;
             default:
                 showTabObj.tab3 = true;
+                setTipo(1);
         }
 
         setShowTab(showTabObj);
     }
 
     const cargaTipoCambio = {
-        showTab,changePestania,register, handleSubmit,errors,currencies
+        tipo,showTab,changePestania,register, handleSubmit,errors,currencies
     }
 
 
