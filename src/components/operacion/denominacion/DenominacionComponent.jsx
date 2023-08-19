@@ -71,40 +71,46 @@ export const DenominacionComponent = ({title,handleInputChange,moneda,importe,se
     }
 
     return (
-        <div className="container text-center">
-            <h2 className="card-title">{title}</h2>
-            <table className="table table-bordered table-hover">
-                <thead className="table-dark">
-                <tr>
-                    <th>Denominación</th>
-                    <th>Cantidad</th>
-                    <th>Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                {data?.map((elemento) => (
-                    <tr key={`denominacion_${elemento.denominacion}`}>
-                        <td>{elemento.denominacion}</td>
-                        <td>
-                            <input
-                                type="text"
-                                name={`denominacion_${elemento.denominacion}`}
-                                className="form-control"
-                                value={inputValues[`denominacion_${elemento.denominacion}`] || ""}
-                                onChange={handleChange}
-                            />
-                        </td>
-                        <td>{inputValues[`total_${elemento.denominacion}`] || 0}</td>
-                    </tr>
-                ))}
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th colSpan="2">Total</th>
-                    <th className={validaImporte()}>{inputValues.totalGeneral || 0.0}</th>
-                </tr>
-                </tfoot>
-            </table>
+
+        <div className="text-center mt-2">
+                <h5 className="mb-2">Tabla de Denominaciones</h5>
+                <div className="card-body">
+                    <div className="table-responsive">
+                        <table className="table table-bordered table-hover">
+                            <thead className="table-dark">
+                            <tr>
+                                <th>Denominación</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {data?.map((elemento) => (
+                                <tr key={`denominacion_${elemento.denominacion}`}>
+                                    <td>{elemento.denominacion}</td>
+                                    <td nowrap>
+                                        <input
+                                            type="text"
+                                            name={`denominacion_${elemento.denominacion}`}
+                                            className="form-control form-control-sm"
+                                            placeholder="0.0"
+                                            value={inputValues[`denominacion_${elemento.denominacion}`] || ""}
+                                            onChange={handleChange}
+                                        />
+                                    </td>
+                                    <td>{inputValues[`total_${elemento.denominacion}`] || 0.0}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colSpan="2">Total</th>
+                                <th className={validaImporte()}>{inputValues.totalGeneral || 0.0}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
         </div>
     );
 

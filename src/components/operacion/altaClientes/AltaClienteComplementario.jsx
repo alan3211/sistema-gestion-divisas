@@ -2,7 +2,7 @@ import {memo, useContext} from "react";
 import {ModalConfirm} from "../../commons/modals";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
+import {encryptRequest, validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
 import {useCatalogo} from "../../../hook/useCatalogo";
 import {useAltaComplementario} from "../../../hook/useAltaComplementario";
 import {dataG} from "../../../App";
@@ -22,7 +22,6 @@ export const AltaClienteComplementario = memo(() => {
     const catalogo = useCatalogo([1,3,3,5,6,7,8,12,13,14,10,11]);
 
     const handleValidateFinalForm = propForm.handleSubmit(async(data) => {
-        console.log(data)
         data.sucursal = dataG.sucursal.toString();
         data.usuario = dataG.usuario;
 
@@ -33,23 +32,7 @@ export const AltaClienteComplementario = memo(() => {
             data.esp_destino_recursos = '';
         }
 
-        const jsonDataString = JSON.stringify(data);
-        console.log(jsonDataString)
-        // Clave de cifrado
-        const key = CryptoJS.enc.Utf8.parse('KtsmylMOoT735gRWHUFj7alBJypXlVNw');
-        const iv = CryptoJS.lib.WordArray.random(16);
-
-        const pad = "aqswedrftgyhujio";
-
-        const encryptedData = CryptoJS.AES.encrypt(pad.concat(jsonDataString), key, {
-            iv: iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7,
-        });
-        // Datos cifrados en base64
-        const encryptedBase64 = encryptedData.toString();
-        console.log('JSON cifrado:', encryptedBase64);
-
+        const encryptedBase64 = encryptRequest(data)
 
         const dataClientes = await guardaCliente(encryptedBase64);
         console.log(dataClientes)
@@ -226,7 +209,7 @@ export const AltaClienteComplementario = memo(() => {
                                         value:true,
                                         message:'El campo Número Exterior no puede ser vacio.'
                                     },
-                                    validate: (value) => validarNumeros("Número Exterior",value)
+                                    validate: (value) => validarAlfaNumerico("Número Exterior",value)
                                 })}
                                 type="text"
                                 className={`form-control ${!!propForm.errors?.numero_exterior ? 'invalid-input':''}`}
@@ -244,11 +227,7 @@ export const AltaClienteComplementario = memo(() => {
                         <div className="form-floating">
                             <input
                                 {...propForm.register("numero_interior",{
-                                    required:{
-                                        value:true,
-                                        message:'El campo Número Interior no puede ser vacio.'
-                                    },
-                                    validate: (value) => validarNumeros("Número Interior",value)
+                                    validate: (value) => validarAlfaNumerico("Número Interior",value)
                                 })}
                                 type="text"
                                 className={`form-control ${!!propForm.errors?.numero_interior ? 'invalid-input':''}`}

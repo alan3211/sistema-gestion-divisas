@@ -1,6 +1,7 @@
 import {CajaContext} from "./CajaContext";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
+import {useForm as useFormulario} from "../../hook/";
 
 export const CajaProvider = ({children}) =>{
 
@@ -8,15 +9,18 @@ export const CajaProvider = ({children}) =>{
     const [showDenominacion,setShowDenominacion] =  useState(false);
     const [isOkRecibido,setIsOkRecibido] = useState(true);
     const dotacionForm = useForm();
+    const {formValues,setFormValues,handleInputChange} = useFormulario();
 
     const dotacion = {
         showDenominacion,
         setShowDenominacion,
         isOkRecibido,
         setIsOkRecibido,
-        dotacionForm
+        dotacionForm,
+        formValues,
+        setFormValues,
+        handleInputChange
     }
-
 
     const cajaProvider = {
         dotacion

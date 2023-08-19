@@ -36,20 +36,22 @@ export const validaFechas = (fecha) => {
     if (monthNacimiento < 1 || monthNacimiento > 12) {
         return "El mes debe estar entre 1 y 12.";
     }
+
     if (
-        (dayNacimiento < 1) ||
-        (dayNacimiento > 31) ||
-        (monthNacimiento === 2 && (!esBisiesto(yearNacimiento) && dayNacimiento > 28) || dayNacimiento > 29) ||
-        ((monthNacimiento === 4 || monthNacimiento === 6 || monthNacimiento === 9 || monthNacimiento === 11) && dayNacimiento > 30)
+        yearNacimiento < 1900 ||
+        yearNacimiento >= yearActual - 18 ||
+        monthNacimiento > 12 ||
+        dayNacimiento > 31 ||
+        ((monthNacimiento === 2 && ((!esBisiesto(yearNacimiento) && dayNacimiento > 28) || (esBisiesto(yearNacimiento) && dayNacimiento > 29))) ||
+            ((monthNacimiento === 4 || monthNacimiento === 6 || monthNacimiento === 9 || monthNacimiento === 11) && dayNacimiento > 30))
     ) {
         return "El día es inválido para el mes y año proporcionados.";
     }
-
     return true;
 }
 
 export const validarNombreApellido = (name,value) => {
-    const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    const nombreRegex = /^$|^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'"]+$/;
     if (!nombreRegex.test(value)) {
         return `El campo ${name} debe contener solo letras, acentos y la letra 'ñ'.`;
     }
@@ -65,7 +67,7 @@ export const validarNumeros = (name,value) => {
 }
 
 export const validarAlfaNumerico = (name,value) => {
-    const numerosRegex = /^[a-zA-Z\s\d]+$/;
+    const numerosRegex = /^$|^[a-zA-Z\s\d]+$/;
     if (!numerosRegex.test(value)) {
         return `El campo ${name} debe contener solo caracteres alfanumericos.`;
     }
