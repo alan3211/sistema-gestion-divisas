@@ -1,7 +1,7 @@
 import {Button, Modal} from "react-bootstrap";
 import {DenominacionComponent} from "../../operacion/denominacion/DenominacionComponent";
 import {useForm} from "../../../hook/useForm";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {dataG} from "../../../App";
 import {realizarOperacion} from "../../../services/operaciones-services";
 import {ModalCambio} from "./ModalCambio";
@@ -12,6 +12,7 @@ import {
 } from "../../../utils/utils";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
+import {Denominacion} from "../../operacion/denominacion/Denominacion";
 
 export const ModalDeliverComponent = ({configuration}) =>{
 
@@ -19,10 +20,27 @@ export const ModalDeliverComponent = ({configuration}) =>{
     const [isOkRecibido,setIsOkRecibido] = useState(true);
     const [isOkEntregado,setIsOkEntregado] = useState(true);
     const [showCambio,setShowCambio] = useState(false);
+    const [diferencia,setDiferencia] =  useState(0.0);
+    const [habilita,setHabilita] =  useState({
+        recibe: true,
+        entrega: true,
+    });
     const navigator = useNavigate();
 
+    //Muestra el título correcto
+    const titulo = `Operación ${operacion.tipo_operacion === "1" ? 'Compra': 'Venta'}`;
+
     // Calcula el valor del monto de la parte decimal con 2 digitos
-    const calculaValorMonto = () => parseFloat(operacion.monto-(operacion.cantidad_entregada - parseInt(operacion.cantidad_entregada))).toFixed(2);
+    const calculaValorMonto = useMemo(() => {
+        if (operacion.tipo_operacion === '2') {
+            const valoresDecimalesDivisas = parseFloat(operacion.cantidad_entregada) - parseInt(operacion.cantidad_entregada);
+            setDiferencia(valoresDecimalesDivisas);
+            const conversionAPesos = valoresDecimalesDivisas * parseFloat(operacion.tipo_cambio);
+            const diferenciaAMostrar = parseFloat(operacion.monto) - conversionAPesos;
+            return diferenciaAMostrar.toFixed(2);
+        }
+        return parseFloat(operacion.monto);
+    }, [operacion.cantidad_entregada, operacion.tipo_cambio, operacion.monto, operacion.tipo_operacion]);
 
     // Muestra la divisa correspondiente
     const muestraDivisa = () => operacion.tipo_operacion === "1" ? operacion.moneda : 'MXP';
@@ -64,7 +82,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
             ticket: data.ticket,
             divisa: operacion.moneda,
             cantidad_entregar: parseInt(operacion.cantidad_entregada),
-            monto: parseFloat(calculaValorMonto()),
+            monto: parseFloat(calculaValorMonto),
             usuario: dataG.username,
             sucursal: dataG.sucursal,
             traspaso: '',
@@ -82,7 +100,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         // Validar si tenemos que darle cambio
         if(resultado){
 
-            if(parseFloat(operacion.monto)-parseFloat(calculaValorMonto()) > 0){
+            if(parseFloat(operacion.monto)-parseFloat(calculaValorMonto) > 0){
                 setShowCambio(true);
             }else{
                 toast.success('La operación fue exitosa.', {
@@ -101,14 +119,41 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     }
 
+    /*
+    *  title={`Entregado del cliente (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`}
+                                    handleInputChange={denominacion.handleInputChange}
+                                    moneda={operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda}
+                                    importe={parseInt(operacion.cantidad_entregada)}
+                                    setIsOkEntregado={setIsOkEntregado}
+    *
+    * */
+
+    const options = {
+        title: `Recibido del cliente (${muestraDivisa()})`,
+        importe: parseInt(operacion.monto),
+        calculaValorMonto,
+        habilita,
+        setHabilita,
+    }
+
+    const optionsE = {
+        title: `Entregado del cliente (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
+        importe: parseInt(operacion.cantidad_entregada),
+        calculaValorMonto,
+        habilita,
+        setHabilita,
+    }
+
+
+
     return(
         <>
             <Modal centered size="lg" show={showCustomModal} onHide={closeCustomModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        <h5>
+                        <h5 className="text-blue">
                             <i className="bi bi-currency-exchange m-2"></i>
-                            Operación {operacion.tipo_operacion === "1" ? `Compra`: `Venta`}
+                            {titulo}
                         </h5>
                     </Modal.Title>
                 </Modal.Header>
@@ -117,19 +162,19 @@ export const ModalDeliverComponent = ({configuration}) =>{
                     <div className="row">
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label htmlFor="cantidad"><strong>Importe:</strong></label>
-                                <input type="text" className="form-control" id="importe" value={calculaValorMonto()} readOnly />
+                                <label htmlFor="cantidad"><strong>Importe</strong></label>
+                                <input type="text" className="form-control" id="importe" value={calculaValorMonto} readOnly />
                             </div>
                         </div>
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label htmlFor="cantidad"><strong>Cantidad a entregar:</strong></label>
+                                <label htmlFor="cantidad"><strong>Cantidad a entregar</strong></label>
                                 <input type="text" className="form-control" id="cantidad" value={parseInt(operacion.cantidad_entregada)} readOnly />
                             </div>
                         </div>
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label htmlFor="tipoMoneda"><strong>Tipo de moneda:</strong></label>
+                                <label htmlFor="tipoMoneda"><strong>Tipo de moneda</strong></label>
                                 <select className="form-control" id="tipoMoneda" disabled>
                                     <option value={operacion.moneda}>{operacion.moneda}</option>
                                 </select>
@@ -139,24 +184,26 @@ export const ModalDeliverComponent = ({configuration}) =>{
                     <div className="row">
                         <div className="col-md-6">
                             <div className="form-group">
-                                <DenominacionComponent
+                                <Denominacion type="R" moneda={muestraDivisa()} options={options}/>
+                                {/*<DenominacionComponent
                                     title={`Recibido del cliente (${muestraDivisa()})`}
                                     handleInputChange={handleInputChange}
                                     moneda={muestraDivisa()} importe={calculaValorMonto()}
                                     setIsOkRecibido={setIsOkRecibido}
-                                    type/>
+                                    type/>*/}
                             </div>
                         </div>
 
                         <div className="col-md-6">
                             <div className="form-group">
-                                <DenominacionComponent
+                                <Denominacion type="E" moneda={operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda} options={optionsE}/>
+                                {/*<DenominacionComponent
                                     title={`Entregado del cliente (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`}
                                     handleInputChange={denominacion.handleInputChange}
                                     moneda={operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda}
                                     importe={parseInt(operacion.cantidad_entregada)}
                                     setIsOkEntregado={setIsOkEntregado}
-                                />
+                                />*/}
                             </div>
                     </div>
 
@@ -164,7 +211,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button variant="primary" onClick={()=> hacerOperacion()} disabled={isOkRecibido || isOkEntregado}>
+                    <Button variant="primary" onClick={()=> hacerOperacion()} disabled={habilita.entrega || habilita.recibe}>
                         Finalizar Operación
                     </Button>
                 </Modal.Footer>
@@ -174,11 +221,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 showCambio
                     &&
                     <ModalCambio
-                        cambio={(operacion.cantidad_entregada - parseInt(operacion.cantidad_entregada)).toPrecision(1)}
+                        cambio={(parseFloat(operacion.monto)-calculaValorMonto).toFixed(2)}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
                         operacion={operacion}
                         data={data}
+                        calculaValorMonto={calculaValorMonto}
+                        habilita={habilita}
+                        setHabilita={setHabilita}
                     />
             }
 

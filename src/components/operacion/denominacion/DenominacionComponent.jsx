@@ -1,6 +1,7 @@
 import {useFetch} from "../../../hook/useFetch";
 import {obtieneDenominaciones} from "../../../services/operaciones-services";
 import {useState} from "react";
+import {Title} from "chart.js";
 
 export const DenominacionComponent = ({title,handleInputChange,moneda,importe,setIsOkRecibido,setIsOkEntregado,type,cambio}) => {
 
@@ -8,7 +9,6 @@ export const DenominacionComponent = ({title,handleInputChange,moneda,importe,se
     const [inputValues, setInputValues] = useState({});
 
     if(cambio){
-        console.log("DATA", data)
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
                 if (parseFloat(data[key].denominacion).toPrecision(1) > importe) {
@@ -40,7 +40,7 @@ export const DenominacionComponent = ({title,handleInputChange,moneda,importe,se
                 totalGeneral += parseFloat(updatedValues[key]);
             }
         }
-        updatedValues["totalGeneral"] = isNaN(totalGeneral) ? 0.0 : totalGeneral;
+        updatedValues["totalGeneral"] = isNaN(totalGeneral) ? 0 : totalGeneral;
         // Actualiza el estado de los totales y los valores individuales
         setInputValues(updatedValues);
         // Realiza las validaciones y actualiza los estados para habilitar o deshabilitar los botones
@@ -73,22 +73,22 @@ export const DenominacionComponent = ({title,handleInputChange,moneda,importe,se
     return (
 
         <div className="text-center mt-2">
-                <h5 className="mb-2">Tabla de Denominaciones</h5>
+                <h5 className="p-2 ">{title}</h5>
                 <div className="card-body">
                     <div className="table-responsive">
                         <table className="table table-bordered table-hover">
                             <thead className="table-dark">
                             <tr>
-                                <th>Denominación</th>
-                                <th>Cantidad</th>
-                                <th>Total</th>
+                                <th className="col-1">Denominación</th>
+                                <th className="col-1">Cantidad</th>
+                                <th className="col-1">Total</th>
                             </tr>
                             </thead>
                             <tbody>
                             {data?.map((elemento) => (
                                 <tr key={`denominacion_${elemento.denominacion}`}>
                                     <td>{elemento.denominacion}</td>
-                                    <td nowrap>
+                                    <td>
                                         <input
                                             type="text"
                                             name={`denominacion_${elemento.denominacion}`}
@@ -98,7 +98,7 @@ export const DenominacionComponent = ({title,handleInputChange,moneda,importe,se
                                             onChange={handleChange}
                                         />
                                     </td>
-                                    <td>{inputValues[`total_${elemento.denominacion}`] || 0.0}</td>
+                                    <td>{inputValues[`total_${elemento.denominacion}`] || 0}</td>
                                 </tr>
                             ))}
                             </tbody>

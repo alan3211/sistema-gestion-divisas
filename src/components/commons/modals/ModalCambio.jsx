@@ -7,10 +7,10 @@ import {dataG} from "../../../App";
 import {realizarOperacion} from "../../../services";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
+import {Denominacion} from "../../operacion/denominacion/Denominacion";
 
-export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion,data}) => {
+export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion,data,calculaValorMonto,habilita,setHabilita}) => {
 
-    const [isOkRecibido,setIsOkRecibido] = useState(true);
     const navigator = useNavigate();
 
     const {formValues,handleInputChange} = useForm({
@@ -28,6 +28,14 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             denominacion_500:{nombre:"500", cantidad:0},
             denominacion_1000:{nombre:"1000", cantidad:0},
     });
+
+    const options = {
+        title: 'Cambio a entregar',
+        importe: parseFloat(cambio),
+        calculaValorMonto,
+        habilita,
+        setHabilita
+    }
 
     const closeCustomModal = () => setShowModalCambio(false);
 
@@ -78,8 +86,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     }
 
 
-
-
     return(
         <>
             <Modal centered show={showModalCambio} onHide={closeCustomModal}>
@@ -96,7 +102,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                     <div className="row justify-content-center">
                         <div className="col-md-5">
                             <div className="form-group">
-                                <label htmlFor="cantidad"><strong>Cantidad a entregar:</strong></label>
+                                <label htmlFor="cantidad"><strong>Cantidad a entregar</strong></label>
                                 <input type="text" className="form-control" id="cantidad" value={cambio} readOnly />
                             </div>
                         </div>
@@ -104,14 +110,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                     <div className="row">
                         <div className="col-md-12">
                             <div className="form-group">
-                                <DenominacionComponent
-                                    handleInputChange={handleInputChange}
-                                    moneda="MXP"
-                                    importe={cambio}
-                                    setIsOkRecibido={setIsOkRecibido}
-                                    type
-                                    cambio
-                                />
+                                <Denominacion type="CH" moneda="MXP" options={options}/>
                             </div>
                         </div>
                     </div>
@@ -124,7 +123,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                             Imprime Ticket
                         </Button>*/
                     }
-                    <Button variant="primary" disabled={isOkRecibido} onClick={guardarCambio}>
+                    <Button variant="primary" disabled={habilita.recibe} onClick={guardarCambio}>
                         Guardar
                     </Button>
                 </Modal.Footer>
