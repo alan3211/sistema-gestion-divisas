@@ -8,7 +8,9 @@ export const CajaProvider = ({children}) =>{
     /*Seccion de la dotacion*/
     const [showDenominacion,setShowDenominacion] =  useState(false);
     const [isOkRecibido,setIsOkRecibido] = useState(true);
-    const dotacionForm = useForm();
+    const dotacionForm = useForm({defaultValues:{
+            moneda:'0'
+        }});
     const {formValues,setFormValues,handleInputChange} = useFormulario();
 
     const dotacion = {

@@ -1,8 +1,8 @@
 import {DenominacionComponent} from "../denominacion";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest,
-    formattedDateWS,
+    formattedDateWS, getDenominacion,
     obtenerObjetoDenominaciones,
     validarMoneda,
 } from "../../../utils";
@@ -12,18 +12,36 @@ import {useCatalogo} from "../../../hook/useCatalogo";
 import {realizarOperacion} from "../../../services";
 import {dataG} from "../../../App";
 import {toast} from "react-toastify";
+import {Denominacion} from "../denominacion/Denominacion";
+import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 
 export const DotacionComponent = () => {
 
-    const {dotacion:{showDenominacion,setShowDenominacion,isOkRecibido,setIsOkRecibido,dotacionForm,formValues,setFormValues,handleInputChange}} = useContext(CajaContext);
+    const {dotacion:{showDenominacion,setShowDenominacion,dotacionForm}} = useContext(CajaContext);
+    const {denominacionD} = useContext(DenominacionContext);
     const catalogo = useCatalogo([15]);
+    const [habilita,setHabilita] =  useState({
+        recibe: true,
+        entrega: true,
+    });
+
+    const options = {
+        title: '',
+        importe: parseFloat(dotacionForm.watch('cantidad_recibida')).toFixed(2),
+        habilita,
+        setHabilita,
+    }
 
     const terminarDotacion = dotacionForm.handleSubmit(async (data)=>{
         console.log("Terminar Operacion");
         console.log(data);
-        console.log(formValues);
-         eliminarDenominacionesConCantidadCero(formValues);
-         const denominaciones = obtenerObjetoDenominaciones(formValues);
+        let denominacionesDotacion = denominacionD.getValues();
+
+        const formValuesD = getDenominacion(data.moneda,denominacionesDotacion)
+
+        console.log(formValuesD);
+         eliminarDenominacionesConCantidadCero(formValuesD);
+         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
          denominaciones.divisa = data.moneda;
          denominaciones.tipoOperacion = '0';
          denominaciones.movimiento = 'DOTACION';
@@ -67,8 +85,8 @@ export const DotacionComponent = () => {
     }
 
     const cleanParameters = () => {
-        setFormValues({});
         dotacionForm.reset();
+        denominacionD.reset();
     }
 
     return(
@@ -135,20 +153,14 @@ export const DotacionComponent = () => {
                  <div className="d-flex justify-content-center">
                      {
                          showDenominacion &&
-                         ( <DenominacionComponent
-                             importe={dotacionForm.watch('cantidad_recibida')}
-                             moneda={dotacionForm.watch('moneda')}
-                             handleInputChange={handleInputChange}
-                             type
-                             setIsOkRecibido={setIsOkRecibido}
-                         />)
+                                <Denominacion type="D" moneda={dotacionForm.watch('moneda')} options={options}/>
                      }
                  </div>
                 <div className="col-md-12 d-flex justify-content-center">
                     <button className="btn btn-secondary me-3" onClick={()=>cleanParameters()}>
                         <i className="ri ri-settings-line"></i> Nueva Dotación
                     </button>
-                    <button type="submit" className="btn btn-primary">
+                    <button type="submit" className="btn btn-primary" disabled={habilita.entrega}>
                         <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                         Finalizar Operación
                     </button>

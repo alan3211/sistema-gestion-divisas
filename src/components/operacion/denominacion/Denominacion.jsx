@@ -1,67 +1,94 @@
-import {useEffect, useMemo, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {obtieneDenominaciones} from "../../../services";
-import {useForm} from "react-hook-form";
 import {validarMoneda} from "../../../utils";
+import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 
 export const Denominacion = ({type,moneda,options}) => {
 
-    const opciones = {
-        RECIBE: 'R',
-        ENTREGA: 'E',
-        CAMBIO: 'CH',
-        DOTACION: 'D',
-        CIERRE: 'C',
-        TRASPASO: 'T'
-    }
+    const {
+        denominacionR,
+        denominacionE,
+        denominacionC,
+        denominacionD,
+    } = useContext(DenominacionContext);
+
     const {title,importe,calculaValorMonto,habilita,setHabilita} =  options;
+    let denominacion = {};
+
+    if(type === 'R'){
+        denominacion = denominacionR;
+    }else if(type === 'E'){
+        denominacion = denominacionE;
+    }else if(type === 'C'){
+        denominacion = denominacionC;
+    }else{
+        denominacion = denominacionD;
+    }
+
+    const {register,formState:{errors},watch,trigger} = denominacion;
+    const watchAllInputs = watch();
 
     const [data,setData] = useState([]);
-    const {register,formState:{errors},handleSubmit,watch,reset} = useForm();
 
-    const watchAllInputs = watch();
-    // Función para calcular el total de una denominación
-    const calculateTotal = (denominacion) => {
-        const cantidad = watchAllInputs[`denominacion_${denominacion}`] || 0.0;
-        return cantidad * denominacion;
+    const denominacionMappings = {
+        '.10': 'p1',
+        '.20': 'p2',
+        '.50': 'p5'
     };
+
+
+    // Función para calcular el total de una denominación parcial
+    const calculateTotal = (denominacion) => {
+        let name = denominacionMappings[denominacion] || denominacion;
+        const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0.0;
+        const denominacionValue = parseFloat(denominacion);
+        return (cantidad * denominacionValue).toFixed(2); // Asegura que el resultado tenga 2 decimales
+    };
+
 
     // Calcula el total acumulado de todas las denominaciones
     const calculateGrandTotal = () => {
-        let grandTotal = 0;
+        let grandTotal = 0.0;
         data?.forEach((elemento) => {
-            grandTotal += calculateTotal(elemento.denominacion);
+            grandTotal += parseFloat(calculateTotal(elemento.denominacion));
         });
-        return grandTotal;
+        return grandTotal.toFixed(2); // Asegura que el resultado tenga 2 decimales
     };
+
 
 
     // Valida solo cuando hace la operacion del cliente y entrega billetes
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             const denominacionValue = parseFloat(data[key].denominacion);
-
-            if ((type === 'E' || type === 'CH') && denominacionValue.toPrecision(1) > importe) {
+            if ((type === 'E' || type === 'C') && denominacionValue > parseFloat(importe).toFixed(2)) {
                 delete data[key];
             }
         }
     }
 
 
-
-
     const validacionColor = () => {
+        const grandTotal = parseFloat(calculateGrandTotal());
 
-        if(type === 'R'){
-            if(calculateGrandTotal() === calculaValorMonto){
+        if (type === 'R') {
+            if (grandTotal.toFixed(2) === calculaValorMonto) {
                 return 'text-success';
-            } else if (calculateGrandTotal() > calculaValorMonto){
+            } else if (grandTotal > calculaValorMonto) {
                 return 'text-warning';
-            }
-            else {
+            } else {
                 return 'text-danger';
             }
-        }else{
-            if(calculateGrandTotal() === importe){
+        } else if (type === 'C') {
+            if (grandTotal.toFixed(2) === importe) {
+                return 'text-success';
+            } else if (grandTotal > importe) {
+                return 'text-warning';
+            } else {
+                return 'text-danger';
+            }
+        } else {
+            if (grandTotal.toFixed(2) === importe) {
                 return 'text-success';
             } else {
                 return 'text-danger';
@@ -69,23 +96,28 @@ export const Denominacion = ({type,moneda,options}) => {
         }
     };
 
+
+    // Me ayuda a validar cuando las cantidades de las monedas se deben de seleccionar.
     useEffect(() => {
         const newHabilita = { ...habilita };
         let isValid;
+
+        if(type === 'C'){
+            isValid = calculateGrandTotal() >= parseFloat(importe);
+            newHabilita.recibe = !isValid;
+        }
 
         if (type === 'R') {
             isValid = calculateGrandTotal() >= parseFloat(calculaValorMonto);
             newHabilita.recibe = !isValid;
         } else {
-            isValid = calculateGrandTotal() === importe;
+            isValid = calculateGrandTotal() === parseFloat(importe).toFixed(2);
             newHabilita.entrega = !isValid;
         }
         setHabilita(newHabilita);
-
     }, [calculateGrandTotal(), type]);
 
-
-
+    // Sirve para cargar la denominacion de la moneda que se envia
     useEffect(() => {
         const fetchData = async () => {
             const denominaciones = await obtieneDenominaciones(moneda);
@@ -93,6 +125,7 @@ export const Denominacion = ({type,moneda,options}) => {
         };
         fetchData();
     },[moneda])
+
 
     return (
         <>
@@ -109,26 +142,30 @@ export const Denominacion = ({type,moneda,options}) => {
                             </tr>
                             </thead>
                             <tbody>
-                                {data?.map((elemento) => (
-                                    <tr key={`denominacion_${elemento.denominacion}`}>
+                                {data?.map((elemento) => {
+                                    let name = denominacionMappings[elemento.denominacion] || elemento.denominacion;
+                                    return (
+                                    <tr key={`denominacion_${name}`}>
                                         <td>{elemento.denominacion}</td>
                                         <td>
                                             <input
-                                                {...register(`denominacion_${elemento.denominacion}`, {
+                                                {...register(`denominacion_${name}`, {
                                                     validate: {
-                                                        validacionMN: (value) => validarMoneda(`denominacion_${elemento.denominacion}`,value),
-                                                        mayorACero: value => parseFloat(value) > 0 || "La denominación debe ser mayor a 0.",
-                                                    }
-                                                })}
+                                                        validacionMN: (value) => validarMoneda(`denominacion_${name}`,value),
+                                                    }}
+                                                    )
+                                                }
                                                 type="text"
-                                                name={`denominacion_${elemento.denominacion}`}
-                                                className={`form-control form-control-sm ${errors && errors[`denominacion_${elemento.denominacion}`] ? 'is-invalid' : ''}`}
+                                                onBlur={() => trigger(`denominacion_${name}`)}
+                                                name={`denominacion_${name}`}
+                                                className={`form-control ${errors && errors[`denominacion_${name}`] ? 'is-invalid' : ''}`}
                                                 placeholder="0"
                                             />
                                         </td>
                                         <td>{calculateTotal(elemento.denominacion)}</td>
                                     </tr>
-                                ))}
+                                )
+                                })}
                             </tbody>
                             <tfoot>
                             <tr>

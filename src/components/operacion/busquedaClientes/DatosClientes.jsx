@@ -5,6 +5,7 @@ import {dataG} from "../../../App";
 import {encryptRequest, formattedDate, hora} from "../../../utils";
 import {hacerOperacion} from "../../../services";
 import {CardLayout} from "../../commons";
+import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 
 export const DatosClientes = ({operacion, cliente}) => {
 
@@ -137,7 +138,13 @@ export const DatosClientes = ({operacion, cliente}) => {
                 </div>
             </CardLayout>
             {
-                showCustomModal && <ModalDeliverComponent configuration={configuration}/>
+                showCustomModal &&
+                (
+                    <DenominacionProvider>
+                        <ModalDeliverComponent configuration={configuration}/>
+                    </DenominacionProvider>
+
+                )
             }
 
         </>

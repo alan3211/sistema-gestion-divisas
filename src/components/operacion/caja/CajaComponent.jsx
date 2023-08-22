@@ -3,6 +3,7 @@ import {CierreComponent} from "./CierreComponent";
 import {TraspasoComponent} from "./TraspasoComponent";
 import {CardLayout, Layout} from "../../commons";
 import {CajaProvider} from "../../../context/caja/CajaProvider";
+import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 
 export const CajaComponent = () => {
 
@@ -44,7 +45,9 @@ export const CajaComponent = () => {
                     <div className="tab-content" id="borderedTabJustifiedContent">
                         <div className="tab-pane fade active show" id="bordered-justified-home" role="tabpanel"
                              aria-labelledby="home-tab">
-                            <DotacionComponent/>
+                            <DenominacionProvider>
+                                <DotacionComponent/>
+                            </DenominacionProvider>
                         </div>
                         <div className="tab-pane fade" id="bordered-justified-profile" role="tabpanel"
                              aria-labelledby="profile-tab">
