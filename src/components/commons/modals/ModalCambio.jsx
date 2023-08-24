@@ -1,7 +1,5 @@
 import {Button, Modal} from "react-bootstrap";
-import {DenominacionComponent} from "../../operacion/denominacion/DenominacionComponent";
-import {useContext, useState} from "react";
-import {useForm} from "../../../hook/useForm";
+import {useContext} from "react";
 import {
     eliminarDenominacionesConCantidadCero,
     encryptRequest,

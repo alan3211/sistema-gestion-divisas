@@ -1,1 +1,1 @@
-export * from './DenominacionComponent'
+export * from './Denominacion'

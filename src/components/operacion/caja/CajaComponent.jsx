@@ -1,9 +1,7 @@
-import {DotacionComponent} from "./DotacionComponent";
-import {CierreComponent} from "./CierreComponent";
-import {TraspasoComponent} from "./TraspasoComponent";
 import {CardLayout, Layout} from "../../commons";
 import {CajaProvider} from "../../../context/caja/CajaProvider";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
+import {DotacionComponent,CierreComponent,TraspasoComponent} from "./";
 
 export const CajaComponent = () => {
 
@@ -51,11 +49,11 @@ export const CajaComponent = () => {
                         </div>
                         <div className="tab-pane fade" id="bordered-justified-profile" role="tabpanel"
                              aria-labelledby="profile-tab">
-                            {/*<CierreComponent/>*/}
+                             <CierreComponent/>
                         </div>
                         <div className="tab-pane fade" id="bordered-justified-contact" role="tabpanel"
                              aria-labelledby="contact-tab">
-                            {/*<TraspasoComponent/>*/}
+                            <TraspasoComponent/>
                         </div>
                     </div>
                 </CardLayout>

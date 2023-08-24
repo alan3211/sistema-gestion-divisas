@@ -1,18 +1,16 @@
 import {Button, Modal} from "react-bootstrap";
-import {DenominacionComponent} from "../../operacion/denominacion/DenominacionComponent";
-import {useForm} from "../../../hook/useForm";
 import {useContext, useMemo, useState} from "react";
 import {dataG} from "../../../App";
-import {realizarOperacion} from "../../../services/operaciones-services";
+import {realizarOperacion} from "../../../services";
 import {ModalCambio} from "./ModalCambio";
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest,
     getDenominacion,
     obtenerObjetoDenominaciones
-} from "../../../utils/utils";
+} from "../../../utils";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
-import {Denominacion} from "../../operacion/denominacion/Denominacion";
+import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 
 export const ModalDeliverComponent = ({configuration}) =>{

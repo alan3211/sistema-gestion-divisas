@@ -43,13 +43,10 @@ export const TraspasoComponent =  () => {
                     <form className="row g-3 d-flex justify-content-center needs-validation was-validated" noValidate>
                         <div className="col-md-4">
                             <div className="form-floating mb-3">
-                                <select className="form-select input-group has-validation"
+                                <select className="form-select "
                                         id="usuario"
                                         name="usuario"
                                         aria-label="A quién entrego:"
-                                        value={valorInput}
-                                        onChange={handleChange}
-                                        required
                                 >
                                     <option value="">Selecciona una opción</option>
                                     {
