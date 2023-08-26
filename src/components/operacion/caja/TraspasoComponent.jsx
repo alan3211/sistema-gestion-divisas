@@ -30,16 +30,8 @@ export const TraspasoComponent =  () => {
 
     return (
         <>
-           <div className="row">
-               <div className="col-md-12 d-flex justify-content-center m-2">
-                   <h5 className="card-title">
-                       <strong>Entrega</strong>
-                   </h5>
-               </div>
-           </div>
             <div className="row">
                 <div className="col-md-12">
-
                     <form className="row g-3 d-flex justify-content-center needs-validation was-validated" noValidate>
                         <div className="col-md-4">
                             <div className="form-floating mb-3">

@@ -1,10 +1,20 @@
 import {TableComponent} from "../../commons/tables";
 import {CardLayout} from "../../commons";
+import {useNavigate} from "react-router-dom";
 
 export const ClienteCoincidenciaComponent = ({dataClientes,tools,showAddCliente,addCliente,setDataClientes}) =>{
 
+    const navigate =  useNavigate();
+
     const hacerOperacion = (item) => {
         setDataClientes(item);
+        console.log("CLIENTE A ENVIAR DESDE -> CLIENTE COINCIDENCIA:",item)
+        navigate("/compraVenta", {
+            state: {
+                cliente: item,
+                clienteActivo: true,
+            },
+        });
     }
 
     return(

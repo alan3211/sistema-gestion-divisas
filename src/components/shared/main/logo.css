@@ -1,0 +1,13 @@
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    width: 500px; /* Tamaño pequeño de la imagen */
+}
+
+.logo.large {
+    width: 700px; /* Tamaño grande de la imagen */
+}

@@ -16,6 +16,7 @@ export const CompraVentaComponent = () =>{
     useEffect(() => {
         if (clienteActivo) {
             compraVentaProvider.setContinuaOperacion(true);
+            compraVentaProvider.setCliente(cliente);
         }
     }, [clienteActivo, cliente]);
 
@@ -37,7 +38,7 @@ export const CompraVentaComponent = () =>{
             <div className="row">
                 <div className="col-md-12">
                     {
-                        compraVentaProvider.continuaOperacion && <BusquedaClientesComponent cliente={cliente}/>
+                        compraVentaProvider.continuaOperacion && <BusquedaClientesComponent/>
                     }
                 </div>
             </div>

@@ -24,20 +24,8 @@ export const AltaClienteFormComponent = memo(() => {
         const response = await validaCliente(encryptedBase64);
         console.log(response);
 
-        if(response){
-           if(response.length === 1){
-               if(response[0].resultado !== ''){
-                   toast.error(response[0].resultado, {
-                       position: "top-center",
-                       autoClose: 10000,
-                       hideProgressBar: false,
-                       closeOnClick: true,
-                       pauseOnHover: true,
-                       theme: "light",
-                   });
-                   propForm.reset();
-               }
-           } else{
+        if(response) {
+            if (response.length !== 0) {
                 //Encontro a un cliente similar
                 propForm.setMessageActive(true);
                 propForm.setDataClientes(response);
@@ -50,14 +38,18 @@ export const AltaClienteFormComponent = memo(() => {
                     pauseOnHover: true,
                     theme: "light",
                 });
-           }
+            } else {
+                //No encontro a un cliente
+                propForm.setMessageActive(false);
+                propForm.setDataClientes([]);
+                propForm.setComplementarios(true);
+            }
         }else{
             //No encontro a un cliente
             propForm.setMessageActive(false);
             propForm.setDataClientes([]);
             propForm.setComplementarios(true);
         }
-
     });
 
     return (

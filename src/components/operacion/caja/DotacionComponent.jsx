@@ -59,7 +59,6 @@ export const DotacionComponent = () => {
              ]
          }
 
-         console.log(values);
 
          const encryptedData = encryptRequest(values);
 
@@ -75,6 +74,7 @@ export const DotacionComponent = () => {
                  pauseOnHover: true,
                  theme: "light",
              });
+             cleanParameters();
          }
     });
 

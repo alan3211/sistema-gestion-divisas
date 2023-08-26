@@ -8,7 +8,7 @@ import {
     getDenominacion,
     obtenerObjetoDenominaciones
 } from "../../../utils";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
@@ -98,24 +98,51 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
         const encryptedData = encryptRequest(values);
 
-        const resultado = await realizarOperacion(encryptedData);
-        // Validar si tenemos que darle cambio
-        if(resultado){
+        const resultadoPromise = realizarOperacion(encryptedData);
 
-            if(parseFloat(operacion.monto)-parseFloat(calculaValorMonto) > 0){
-                setShowCambio(true);
-            }else{
-                toast.success('La operación fue exitosa.', {
+        try {
+            await toast.promise(resultadoPromise, {
+                pending: {
+                    message:'La operación está en proceso...',
                     position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
                     theme: "light",
-                });
-                navigator("/inicio");
+                },
+                error: {
+                    message:'Hubo un error en la operación 🤯',
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    theme: "light",
+                }
+            });
+
+            // Resto de tu código
+
+            if (resultadoPromise) {
+                if (parseFloat(operacion.monto) - parseFloat(calculaValorMonto) > 0) {
+                    setShowCambio(true);
+                } else {
+                    toast.success('La operación fue exitosa.', {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        theme: "light",
+                    });
+                    navigator("/inicio");
+                }
+                console.log(resultadoPromise);
             }
-            console.log(resultado);
+        } catch (error) {
+            // Manejar el error si la promesa es rechazada
+            console.error(error);
         }
     }
 
@@ -194,6 +221,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                         Finalizar Operación
                     </Button>
                 </Modal.Footer>
+                <ToastContainer/>
             </Modal>
 
             {
