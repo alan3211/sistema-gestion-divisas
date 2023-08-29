@@ -101,10 +101,9 @@ export const FormCliente = ({tipo}) => {
         formBuscarCliente.reset();
     }
 
-    useEffect(() => {
-        // Establecer el valor inicial del campo
-         formBuscarCliente.setValue("cliente", cliente.cliente);
-    }, [formBuscarCliente.setValue, cliente.cliente]);
+    useEffect(()=>{
+        formBuscarCliente.setValue("cliente", cliente.cliente);
+    },[formBuscarCliente.setValue,cliente.cliente])
 
     return(
             <form className="row g-3" onSubmit={handleValidateForm} noValidate>

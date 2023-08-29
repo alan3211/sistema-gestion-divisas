@@ -25,9 +25,6 @@ export const AsideComponent = () => {
                                <Link to="/usuarios">
                                    <i className="bi bi-circle"></i><span>Usuarios</span>
                                </Link>
-                               <Link to="/sucursales">
-                                   <i className="bi bi-circle"></i><span>Sucursales</span>
-                               </Link>
                                <Link to="/catalogos">
                                    <i className="bi bi-circle"></i><span>Catalogos</span>
                                </Link>

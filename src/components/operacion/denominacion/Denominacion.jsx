@@ -120,8 +120,10 @@ export const Denominacion = ({type,moneda,options}) => {
     // Sirve para cargar la denominacion de la moneda que se envia
     useEffect(() => {
         const fetchData = async () => {
-            const denominaciones = await obtieneDenominaciones(moneda);
-            setData(denominaciones);
+            if(moneda !== '0'){
+                const denominaciones = await obtieneDenominaciones(moneda);
+                setData(denominaciones);
+            }
         };
         fetchData();
     },[moneda])

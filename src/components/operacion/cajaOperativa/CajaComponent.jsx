@@ -1,7 +1,7 @@
 import {CardLayout, Layout} from "../../commons";
 import {CajaProvider} from "../../../context/caja/CajaProvider";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
-import {DotacionComponent,CierreComponent,TraspasoComponent} from "./";
+import {DotacionComponent,CierreComponent,TraspasoComponent} from "./index";
 import {EntregaComponent} from "./EntregaComponent";
 
 export const CajaComponent = () => {

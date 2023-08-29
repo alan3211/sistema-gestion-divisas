@@ -1,5 +1,5 @@
 import {formattedDateDD, mensajeSinElementos} from "../../../utils";
-import {MessageComponent} from "../../commons/";
+import {MessageComponent} from "../../commons";
 import {useCaja} from "../../../hook/useCaja";
 import { Carousel } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,9 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 export const CuentaCajaComponent = () => {
 
     const {extractedData, getIconAndClass, getCurrencyIcon,catalogo} = useCaja();
-
     console.log(extractedData);
-
     if (extractedData.length === 0) {
         return (<div className="row d-flex justify-content-center">
             <div className="col-md-4">

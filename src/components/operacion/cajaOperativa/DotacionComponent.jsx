@@ -1,4 +1,3 @@
-import {DenominacionComponent} from "../denominacion";
 import {useContext, useEffect, useState} from "react";
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest,
@@ -12,7 +11,7 @@ import {useCatalogo} from "../../../hook/useCatalogo";
 import {realizarOperacion} from "../../../services";
 import {dataG} from "../../../App";
 import {toast} from "react-toastify";
-import {Denominacion} from "../denominacion/Denominacion";
+import {Denominacion} from "../denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 
 export const DotacionComponent = () => {
@@ -78,11 +77,14 @@ export const DotacionComponent = () => {
          }
     });
 
-    if(dotacionForm.watch("moneda") === '0'){
-        setShowDenominacion(false);
-    }else{
-        setShowDenominacion(true);
-    }
+    useEffect(() => {
+        if(dotacionForm.watch("moneda") === '0'){
+            setShowDenominacion(false);
+        }else{
+            setShowDenominacion(true);
+        }
+    }, [dotacionForm.watch("moneda")]);
+
 
     const cleanParameters = () => {
         dotacionForm.reset();
@@ -152,8 +154,7 @@ export const DotacionComponent = () => {
                 </div>
                  <div className="d-flex justify-content-center">
                      {
-                         showDenominacion &&
-                                <Denominacion type="D" moneda={dotacionForm.watch('moneda')} options={options}/>
+                         showDenominacion && <Denominacion type="D" moneda={dotacionForm.watch('moneda')} options={options}/>
                      }
                  </div>
                 <div className="col-md-12 d-flex justify-content-center">
