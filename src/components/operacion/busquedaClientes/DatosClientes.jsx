@@ -1,13 +1,16 @@
 import {useOperaCliente} from "../../../hook";
 import {ModalDeliverComponent} from "../../commons/modals";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {dataG} from "../../../App";
 import {encryptRequest, formattedDate, hora} from "../../../utils";
 import {hacerOperacion} from "../../../services";
 import {CardLayout} from "../../commons";
+import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
+import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
 export const DatosClientes = ({operacion, cliente}) => {
 
+    const compraVentaProvider = useContext(CompraVentaContext);
     const {showModal, setShowModal, selectedItem, closeModal} = useOperaCliente();
     const [showCustomModal, setShowCustomModal] = useState(false);
     const [data, setData] = useState({});
@@ -122,6 +125,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="button"
                                 onClick={continuaOperacion}
                                 className="m-2 btn btn-primary d-grid gap-2"
+                                disabled={Object.keys(operacion).length === 0}
                             >
                                 <span className="me-2">
                                     Continuar
@@ -137,7 +141,13 @@ export const DatosClientes = ({operacion, cliente}) => {
                 </div>
             </CardLayout>
             {
-                showCustomModal && <ModalDeliverComponent configuration={configuration}/>
+                showCustomModal &&
+                (
+                    <DenominacionProvider>
+                        <ModalDeliverComponent configuration={configuration}/>
+                    </DenominacionProvider>
+
+                )
             }
 
         </>

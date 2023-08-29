@@ -44,17 +44,26 @@ export const CargaTipoCambioOpera = () => {
 
         updatedData.opcion = tipo;
 
-        const respuesta = await getCargaTipoCambio(encryptRequest(updatedData));
-
-        toast.success(respuesta.mensaje,{
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            theme: "light",
-        });
-
+        if(updatedData.tipoCambio.length === 0){
+            toast.error('No se han ingresado tipos de cambio.',{
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "light",
+            });
+        }else{
+            const respuesta = await getCargaTipoCambio(encryptRequest(updatedData));
+            toast.success(respuesta.mensaje,{
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "light",
+            });
+        }
     });
 
     return (

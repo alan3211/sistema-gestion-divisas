@@ -48,39 +48,34 @@ export const obtenerObjetoDenominaciones = (denominacionesObj) => {
     };
 }
 
-export const getDenominacion = (divisa='MXP') =>{
-    if (divisa === 'MXP') {
-        return {
-            divisa,
-            denominacion_p1:{nombre:"0.10", cantidad:0},
-            denominacion_p2:{nombre:"0.20", cantidad:0},
-            denominacion_p5:{nombre:"0.50", cantidad:0},
-            denominacion_1:{nombre:"1", cantidad:0},
-            denominacion_2:{nombre:"2", cantidad:0},
-            denominacion_5:{nombre:"5", cantidad:0},
-            denominacion_10:{nombre:"10", cantidad:0},
-            denominacion_20:{nombre:"20", cantidad:0},
-            denominacion_50:{nombre:"50", cantidad:0},
-            denominacion_100:{nombre:"100", cantidad:0},
-            denominacion_200:{nombre:"200", cantidad:0},
-            denominacion_500:{nombre:"500", cantidad:0},
-            denominacion_1000:{nombre:"1000", cantidad:0},
-            moneda: divisa,
+export const getDenominacion = (divisa = 'MXP', replaceValues) => {
+    const denominaciones = [
+        'p1', 'p2', 'p5',
+        '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+    ];
+
+    const getDenominacionCantidad = (nombre) => {
+        if (replaceValues && replaceValues.hasOwnProperty(`denominacion_${nombre}`)) {
+            const cantidad = replaceValues[`denominacion_${nombre}`];
+            return cantidad === '' ? 0 : parseInt(cantidad);
         }
-    } else {
-        return {
-            divisa,
-            denominacion_1:{nombre:"1", cantidad:0},
-            denominacion_2:{nombre:"2", cantidad:0},
-            denominacion_5:{nombre:"5", cantidad:0},
-            denominacion_10:{nombre:"10", cantidad:0},
-            denominacion_20:{nombre:"20", cantidad:0},
-            denominacion_50:{nombre:"50", cantidad:0},
-            denominacion_100:{nombre:"100", cantidad:0},
-            moneda: divisa,
-        }
+        return 0; // Si no existe la propiedad, asignar 0 por defecto
+    };
+
+    const denominacionObj = { divisa };
+
+    for (const nombre of denominaciones) {
+        const valor = nombre.startsWith('p') ? `0.${nombre.substring(1)}` : nombre;
+        denominacionObj[`denominacion_${nombre}`] = {
+            nombre: valor,
+            cantidad: getDenominacionCantidad(nombre)
+        };
     }
-}
+
+    return denominacionObj;
+};
+
+
 
 export const encryptRequest = (data) => {
     const jsonDataString = JSON.stringify(data);

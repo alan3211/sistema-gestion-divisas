@@ -1,15 +1,15 @@
 import logo from '../../assets/logo.png';
-import { useNavigate } from 'react-router-dom';
-import {validarAlfaNumerico, year} from "../../utils";
+import {encryptRequest, validarAlfaNumerico, year} from "../../utils";
 import {useForm} from "react-hook-form";
-import CryptoJS from "crypto-js";
 import {getUser} from "../../services";
 import {toast} from "react-toastify";
 import {dataG} from "../../App";
+import jwt_decode from 'jwt-decode';
+import {useNavigate} from "react-router-dom";
 
-export const LoginComponent = ({isLoggedIn,setIsLoggedIn}) => {
+export const LoginComponent = () => {
 
-    const navigate = useNavigate();
+    const navigator = useNavigate();
 
     const {
         register,
@@ -19,35 +19,20 @@ export const LoginComponent = ({isLoggedIn,setIsLoggedIn}) => {
     } = useForm();
 
     const handleLogin = handleSubmit(async(data) =>{
-        const jsonDataString = JSON.stringify(data);
-        console.log(jsonDataString)
-        // Clave de cifrado
-        const key = CryptoJS.enc.Utf8.parse('KtsmylMOoT735gRWHUFj7alBJypXlVNw');
-        const iv = CryptoJS.lib.WordArray.random(16);
-
-        const pad = "aqswedrftgyhujio";
-
-        const encryptedData = CryptoJS.AES.encrypt(pad.concat(jsonDataString), key, {
-            iv: iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7,
-        });
-        // Datos cifrados en base64
-        const encryptedBase64 = encryptedData.toString();
-        console.log('JSON cifrado:', encryptedBase64);
-
-        const usuarioData = await getUser(encryptedBase64);
-        localStorage.setItem('datos', JSON.stringify(usuarioData));
-        if (usuarioData.usuario) {
-            dataG.sucursal = parseInt(usuarioData.sucursal);
-            dataG.username = usuarioData.nombre;
-            dataG.perfil = usuarioData.perfil;
-            dataG.usuario = usuarioData.usuario;
-            dataG.direccion = usuarioData.direccion;
-            dataG.nombre_sucursal = usuarioData.nombre_sucursal;
-            dataG.limite_diario = usuarioData.limite_diario;
-            dataG.limite_mensual = usuarioData.limite_mensual;
-            setIsLoggedIn(true);
+        const encryptedBase64 = encryptRequest(data);
+        const datos = await getUser(encryptedBase64);
+        localStorage.setItem("token",datos.token); // Se guarda el token
+        const decodedToken = jwt_decode(datos.token);
+        if (decodedToken.usuario) {
+            dataG.sucursal = parseInt(decodedToken.sucursal);
+            dataG.username = decodedToken.nombre;
+            dataG.perfil = decodedToken.perfil;
+            dataG.usuario = decodedToken.usuario;
+            dataG.direccion = decodedToken.direccion;
+            dataG.nombre_sucursal = decodedToken.nombre_sucursal;
+            dataG.limite_diario = decodedToken.limite_diario;
+            dataG.limite_mensual = decodedToken.limite_mensual;
+            navigator("/inicio");
         } else {
             reset()
             toast.warn('El usuario ingresado no existe.', {
@@ -59,11 +44,8 @@ export const LoginComponent = ({isLoggedIn,setIsLoggedIn}) => {
                 theme: "light",
             });
         }
-    });
 
-    if (isLoggedIn) {
-        navigate('/inicio');
-    }
+    });
 
     return(
         <main>

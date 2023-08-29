@@ -7,8 +7,7 @@ import {DatosClientes} from "./DatosClientes";
 
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
-
-export const BusquedaClientesComponent = ({cliente}) => {
+export const BusquedaClientesComponent = () => {
 
     const {busquedaCliente:{showCliente,data,setData},operacion} = useContext(CompraVentaContext);
 
@@ -71,7 +70,7 @@ export const BusquedaClientesComponent = ({cliente}) => {
                 />
             }
             {
-                showCliente && <DatosClientes operacion={operacion} cliente={data[0] || cliente}/>
+                showCliente && <DatosClientes operacion={operacion} cliente={data[0]}/>
             }
         </>
     );

@@ -1,13 +1,12 @@
-import {memo, useContext} from "react";
+import {memo, useContext, useEffect, useState} from "react";
 import {ModalConfirm} from "../../commons/modals";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
+import {encryptRequest, validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
 import {useCatalogo} from "../../../hook/useCatalogo";
 import {useAltaComplementario} from "../../../hook/useAltaComplementario";
 import {dataG} from "../../../App";
-import {guardaCliente} from "../../../services";
-import CryptoJS from "crypto-js";
+import {getCatalogo, getLocalidad, guardaCliente} from "../../../services";
 
 export const AltaClienteComplementario = memo(() => {
 
@@ -19,10 +18,9 @@ export const AltaClienteComplementario = memo(() => {
         hacerOperacion,
         } = useAltaComplementario();
 
-    const catalogo = useCatalogo([1,3,3,5,6,7,8,12,13,14,10,11]);
+    const catalogo = useCatalogo([1,3,3,6,12,13,14,10,11,18]);
 
     const handleValidateFinalForm = propForm.handleSubmit(async(data) => {
-        console.log(data)
         data.sucursal = dataG.sucursal.toString();
         data.usuario = dataG.usuario;
 
@@ -33,23 +31,7 @@ export const AltaClienteComplementario = memo(() => {
             data.esp_destino_recursos = '';
         }
 
-        const jsonDataString = JSON.stringify(data);
-        console.log(jsonDataString)
-        // Clave de cifrado
-        const key = CryptoJS.enc.Utf8.parse('KtsmylMOoT735gRWHUFj7alBJypXlVNw');
-        const iv = CryptoJS.lib.WordArray.random(16);
-
-        const pad = "aqswedrftgyhujio";
-
-        const encryptedData = CryptoJS.AES.encrypt(pad.concat(jsonDataString), key, {
-            iv: iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7,
-        });
-        // Datos cifrados en base64
-        const encryptedBase64 = encryptedData.toString();
-        console.log('JSON cifrado:', encryptedBase64);
-
+        const encryptedBase64 = encryptRequest(data)
 
         const dataClientes = await guardaCliente(encryptedBase64);
         console.log(dataClientes)
@@ -65,6 +47,59 @@ export const AltaClienteComplementario = memo(() => {
         propForm.setComplementarios(false);
     }
 
+    const [municipios,setMunicipios] = useState([]);
+    const [colonias,setColonias] = useState([]);
+    const [codigoPostal,setCodigoPostal] = useState([]);
+
+    useEffect(() => {
+        const getFetch = async() =>{
+            const values = {
+                opcion:1,
+                estado: propForm.watch("estado"),
+                municipio:'',
+                colonia:''
+            }
+            console.log(values)
+            const encryptedData =  encryptRequest(values);
+            const mun = await getLocalidad(encryptedData);
+            setMunicipios(mun)
+        }
+        if(propForm.watch("estado") !== '0') getFetch();
+    }, [propForm.watch("estado")]);
+
+    useEffect(() => {
+        const getFetch = async() =>{
+            const values = {
+                opcion:2,
+                estado: propForm.watch("estado"),
+                municipio:propForm.watch("municipio"),
+                colonia:''
+            }
+            console.log("2 -->",values)
+            console.log("municipio -->",propForm.watch("municipio"))
+            const encryptedData =  encryptRequest(values);
+            const colonias = await getLocalidad(encryptedData);
+            setColonias(colonias)
+        }
+        if(propForm.watch("municipio") !== '0') getFetch();
+    }, [propForm.watch("municipio")]);
+
+    useEffect(() => {
+        const getFetch = async() =>{
+            const values = {
+                opcion:3,
+                estado: propForm.watch("estado"),
+                municipio:propForm.watch("municipio"),
+                colonia:propForm.watch("colonia")
+            }
+            console.log("3 -->",values)
+            console.log("colonia -->",propForm.watch("colonia"))
+            const encryptedData =  encryptRequest(values);
+            const codigo_postal = await getLocalidad(encryptedData);
+            setCodigoPostal(codigo_postal)
+        }
+        if(propForm.watch("colonia") !== '0') getFetch();
+    }, [propForm.watch("colonia")]);
 
 
     return (
@@ -74,27 +109,35 @@ export const AltaClienteComplementario = memo(() => {
                 <CardLayout title="Datos Complementarios" icon="ri-file-list-2-fill p-2">
                     <div className="row">
                         <div className="col-md-3">
-                            <div className="form-floating">
-                                <input
-                                    {...propForm.register("telefono",{
-                                        required:{
-                                            value:true,
-                                            message:'El campo Telefono no puede ser vacio.'
-                                        },
-                                        validate: (value) => validarNumeroTelefono("Telefono",value)
-                                    })}
-                                    type="text"
-                                    className={`form-control ${!!propForm.errors?.telefono ? 'invalid-input':''}`}
-                                    id="telefono"
-                                    name="telefono"
-                                    placeholder="Ingresa el teléfono"
-                                />
-                                <label htmlFor="telefono">Teléfono</label>
-                                {
-                                    propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>
-                                }
+                                <div className="form-floating mb-3">
+                                    <select
+                                        {...propForm.register("genero",{
+                                            required:{
+                                                value:true,
+                                                message:'Debes de seleccionar al menos un genero.'
+                                            }
+                                        })}
+                                        className={`form-select ${!!propForm.errors?.genero ? 'invalid-input':''}`}
+                                        id="genero"
+                                        name="genero"
+                                        aria-label="Genero"
+                                    >
+                                        <option value="0">Selecciona una opción</option>
+                                        {
+                                            catalogo[9]?.map((ele) => (
+                                                <option key={ele.id + '-' + ele.descripcion}
+                                                        value={ele.id}>
+                                                    {ele.descripcion}
+                                                </option>
+                                            ))
+                                        }
+                                    </select>
+                                    <label htmlFor="genero">Genero</label>
+                                    {
+                                        propForm.errors?.genero && <div className="invalid-feedback-custom">{propForm.errors?.genero.message}</div>
+                                    }
+                                </div>
                             </div>
-                        </div>
                         <div className="col-md-3">
                             <div className="form-floating mb-3">
                                 <select
@@ -197,71 +240,106 @@ export const AltaClienteComplementario = memo(() => {
                     </div>
                     <div className="row">
                         <div className="col-md-3">
-                            <div className="form-floating">
-                            <input
-                                {...propForm.register("calle",{
-                                    required:{
-                                        value:true,
-                                        message:'El campo Calle no puede ser vacio.'
-                                    },
-                                    validate: (value) => validarAlfaNumerico("Calle",value)
-                                })}
-                                type="text"
-                                className={`form-control ${!!propForm.errors?.calle ? 'invalid-input':''}`}
-                                id="calle"
-                                name="calle"
-                                placeholder="Ingresa la calle"
-                            />
-                            <label htmlFor="calle">Calle</label>
-                            {
-                                propForm.errors?.calle && <div className="invalid-feedback-custom">{propForm.errors?.calle.message}</div>
-                            }
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("estado",{
+                                        required:{
+                                            value:true,
+                                            message:'Debes de seleccionar al menos un estado.'
+                                        },
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar un estado válido.';
+                                        }
+                                    })}
+                                    className={`form-select ${!!propForm.errors?.estado ? 'invalid-input':''}`}
+                                    id="estado"
+                                    name="estado"
+                                    aria-label="Estado"
+                                >
+                                    <option value="0">Selecciona una opción</option>
+                                    {
+                                        catalogo[3]?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                                <label htmlFor="estado">Estado</label>
+                                {
+                                    propForm.errors?.estado && <div className="invalid-feedback-custom">{propForm.errors?.estado.message}</div>
+                                }
+                            </div>
                         </div>
-                    </div>
                         <div className="col-md-3">
-                            <div className="form-floating">
-                            <input
-                                {...propForm.register("numero_exterior",{
-                                    required:{
-                                        value:true,
-                                        message:'El campo Número Exterior no puede ser vacio.'
-                                    },
-                                    validate: (value) => validarNumeros("Número Exterior",value)
-                                })}
-                                type="text"
-                                className={`form-control ${!!propForm.errors?.numero_exterior ? 'invalid-input':''}`}
-                                id="numero_exterior"
-                                name="numero_exterior"
-                                placeholder="Ingresa el Número Exterior"
-                            />
-                            <label htmlFor="numero_exterior">Número Exterior</label>
-                            {
-                                propForm.errors?.numero_exterior && <div className="invalid-feedback-custom">{propForm.errors?.numero_exterior.message}</div>
-                            }
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("municipio",{
+                                        required:{
+                                            value:true,
+                                            message:'Debes de seleccionar al menos un municipio.'
+                                        },
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar un municipio válido.';
+                                        }
+                                    })}
+                                    className={`form-select ${!!propForm.errors?.municipio ? 'invalid-input':''}`}
+                                    id="municipio"
+                                    name="municipio"
+                                    aria-label="Municipio"
+                                    disabled={(propForm.watch('municipio') === '0') && municipios.length === 0}
+                                >
+                                    <option value="0">Selecciona una opción</option>
+                                    {
+                                        municipios?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                                <label htmlFor="municipio">Municipio</label>
+                                {
+                                    propForm.errors?.municipio && <div className="invalid-feedback-custom">{propForm.errors?.municipio.message}</div>
+                                }
+                            </div>
                         </div>
-                    </div>
                         <div className="col-md-3">
-                        <div className="form-floating">
-                            <input
-                                {...propForm.register("numero_interior",{
-                                    required:{
-                                        value:true,
-                                        message:'El campo Número Interior no puede ser vacio.'
-                                    },
-                                    validate: (value) => validarNumeros("Número Interior",value)
-                                })}
-                                type="text"
-                                className={`form-control ${!!propForm.errors?.numero_interior ? 'invalid-input':''}`}
-                                id="numero_interior"
-                                name="numero_interior"
-                                placeholder="Ingresa el Número Interior"
-                            />
-                            <label htmlFor="numero_interior">Número Interior</label>
-                            {
-                                propForm.errors?.numero_interior && <div className="invalid-feedback-custom">{propForm.errors?.numero_interior.message}</div>
-                            }
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("colonia",{
+                                        required:{
+                                            value:true,
+                                            message:'Debes de seleccionar al menos una colonia.'
+                                        },
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar una colonia válida.';
+                                        }
+                                    })}
+                                    className={`form-select ${!!propForm.errors?.colonia ? 'invalid-input':''}`}
+                                    id="colonia"
+                                    name="colonia"
+                                    aria-label="Colonia"
+                                    disabled={(propForm.watch('colonia') === '0') && colonias.length === 0}
+                                >
+                                    <option value="0">Selecciona una opción</option>
+                                    {
+                                        colonias?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                                <label htmlFor="colonia">Colonia</label>
+                                {
+                                    propForm.errors?.colonia && <div className="invalid-feedback-custom">{propForm.errors?.colonia.message}</div>
+                                }
+                            </div>
                         </div>
-                    </div>
                         <div className="col-md-3">
                         <div className="form-floating mb-3">
                             <select
@@ -278,10 +356,11 @@ export const AltaClienteComplementario = memo(() => {
                                 id="codigo_postal"
                                 name="codigo_postal"
                                 aria-label="Código Postal"
+                                disabled={(propForm.watch('codigo_postal') === '0') && codigoPostal.length === 0}
                             >
                                 <option value="0">Selecciona una opción</option>
                                 {
-                                    catalogo[3]?.map((ele) => (
+                                    codigoPostal?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
                                                 value={ele.id}>
                                             {ele.descripcion}
@@ -297,105 +376,90 @@ export const AltaClienteComplementario = memo(() => {
                     </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-4">
-                        <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("estado",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos un estado.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar un estado válido.';
-                                    }
-                                })}
-                                className={`form-select ${!!propForm.errors?.estado ? 'invalid-input':''}`}
-                                id="estado"
-                                name="estado"
-                                aria-label="Estado"
-                            >
-                                <option value="0">Selecciona una opción</option>
+                        <div className="col-md-3">
+                            <div className="form-floating">
+                                <input
+                                    {...propForm.register("telefono",{
+                                        required:{
+                                            value:true,
+                                            message:'El campo Telefono no puede ser vacio.'
+                                        },
+                                        validate: (value) => validarNumeroTelefono("Telefono",value)
+                                    })}
+                                    type="text"
+                                    className={`form-control ${!!propForm.errors?.telefono ? 'invalid-input':''}`}
+                                    id="telefono"
+                                    name="telefono"
+                                    placeholder="Ingresa el teléfono"
+                                />
+                                <label htmlFor="telefono">Teléfono</label>
                                 {
-                                    catalogo[4]?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
+                                    propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>
                                 }
-                            </select>
-                            <label htmlFor="estado">Estado</label>
-                            {
-                                propForm.errors?.estado && <div className="invalid-feedback-custom">{propForm.errors?.estado.message}</div>
-                            }
+                            </div>
                         </div>
-                    </div>
-                        <div className="col-md-4">
-                            <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("municipio",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos un municipio.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar un municipio válido.';
-                                    }
-                                })}
-                                className={`form-select ${!!propForm.errors?.municipio ? 'invalid-input':''}`}
-                                id="municipio"
-                                name="municipio"
-                                aria-label="Municipio"
-                            >
-                                <option value="0">Selecciona una opción</option>
+                        <div className="col-md-3">
+                            <div className="form-floating">
+                                <input
+                                    {...propForm.register("calle",{
+                                        required:{
+                                            value:true,
+                                            message:'El campo Calle no puede ser vacio.'
+                                        },
+                                        validate: (value) => validarAlfaNumerico("Calle",value)
+                                    })}
+                                    type="text"
+                                    className={`form-control ${!!propForm.errors?.calle ? 'invalid-input':''}`}
+                                    id="calle"
+                                    name="calle"
+                                    placeholder="Ingresa la calle"
+                                />
+                                <label htmlFor="calle">Calle</label>
                                 {
-                                    catalogo[5]?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
+                                    propForm.errors?.calle && <div className="invalid-feedback-custom">{propForm.errors?.calle.message}</div>
                                 }
-                            </select>
-                            <label htmlFor="municipio">Municipio</label>
-                            {
-                                propForm.errors?.municipio && <div className="invalid-feedback-custom">{propForm.errors?.municipio.message}</div>
-                            }
+                            </div>
                         </div>
-                    </div>
-                        <div className="col-md-4">
-                        <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("colonia",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos una colonia.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar una colonia válida.';
-                                    }
-                                })}
-                                className={`form-select ${!!propForm.errors?.colonia ? 'invalid-input':''}`}
-                                id="colonia"
-                                name="colonia"
-                                aria-label="Colonia"
-                            >
-                                <option value="0">Selecciona una opción</option>
+                        <div className="col-md-3">
+                            <div className="form-floating">
+                                <input
+                                    {...propForm.register("numero_exterior",{
+                                        required:{
+                                            value:true,
+                                            message:'El campo Número Exterior no puede ser vacio.'
+                                        },
+                                        validate: (value) => validarAlfaNumerico("Número Exterior",value)
+                                    })}
+                                    type="text"
+                                    className={`form-control ${!!propForm.errors?.numero_exterior ? 'invalid-input':''}`}
+                                    id="numero_exterior"
+                                    name="numero_exterior"
+                                    placeholder="Ingresa el Número Exterior"
+                                />
+                                <label htmlFor="numero_exterior">Número Exterior</label>
                                 {
-                                    catalogo[6]?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
+                                    propForm.errors?.numero_exterior && <div className="invalid-feedback-custom">{propForm.errors?.numero_exterior.message}</div>
                                 }
-                            </select>
-                            <label htmlFor="colonia">Colonia</label>
-                            {
-                                propForm.errors?.colonia && <div className="invalid-feedback-custom">{propForm.errors?.colonia.message}</div>
-                            }
+                            </div>
                         </div>
-                    </div>
+                        <div className="col-md-3">
+                            <div className="form-floating">
+                                <input
+                                    {...propForm.register("numero_interior",{
+                                        validate: (value) => validarAlfaNumerico("Número Interior",value)
+                                    })}
+                                    type="text"
+                                    className={`form-control ${!!propForm.errors?.numero_interior ? 'invalid-input':''}`}
+                                    id="numero_interior"
+                                    name="numero_interior"
+                                    placeholder="Ingresa el Número Interior"
+                                />
+                                <label htmlFor="numero_interior">Número Interior</label>
+                                {
+                                    propForm.errors?.numero_interior && <div className="invalid-feedback-custom">{propForm.errors?.numero_interior.message}</div>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </CardLayout>
 
@@ -420,7 +484,7 @@ export const AltaClienteComplementario = memo(() => {
                             >
                                 <option value="0">Selecciona una opción</option>
                                 {
-                                    catalogo[7]?.map((ele) => (
+                                    catalogo[4]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
                                                 value={ele.id}>
                                             {ele.descripcion}
@@ -453,7 +517,7 @@ export const AltaClienteComplementario = memo(() => {
                             >
                                 <option value="0">Selecciona una opción</option>
                                 {
-                                    catalogo[8]?.map((ele) => (
+                                    catalogo[5]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
                                                 value={ele.id}>
                                             {ele.descripcion}
@@ -486,7 +550,7 @@ export const AltaClienteComplementario = memo(() => {
                             >
                                 <option value="0">Selecciona una opción</option>
                                 {
-                                    catalogo[9]?.map((ele) => (
+                                    catalogo[6]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
                                                 value={ele.id}>
                                             {ele.descripcion}
@@ -521,7 +585,7 @@ export const AltaClienteComplementario = memo(() => {
                             >
                                 <option value="0">Selecciona una opción</option>
                                 {
-                                    catalogo[10]?.map((ele) => (
+                                    catalogo[7]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
                                                 value={ele.id}>
                                             {ele.descripcion}
@@ -579,7 +643,7 @@ export const AltaClienteComplementario = memo(() => {
                             >
                                 <option value="0">Selecciona una opción</option>
                                 {
-                                    catalogo[11]?.map((ele) => (
+                                    catalogo[8]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
                                                 value={ele.id}>
                                             {ele.descripcion}

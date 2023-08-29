@@ -24,20 +24,8 @@ export const AltaClienteFormComponent = memo(() => {
         const response = await validaCliente(encryptedBase64);
         console.log(response);
 
-        if(response){
-           if(response.length === 1){
-               if(response[0].resultado !== ''){
-                   toast.error(response[0].resultado, {
-                       position: "top-center",
-                       autoClose: 10000,
-                       hideProgressBar: false,
-                       closeOnClick: true,
-                       pauseOnHover: true,
-                       theme: "light",
-                   });
-                   propForm.reset();
-               }
-           } else{
+        if(response) {
+            if (response.length !== 0) {
                 //Encontro a un cliente similar
                 propForm.setMessageActive(true);
                 propForm.setDataClientes(response);
@@ -50,14 +38,18 @@ export const AltaClienteFormComponent = memo(() => {
                     pauseOnHover: true,
                     theme: "light",
                 });
-           }
+            } else {
+                //No encontro a un cliente
+                propForm.setMessageActive(false);
+                propForm.setDataClientes([]);
+                propForm.setComplementarios(true);
+            }
         }else{
             //No encontro a un cliente
             propForm.setMessageActive(false);
             propForm.setDataClientes([]);
             propForm.setComplementarios(true);
         }
-
     });
 
     return (
@@ -128,18 +120,6 @@ export const AltaClienteFormComponent = memo(() => {
                         <div className="form-floating">
                             <input
                                 {...propForm.register("apellido_materno",{
-                                    required:{
-                                        value:true,
-                                        message:'El campo Apellido Materno no puede ser vacio.'
-                                    },
-                                    minLength:{
-                                        value:2,
-                                        message:'El campo Apellido Materno como mínimo debe de tener al menos 2 caracteres.'
-                                    },
-                                    maxLength:{
-                                        value:30,
-                                        message:'El campo Apellido Materno como máximo debe de tener no mas de 30 caracteres.'
-                                    },
                                     validate: (value) => validarNombreApellido("Apellido Materno",value)
                                 })}
                                 type="text"

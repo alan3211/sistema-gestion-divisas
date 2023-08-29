@@ -208,7 +208,7 @@ export const consultaCaja =  async(formValues) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {

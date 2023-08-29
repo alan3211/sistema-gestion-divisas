@@ -1,36 +1,54 @@
-import {DenominacionComponent} from "../denominacion";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {
-    eliminarDenominacionesConCantidadCero,
-    formattedDateWS,
-    obtenerObjetoDenominaciones, validarMoneda, validarNombreApellido
+    eliminarDenominacionesConCantidadCero, encryptRequest,
+    formattedDateWS, getDenominacion,
+    obtenerObjetoDenominaciones,
+    validarMoneda,
 } from "../../../utils";
-import {dataG} from "../../../App";
-import {realizarOperacion} from "../../../services";
+
 import {CajaContext} from "../../../context/caja/CajaContext";
 import {useCatalogo} from "../../../hook/useCatalogo";
+import {realizarOperacion} from "../../../services";
+import {dataG} from "../../../App";
+import {toast} from "react-toastify";
+import {Denominacion} from "../denominacion";
+import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 
 export const DotacionComponent = () => {
 
-    const {dotacion:{showDenominacion,setShowDenominacion,isOkRecibido,setIsOkRecibido,dotacionForm}} = useContext(CajaContext);
+    const {dotacion:{showDenominacion,setShowDenominacion,dotacionForm}} = useContext(CajaContext);
+    const {denominacionD} = useContext(DenominacionContext);
     const catalogo = useCatalogo([15]);
+    const [habilita,setHabilita] =  useState({
+        recibe: true,
+        entrega: true,
+    });
+
+    const options = {
+        title: '',
+        importe: parseFloat(dotacionForm.watch('cantidad_recibida')).toFixed(2),
+        habilita,
+        setHabilita,
+    }
 
     const terminarDotacion = dotacionForm.handleSubmit(async (data)=>{
         console.log("Terminar Operacion");
         console.log(data);
+        let denominacionesDotacion = denominacionD.getValues();
 
-        /* eliminarDenominacionesConCantidadCero(formValues);
+        const formValuesD = getDenominacion(data.moneda,denominacionesDotacion)
 
-         const denominaciones = obtenerObjetoDenominaciones(formValues);
-
-         denominaciones.divisa = formValues.moneda;
+        console.log(formValuesD);
+         eliminarDenominacionesConCantidadCero(formValuesD);
+         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
+         denominaciones.divisa = data.moneda;
          denominaciones.tipoOperacion = '0';
          denominaciones.movimiento = 'DOTACION';
 
          const values = {
              cliente: '',
              ticket: `DOT${dataG.sucursal}${dataG.usuario}${formattedDateWS}`,
-             divisa: formValues.moneda,
+             divisa: data.moneda,
              usuario: dataG.usuario,
              sucursal: dataG.sucursal,
              traspaso: '',
@@ -40,18 +58,38 @@ export const DotacionComponent = () => {
              ]
          }
 
-         console.log(values);
 
-         const resultado = await realizarOperacion(values);
+         const encryptedData = encryptRequest(values);
 
-         console.log(resultado);*/
+         const resultado = await realizarOperacion(encryptedData);
 
+         console.log(resultado);
+         if(resultado){
+             toast.success(`Se ha realizado la dotación correctamente de ${data.moneda}`,{
+                 position: "top-center",
+                 autoClose: 3000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 theme: "light",
+             });
+             cleanParameters();
+         }
     });
 
-    useEffect(()=>{
-        if (dotacionForm.watch('moneda') !== '')
+    useEffect(() => {
+        if(dotacionForm.watch("moneda") === '0'){
+            setShowDenominacion(false);
+        }else{
             setShowDenominacion(true);
-    },[dotacionForm.watch('moneda')])
+        }
+    }, [dotacionForm.watch("moneda")]);
+
+
+    const cleanParameters = () => {
+        dotacionForm.reset();
+        denominacionD.reset();
+    }
 
     return(
         <>
@@ -65,7 +103,7 @@ export const DotacionComponent = () => {
                                     message:'El campo Cantidad Recibida no puede ser vacio.'
                                 },
                                 validate: {
-                                    validaMoneda: (value) => validarMoneda("Cantidad Recibida",value),
+                                    validacionMN: (value) => validarMoneda("Cantidad Recibida",value),
                                     mayorACero: value => parseFloat(value) > 0 || "La Cantidad Recibida debe ser mayor a 0",
                                 }
                             })}
@@ -116,12 +154,14 @@ export const DotacionComponent = () => {
                 </div>
                  <div className="d-flex justify-content-center">
                      {
-                         showDenominacion && <DenominacionComponent importe={dotacionForm.watch('cantidad_recibida')} moneda={dotacionForm.watch('moneda')} type setIsOkRecibido={setIsOkRecibido}/>
+                         showDenominacion && <Denominacion type="D" moneda={dotacionForm.watch('moneda')} options={options}/>
                      }
                  </div>
-
                 <div className="col-md-12 d-flex justify-content-center">
-                    <button type="submit" className="btn btn-primary">
+                    <button className="btn btn-secondary me-3" onClick={()=>cleanParameters()}>
+                        <i className="ri ri-settings-line"></i> Nueva Dotación
+                    </button>
+                    <button type="submit" className="btn btn-primary" disabled={habilita.entrega}>
                         <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                         Finalizar Operación
                     </button>

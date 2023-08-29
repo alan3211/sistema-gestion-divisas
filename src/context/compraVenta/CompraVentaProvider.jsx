@@ -30,6 +30,8 @@ export const CompraVentaProvider = ({children}) => {
         setData,
     }
 
+    const [cliente,setCliente]  = useState({});
+
     const compraVentaProvider = {
         cantidad,
         setCantidad,
@@ -48,7 +50,9 @@ export const CompraVentaProvider = ({children}) => {
         errors,
         reset,
         watch,
-        busquedaCliente
+        busquedaCliente,
+        cliente,
+        setCliente,
     }
 
     return(

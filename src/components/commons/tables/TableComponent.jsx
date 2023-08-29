@@ -126,24 +126,10 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
                                 <td key={index} className="text-center">
                                     {
                                         (selecciona && key==='cliente')
-                                        && <span className="badge bg-primary m-2 p-2 cursor-pointer" onClick={() => {
-                                            navigator.clipboard.writeText(item.cliente)
-                                                .then(() => {
-                                                    toast.info('Cliente copiado al portapapeles', {
-                                                        position: "top-center",
-                                                        autoClose: 3000,
-                                                        hideProgressBar: false,
-                                                        closeOnClick: true,
-                                                        pauseOnHover: true,
-                                                        theme: "colored",
-                                                    });
-                                                })
-                                                .catch(error => {
-                                                    console.error('Error al copiar al portapapeles: ', error);
-                                                });
-                                        }}>
-                                            <i className="ri-file-copy-line me-2"></i>
-                                            Copiar
+                                        && <span className="badge bg-primary m-2 p-2 cursor-pointer"
+                                                 onClick={()=>hacerOperacion(item)}>
+                                            <i className="ri-star-line me-2"></i>
+                                            Seleccionar
                                            </span>
                                     }
                                     {item[key]}

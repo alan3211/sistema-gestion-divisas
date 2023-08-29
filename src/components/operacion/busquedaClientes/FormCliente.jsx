@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {encryptRequest, validaFechas, validarNombreApellido, validarNumeros} from "../../../utils";
 import {buscaCliente} from "../../../services";
@@ -13,6 +13,7 @@ export const FormCliente = ({tipo}) => {
         operacion,
         setContinuaOperacion,
         reset,
+        cliente,
         busquedaCliente:{
             setShowCliente,
             formBuscarCliente,
@@ -99,6 +100,10 @@ export const FormCliente = ({tipo}) => {
     const clearBuscaCliente = () =>{
         formBuscarCliente.reset();
     }
+
+    useEffect(()=>{
+        formBuscarCliente.setValue("cliente", cliente.cliente);
+    },[formBuscarCliente.setValue,cliente.cliente])
 
     return(
             <form className="row g-3" onSubmit={handleValidateForm} noValidate>

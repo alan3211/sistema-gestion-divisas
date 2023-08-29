@@ -9,15 +9,16 @@ import {MainComponent} from "./components/shared/main/MainComponent";
 import {AltaClientesComponent} from "./components/operacion/altaClientes";
 import {CompraVentaComponent} from "./components/operacion/compraVenta";
 import {LoginComponent} from "./components/login";
-import {CajaComponent} from "./components/operacion/caja";
-import {ToastContainer} from "react-toastify";
+import {CajaComponent} from "./components/operacion/cajaOperativa";
 import {Usuarios} from "./components/administracion/Usuarios";
-import {Sucursales} from "./components/administracion/Sucursales";
 import {Catalogo} from "./components/administracion/Catalogo";
+
 import {AltaClienteProvider} from "./context/AltaCliente/AltaClienteProvider";
 import {CompraVentaProvider} from "./context/compraVenta/CompraVentaProvider";
 import {CargaTipoCambio} from "./components/administracion/cargaTipoCambio/CargaTipoCambio";
 import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambioProvider";
+import {CajaSucursal} from "./components/operacion/cajaSucursal/CajaSucursal";
+import {useAuth} from "./hook/useAuth";
 
 export let dataG = {
     sucursal:0,
@@ -31,40 +32,32 @@ export let dataG = {
 };
 
 const App = () => {
-
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [token,setToken] = useState({});
-
+    const authenticated = useAuth();
     return (
         <Router>
-            {isLoggedIn && <HeaderComponent setIsLoggedIn={setIsLoggedIn} />}
-            {isLoggedIn && <AsideComponent />}
             <Routes>
+                <Route exact path="/" element={<LoginComponent/>}/>
                 <Route
-                    exact
-                    path="/"
-                    element={<LoginComponent isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
-                />
-
-                {
-                    isLoggedIn ? (
-                        <Route exact path="/inicio" element={<MainComponent/>} />
+                    element={
+                    authenticated ? (
+                        <>
+                          <HeaderComponent/>
+                          <AsideComponent/>
+                            <Route path="/inicio" element={<MainComponent />} />
+                            <Route path="/altaClientes" element={<AltaClienteProvider><AltaClientesComponent /></AltaClienteProvider>}/>
+                            <Route path="/compraVenta" element={<CompraVentaProvider><CompraVentaComponent /></CompraVentaProvider>}/>
+                            <Route exact path="/caja" element={<CajaComponent />}/>
+                            <Route exact path="/cajaSucursal" element={<CajaSucursal />} />
+                            <Route exact path="/cargaTipoCambio" element={<CargaTipoCambioProvider><CargaTipoCambio /></CargaTipoCambioProvider>} />
+                            <Route exact path="/usuarios" element={<Usuarios />} />
+                            <Route exact path="/catalogos" element={<Catalogo />}/>
+                            <Route path="/*" element={<Navigate to="/inicio"/>} />
+                          <FooterComponent />
+                        </>
                     )
-                    : null
-                }
-
-                <Route exact path="/altaClientes" element={<AltaClienteProvider><AltaClientesComponent /></AltaClienteProvider>} />
-                <Route exact path="/compraVenta" element={<CompraVentaProvider><CompraVentaComponent /></CompraVentaProvider>} />
-                <Route exact path="/caja" element={<CajaComponent />} />
-                <Route exact path="/cargaTipoCambio" element={<CargaTipoCambioProvider><CargaTipoCambio /></CargaTipoCambioProvider>} />
-                <Route exact path="/usuarios" element={<Usuarios />} />
-                <Route exact path="/sucursales" element={<Sucursales />} />
-                <Route exact path="/catalogos" element={<Catalogo />} />
-
-                <Route path="/*" element={<Navigate to="/inicio"/>} />
+                  : <Navigate to="/"/>}
+                />
             </Routes>
-            {isLoggedIn && <FooterComponent />}
-            <ToastContainer />
         </Router>
   );
 }

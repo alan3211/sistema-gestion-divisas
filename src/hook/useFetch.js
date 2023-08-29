@@ -15,13 +15,14 @@ export const useFetch = ({funcionAsync,values={}}) => {
             isLoading: true,
         });
 
-        const data = await funcionAsync(values);
-
-        setState({
-            ...state,
-            isLoading: false,
-            data,
-        })
+        if(values !== '0'){
+            const data = await funcionAsync(values);
+            setState({
+                ...state,
+                isLoading: false,
+                data,
+            })
+        }
     }
 
 
