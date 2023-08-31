@@ -8,6 +8,7 @@ export const useAuth = () =>{
         const token = localStorage.getItem('token');
 
         if (token) {
+
             try {
                 const decodedToken = jwt_decode(token);
                 const currentTime = Date.now() / 1000; // Tiempo actual en segundos

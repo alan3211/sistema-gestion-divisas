@@ -4,12 +4,13 @@ import {dataG} from "../../../App";
 
 const toggle = () => document.body.classList.toggle('toggle-sidebar');
 
-export const HeaderComponent = ({setIsLoggedIn}) => {
+export const HeaderComponent = () => {
 
     const navigate = useNavigate();
 
+
     const cerrarSesion = () => {
-        setIsLoggedIn(false);
+        localStorage.removeItem('token');
         navigate('/');
     }
 

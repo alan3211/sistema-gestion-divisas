@@ -21,28 +21,32 @@ export const LoginComponent = () => {
     const handleLogin = handleSubmit(async(data) =>{
         const encryptedBase64 = encryptRequest(data);
         const datos = await getUser(encryptedBase64);
-        localStorage.setItem("token",datos.token); // Se guarda el token
-        const decodedToken = jwt_decode(datos.token);
-        if (decodedToken.usuario) {
-            dataG.sucursal = parseInt(decodedToken.sucursal);
-            dataG.username = decodedToken.nombre;
-            dataG.perfil = decodedToken.perfil;
-            dataG.usuario = decodedToken.usuario;
-            dataG.direccion = decodedToken.direccion;
-            dataG.nombre_sucursal = decodedToken.nombre_sucursal;
-            dataG.limite_diario = decodedToken.limite_diario;
-            dataG.limite_mensual = decodedToken.limite_mensual;
-            navigator("/inicio");
-        } else {
-            reset()
-            toast.warn('El usuario ingresado no existe.', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+        console.log(datos)
+        if(Object.keys(datos).length !== 0){
+            localStorage.setItem("token",datos.token); // Se guarda el token
+            const decodedToken = jwt_decode(datos.token);
+            if (decodedToken.usuario) {
+                dataG.sucursal = parseInt(decodedToken.sucursal);
+                dataG.username = decodedToken.nombre;
+                dataG.perfil = decodedToken.perfil;
+                dataG.usuario = decodedToken.usuario;
+                dataG.direccion = decodedToken.direccion;
+                dataG.nombre_sucursal = decodedToken.nombre_sucursal;
+                dataG.limite_diario = decodedToken.limite_diario;
+                dataG.limite_mensual = decodedToken.limite_mensual;
+                navigator("/inicio");
+            } else {
+                reset()
+                toast.warn('El usuario ingresado no existe.', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    theme: "light",
+                });
+            }
+
         }
 
     });
