@@ -4,7 +4,7 @@ import {AltaDivisas} from "./AltaDivisas";
 import {useCatalogo} from "../../../hook/useCatalogo";
 import {getCargaTipoCambio} from "../../../services/administracion-services";
 import {encryptRequest, formattedDate} from "../../../utils";
-import {toast, ToastContainer} from "react-toastify";
+import {toast} from "react-toastify";
 
 export const CargaTipoCambioOpera = () => {
 
@@ -12,6 +12,8 @@ export const CargaTipoCambioOpera = () => {
     const catalogo = useCatalogo([16, 17])
 
     const onSubmit = handleSubmit(async(data) => {
+
+        console.log("DATOS DEL FORM",data)
 
         const updatedTipoCambio = currencies.map((currency) => {
 
@@ -55,6 +57,7 @@ export const CargaTipoCambioOpera = () => {
             });
         }else{
             const respuesta = await getCargaTipoCambio(encryptRequest(updatedData));
+            console.log("Respuesta: ",respuesta)
             toast.success(respuesta.mensaje,{
                 position: "top-center",
                 autoClose: 3000,
@@ -153,7 +156,6 @@ export const CargaTipoCambioOpera = () => {
                         <i className="bi bi-save me-1"></i> Guardar
                     </button>
                 </div>
-                <ToastContainer/>
             </form>
         </>
     )

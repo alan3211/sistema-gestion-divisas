@@ -54,15 +54,15 @@ export const MainComponent = () => {
         validaDotacion();
     },[]);
 
-    if(dataG.perfil !== 'Administrador'){
-        return( <>
-                <LogoGrocerys/>
-                <ToastContainer/>
-        </>)
-    }else{
-        return( <>
-                <TableroComponent/>
-                <ToastContainer/>
-        </>)
-    }
+
+    return(
+        <>
+            {
+                dataG.perfil !== 'Administrador'
+                    ? <LogoGrocerys/>
+                    :  <TableroComponent/>
+
+            }
+        </>
+    );
 }
