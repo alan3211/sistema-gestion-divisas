@@ -52,7 +52,7 @@ export const MainComponent = () => {
     useEffect(()=>{
         validaTipoCambio();
         validaDotacion();
-    },[]);
+    },);
 
 
     return(
@@ -62,6 +62,7 @@ export const MainComponent = () => {
                     ? <LogoGrocerys/>
                     :  <TableroComponent/>
             }
+            <ToastContainer/>
         </>
     );
 }

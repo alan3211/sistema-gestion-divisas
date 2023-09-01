@@ -1,9 +1,5 @@
-import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
-import {useState} from "react";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
-import {HeaderComponent} from "./components/shared/header/HeaderComponent";
-import {AsideComponent} from "./components/shared/aside/AsideComponent";
-import {FooterComponent} from "./components/shared/footer/FooterComponent";
 import {MainComponent} from "./components/shared/main/MainComponent";
 
 import {AltaClientesComponent} from "./components/operacion/altaClientes";
@@ -19,7 +15,6 @@ import {CargaTipoCambio} from "./components/administracion/cargaTipoCambio/Carga
 import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambioProvider";
 import {CajaSucursal} from "./components/operacion/cajaSucursal/CajaSucursal";
 import {MainLayout} from "./components/shared/MainLayout";
-import {validaToken} from "./services/inicio-services";
 
 export let dataG = {
     sucursal:0,
