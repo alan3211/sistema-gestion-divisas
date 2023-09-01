@@ -61,7 +61,6 @@ export const MainComponent = () => {
                 dataG.perfil !== 'Administrador'
                     ? <LogoGrocerys/>
                     :  <TableroComponent/>
-
             }
         </>
     );
