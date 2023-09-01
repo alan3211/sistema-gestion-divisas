@@ -1,9 +1,10 @@
 import {dataG} from "../../../App";
 import {getValidaTipoCambioDia} from "../../../services/inicio-services";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import {useEffect} from "react";
 import {TableroComponent} from "./TableroComponent";
 import {LogoGrocerys} from "./LogoGrocerys";
+import {encryptRequest} from "../../../utils";
 
 
 export const MainComponent = () => {
@@ -16,7 +17,9 @@ export const MainComponent = () => {
     const validaTipoCambio = async() =>{
         console.log("Entre a tipo de cambio")
         formValue.id = 1;
-        const {resultado} = await getValidaTipoCambioDia(formValue);
+        const encryptedData = encryptRequest(formValue);
+
+        const {resultado} = await getValidaTipoCambioDia(encryptedData);
         if(resultado){
             toast.error(resultado, {
                 position: "top-center",
@@ -32,7 +35,8 @@ export const MainComponent = () => {
     const validaDotacion = async() =>{
         console.log("Entre a dotacion")
         formValue.id = 2;
-        const {resultado} = await getValidaTipoCambioDia(formValue);
+        const encryptedData = encryptRequest(formValue);
+        const {resultado} = await getValidaTipoCambioDia(encryptedData);
         if(resultado){
             toast.warn(resultado, {
                 position: "top-center",
@@ -51,8 +55,14 @@ export const MainComponent = () => {
     },[]);
 
     if(dataG.perfil !== 'Administrador'){
-        return <LogoGrocerys/>
+        return( <>
+                <LogoGrocerys/>
+                <ToastContainer/>
+        </>)
     }else{
-        return <TableroComponent/>
+        return( <>
+                <TableroComponent/>
+                <ToastContainer/>
+        </>)
     }
 }

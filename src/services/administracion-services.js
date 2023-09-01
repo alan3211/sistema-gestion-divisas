@@ -1,4 +1,4 @@
-import {ADMINISTRACION_CARGATIPOCAMBIO_URL} from "../utils/constantes";
+import {ADMINISTRACION_CARGATIPOCAMBIO_URL} from "../utils";
 
 // Valida si existe el tipo de cambio en la sucursal indicada
 export const getCargaTipoCambio = async (formValues) => {
@@ -8,7 +8,8 @@ export const getCargaTipoCambio = async (formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });

@@ -21,8 +21,7 @@ export const LoginComponent = () => {
     const handleLogin = handleSubmit(async(data) =>{
         const encryptedBase64 = encryptRequest(data);
         const datos = await getUser(encryptedBase64);
-        console.log(datos)
-        if(Object.keys(datos).length !== 0){
+        if(!datos.hasOwnProperty('resultSize')){
             localStorage.setItem("token",datos.token); // Se guarda el token
             const decodedToken = jwt_decode(datos.token);
             if (decodedToken.usuario) {
@@ -35,7 +34,9 @@ export const LoginComponent = () => {
                 dataG.limite_diario = decodedToken.limite_diario;
                 dataG.limite_mensual = decodedToken.limite_mensual;
                 navigator("/inicio");
-            } else {
+            }
+        }else {
+            if(datos.resultSize === 0){
                 reset()
                 toast.warn('El usuario ingresado no existe.', {
                     position: "top-center",
@@ -46,7 +47,6 @@ export const LoginComponent = () => {
                     theme: "light",
                 });
             }
-
         }
 
     });

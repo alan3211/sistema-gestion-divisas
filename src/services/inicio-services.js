@@ -4,13 +4,14 @@ import {INICIO_URL} from "../utils/constantes";
 export const getValidaTipoCambioDia = async (formValues) => {
     try {
         const url = `${INICIO_URL}`;
-
+        console.log("INICIO: " ,formValues)
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
-            body: JSON.stringify(formValues)
+            body: JSON.stringify({encryptedData:formValues}),
         });
 
         if (!response.ok) {

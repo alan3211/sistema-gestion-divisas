@@ -29,6 +29,4 @@ export const CargaTipoCambio = () => {
             </CardLayout>
         </Layout>
     )
-
-
 }

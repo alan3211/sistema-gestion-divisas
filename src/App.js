@@ -18,8 +18,8 @@ import {CompraVentaProvider} from "./context/compraVenta/CompraVentaProvider";
 import {CargaTipoCambio} from "./components/administracion/cargaTipoCambio/CargaTipoCambio";
 import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambioProvider";
 import {CajaSucursal} from "./components/operacion/cajaSucursal/CajaSucursal";
-import {useAuth} from "./hook/useAuth";
 import {MainLayout} from "./components/shared/MainLayout";
+import {validaToken} from "./services/inicio-services";
 
 export let dataG = {
     sucursal:0,
@@ -31,6 +31,10 @@ export let dataG = {
     limite_diario:'',
     limite_mensual:''
 };
+
+/*setInterval(async()=>{
+    await validaToken(localStorage.getItem('token'));
+},5000);*/
 
 const App = () => {
     return (

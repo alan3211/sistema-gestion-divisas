@@ -4,7 +4,6 @@ import {LOGIN_KEY_URL, LOGIN_URL} from "../utils";
 export const getUser = async (formValues) => {
     try {
         const url = `${LOGIN_URL}`;
-
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -13,7 +12,7 @@ export const getUser = async (formValues) => {
             body: JSON.stringify({encryptedData:formValues}),
         });
 
-        if (!response.ok) {
+        if (!response.ok && response.status !== 400) {
             throw new Error('Error en la solicitud al backend');
         }
 
