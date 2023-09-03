@@ -1,11 +1,12 @@
 import logo from '../../assets/logo.png';
-import {encryptRequest, validarAlfaNumerico, year} from "../../utils";
+import {encryptRequest, recordValues, validarAlfaNumerico, year} from "../../utils";
 import {useForm} from "react-hook-form";
 import {getUser} from "../../services";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import {dataG} from "../../App";
 import jwt_decode from 'jwt-decode';
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 export const LoginComponent = () => {
 
@@ -14,8 +15,10 @@ export const LoginComponent = () => {
     const {
         register,
         handleSubmit,
+        setValue,
         formState:{errors},
         reset,
+        watch,
     } = useForm();
 
     const handleLogin = handleSubmit(async(data) =>{
@@ -33,6 +36,7 @@ export const LoginComponent = () => {
                 dataG.nombre_sucursal = decodedToken.nombre_sucursal;
                 dataG.limite_diario = decodedToken.limite_diario;
                 dataG.limite_mensual = decodedToken.limite_mensual;
+                dataG.menus = decodedToken.menus;
                 navigator("/inicio");
             }
         }else {
@@ -50,6 +54,12 @@ export const LoginComponent = () => {
         }
 
     });
+
+    useEffect(() => {
+        setValue("usuario",localStorage.getItem('usuario') || '')
+        setValue("rememberMe",localStorage.getItem('rememberMe') || false)
+    }, []);
+
 
     return(
         <main>
@@ -130,6 +140,7 @@ export const LoginComponent = () => {
                                                         type="checkbox"
                                                         name="remember"
                                                         id="rememberMe"
+                                                        onChange={()=> recordValues(watch())}
                                                     />
                                                     <label className="form-check-label" htmlFor="rememberMe">
                                                         Recuérdame
@@ -152,10 +163,9 @@ export const LoginComponent = () => {
                             </div>
                         </div>
                     </div>
-
                 </section>
-
             </div>
+            <ToastContainer/>
         </main>
     );
 }

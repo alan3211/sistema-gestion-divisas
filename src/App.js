@@ -15,6 +15,7 @@ import {CargaTipoCambio} from "./components/administracion/cargaTipoCambio/Carga
 import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambioProvider";
 import {CajaSucursal} from "./components/operacion/cajaSucursal/CajaSucursal";
 import {MainLayout} from "./components/shared/MainLayout";
+import {validaToken} from "./services";
 
 export let dataG = {
     sucursal:0,
@@ -24,13 +25,9 @@ export let dataG = {
     direccion:"",
     nombre_sucursal:"",
     limite_diario:'',
-    limite_mensual:''
+    limite_mensual:'',
+    menus:[],
 };
-
-/*setInterval(async()=>{
-    await validaToken(localStorage.getItem('token'));
-},5000);*/
-
 const App = () => {
     return (
         <Router>
