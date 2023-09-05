@@ -9,9 +9,11 @@ import {encryptRequest} from "../../../utils";
 
 export const MainComponent = () => {
 
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
     const formValue ={
-        sucursal: dataG.sucursal,
-        usuario: dataG.usuario
+        sucursal: dataG.sucursal || usuario.sucursal,
+        usuario: dataG.usuario || usuario.usuario
     };
 
     const validaTipoCambio = async() =>{
@@ -58,7 +60,7 @@ export const MainComponent = () => {
     return(
         <>
             {
-                dataG.perfil !== 'Administrador'
+                (dataG.perfil || usuario.perfil) !== 'Administrador'
                     ? <LogoGrocerys/>
                     :  <TableroComponent/>
             }

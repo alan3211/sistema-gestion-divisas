@@ -5,7 +5,7 @@ export const useAuth = () =>{
     const [authenticated, setAuthenticated] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
         if (token) {
 
@@ -23,5 +23,5 @@ export const useAuth = () =>{
         }
     }, []);
 
-    return authenticated;
+    return {authenticated,setAuthenticated};
 }

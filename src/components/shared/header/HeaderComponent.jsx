@@ -7,7 +7,7 @@ const toggle = () => document.body.classList.toggle('toggle-sidebar');
 export const HeaderComponent = () => {
 
     const navigate = useNavigate();
-
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
 
     const cerrarSesion = () => {
         localStorage.clear();
@@ -77,12 +77,12 @@ export const HeaderComponent = () => {
                     <li className="nav-item dropdown pe-3">
                         <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                            data-bs-toggle="dropdown">
-                                <span className="d-none d-md-block dropdown-toggle ps-2">{dataG.username}</span>
+                                <span className="d-none d-md-block dropdown-toggle ps-2">{dataG.username || usuario.username}</span>
                         </a>
                         <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                             <li className="dropdown-header">
-                                <h6>{dataG.username}</h6>
-                                <span>{dataG.perfil}</span>
+                                <h6>{dataG.username || usuario.username}</h6>
+                                <span>{dataG.perfil || usuario.perfil}</span>
                             </li>
                             <li>
                                 <hr className="dropdown-divider"/>

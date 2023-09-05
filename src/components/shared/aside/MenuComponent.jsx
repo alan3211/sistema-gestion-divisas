@@ -48,6 +48,9 @@ function renderMenu(menu) {
 }
 
 function MenuComponent() {
+
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
     return (
             <ul className="sidebar-nav" id="sidebar-nav">
 
@@ -57,7 +60,11 @@ function MenuComponent() {
                         <span>Inicio</span>
                     </Link>
                 </li>
-                {dataG.menus.map((menu) => renderMenu(menu))}
+                {
+                    dataG.menus.length!== 0
+                    ? dataG.menus.map((menu) => renderMenu(menu))
+                    : usuario.menus.map((menu) => renderMenu(menu))
+                }
             </ul>
     );
 }

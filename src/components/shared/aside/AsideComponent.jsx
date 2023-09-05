@@ -1,4 +1,3 @@
-import {Link } from 'react-router-dom';
 import MenuComponent from "./MenuComponent";
 
 export const AsideComponent = () => {

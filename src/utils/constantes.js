@@ -1,10 +1,12 @@
 //const URL = 'http://grocerys-backend.cpd2aadzgsaweuax.eastus.azurecontainer.io:9000/';
-//const URL = 'http://192.168.101.45:9000/';
-const URL = 'http://localhost:9000/';
+const URL = 'http://192.168.101.45:9000/';
+//const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
 export const INICIO_URL = `${URL}inicio/`;
+export const TOKEN_URL = `${URL}token`;
+export const REFRESH_TOKEN_URL = `${URL}refresh-token`;
 export const CATALOGOS_URL = `${URL}catalogos/`;
 export const CATALOGOS_LOCALIDAD_URL = `${URL}catalogos/localidad/`;
 export const CATALOGOSUSUARIOS_URL = `${URL}catalogos/usuarios/`;

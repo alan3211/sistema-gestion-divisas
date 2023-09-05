@@ -15,6 +15,13 @@ export const TIME_OUT = 1000 * 60;
 
 export const hora = currentDate.toLocaleTimeString('es-ES', opciones);
 
+export const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
+}
 
 export const mensajeSinElementos = {
     estilo: 'alert-info',

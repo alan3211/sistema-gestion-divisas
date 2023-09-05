@@ -26,6 +26,8 @@ export const LoginComponent = () => {
         const datos = await getUser(encryptedBase64);
         if(!datos.hasOwnProperty('resultSize')){
             localStorage.setItem("token",datos.token); // Se guarda el token
+            localStorage.setItem("refresh_token",datos.refresh_token); // Se guarda el refresh
+            console.log(datos)
             const decodedToken = jwt_decode(datos.token);
             if (decodedToken.usuario) {
                 dataG.sucursal = parseInt(decodedToken.sucursal);
@@ -37,6 +39,7 @@ export const LoginComponent = () => {
                 dataG.limite_diario = decodedToken.limite_diario;
                 dataG.limite_mensual = decodedToken.limite_mensual;
                 dataG.menus = decodedToken.menus;
+                localStorage.setItem("usuario",JSON.stringify(dataG));
                 navigator("/inicio");
             }
         }else {
