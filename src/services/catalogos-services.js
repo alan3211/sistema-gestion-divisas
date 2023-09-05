@@ -1,4 +1,4 @@
-import {CATALOGOS_LOCALIDAD_URL, CATALOGOS_URL, CATALOGOSUSUARIOS_URL} from "../utils/constantes";
+import {CATALOGOS_LOCALIDAD_URL, CATALOGOS_URL, CATALOGOSUSUARIOS_URL} from "../utils";
 
 // Obtiene los catalogos
 export const getCatalogo = async (idCatalogo) => {
@@ -8,7 +8,8 @@ export const getCatalogo = async (idCatalogo) => {
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             }
         });
 
@@ -31,7 +32,8 @@ export const getLocalidad = async (formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });
@@ -58,7 +60,8 @@ export const getUsuariosSistema = async (idSucursal,idUsuario) => {
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             }
         });
 

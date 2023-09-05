@@ -1,9 +1,5 @@
-import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
-import {useState} from "react";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
-import {HeaderComponent} from "./components/shared/header/HeaderComponent";
-import {AsideComponent} from "./components/shared/aside/AsideComponent";
-import {FooterComponent} from "./components/shared/footer/FooterComponent";
 import {MainComponent} from "./components/shared/main/MainComponent";
 
 import {AltaClientesComponent} from "./components/operacion/altaClientes";
@@ -18,7 +14,8 @@ import {CompraVentaProvider} from "./context/compraVenta/CompraVentaProvider";
 import {CargaTipoCambio} from "./components/administracion/cargaTipoCambio/CargaTipoCambio";
 import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambioProvider";
 import {CajaSucursal} from "./components/operacion/cajaSucursal/CajaSucursal";
-import {useAuth} from "./hook/useAuth";
+import {MainLayout} from "./components/shared/MainLayout";
+import {validaToken} from "./services";
 
 export let dataG = {
     sucursal:0,
@@ -28,35 +25,23 @@ export let dataG = {
     direccion:"",
     nombre_sucursal:"",
     limite_diario:'',
-    limite_mensual:''
+    limite_mensual:'',
+    menus:[],
 };
-
 const App = () => {
-    const authenticated = useAuth();
     return (
         <Router>
+
             <Routes>
                 <Route exact path="/" element={<LoginComponent/>}/>
-                <Route
-                    element={
-                    authenticated ? (
-                        <>
-                          <HeaderComponent/>
-                          <AsideComponent/>
-                            <Route path="/inicio" element={<MainComponent />} />
-                            <Route path="/altaClientes" element={<AltaClienteProvider><AltaClientesComponent /></AltaClienteProvider>}/>
-                            <Route path="/compraVenta" element={<CompraVentaProvider><CompraVentaComponent /></CompraVentaProvider>}/>
-                            <Route exact path="/caja" element={<CajaComponent />}/>
-                            <Route exact path="/cajaSucursal" element={<CajaSucursal />} />
-                            <Route exact path="/cargaTipoCambio" element={<CargaTipoCambioProvider><CargaTipoCambio /></CargaTipoCambioProvider>} />
-                            <Route exact path="/usuarios" element={<Usuarios />} />
-                            <Route exact path="/catalogos" element={<Catalogo />}/>
-                            <Route path="/*" element={<Navigate to="/inicio"/>} />
-                          <FooterComponent />
-                        </>
-                    )
-                  : <Navigate to="/"/>}
-                />
+                <Route path="/inicio" element={<MainLayout><MainComponent /></MainLayout>}/>
+                <Route path="/altaClientes" element={<MainLayout><AltaClienteProvider><AltaClientesComponent /></AltaClienteProvider></MainLayout>}/>
+                <Route path="/compraVenta" element={<MainLayout><CompraVentaProvider><CompraVentaComponent /></CompraVentaProvider></MainLayout>}/>
+                <Route exact path="/caja" element={<MainLayout><CajaComponent /></MainLayout>}/>
+                <Route exact path="/cajaAdministrativa" element={<MainLayout><CajaSucursal /></MainLayout>} />
+                <Route exact path="/cargaTipoCambio" element={<MainLayout><CargaTipoCambioProvider><CargaTipoCambio /></CargaTipoCambioProvider></MainLayout>} />
+                <Route exact path="/usuarios" element={<MainLayout><Usuarios /></MainLayout>} />
+                <Route exact path="/catalogos" element={<MainLayout><Catalogo /></MainLayout>} />
             </Routes>
         </Router>
   );

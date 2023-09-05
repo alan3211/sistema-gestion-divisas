@@ -5,9 +5,10 @@ export const useAuth = () =>{
     const [authenticated, setAuthenticated] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
         if (token) {
+
             try {
                 const decodedToken = jwt_decode(token);
                 const currentTime = Date.now() / 1000; // Tiempo actual en segundos
@@ -22,5 +23,5 @@ export const useAuth = () =>{
         }
     }, []);
 
-    return authenticated;
+    return {authenticated,setAuthenticated};
 }

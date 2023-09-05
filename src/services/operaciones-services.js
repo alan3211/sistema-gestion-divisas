@@ -1,12 +1,11 @@
 import {
-    CATALOGOS_URL,
     OPERACIONES_ALTACLIENTE_URL,
     OPERACIONES_BUSCACLIENTE_URL, OPERACIONES_CONSULTACAJA_URL,
     OPERACIONES_CONSULTALDENOMINACIONES_URL,
     OPERACIONES_CONVERSION_URL, OPERACIONES_HACEROPERACION_URL, OPERACIONES_REALIZAOPERACION_URL,
     OPERACIONES_TIPOCAMBIO_URL,
     OPERACIONES_VALIDACLIENTE_URL
-} from "../utils/constantes";
+} from "../utils";
 
 export const validaCliente = async (formValues) => {
     try {
@@ -15,7 +14,8 @@ export const validaCliente = async (formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });
@@ -39,7 +39,8 @@ export const guardaCliente = async (formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });
@@ -63,7 +64,8 @@ export const getTipoCambio =  async(formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });
@@ -87,7 +89,8 @@ export const realizaConversion =  async(formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });
@@ -111,7 +114,8 @@ export const buscaCliente = async (formValues) =>{
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });
@@ -135,7 +139,8 @@ export const obtieneDenominaciones = async (formValues) =>{
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             }
         });
 
@@ -158,7 +163,8 @@ export const hacerOperacion =  async(formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });
@@ -182,7 +188,8 @@ export const realizarOperacion =  async(formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });
@@ -206,7 +213,8 @@ export const consultaCaja =  async(formValues) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
         });

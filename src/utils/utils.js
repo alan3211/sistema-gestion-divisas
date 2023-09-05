@@ -11,8 +11,17 @@ export const formattedDate = `${year}-${month}-${day}`;
 export const formattedDateWS = `${year}${month}${day}`;
 export const formattedDateDD = `${day}-${month}-${year}`;
 
+export const TIME_OUT = 1000 * 60;
+
 export const hora = currentDate.toLocaleTimeString('es-ES', opciones);
 
+export const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
+}
 
 export const mensajeSinElementos = {
     estilo: 'alert-info',
@@ -88,5 +97,16 @@ export const encryptRequest = (data) => {
         padding: CryptoJS.pad.Pkcs7,
     });
     const encryptedBase64 = encryptedData.toString();
+    console.log("ENCR: ", encryptedBase64);
     return encryptedBase64
+}
+
+export const recordValues = (values) =>{
+    if(!values.rememberMe){
+        localStorage.setItem("usuario",values.usuario);
+        localStorage.setItem("rememberMe",true);
+    }else{
+        localStorage.removeItem("usuario",values.usuario);
+        localStorage.removeItem("rememberMe",false);
+    }
 }

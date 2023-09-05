@@ -13,6 +13,8 @@ export const CargaTipoCambioOpera = () => {
 
     const onSubmit = handleSubmit(async(data) => {
 
+        console.log("DATOS DEL FORM",data)
+
         const updatedTipoCambio = currencies.map((currency) => {
 
             const compraValue = data[`compra_${currency.divisa}`];
@@ -55,6 +57,7 @@ export const CargaTipoCambioOpera = () => {
             });
         }else{
             const respuesta = await getCargaTipoCambio(encryptRequest(updatedData));
+            console.log("Respuesta: ",respuesta)
             toast.success(respuesta.mensaje,{
                 position: "top-center",
                 autoClose: 3000,
