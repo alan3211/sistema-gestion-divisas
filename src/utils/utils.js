@@ -11,7 +11,14 @@ export const formattedDate = `${year}-${month}-${day}`;
 export const formattedDateWS = `${year}${month}${day}`;
 export const formattedDateDD = `${day}-${month}-${year}`;
 
-export const TIME_OUT = 1000 * 60;
+export const formateaMoneda = (cantidad) =>{
+    // Convierte la cadena en un número decimal con 2 decimales
+    const numero = parseFloat(cantidad).toFixed(2);
+    // Agrega el símbolo de moneda "$" antes del valor
+    const formatoMoneda = `$ ${numero}`;
+    return formatoMoneda;
+}
+export const TIME_OUT = 1000 * 590;
 
 export const hora = currentDate.toLocaleTimeString('es-ES', opciones);
 

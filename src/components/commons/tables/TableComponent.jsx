@@ -65,7 +65,7 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
         }
     };
 
-    const {selecciona} = tools;
+    const {selecciona} = !!tools;
 
     return (
         <>

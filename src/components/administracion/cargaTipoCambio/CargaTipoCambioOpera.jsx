@@ -6,9 +6,9 @@ import {getCargaTipoCambio} from "../../../services/administracion-services";
 import {encryptRequest, formattedDate} from "../../../utils";
 import {toast} from "react-toastify";
 
-export const CargaTipoCambioOpera = () => {
+export const CargaTipoCambioOpera = ({id}) => {
 
-    const {showTab,tipo, register,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
+    const {tipo, register,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
     const catalogo = useCatalogo([16, 17])
 
     const onSubmit = handleSubmit(async(data) => {
@@ -73,7 +73,7 @@ export const CargaTipoCambioOpera = () => {
         <>
             <form onSubmit={onSubmit}>
                 {
-                    showTab.tab2
+                    id === 'Region'
                     && (
                         <div className="d-flex align-items-center justify-content-center mt-5">
                             <div className="form-floating mb-3">
@@ -112,7 +112,7 @@ export const CargaTipoCambioOpera = () => {
                     )
                 }
                 {
-                    showTab.tab3
+                    id === 'Sucursal'
                     && (
                         <div className="d-flex align-items-center justify-content-center mt-5">
                             <div className="form-floating mb-3">
