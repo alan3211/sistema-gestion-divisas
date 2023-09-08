@@ -1,10 +1,10 @@
 import {useContext} from "react";
 import {CargaTipoCambioContext} from "../../../context/CargaTipoCambio/CargaTipoCambioContext";
+import {TesoreriaContext} from "../../../context/tesoreria/TesoreriaContext";
 
 export const TabsItem = ({name,icon,id,pestania,defecto}) => {
 
     const {changePestania} = useContext(CargaTipoCambioContext);
-
 
     return (
         <li className="nav-item flex-fill" role="presentation">

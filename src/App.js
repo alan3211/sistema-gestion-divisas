@@ -16,6 +16,8 @@ import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambio
 import {CajaSucursal} from "./components/operacion/cajaSucursal/CajaSucursal";
 import {MainLayout} from "./components/shared/MainLayout";
 import {validaToken} from "./services";
+import {Tesoreria} from "./components/operacion/tesoreria/Tesoreria";
+import {TesoreriaProvider} from "./context/tesoreria/TesoreriaProvider";
 
 export let dataG = {
     sucursal:0,
@@ -39,6 +41,7 @@ const App = () => {
                 <Route path="/compraVenta" element={<MainLayout><CompraVentaProvider><CompraVentaComponent /></CompraVentaProvider></MainLayout>}/>
                 <Route exact path="/caja" element={<MainLayout><CajaComponent /></MainLayout>}/>
                 <Route exact path="/cajaAdministrativa" element={<MainLayout><CajaSucursal /></MainLayout>} />
+                <Route exact path="/tesoreria" element={<MainLayout><TesoreriaProvider><Tesoreria/></TesoreriaProvider></MainLayout>} />
                 <Route exact path="/cargaTipoCambio" element={<MainLayout><CargaTipoCambioProvider><CargaTipoCambio /></CargaTipoCambioProvider></MainLayout>} />
                 <Route exact path="/usuarios" element={<MainLayout><Usuarios /></MainLayout>} />
                 <Route exact path="/catalogos" element={<MainLayout><Catalogo /></MainLayout>} />
