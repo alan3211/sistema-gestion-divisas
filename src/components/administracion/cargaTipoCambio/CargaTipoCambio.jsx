@@ -24,7 +24,6 @@ export const CargaTipoCambio = () => {
             <CardLayout title={moduleName.title} icon={moduleName.icon}>
                 <TabsLayout tabs={tabs}/>
             </CardLayout>
-            <ToastContainer/>
         </Layout>
     )
 }

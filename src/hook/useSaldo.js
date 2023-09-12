@@ -11,7 +11,7 @@ export const useSaldo =  () => {
             setSaldoGeneral(saldo_cuenta);
         }
         getConsultaTesoreria();
-    }, [saldoGeneral]);
+    }, []);
 
     return saldoGeneral;
 }

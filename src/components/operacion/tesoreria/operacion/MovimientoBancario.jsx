@@ -1,32 +1,36 @@
-import {encryptRequest, formattedDateWS, validarMoneda} from "../../../../utils";
+import {encryptRequest, formattedDateWS, globalData, opciones, validarMoneda} from "../../../../utils";
 import {useForm} from "react-hook-form";
 import {useCatalogo} from "../../../../hook/useCatalogo";
 import {dataG} from "../../../../App";
 import {dotaSucursales} from "../../../../services/operacion-tesoreria";
 import {toast} from "react-toastify";
+import {useSaldo} from "../../../../hook/useSaldo";
 
-export const MovimientoBancario = () => {
+export const MovimientoBancario = ({actualizarSaldo}) => {
 
     const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
     const catalogo = useCatalogo([19]);
 
     const onSubmitMovimientoBancario = handleSubmit(async (data) => {
-        data.usuario = dataG.usuario;
+        data.usuario = dataG.usuario || globalData.usuario;
         data.operacion = watch('tipo_movimiento');
         data.monto_equivalente = watch('monto');
         data.moneda = 'MXP';
-        data.sucuesal = dataG.sucursal;
-        data.ticket = `MOVBAN${dataG.sucursal}${dataG.usuario}${formattedDateWS}`
+        data.sucursal = dataG.sucursal+"" || globalData.sucursal +"";
+        const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
+        const horaOperacion = horaDelDia.split(":").join("");
+        data.ticket = `MOVBAN${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`
         const encryptedData = encryptRequest(data);
         const response = await dotaSucursales(encryptedData);
         if(response.mensaje !== ''){
             toast.success(response.mensaje, {
                 position: "top-center",
-                autoClose: 5000,
+                autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 theme: "light",
+                onClose: actualizarSaldo,
             });
             reset();
         }

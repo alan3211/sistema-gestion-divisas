@@ -3,6 +3,7 @@ import {DotacionSucursales} from "./DotacionSucursales";
 import {MovimientoBancario} from "./MovimientoBancario";
 import {formateaMoneda} from "../../../../utils";
 import {useSaldo} from "../../../../hook/useSaldo";
+import {getConsultaSaldoCuenta} from "../../../../services/operacion-tesoreria";
 
 export const OperacionTesoreria = () => {
 
@@ -14,6 +15,11 @@ export const OperacionTesoreria = () => {
 
     const handleRadioChange = ({ target: { value } }) => {
         setSelectedOption(value);
+    };
+
+    const actualizarSaldo = async () => {
+        const {saldo_cuenta} = await getConsultaSaldoCuenta();
+        setSaldoGeneral(saldo_cuenta);
     };
 
     useEffect(() => {
@@ -65,8 +71,8 @@ export const OperacionTesoreria = () => {
 
         {
             selectedOption === 'dotacionSuc'
-                ? <DotacionSucursales/>
-                : <MovimientoBancario/>
+                ? <DotacionSucursales  actualizarSaldo={actualizarSaldo}/>
+                : <MovimientoBancario  actualizarSaldo={actualizarSaldo}/>
         }
     </>
     );

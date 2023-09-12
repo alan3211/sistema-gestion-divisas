@@ -1,25 +1,20 @@
 import {TableComponent} from "../../commons/tables";
 import {CardLayout} from "../../commons";
-import {useNavigate} from "react-router-dom";
 
-export const ClienteCoincidenciaComponent = ({dataClientes,tools,showAddCliente,addCliente,setDataClientes}) =>{
+export const ClienteCoincidenciaComponent = ({dataClientes,showAddCliente,addCliente,setDataClientes,setShowCliente}) =>{
 
-    const navigate =  useNavigate();
-
-    const hacerOperacion = (item) => {
-        setDataClientes(item);
-        console.log("CLIENTE A ENVIAR DESDE -> CLIENTE COINCIDENCIA:",item)
-        navigate("/compraVenta", {
-            state: {
-                cliente: item,
-                clienteActivo: true,
-            },
-        });
+    const options = {
+        showMostrar:true,
+        buscar: true,
+        paginacion: true,
+        tools: [
+            {columna:"Selecciona",tool:'selecciona-cliente',deps:{setDataClientes,setShowCliente}},
+        ]
     }
 
     return(
         <CardLayout title="Clientes con coincidencias" icon="bx bxs-user-detail p-2">
-            <TableComponent data={dataClientes} tools={tools} hacerOperacion={hacerOperacion}/>
+            <TableComponent data={dataClientes} options={options}/>
             {
                 showAddCliente &&
                 (

@@ -18,7 +18,11 @@ export const CompraVentaProvider = ({children}) => {
 
     const formBuscarCliente = useForm();
     const [showCliente, setShowCliente] = useState(false);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState({
+        headers:[],
+        result_set:[],
+        total_rows:0
+    });
 
     const busquedaCliente = {
         selectedOption,
@@ -30,7 +34,7 @@ export const CompraVentaProvider = ({children}) => {
         setData,
     }
 
-    const [cliente,setCliente]  = useState({});
+    const [cliente,setCliente]  = useState('');
 
     const compraVentaProvider = {
         cantidad,

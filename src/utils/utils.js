@@ -1,11 +1,12 @@
 import CryptoJS from "crypto-js";
 
 const currentDate = new Date();
+export const globalData = JSON.parse(localStorage.getItem('usuario'))
 
 export const year = currentDate.getFullYear();
 const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
 const day = currentDate.getDate().toString().padStart(2, "0");
-const opciones = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+export const opciones = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
 export const formattedDate = `${year}-${month}-${day}`;
 export const formattedDateWS = `${year}${month}${day}`;
@@ -21,6 +22,8 @@ export const formateaMoneda = (cantidad) =>{
 export const TIME_OUT = 1000 * 590;
 
 export const hora = currentDate.toLocaleTimeString('es-ES', opciones);
+const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
+horaDelDia.split(":").join("");
 
 export const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -104,7 +107,6 @@ export const encryptRequest = (data) => {
         padding: CryptoJS.pad.Pkcs7,
     });
     const encryptedBase64 = encryptedData.toString();
-    console.log("ENCR: ", encryptedBase64);
     return encryptedBase64
 }
 
@@ -116,4 +118,10 @@ export const recordValues = (values) =>{
         localStorage.removeItem("usuario",values.usuario);
         localStorage.removeItem("rememberMe",false);
     }
+}
+
+export const DENOMINACIONES = {
+    USD: "DOLARES",
+    EUR: "EUROS",
+    GBR: "LIBRAS"
 }

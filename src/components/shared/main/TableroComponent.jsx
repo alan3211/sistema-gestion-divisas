@@ -1,3 +1,5 @@
+import {ToastContainer} from "react-toastify";
+
 export const TableroComponent = () =>{
     return (
         <main id="main" className="main">
@@ -501,8 +503,6 @@ export const TableroComponent = () =>{
                     </div>
                 </div>
             </section>
-
-
         </main>
     );
 }
