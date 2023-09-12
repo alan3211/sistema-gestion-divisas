@@ -10,7 +10,6 @@ import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContex
 
 export const DatosClientes = ({operacion, cliente}) => {
 
-    const compraVentaProvider = useContext(CompraVentaContext);
     const {showModal, setShowModal, selectedItem, closeModal} = useOperaCliente();
     const [showCustomModal, setShowCustomModal] = useState(false);
     const [data, setData] = useState({});
@@ -26,11 +25,13 @@ export const DatosClientes = ({operacion, cliente}) => {
         data,
     }
 
+    console.log("DATOS CLIENTE: ",cliente)
+
     const getOperacion = async () => {
         const operacionEnvia = {
             cliente: cliente.cliente,
             tipo_operacion: operacion.tipo_operacion,
-            sucursal: dataG.sucursal,
+            sucursal: dataG.sucursal || 0,
             nombre_operador: dataG.usuario,
             fecha_operacion: formattedDate,
             hora_operacion: hora,
@@ -63,7 +64,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="cliente"
-                                value={cliente.cliente}
+                                value={cliente.Cliente}
                                 readOnly
                             />
                             <label htmlFor="cliente">Número de Cliente</label>
@@ -75,7 +76,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="nombre"
-                                value={cliente.nombre}
+                                value={cliente.Nombre}
                                 readOnly
                             />
                             <label htmlFor="nombre">Nombre</label>
@@ -87,7 +88,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="apellidoPaterno"
-                                value={cliente.apellidoPaterno}
+                                value={cliente.ApellidoPaterno}
                                 readOnly
                             />
                             <label htmlFor="apellidoPaterno">Apellido Paterno</label>
@@ -99,7 +100,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="apellidoMaterno"
-                                value={cliente.apellidoMaterno}
+                                value={cliente.ApellidoMaterno}
                                 readOnly
                             />
                             <label htmlFor="apellidoMaterno">Apellido Materno</label>
@@ -113,7 +114,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="fechaNacimiento"
-                                value={cliente.fechaNacimiento}
+                                value={cliente.FechaNacimiento}
                                 readOnly
                             />
                             <label htmlFor="fechaNacimiento">Fecha de Nacimiento</label>

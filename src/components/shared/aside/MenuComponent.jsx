@@ -11,13 +11,10 @@ function renderSubMenu({IdModulo,Nombre,subMenus}) {
                     return(
                     <li key={subMenuItem.IdModulo}>
                         <Link to={subMenuItem.Mapeo}
-                              state={ subMenuItem.Mapeo === '/compraVenta' ?  {
-                                cliente: {},
-                                clienteActivo: true,
-                            } : {
-                                  cliente: {},
-                                  clienteActivo: false,
-                              }
+                              state={ subMenuItem.Mapeo === '/compraVenta' &&  {
+                                cliente: '',
+                                clienteActivo: false,
+                            }
                         } >
                             <i className={subMenuItem.Icono}></i><span>{subMenuItem.Nombre}</span>
                         </Link>

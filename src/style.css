@@ -62,6 +62,7 @@ h6 {
 
 .bg-blue{
   background-color: #012970;
+  color:white;
 }
 
 .pagetitle {
@@ -1425,12 +1426,12 @@ h6 {
 
 
 .datatable-sorter::before {
-  border-top: 4px solid #000;
+  border-top: 4px solid #FFF;
   bottom: 0px;
 }
 
 .datatable-sorter::after {
-  border-bottom: 4px solid #000;
+  border-bottom: 4px solid #FFF;
   border-top: 4px solid transparent;
   top: 0px;
 }

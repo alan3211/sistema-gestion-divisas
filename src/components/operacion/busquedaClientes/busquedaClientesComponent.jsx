@@ -6,15 +6,11 @@ import {ClienteCoincidenciaComponent} from "./ClienteCoincidenciaComponent";
 import {DatosClientes} from "./DatosClientes";
 
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+import {ToastContainer} from "react-toastify";
 
 export const BusquedaClientesComponent = () => {
 
-    const {busquedaCliente:{showCliente,data,setData},operacion} = useContext(CompraVentaContext);
-
-    /*useEffect(() => {
-        console.log("BUSQUEDA CLIENTES COMPONENT", cliente);
-        if (cliente) setShowCliente(true);
-    }, [cliente])*/
+    const {busquedaCliente:{showCliente,setShowCliente,data,setData},operacion} = useContext(CompraVentaContext);
 
     const [selectedOption, setSelectedOption] = useState("cliente");
 
@@ -62,15 +58,15 @@ export const BusquedaClientesComponent = () => {
             </CardLayout>
 
             {
-                (data.length > 1) &&
+                (data.total_rows > 1) &&
                 <ClienteCoincidenciaComponent
                     dataClientes={data}
                     setDataClientes={setData}
-                    tools={{selecciona: true}}
+                    setShowCliente={setShowCliente}
                 />
             }
             {
-                showCliente && <DatosClientes operacion={operacion} cliente={data[0]}/>
+                showCliente && <DatosClientes operacion={operacion} cliente={data.result_set[0] || {}}/>
             }
         </>
     );

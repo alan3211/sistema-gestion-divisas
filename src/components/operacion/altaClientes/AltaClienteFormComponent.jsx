@@ -5,7 +5,7 @@ import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContex
 import {validaCliente} from "../../../services";
 import {encryptRequest, validaFechas, validarAlfaNumerico, validarNombreApellido} from "../../../utils";
 import {useCatalogo} from "../../../hook/useCatalogo";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 
 export const AltaClienteFormComponent = memo(() => {
 
@@ -22,6 +22,7 @@ export const AltaClienteFormComponent = memo(() => {
         const encryptedBase64 = encryptRequest(data);
 
         const response = await validaCliente(encryptedBase64);
+        response.headers = ['Selecciona',...response.headers]
         console.log(response);
 
         if(response) {
@@ -236,7 +237,6 @@ export const AltaClienteFormComponent = memo(() => {
                     dataClientes={propForm.dataClientes}
                     setDataClientes={propForm.setDataClientes}
                     addCliente={nuevoCliente}
-                    tools={{selecciona: true}}
                 />
             }
         </>

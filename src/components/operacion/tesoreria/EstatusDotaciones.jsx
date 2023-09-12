@@ -13,9 +13,21 @@ export const EstatusDotaciones = () => {
 
     const catalogo = useCatalogo([20,17]);
 
+    const options = {
+        showMostrar:true,
+        buscar: true,
+        paginacion: true,
+        tools: [
+            {columna:"Estatus",tool:'estatus'},
+            {columna:"Detalle",tool:'detalle'},
+            {columna:"Cancelar",tool:'cancelar-tesoreria'}
+        ]
+    }
+
     const onSubmitEstatus = handleSubmit(async (data) => {
         const encryptedData = encryptRequest(data);
         const response = await estatusOperaciones(encryptedData);
+        console.log(response)
         setData(response);
         setShowTable(true)
     });
@@ -133,7 +145,7 @@ export const EstatusDotaciones = () => {
                 </div>
             </form>
             {
-                showTable && <TableComponent data={data}/>
+                showTable && <TableComponent data={data} options={options}/>
             }
         </div>
     );

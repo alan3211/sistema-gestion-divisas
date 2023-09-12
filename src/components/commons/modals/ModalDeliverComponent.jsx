@@ -221,7 +221,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
                         Finalizar Operación
                     </Button>
                 </Modal.Footer>
-                <ToastContainer/>
             </Modal>
 
             {

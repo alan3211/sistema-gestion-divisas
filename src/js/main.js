@@ -3,6 +3,8 @@ import tinymce from "tinymce";
 
 import echarts from "echarts/dist/echarts.min";
 import * as simpleDatatables from "simple-datatables";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle';
 
   /**
    * Easy selector helper function

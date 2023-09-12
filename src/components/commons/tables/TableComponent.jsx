@@ -1,15 +1,30 @@
-import React, { useState } from "react";
-import {toast} from "react-toastify";
+import React, {useState} from "react";
+import {MessageComponent} from "../MessageComponent";
+import {mensajeSinElementos} from "../../../utils";
 
-export const TableComponent = ({ data, tools,hacerOperacion}) => {
+import './table.css';
+import {getTools} from "./operaciones/operaciones-tools";
+
+
+export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const [sortColumn, setSortColumn] = useState("");
     const [sortDirection, setSortDirection] = useState("asc");
 
-    if (data.length === 0) {
-        return <p>No hay datos disponibles</p>;
+    const {
+        showMostrar = false,
+        buscar = false,
+        paginacion = false,
+        tools = [],
+    } = options || {};
+
+
+    if (total_rows === 0) {
+        return (<MessageComponent estilos={mensajeSinElementos}>
+                No se encontraron datos con los parametros especificados.
+            </MessageComponent>);
     }
 
     const handlePerPageChange = (event) => {
@@ -40,11 +55,7 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
     };
 
     // Filtrar los datos según el término de búsqueda
-    const filteredData = data.filter((item) =>
-        Object.values(item).some((value) =>
-            value.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
+    const filteredData = result_set.filter((item) => Object.values(item).some((value) => value.toLowerCase().includes(searchTerm.toLowerCase())));
 
     // Calcular el número total de páginas
     const totalPages = Math.ceil(filteredData.length / perPage);
@@ -53,8 +64,6 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
     const currentData = filteredData.slice(startIndex, endIndex);
-
-    const keys = Object.keys(data[0]);
 
     const handleSort = (column) => {
         if (sortColumn === column) {
@@ -65,132 +74,123 @@ export const TableComponent = ({ data, tools,hacerOperacion}) => {
         }
     };
 
-    const {selecciona} = !!tools;
-
-    return (
-        <>
-        <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
-            <div className="datatable-top">
-                <div className="datatable-dropdown">
-                    <label>
-                        Mostrar
-                        <select
-                            className="datatable-selector m-2"
-                            value={perPage}
-                            onChange={handlePerPageChange}
-                        >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                            <option value="200">200</option>
-                        </select>{" "}
-                        por página
-                    </label>
-                </div>
-                <div className="datatable-search">
-                    <div className="search-input-container">
-                        <input
-                            key="searchTable"
-                            placeholder="Buscar en la tabla"
-                            className="datatable-input"
-                            value={searchTerm}
-                            onChange={handleSearch}
-                        />
-                        <i className="bx bx-search p-2"></i>
-                    </div>
-                </div>
-            </div>
-            <div className="datatable-container">
-                <table className="table datatable datatable-table">
-                    <thead>
-                    <tr>
-                        {keys.map((key, index) => (
-                            <th
-                                key={index}
-                                data-sortable="true"
-                                className={sortColumn === key ? `sorted ${sortDirection} text-center` : "text-center"}
-                                onClick={() => handleSort(key)}
+    return (<>
+            <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns"
+                 style={{"fontSize": "12px"}}>
+                <div className="datatable-top">
+                    {
+                        showMostrar && (<div className="datatable-dropdown">
+                        <label>
+                            Mostrar
+                            <select
+                                className="datatable-selector m-2"
+                                value={perPage}
+                                onChange={handlePerPageChange}
                             >
-                                <a className="datatable-sorter">
-                                    {key}
-                                </a>
-                            </th>
-                        ))}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {currentData.map((item, index) => (
-                        <tr key={index} data-index={index}>
-                            {keys.map((key, index) => (
-                                <td key={index} className="text-center">
-                                    {
-                                        (selecciona && key==='cliente')
-                                        && <span className="badge bg-primary m-2 p-2 cursor-pointer"
-                                                 onClick={()=>hacerOperacion(item)}>
-                                            <i className="ri-star-line me-2"></i>
-                                            Seleccionar
-                                           </span>
-                                    }
-                                    {item[key]}
-                                </td>
-                            ))}
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="200">200</option>
+                            </select>{" "}
+                            por página
+                        </label>
+                    </div>)}
+                    {buscar && (<div className="datatable-search">
+                        <div className="search-input-container">
+                            <input
+                                key="searchTable"
+                                placeholder="Buscar en la tabla"
+                                className="datatable-input"
+                                value={searchTerm}
+                                onChange={handleSearch}
+                            />
+                            <i className="bx bx-search p-2"></i>
+                        </div>
+                    </div>)}
+                </div>
+                <div className="datatable-container table-overflow">
+                    <table className="table datatable-table table-responsive table-striped">
+                        <thead className="table-blue">
+                        <tr>
+                            {headers.map((key, index) => (<th
+                                    key={index}
+                                    data-sortable="true"
+                                    className={sortColumn === key ? `sorted ${sortDirection} text-center` : "text-center"}
+                                    onClick={() => handleSort(key)}
+                                >
+                                    <a className="datatable-sorter">
+                                        {key}
+                                    </a>
+                                </th>))}
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
-            <div className="datatable-bottom">
-                <div className="datatable-info">
-                    Mostrando página <strong>{currentPage}</strong> de <strong>{totalPages}</strong> de <strong>{filteredData.length} </strong>registros
+                        </thead>
+                        <tbody>
+                            {currentData.map((item, index) => (<tr key={index} data-index={index}>
+                                    {headers.map((key, index) => {
+                                        // Busca el objeto tool correspondiente a la columna actual
+                                        const toolInfo = tools.find(tool => tool.columna === key);
+                                        // Si se encuentra un objeto tool, renderiza el componente correspondiente
+                                        if (toolInfo) {
+                                            return getTools(toolInfo,item,index)
+                                        } else {
+                                            return (<td key={index} className="text-center">
+                                                    {item[key]}
+                                                </td>);
+                                        }
+                                    })}
+                                </tr>))}
+                        </tbody>
+                    </table>
                 </div>
-                <nav className="datatable-pagination">
-                    <ul className="datatable-pagination-list">
-                        {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                            <li
-                                key={page}
-                                className={page === currentPage ? "active" : ""}
-                                onClick={() => goToPage(page)}
-                            >
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-                <nav aria-label="Page navigation">
-                    <ul className="pagination">
-                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                            <button
-                                className="page-link"
-                                onClick={goToPreviousPage}
-                                aria-label="Previous"
-                            >
-                                <span aria-hidden="true">«</span>
-                            </button>
-                        </li>
-                        {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                            <li
-                                key={page}
-                                className={`page-item ${page === currentPage ? "active" : ""}`}
-                            >
-                                <button className="page-link" onClick={() => goToPage(page)}>
-                                    {page}
+                {paginacion && (<div className="datatable-bottom">
+                    <div className="datatable-info">
+                        Mostrando
+                        página <strong>{currentPage}</strong> de <strong>{totalPages}</strong> de <strong>{filteredData.length} </strong>
+                        {totalPages === 1 ? 'registro': 'registros'}
+                    </div>
+                    <nav className="datatable-pagination">
+                        <ul className="datatable-pagination-list">
+                            {Array.from({length: totalPages}, (_, index) => index + 1).map((page) => (<li
+                                    key={page}
+                                    className={page === currentPage ? "active" : ""}
+                                    onClick={() => goToPage(page)}
+                                >
+                                </li>))}
+                        </ul>
+                    </nav>
+                    <nav aria-label="Page navigation">
+                        <ul className="pagination pagination-sm">
+                            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                <button
+                                    className="page-link"
+                                    onClick={goToPreviousPage}
+                                    aria-label="Previous"
+                                >
+                                    <span aria-hidden="true">«</span>
                                 </button>
                             </li>
-                        ))}
-                        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                            <button
-                                className="page-link"
-                                onClick={goToNextPage}
-                                aria-label="Next"
-                            >
-                                <span aria-hidden="true">»</span>
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
+                            {Array.from({length: totalPages}, (_, index) => index + 1).map((page) => (<li
+                                    key={page}
+                                    className={`page-item ${page === currentPage ? "active" : ""}`}
+                                >
+                                    <button className="page-link" onClick={() => goToPage(page)}>
+                                        {page}
+                                    </button>
+                                </li>))}
+                            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                <button
+                                    className="page-link"
+                                    onClick={goToNextPage}
+                                    aria-label="Next"
+                                >
+                                    <span aria-hidden="true">»</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>)}
             </div>
-        </div>
-        </>
-    );
+        </>);
 };
 

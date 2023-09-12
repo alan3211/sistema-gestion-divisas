@@ -168,7 +168,6 @@ export const LoginComponent = () => {
                     </div>
                 </section>
             </div>
-            <ToastContainer/>
         </main>
     );
 }

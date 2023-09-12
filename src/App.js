@@ -13,11 +13,11 @@ import {AltaClienteProvider} from "./context/AltaCliente/AltaClienteProvider";
 import {CompraVentaProvider} from "./context/compraVenta/CompraVentaProvider";
 import {CargaTipoCambio} from "./components/administracion/cargaTipoCambio/CargaTipoCambio";
 import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambioProvider";
-import {CajaSucursal} from "./components/operacion/cajaSucursal/CajaSucursal";
 import {MainLayout} from "./components/shared/MainLayout";
-import {validaToken} from "./services";
 import {Tesoreria} from "./components/operacion/tesoreria/Tesoreria";
 import {TesoreriaProvider} from "./context/tesoreria/TesoreriaProvider";
+import {SucursalOperativa} from "./components/operacion/sucursalOperativa/SucursalOperativa";
+import {ToastContainer} from "react-toastify";
 
 export let dataG = {
     sucursal:0,
@@ -32,21 +32,28 @@ export let dataG = {
 };
 const App = () => {
     return (
-        <Router>
-
-            <Routes>
-                <Route exact path="/" element={<LoginComponent/>}/>
-                <Route path="/inicio" element={<MainLayout><MainComponent /></MainLayout>}/>
-                <Route path="/altaClientes" element={<MainLayout><AltaClienteProvider><AltaClientesComponent /></AltaClienteProvider></MainLayout>}/>
-                <Route path="/compraVenta" element={<MainLayout><CompraVentaProvider><CompraVentaComponent /></CompraVentaProvider></MainLayout>}/>
-                <Route exact path="/caja" element={<MainLayout><CajaComponent /></MainLayout>}/>
-                <Route exact path="/cajaAdministrativa" element={<MainLayout><CajaSucursal /></MainLayout>} />
-                <Route exact path="/tesoreria" element={<MainLayout><TesoreriaProvider><Tesoreria/></TesoreriaProvider></MainLayout>} />
-                <Route exact path="/cargaTipoCambio" element={<MainLayout><CargaTipoCambioProvider><CargaTipoCambio /></CargaTipoCambioProvider></MainLayout>} />
-                <Route exact path="/usuarios" element={<MainLayout><Usuarios /></MainLayout>} />
-                <Route exact path="/catalogos" element={<MainLayout><Catalogo /></MainLayout>} />
-            </Routes>
-        </Router>
+        <>
+            <Router>
+                <Routes>
+                    <Route exact path="/" element={<LoginComponent/>}/>
+                    <Route path="/inicio" element={<MainLayout><MainComponent/></MainLayout>}/>
+                    <Route path="/altaClientes" element={
+                        <MainLayout><AltaClienteProvider><AltaClientesComponent/></AltaClienteProvider></MainLayout>}/>
+                    <Route path="/compraVenta" element={
+                        <MainLayout><CompraVentaProvider><CompraVentaComponent/></CompraVentaProvider></MainLayout>}/>
+                    <Route exact path="/caja" element={<MainLayout><CajaComponent/></MainLayout>}/>
+                    <Route exact path="/administracionSucursal"
+                           element={<MainLayout><SucursalOperativa/></MainLayout>}/>
+                    <Route exact path="/tesoreria"
+                           element={<MainLayout><TesoreriaProvider><Tesoreria/></TesoreriaProvider></MainLayout>}/>
+                    <Route exact path="/cargaTipoCambio" element={
+                        <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
+                    <Route exact path="/usuarios" element={<MainLayout><Usuarios/></MainLayout>}/>
+                    <Route exact path="/catalogos" element={<MainLayout><Catalogo/></MainLayout>}/>
+                </Routes>
+            </Router>
+            <ToastContainer/>
+        </>
   );
 }
 export default App;
