@@ -1,8 +1,15 @@
 import React, {useState} from "react";
-import {encryptRequest, formattedDateWS, opciones, validarAlfaNumerico, validarNombreApellido} from "../../../../utils";
+import {
+    encryptRequest,
+    formattedDateWS,
+    opciones,
+    validarAlfaNumerico,
+    validarMoneda,
+    validarNombreApellido
+} from "../../../../utils";
 import {dataG} from "../../../../App";
-import {ModalAccionCancelarTool, ModalDetalleTool} from "../../modals/";
-import {cancelarEnvioSucursal, consultaDetalle} from "../../../../services/tools-services";
+import {ModalAccionCancelarTool, ModalAccionTesoreriaTool, ModalDetalleTool} from "../../modals/";
+import {accionesTesoreria, cancelarEnvioSucursal, consultaDetalle} from "../../../../services/tools-services";
 import {TableComponent} from "../TableComponent";
 import {useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
@@ -38,43 +45,99 @@ const EstatusTool = ({item, index, columna}) => {
 const AccionesTesoreria = ({item, index, columna}) => {
 
     const [showModal, setShowModal] = useState(false);
+    const {register,
+        handleSubmit,
+        formState: {errors},reset
+        ,watch} = useForm();
+    const [optionBtn,setOptionBtn] = useState(1);
 
-    console.log("Accion Tesoreria ", item);
-    const onAceptarEnvio = async () => {
-
+    /*Aqui se diferencia entre un boton de aceptar y otro de rechazar*/
+    const onHandleOptions = (option) => {
+        setOptionBtn(option);
+        setShowModal(true);
+    }
+    const onEnvioValores = async () => {
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
-
         const values = {
-            id_operacion: item.Id,
+            id_operacion: item.ID,
             ticket: `ENVVAL${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`,
-            estatus:'Aceptado',
-            motivo:'',
+            estatus: (optionBtn === 1) ? 'Aceptado':'Rechazado',
+            motivo: watch("motivo"),
             usuario: dataG.usuario,
-            sucursal: item.Sucursal,
-            monto_equivalente: '',
+            sucursal: item['Sucursal Envia'],
+            monto_equivalente:(optionBtn === 1) ? watch("monto_equivalente"): item.Monto,
             monto:item.Monto,
             moneda:item.Moneda
+        }
 
+        const encryptedData = encryptRequest(values);
+
+        const response =  await accionesTesoreria(encryptedData);
+
+        if(response.result_set[0].Mensaje !== ''){
+            toast.success(response.result_set[0].Mensaje, {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "light",
+                onClose: () => setShowModal(false),
+            });
+            reset();
         }
 
 
     }
 
+    const options = {
+        showModal,
+        closeCustomModal: () => setShowModal(false),
+        title: (optionBtn === 1) ? 'Aceptar Dotación':'Rechazar Dotación',
+        icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success':'bi bi-x-circle m-2 text-danger',
+        subtitle: (optionBtn === 1) ? 'Ingresa el monto equivalente solicitado y el motivo para aceptar la dotación.'
+            :'Ingresa el motivo por el cual rechazas la dotación.',
+    };
+
 
     return (
         <td key={index} className="text-center">
             <button className="btn btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Aceptar"
-                    onClick={onAceptarEnvio} disabled={item.Estatus === 'Pendiente'}>
+                    onClick={()=> onHandleOptions(1)} disabled={item.Estatus !== 'Pendiente'}>
                 <i className="bi bi-check-circle"></i>
             </button>
             <button className="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Rechazar"
-                    disabled={item.Estatus === 'Pendiente'}>
+                    onClick={()=> onHandleOptions(2)} disabled={item.Estatus !== 'Pendiente'}>
                 <i className="bi bi-x-circle"></i>
             </button>
-            {showModal && (
-                <ModalAccionCancelarTool options={options}>
-                    <form onSubmit={handleSubmit(handleCancelarEnvio)} noValidate>
+            {
+                showModal
+                && (
+                <ModalAccionTesoreriaTool options={options}>
+                    <form onSubmit={handleSubmit(onEnvioValores)} noValidate>
+                        {
+                            optionBtn === 1 && (
+                                <div className="col-md-12 mb-3">
+                                    <div className="form-floating">
+                                        <input
+                                            {...register("monto_equivalente",{
+                                                validate: (value) => validarMoneda("Monto Equivalente",value)
+                                            })}
+                                            type="text"
+                                            className={`form-control ${!!errors?.monto_equivalente ? 'invalid-input':''}`}
+                                            id="monto_equivalente"
+                                            name="monto_equivalente"
+                                            placeholder="Ingresa el Monto Equivalente"
+                                        />
+                                        <label htmlFor="monto_equivalente">Monto Equivalente de {item.Moneda} en MXP</label>
+                                        {
+                                            errors?.monto_equivalente && <div className="invalid-feedback-custom">{errors?.monto_equivalente.message}</div>
+                                        }
+                                    </div>
+                                </div>
+                            )
+                        }
                         <div className="col-md-12">
                             <div className="form-floating">
                                     <textarea
@@ -106,20 +169,20 @@ const AccionesTesoreria = ({item, index, columna}) => {
                             </div>
                         </div>
                         <div className="d-flex justify-content-end mt-2">
-                            <button type="submit" className="btn btn-danger">
-                                <i className="bi bi-x-circle me-1"></i>
-                                Cancelar Envío
+                            <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success':'btn-danger'}`}>
+                                <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2':'bi bi-x-circle m-2'}></i>
+                                {optionBtn === 1 ? 'Aceptar':'Rechazar'}
                             </button>
                         </div>
                     </form>
-                </ModalAccionCancelarTool>
+                </ModalAccionTesoreriaTool>
             )}
         </td>
     );
 }
 
 /*Herramienta para visualizar los detalles de cada modulo mostrando un modal*/
-const Detalle = ({item, index, columna}) => {
+const Detalle = ({item, index, columna,params}) => {
 
     const [showModal, setShowModal] = useState(false);
     const [dataDetalle, setDataDetalle] = useState({})
@@ -130,10 +193,9 @@ const Detalle = ({item, index, columna}) => {
 
     const onDetalle = async () => {
         const values = {
-            opcion: 2,
-            id_operacion: item.Id,
+            opcion: params.opcion,
+            id_operacion: item.ID,
         }
-        console.log(values)
         const encryptedData = encryptRequest(values);
         const response = await consultaDetalle(encryptedData);
         setDataDetalle(response);
@@ -300,7 +362,7 @@ export const getTools = (toolInfo, item, index) => {
         case 'acciones-tesoreria':
             return <AccionesTesoreria item={item} index={index} columna={toolInfo.columna}/>
         case 'detalle':
-            return <Detalle item={item} index={index} columna={toolInfo.columna}/>
+            return <Detalle item={item} index={index} columna={toolInfo.columna} params={toolInfo.params}/>
         case 'cancelar-tesoreria':
             return <CancelarTesoreria item={item} index={index} columna={toolInfo.columna}/>
         case 'selecciona-cliente':

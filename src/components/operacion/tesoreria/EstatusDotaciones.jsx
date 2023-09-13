@@ -19,7 +19,7 @@ export const EstatusDotaciones = () => {
         paginacion: true,
         tools: [
             {columna:"Estatus",tool:'estatus'},
-            {columna:"Detalle",tool:'detalle'},
+            {columna:"Detalle",tool:'detalle',params:{opcion:2}},
             {columna:"Cancelar",tool:'cancelar-tesoreria'}
         ]
     }
