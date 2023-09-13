@@ -2,7 +2,7 @@ import {TableComponent} from "../../commons/tables";
 import {useForm} from "react-hook-form";
 import {useState} from "react";
 import {encryptRequest} from "../../../utils";
-import {consultaEnvioSucursal, estatusOperaciones} from "../../../services/operacion-tesoreria";
+import {consultaEnvioSucursal} from "../../../services/operacion-tesoreria";
 
 export const RecepcionValores = () => {
 
@@ -17,7 +17,7 @@ export const RecepcionValores = () => {
         tools:[
             {columna:"Estatus",tool:"estatus"},
             {columna:"Acciones",tool:"acciones-tesoreria"},
-            {columna:"Detalle",tool:"detalle"},
+            {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
         ]
     }
 

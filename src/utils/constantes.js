@@ -1,5 +1,5 @@
-//const URL = 'http://grocerys-backend.cpd2aadzgsaweuax.eastus.azurecontainer.io:9000/';
-const URL = 'http://192.168.101.45:9000/';
+const URL = 'http://grocerys-backend.cpd2aadzgsaweuax.eastus.azurecontainer.io:9000/';
+//const URL = 'http://192.168.101.45:9000/';
 //const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
@@ -34,4 +34,5 @@ export const TESORERIA_ENVIO_SUCURSAL_URL = `${TESORERIA_URL}dotacion-sucursal/c
 /*ENDPOINTS DE TOOLS*/
 export const TOOLS_CONSULTA_DETALLE_URL = `${TOOLS_URL}consulta/detalle`
 export const TOOLS_CANCELAR_DOTACION_URL = `${TOOLS_URL}cancelar/dotacion`
+export const TOOLS_ACCIONES_DOTACION_URL = `${TOOLS_URL}acciones/dotacion`
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`

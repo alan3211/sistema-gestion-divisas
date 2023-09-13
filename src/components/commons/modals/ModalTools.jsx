@@ -23,24 +23,16 @@ export const ModalAccionTesoreriaTool = ({options,children}) => {
         <Modal centered size="lg" show={options.showModal} onHide={options.closeCustomModal}>
             <Modal.Header closeButton>
                 <Modal.Title>
-                    <h5 className="text-blue">
-                        <i className="bx bx-money m-2"></i>
+                    <h5>
+                        <i className={options.icon}></i>
                         {options.title}
                     </h5>
                 </Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
+                <p>{options.subtitle}</p>
                 {children}
             </Modal.Body>
-
-            <Modal.Footer>
-                <Button variant="primary" onClick={options.onAccion}>
-                    <i className="bi bi-save me-1"></i>
-                    Guardar
-                </Button>
-            </Modal.Footer>
-
         </Modal>
     );
 }
