@@ -55,7 +55,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     };
 
     // Filtrar los datos según el término de búsqueda
-    const filteredData = result_set.filter((item) => Object.values(item).some((value) => value.toLowerCase().includes(searchTerm.toLowerCase())));
+    const filteredData = result_set.filter((item) => Object.values(item).some((value) => String(value).toLowerCase().includes(searchTerm.toLowerCase())));
 
     // Calcular el número total de páginas
     const totalPages = Math.ceil(filteredData.length / perPage);

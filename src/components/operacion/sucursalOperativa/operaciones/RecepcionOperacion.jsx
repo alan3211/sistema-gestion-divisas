@@ -1,22 +1,21 @@
-import {TableComponent} from "../../commons/tables";
 import {useForm} from "react-hook-form";
 import {useState} from "react";
-import {encryptRequest} from "../../../utils";
-import {consultaEnvioSucursal} from "../../../services/operacion-tesoreria";
+import {encryptRequest} from "../../../../utils";
+import {TableComponent} from "../../../commons/tables";
+import {consultaMovimientoSucursal} from "../../../../services/operacion-sucursal";
+import {dataG} from "../../../../App";
 
-export const RecepcionValores = () => {
-
+export const RecepcionOperacion = () => {
     const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
 
     const refreshQuery = async () =>{
-        const response = await consultaEnvioSucursal(formData);
+        const response = await consultaMovimientoSucursal(formData);
         response.headers = [...response.headers,'Acciones']
         setData(response);
     }
-
 
     const options = {
         showMostrar:true,
@@ -24,15 +23,16 @@ export const RecepcionValores = () => {
         paginacion: true,
         tools:[
             {columna:"Estatus",tool:"estatus"},
-            {columna:"Acciones",tool:"acciones-tesoreria",refresh:refreshQuery},
+            {columna:"Acciones",tool:"acciones-sucursales",refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
         ]
     }
 
     const onSubmitRecepcion = handleSubmit(async (data) => {
+        data.sucursal = dataG.sucursal;
         const encryptedData = encryptRequest(data);
         setFormData(encryptedData);
-        const response = await consultaEnvioSucursal(encryptedData);
+        const response = await consultaMovimientoSucursal(encryptedData);
         response.headers = [...response.headers,'Acciones']
         setData(response);
         setShowTable(true)

@@ -53,16 +53,17 @@ export const getLocalidad = async (formValues) => {
 
 
 // Obtiene los catalogos
-export const getUsuariosSistema = async (idSucursal,idUsuario) => {
+export const getUsuariosSistema = async (encryptedData) => {
     try {
-        const url = `${CATALOGOSUSUARIOS_URL}${idSucursal}/${idUsuario}`;
+        const url = CATALOGOSUSUARIOS_URL;
 
         const response = await fetch(url, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
-            }
+            },
+            body: JSON.stringify({encryptedData:encryptedData})
         });
 
         if (!response.ok) {
