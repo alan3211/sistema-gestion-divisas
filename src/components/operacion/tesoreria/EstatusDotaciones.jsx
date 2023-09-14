@@ -1,17 +1,22 @@
 import {encryptRequest, validaFechas} from "../../../utils";
 import {useForm} from "react-hook-form";
 import {useCatalogo} from "../../../hook/useCatalogo";
-import {estatusOperaciones} from "../../../services/operacion-tesoreria";
+import {consultaEnvioSucursal, estatusOperaciones} from "../../../services/operacion-tesoreria";
 import {TableComponent} from "../../commons/tables";
 import {useState} from "react";
 
 export const EstatusDotaciones = () => {
 
+    const catalogo = useCatalogo([20,17]);
     const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
+    const [formData,setFormData] = useState('');
 
-    const catalogo = useCatalogo([20,17]);
+    const refreshQuery = async () => {
+        const response = await estatusOperaciones(formData);
+        setData(response);
+    }
 
     const options = {
         showMostrar:true,
@@ -20,14 +25,14 @@ export const EstatusDotaciones = () => {
         tools: [
             {columna:"Estatus",tool:'estatus'},
             {columna:"Detalle",tool:'detalle',params:{opcion:2}},
-            {columna:"Cancelar",tool:'cancelar-tesoreria'}
+            {columna:"Cancelar",tool:'cancelar-tesoreria',refresh:refreshQuery}
         ]
     }
 
     const onSubmitEstatus = handleSubmit(async (data) => {
         const encryptedData = encryptRequest(data);
+        setFormData(encryptedData);
         const response = await estatusOperaciones(encryptedData);
-        console.log(response)
         setData(response);
         setShowTable(true)
     });
@@ -45,11 +50,11 @@ export const EstatusDotaciones = () => {
                             {...register("tipo_operacion", {
                                 required: {
                                     value: true,
-                                    message: "Debes de seleccionar al menos una tipo de operación.",
+                                    message: "Debes de seleccionar al menos un tipo de operación.",
                                 },
                                 validate: (value) => {
                                     return (
-                                        value !== "0" || "Debes seleccionar una tipo de operación válido."
+                                        value !== "0" || "Debes seleccionar un tipo de operación válido."
                                     );
                                 },
                             })}

@@ -1,24 +1,38 @@
 import {useForm} from "react-hook-form";
 import {useState} from "react";
-import {encryptRequest} from "../../../utils";
-import {estatusOperaciones} from "../../../services/operacion-tesoreria";
-import {TableComponent} from "../../commons/tables";
+import {consultaEnvioSucursal} from "../../../../services/operacion-tesoreria";
+import {encryptRequest} from "../../../../utils";
+import {TableComponent} from "../../../commons/tables";
+import {dataG} from "../../../../App";
+import {consultaDotacionSucursal} from "../../../../services/operacion-sucursal";
 
-export const EstatusOperacionesSucursal = () => {
+export const EnvioOperaciones = () => {
     const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
+    const [formData,setFormData] = useState('');
+
+    const refreshQuery = async () =>{
+        const response = await consultaDotacionSucursal(formData);
+        setData(response);
+    }
 
     const options = {
         showMostrar:true,
         buscar: true,
         paginacion: true,
+        tools:[
+            {columna:"Estatus",tool:"estatus"},
+            {columna:"Cancelar",tool:"cancelar-envio-sucursal",refresh:refreshQuery},
+            {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
+        ]
     }
 
     const onSubmitRecepcion = handleSubmit(async (data) => {
+        data.sucursal = dataG.sucursal;
         const encryptedData = encryptRequest(data);
-        const response = await estatusOperaciones(encryptedData);
-        console.log(response)
+        setFormData(encryptedData);
+        const response = await consultaDotacionSucursal(encryptedData);
         setData(response);
         setShowTable(true)
     });

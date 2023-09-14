@@ -7,8 +7,9 @@ import {TabsLayout} from "../../commons/tabs";
 import {ToastContainer} from "react-toastify";
 import {EnvioValoresSucursal} from "./EnvioValoresSucursal";
 import {DotacionCajaSucursal} from "./DotacionCajaSucursal";
-import {EstatusOperacionesSucursal} from "./EstatusOperacionesSucursal";
+import {EstatusOperacionesSucursal} from "./operaciones/EstatusOperacionesSucursal";
 import {ConsultasSucursal} from "./ConsultasSucursal";
+import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 
 export const SucursalOperativa = () => {
     const moduleName= {
@@ -28,7 +29,9 @@ export const SucursalOperativa = () => {
         <>
             <Layout moduleName={moduleName}>
                 <CardLayout title={moduleName.module} icon={moduleName.icon}>
-                    <TabsLayout tabs={tabs}/>
+                    <DenominacionProvider>
+                        <TabsLayout tabs={tabs}/>
+                    </DenominacionProvider>
                 </CardLayout>
             </Layout>
 
