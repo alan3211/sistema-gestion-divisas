@@ -56,7 +56,7 @@ export const obtenerObjetoDenominaciones = (denominacionesObj) => {
     for (const key in denominacionesObj) {
         if (denominacionesObj.hasOwnProperty(key) && key !== 'divisa' && key !== 'tipoOperacion' && key !== 'movimiento') {
             if(denominacionesObj[key].nombre !== undefined && denominacionesObj[key].cantidad !== undefined)
-            denominacionesArray.push({ nombre: denominacionesObj[key].nombre, cantidad: denominacionesObj[key].cantidad });
+            denominacionesArray.push({ nombre: denominacionesObj[key].nombre, cantidad: parseInt(denominacionesObj[key].cantidad) });
         }
     }
     return {

@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from "react";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest,
+    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDate,
     formattedDateWS, getDenominacion,
     obtenerObjetoDenominaciones,
     validarMoneda,
@@ -13,161 +13,63 @@ import {dataG} from "../../../App";
 import {toast} from "react-toastify";
 import {Denominacion} from "../denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
+import {getDotaciones} from "../../../services/operacion-caja";
+import {TableComponent} from "../../commons/tables";
+import {consultaDotacionSucursal} from "../../../services/operacion-sucursal";
 
 export const DotacionComponent = () => {
 
-    const {dotacion:{showDenominacion,setShowDenominacion,dotacionForm}} = useContext(CajaContext);
-    const {denominacionD} = useContext(DenominacionContext);
-    const catalogo = useCatalogo([15]);
-    const [habilita,setHabilita] =  useState({
-        recibe: true,
-        entrega: true,
-    });
+    const [data,setData] = useState({});
+    const [showData,setShowData] = useState(false);
+    const [formData,setFormData] = useState('');
+
+
+    useEffect(()=>{
+
+        const valores = {
+            fecha: formattedDate,
+            usuario: dataG.usuario,
+            sucursal: dataG.sucursal,
+        }
+        const encryptedData = encryptRequest(valores);
+
+        const getConsultaDotaciones = async () =>{
+            setFormData(encryptedData);
+            const data_response = await getDotaciones(encryptedData);
+            data_response.headers = [...data_response.headers,'Acciones'];
+            setData(data_response);
+            setShowData(true);
+        }
+        getConsultaDotaciones();
+    },[]);
+
+    const refreshQuery = async () =>{
+        const data_response = await getDotaciones(formData);
+        data_response.headers = [...data_response.headers,'Acciones'];
+        setData(data_response);
+    }
 
     const options = {
-        title: '',
-        importe: parseFloat(dotacionForm.watch('cantidad_recibida')).toFixed(2),
-        habilita,
-        setHabilita,
+        showMostrar:true,
+        buscar: true,
+        paginacion: true,
+        tools:[
+            {columna:"Estatus",tool:"estatus"},
+            {columna:"Acciones",tool:"acciones-caja", refresh:refreshQuery},
+            {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
+
+        ]
     }
 
-    const terminarDotacion = dotacionForm.handleSubmit(async (data)=>{
-        console.log("Terminar Operacion");
-        console.log(data);
-        let denominacionesDotacion = denominacionD.getValues();
-
-        const formValuesD = getDenominacion(data.moneda,denominacionesDotacion)
-
-        console.log(formValuesD);
-         eliminarDenominacionesConCantidadCero(formValuesD);
-         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
-         denominaciones.divisa = data.moneda;
-         denominaciones.tipoOperacion = '0';
-         denominaciones.movimiento = 'DOTACION';
-
-         const values = {
-             cliente: '',
-             ticket: `DOT${dataG.sucursal}${dataG.usuario}${formattedDateWS}`,
-             divisa: data.moneda,
-             usuario: dataG.usuario,
-             sucursal: dataG.sucursal,
-             traspaso: '',
-             diferencia:0.0,
-             denominacion:[
-                 denominaciones,
-             ]
-         }
-
-
-         const encryptedData = encryptRequest(values);
-
-         const resultado = await realizarOperacion(encryptedData);
-
-         console.log(resultado);
-         if(resultado){
-             toast.success(`Se ha realizado la dotación correctamente de ${data.moneda}`,{
-                 position: "top-center",
-                 autoClose: 3000,
-                 hideProgressBar: false,
-                 closeOnClick: true,
-                 pauseOnHover: true,
-                 theme: "light",
-             });
-             cleanParameters();
-         }
-    });
-
-    useEffect(() => {
-        if(dotacionForm.watch("moneda") === '0'){
-            setShowDenominacion(false);
-        }else{
-            setShowDenominacion(true);
-        }
-    }, [dotacionForm.watch("moneda")]);
-
-
-    const cleanParameters = () => {
-        dotacionForm.reset();
-        denominacionD.reset();
-    }
+    console.log(data);
 
     return(
-        <>
-            <form className="row m-1 g-3 justify-content-center" onSubmit={terminarDotacion} noValidate>
-                <div className="col-md-3">
-                    <div className="form-floating">
-                        <input
-                            {...dotacionForm.register("cantidad_recibida",{
-                                required:{
-                                    value:true,
-                                    message:'El campo Cantidad Recibida no puede ser vacio.'
-                                },
-                                validate: {
-                                    validacionMN: (value) => validarMoneda("Cantidad Recibida",value),
-                                    mayorACero: value => parseFloat(value) > 0 || "La Cantidad Recibida debe ser mayor a 0",
-                                }
-                            })}
-                            type="text"
-                            className={`form-control ${!!dotacionForm.formState.errors?.cantidad_recibida ? 'invalid-input':''}`}
-                            id="cantidad_recibida"
-                            name="cantidad_recibida"
-                            placeholder="Ingresa la cantidad recibida"
-                        />
-                        <label htmlFor="cantidad_recibida">Cantidad a Recibir:</label>
-                        {
-                            dotacionForm.formState.errors?.cantidad_recibida && <div className="invalid-feedback-custom">{dotacionForm.formState.errors?.cantidad_recibida.message}</div>
-                        }
-                    </div>
-                </div>
-                <div className="col-md-3">
-                    <div className="form-floating mb-3">
-                        <select
-                            {...dotacionForm.register("moneda",{
-                                required:{
-                                    value:true,
-                                    message:'Debes de seleccionar al menos un tipo de moneda.'
-                                },
-                                validate: value => {
-                                    return value !== "0" || 'Debes seleccionar un tipo de moneda válido.';
-                                }
-                            })}
-                            className={`form-select ${!!dotacionForm.formState.errors?.moneda ? 'invalid-input':''}`}
-                            id="moneda"
-                            name="moneda"
-                            aria-label="Moneda"
-                        >
-                            <option value="0">Selecciona una opción</option>
-                            {
-                                catalogo[0]?.map((ele) => (
-                                    <option key={ele.id + '-' + ele.descripcion}
-                                            value={ele.id}>
-                                        {ele.descripcion}
-                                    </option>
-                                ))
-                            }
-                        </select>
-                        <label htmlFor="moneda">Moneda</label>
-                        {
-                            dotacionForm.formState.errors?.moneda && <div className="invalid-feedback-custom">{dotacionForm.formState.errors?.moneda.message}</div>
-                        }
-                    </div>
-                </div>
-                 <div className="d-flex justify-content-center">
-                     {
-                         showDenominacion && <Denominacion type="D" moneda={dotacionForm.watch('moneda')} options={options}/>
-                     }
-                 </div>
-                <div className="col-md-12 d-flex justify-content-center">
-                    <button className="btn btn-secondary me-3" onClick={()=>cleanParameters()}>
-                        <i className="ri ri-settings-line"></i> Nueva Dotación
-                    </button>
-                    <button type="submit" className="btn btn-primary" disabled={habilita.entrega}>
-                        <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
-                        Finalizar Operación
-                    </button>
-                </div>
-
-            </form>
-        </>
+        <div className="mt-4">
+            {showData ? (
+                <TableComponent data={data} options={options} />
+            ) : (
+                <p>Cargando datos...</p>
+            )}
+        </div>
     );
 }

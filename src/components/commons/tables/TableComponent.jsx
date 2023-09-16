@@ -147,7 +147,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                     <div className="datatable-info">
                         Mostrando
                         página <strong>{currentPage}</strong> de <strong>{totalPages}</strong> de <strong>{filteredData.length} </strong>
-                        {totalPages === 1 ? 'registro': 'registros'}
+                        {filteredData.length === 1 ? 'registro': 'registros'}
                     </div>
                     <nav className="datatable-pagination">
                         <ul className="datatable-pagination-list">

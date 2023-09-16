@@ -1,4 +1,5 @@
 import {
+    AccionesCaja,
     AccionesSucursales,
     AccionesTesoreria,
     CancelarEnvioSucursal,
@@ -16,6 +17,7 @@ const toolComponents = {
     'cancelar-envio-sucursal': CancelarEnvioSucursal,
     'acciones-sucursales': AccionesSucursales,
     'selecciona-cliente': SeleccionarCliente,
+    'acciones-caja': AccionesCaja,
 };
 
 export const getTools = (toolInfo, item, index) => {
