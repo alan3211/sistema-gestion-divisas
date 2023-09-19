@@ -12,11 +12,14 @@ import {toast, ToastContainer} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
+import {ModalAccionTesoreriaTool} from "./ModalTools";
+import {Ticket} from "../../ticket/ticket";
 
 export const ModalDeliverComponent = ({configuration}) =>{
 
     const {showCustomModal,setShowCustomModal,operacion,data} = configuration;
     const [showCambio,setShowCambio] = useState(false);
+    const [showTicket,setShowTicket] = useState(false);
     const [habilita,setHabilita] =  useState({
         recibe: true,
         entrega: true,
@@ -27,7 +30,10 @@ export const ModalDeliverComponent = ({configuration}) =>{
         denominacionE,
     } = useContext(DenominacionContext);
 
-
+    const muestraTicket = () => {
+        console.log("TICKET");
+        setShowTicket(true);
+    }
 
     //Muestra el título correcto
     const titulo = `Operación ${operacion.tipo_operacion === "1" ? 'Compra': 'Venta'}`;
@@ -162,6 +168,12 @@ export const ModalDeliverComponent = ({configuration}) =>{
         setHabilita,
     }
 
+    const optionsTicket = {
+        showModal:showTicket,
+        closeCustomModal: () => setShowTicket(false),
+        title: 'Imprimir ticket',
+        icon: 'bi bi-printer-fill me-2',
+    };
 
 
     return(
@@ -216,6 +228,10 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 </Modal.Body>
 
                 <Modal.Footer>
+                    <Button variant="secondary" onClick={muestraTicket} disabled={habilita.entrega || habilita.recibe}>
+                        <i className="bi bi-printer-fill me-2"></i>
+                        Imprimir Ticket
+                    </Button>
                     <Button variant="primary" onClick={()=> hacerOperacion()} disabled={habilita.entrega || habilita.recibe}>
                         <i className="bi bi-check-circle-fill me-2"></i>
                         Finalizar Operación
@@ -235,6 +251,13 @@ export const ModalDeliverComponent = ({configuration}) =>{
                         habilita={habilita}
                         setHabilita={setHabilita}
                     />
+            }
+
+            {
+                showTicket
+                && (<ModalAccionTesoreriaTool options={optionsTicket}>
+                    <Ticket/>
+                </ModalAccionTesoreriaTool>)
             }
 
         </>

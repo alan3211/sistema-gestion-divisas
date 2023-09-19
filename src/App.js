@@ -6,8 +6,8 @@ import {AltaClientesComponent} from "./components/operacion/altaClientes";
 import {CompraVentaComponent} from "./components/operacion/compraVenta";
 import {LoginComponent} from "./components/login";
 import {CajaComponent} from "./components/operacion/cajaOperativa";
-import {Usuarios} from "./components/administracion/Usuarios";
-import {Catalogo} from "./components/administracion/Catalogo";
+import {Usuarios} from "./components/administracion/usuarios/Usuarios";
+import {Catalogo} from "./components/administracion/catalogos/Catalogo";
 
 import {AltaClienteProvider} from "./context/AltaCliente/AltaClienteProvider";
 import {CompraVentaProvider} from "./context/compraVenta/CompraVentaProvider";

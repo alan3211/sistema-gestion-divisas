@@ -74,6 +74,17 @@ export const validarAlfaNumerico = (name, value) => {
     return true;
 };
 
+export const validarMayus = (name, value) => {
+    const mayusculasRegex = /^[A-Z]{1,4}$/;
+    if (!mayusculasRegex.test(value)) {
+        return `El campo ${name} debe contener solo letras mayúsculas y tener un máximo de 4 caracteres.`;
+    }
+    return true;
+};
+
+
+
+
 export const validarNumeroTelefono = (name,value) => {
     const phoneNumberRegex = /^\d{10}$/;
     if (!phoneNumberRegex.test(value)) {

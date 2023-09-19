@@ -104,7 +104,6 @@ export const AltaClienteComplementario = memo(() => {
 
     return (
         <>
-            {/*Sección de Datos complementarios*/}
             <form className="row g-3" onSubmit={handleValidateFinalForm} noValidate>
                 <CardLayout title="Datos Complementarios" icon="ri-file-list-2-fill p-2">
                     <div className="row">
