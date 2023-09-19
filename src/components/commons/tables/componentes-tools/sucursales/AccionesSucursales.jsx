@@ -91,6 +91,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             setShowModal(false);
             refresh();
             reset();
+            denominacionD.reset()
         }
     }
 

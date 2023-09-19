@@ -25,15 +25,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
         recibe: true,
         entrega: true,
     });
-    const {denominacionD} = useContext(DenominacionContext);
     const [data,setData] = useState([]);
-
-    const optionsDenominacion = {
-        title: `Moneda ${item.Moneda}`,
-        importe: parseFloat(item.Monto).toFixed(2),
-        habilita,
-        setHabilita,
-    }
 
     /*Aqui se diferencia entre un boton de aceptar y otro de rechazar*/
     const onHandleOptions = (option) => {
