@@ -68,7 +68,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         denominaciones.divisa = values.moneda;
         denominaciones.tipoOperacion = '0';
         denominaciones.movimiento = 'DOTACION SUCURSAL';
-        debugger
         values.denominacion = [
             denominaciones,
         ]

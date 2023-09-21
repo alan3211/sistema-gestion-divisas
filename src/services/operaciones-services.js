@@ -1,4 +1,5 @@
 import {
+    CAJA_CONSULTA_URL,
     OPERACIONES_ALTACLIENTE_URL,
     OPERACIONES_BUSCACLIENTE_URL, OPERACIONES_CONSULTACAJA_URL,
     OPERACIONES_CONSULTALDENOMINACIONES_URL,
@@ -184,31 +185,6 @@ export const hacerOperacion =  async(formValues) => {
 export const realizarOperacion =  async(formValues) => {
     try {
         const url = `${OPERACIONES_REALIZAOPERACION_URL}`;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify({encryptedData:formValues})
-        });
-
-        if (!response.ok) {
-            throw new Error('Error en la solicitud al backend');
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
-    }
-}
-
-export const consultaCaja =  async(formValues) => {
-    try {
-        const url = `${OPERACIONES_CONSULTACAJA_URL}`;
 
         const response = await fetch(url, {
             method: 'POST',
