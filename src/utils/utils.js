@@ -67,6 +67,17 @@ export const obtenerObjetoDenominaciones = (denominacionesObj) => {
     };
 }
 
+export const obtenerArrayDifDenominaciones = (denominacionesObj) => {
+    const denominacionesArray = [];
+    for (const key in denominacionesObj) {
+        if (denominacionesObj.hasOwnProperty(key)) {
+            if(denominacionesObj[key].nombre !== undefined && denominacionesObj[key].cantidad !== undefined)
+                denominacionesArray.push({ nombre: denominacionesObj[key].nombre, cantidad: parseInt(denominacionesObj[key].cantidad) });
+        }
+    }
+    return denominacionesArray
+}
+
 export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominaciones = [
         'p1', 'p2', 'p5',
@@ -86,6 +97,33 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     for (const nombre of denominaciones) {
         const valor = nombre.startsWith('p') ? `0.${nombre.substring(1)}` : nombre;
         denominacionObj[`denominacion_${nombre}`] = {
+            nombre: valor,
+            cantidad: getDenominacionCantidad(nombre)
+        };
+    }
+
+    return denominacionObj;
+};
+
+export const getDiferenciaDenominacion = (divisa = 'MXP', replaceValues) => {
+    const denominaciones = [
+        'p1', 'p2', 'p5',
+        '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+    ];
+
+    const getDenominacionCantidad = (nombre) => {
+        if (replaceValues && replaceValues.hasOwnProperty(`diferencia_${nombre}`)) {
+            const cantidad = replaceValues[`diferencia_${nombre}`];
+            return cantidad === '' ? 0 : parseInt(cantidad);
+        }
+        return 0; // Si no existe la propiedad, asignar 0 por defecto
+    };
+
+    const denominacionObj = { divisa };
+
+    for (const nombre of denominaciones) {
+        const valor = nombre.startsWith('p') ? `0.${nombre.substring(1)}` : nombre;
+        denominacionObj[`diferencia_${nombre}`] = {
             nombre: valor,
             cantidad: getDenominacionCantidad(nombre)
         };
@@ -121,7 +159,8 @@ export const recordValues = (values) =>{
 }
 
 export const DENOMINACIONES = {
-    USD: "DOLARES",
+    USD: "DOLARES AMERICANOS",
     EUR: "EUROS",
-    GBR: "LIBRAS"
+    GBR: "LIBRAS",
+    MXP:'PESOS MEXICANOS'
 }

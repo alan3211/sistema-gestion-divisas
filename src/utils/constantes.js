@@ -1,6 +1,6 @@
 //const URL = 'http://grocerys-backend.cpd2aadzgsaweuax.eastus.azurecontainer.io:9000/';
-const URL = 'http://192.168.101.45:9000/';
-//const URL = 'http://localhost:9000/';
+//const URL = 'http://192.168.101.45:9000/';
+const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -26,7 +26,6 @@ export const OPERACIONES_BUSCACLIENTE_URL = `${OPERACIONES_URL}buscaCliente`
 export const OPERACIONES_HACEROPERACION_URL = `${OPERACIONES_URL}realiza/preoperacion`
 export const OPERACIONES_REALIZAOPERACION_URL = `${OPERACIONES_URL}realiza/operacion`
 export const OPERACIONES_CONSULTALDENOMINACIONES_URL = `${OPERACIONES_URL}consulta/denominaciones/`
-export const OPERACIONES_CONSULTACAJA_URL = `${OPERACIONES_URL}caja/consulta`
 
 export const TESORERIA_CONSULTA_SALDO_URL = `${TESORERIA_URL}consulta`
 export const TESORERIA_DOTACION_SUCURSALES_URL = `${TESORERIA_URL}dotacion-sucursal/dota`
@@ -41,6 +40,9 @@ export const SUCURSAL_MOVIMIENTOS_URL = `${SUCURSAL_URL}operativa/movimientos`
 
 /*OPERACION CAJA*/
 export const CAJA_CONSULTA_DOTACIONES_URL = `${CAJA_URL}consulta/dotaciones`
+export const CAJA_CONSULTA_URL = `${CAJA_URL}consulta`
+export const CAJA_ENTREGA_URL = `${CAJA_URL}entrega`
+
 
 /*ENDPOINTS DE TOOLS*/
 export const TOOLS_CONSULTA_DETALLE_URL = `${TOOLS_URL}consulta/detalle`
@@ -51,6 +53,7 @@ export const TOOLS_CANCELAR_DOTACION_SUCURSAL_URL = `${TOOLS_URL}cancelar/dotaci
 export const TOOLS_OBTIENE_DENOMINACIONES_URL = `${TOOLS_URL}consulta/denominaciones`
 
 export const TOOLS_ACCIONES_CAJA_URL = `${TOOLS_URL}acciones/dotacion-caja`
+export const TOOLS_MUESTRA_DENOMINACIONES_URL = `${TOOLS_URL}muestra/denominaciones`
 
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`

@@ -74,3 +74,22 @@ export const ModalAccionesTool = ({options,children}) => {
         </Modal>
     );
 }
+
+export const ModalGenericTool = ({options,children}) => {
+    return (
+        <Modal centered size={options.size} show={options.showModal} onHide={options.closeCustomModal}>
+            <Modal.Header closeButton>
+                <Modal.Title>
+                    <h5>
+                        <i className={options.icon}></i>
+                        {options.title}
+                    </h5>
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{options.subtitle}</p>
+                {children}
+            </Modal.Body>
+        </Modal>
+    );
+}
