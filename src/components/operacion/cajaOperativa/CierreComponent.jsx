@@ -5,7 +5,7 @@ export const CierreComponent = () => {
         <>
             <div className="row">
                 <div className="col-md-12">
-                    <CuentaCajaComponent/>
+                    <CuentaCajaComponent tipo='Cierre'/>
                 </div>
             </div>
         </>

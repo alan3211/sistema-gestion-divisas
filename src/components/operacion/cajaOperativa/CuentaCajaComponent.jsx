@@ -1,13 +1,11 @@
-import {DENOMINACIONES, formattedDateDD, mensajeSinElementos} from "../../../utils";
+import {formattedDateDD, mensajeSinElementos} from "../../../utils";
 import {MessageComponent} from "../../commons";
 import {useCaja} from "../../../hook/useCaja";
-import { Carousel } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import {useState} from "react";
 import {TableComponent} from "../../commons/tables";
 import {ResumenCaja} from "./ResumenCaja";
 
-export const CuentaCajaComponent = () => {
+export const CuentaCajaComponent = ({tipo}) => {
 
     const {data,showTable} = useCaja();
     const [showDetalle,setShowDetalle] = useState(false);
@@ -41,8 +39,7 @@ export const CuentaCajaComponent = () => {
                {
                    showDetalle && (
                        <>
-                           <h5 className="p-2 ">Denominacion: {DENOMINACIONES[moneda] || ''}</h5>
-                           <ResumenCaja data={dataDenominacion} moneda={moneda} setShowDetalle={setShowDetalle}/>
+                           <ResumenCaja data={dataDenominacion} moneda={moneda} setShowDetalle={setShowDetalle} tipo={tipo}/>
                        </>
                    )
                }
