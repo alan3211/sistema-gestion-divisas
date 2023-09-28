@@ -7,7 +7,7 @@ import {getTools} from "./operaciones/operaciones-tools";
 
 
 export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
-    const [perPage, setPerPage] = useState(10);
+    const [perPage, setPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const [sortColumn, setSortColumn] = useState("");
@@ -79,7 +79,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                  style={{"fontSize": "12px"}}>
                 <div className="datatable-top">
                     {
-                        showMostrar && (<div className="datatable-dropdown">
+                        (showMostrar && (filteredData.length >= 5)) && (<div className="datatable-dropdown">
                         <label>
                             Mostrar
                             <select
@@ -96,7 +96,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                             por página
                         </label>
                     </div>)}
-                    {buscar && (<div className="datatable-search">
+                    {  (buscar && (filteredData.length >= 5)) && (<div className="datatable-search">
                         <div className="search-input-container">
                             <input
                                 key="searchTable"
@@ -149,47 +149,49 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                         página <strong>{currentPage}</strong> de <strong>{totalPages}</strong> de <strong>{filteredData.length} </strong>
                         {filteredData.length === 1 ? 'registro': 'registros'}
                     </div>
-                    <nav className="datatable-pagination">
-                        <ul className="datatable-pagination-list">
-                            {Array.from({length: totalPages}, (_, index) => index + 1).map((page) => (<li
-                                    key={page}
-                                    className={page === currentPage ? "active" : ""}
-                                    onClick={() => goToPage(page)}
-                                >
-                                </li>))}
-                        </ul>
-                    </nav>
-                    <nav aria-label="Page navigation">
-                        <ul className="pagination pagination-sm">
-                            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                                <button
-                                    className="page-link"
-                                    onClick={goToPreviousPage}
-                                    aria-label="Previous"
-                                >
-                                    <span aria-hidden="true">«</span>
-                                </button>
-                            </li>
-                            {Array.from({length: totalPages}, (_, index) => index + 1).map((page) => (<li
-                                    key={page}
-                                    className={`page-item ${page === currentPage ? "active" : ""}`}
-                                >
+                    {  filteredData.length > 5 &&
+                        (
+                            <>
+                            <nav className="datatable-pagination">
+                            <ul className="datatable-pagination-list">
+                                {Array.from({length: totalPages}, (_, index) => index + 1).map((page) => {
+                                        return (<li key={page} className={page === currentPage ? "active" : ""}
+                                                    onClick={() => goToPage(page)}></li>)
+                                    }
+                                )}
+                            </ul>
+                        </nav>
+                        <nav aria-label="Page navigation">
+                            <ul className="pagination pagination-sm">
+                                 <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                        <button
+                                                className="page-link"
+                                                onClick={goToPreviousPage}
+                                                aria-label="Previous"
+                                        >
+                                        <span aria-hidden="true">«</span>
+                                        </button>
+                                 </li>
+                                {Array.from({length: totalPages}, (_, index) => index + 1).map((page) => (<li
+                                    key={page} className={`page-item ${page === currentPage ? "active" : ""}`}>
                                     <button className="page-link" onClick={() => goToPage(page)}>
                                         {page}
                                     </button>
-                                </li>))}
-                            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                                <button
-                                    className="page-link"
-                                    onClick={goToNextPage}
-                                    aria-label="Next"
-                                >
-                                    <span aria-hidden="true">»</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>)}
+                                </li>
+                                ))}
+                                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                    <button
+                                        className="page-link"
+                                        onClick={goToNextPage}
+                                        aria-label="Next"
+                                    >
+                                        <span aria-hidden="true">»</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav></>)}
+                    </div>)
+                }
             </div>
         </>);
 };

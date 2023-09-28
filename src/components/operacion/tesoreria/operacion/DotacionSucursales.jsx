@@ -57,7 +57,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                             name="sucursal"
                             aria-label="Sucursal"
                         >
-                            <option value="0">Selecciona una opción</option>
+                            <option value="0">SELECCIONA UNA OPCIÓN</option>
                             {catalogo[0]?.map((ele) => (
                                 <option
                                     key={ele.id + "-" + ele.descripcion}
@@ -96,7 +96,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                             name="moneda"
                             aria-label="Moneda"
                         >
-                            <option value="0">Selecciona una opción</option>
+                            <option value="0">SELECCIONA UNA OPCIÓN</option>
                             {catalogo[1]?.map((ele) => (
                                 <option
                                     key={ele.id + "-" + ele.descripcion}

@@ -92,7 +92,7 @@ export const CargaTipoCambioOpera = ({id}) => {
                                     name="region"
                                     aria-label="Región"
                                 >
-                                    <option value="0">Selecciona una opción</option>
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[0]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -131,7 +131,7 @@ export const CargaTipoCambioOpera = ({id}) => {
                                     name="sucursal"
                                     aria-label="Sucursal"
                                 >
-                                    <option value="0">Selecciona una opción</option>
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[1]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}

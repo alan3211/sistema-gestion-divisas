@@ -4,7 +4,6 @@ import {INICIO_URL, LOGIN_URL, REFRESH_TOKEN_URL, TOKEN_URL} from "../utils";
 export const getValidaTipoCambioDia = async (formValues) => {
     try {
         const url = `${INICIO_URL}`;
-        console.log("INICIO: " ,formValues)
         const response = await fetch(url, {
             method: 'POST',
             headers: {

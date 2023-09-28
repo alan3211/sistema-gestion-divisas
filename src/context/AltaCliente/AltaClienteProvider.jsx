@@ -9,6 +9,7 @@ export const AltaClienteProvider = ({children}) => {
     const [messageActive,setMessageActive] =  useState(false);
     const [isloading,setIsloading] = useState(false);
     const [dataClientes, setDataClientes ] = useState([]);
+    const [showEdit, setShowEdit] = useState(false);
 
     const {
         register,
@@ -16,6 +17,7 @@ export const AltaClienteProvider = ({children}) => {
         formState:{errors},
         watch,
         reset,
+        setValue,
     } = useForm({defaultValues:AltaClienteFormulario});
 
     const propForm = {
@@ -32,6 +34,9 @@ export const AltaClienteProvider = ({children}) => {
         errors,
         watch,
         reset,
+        setValue,
+        showEdit,
+        setShowEdit
     }
     return(
         <AltaClienteContext.Provider value={{propForm}}>

@@ -89,7 +89,7 @@ export const AsignaUsuario = () => {
                             name="sucursal_origen"
                             aria-label="Sucursal Origen"
                         >
-                            <option value="0">Selecciona una opción</option>
+                            <option value="0">SELECCIONA UNA OPCIÓN</option>
                             {
                                 catalogo[0]?.map((ele) => (
                                     <option key={ele.id + '-' + ele.descripcion}
@@ -124,7 +124,7 @@ export const AsignaUsuario = () => {
                             aria-label="usuario"
                             disabled={(watch('sucursal_origen') === '0') && usuarios.length === 0}
                         >
-                            <option value="0">Selecciona una opción</option>
+                            <option value="0">SELECCIONA UNA OPCIÓN</option>
                             {
                                 usuarios && usuarios.map((ele) => (
                                     <option key={ele.Usu + '-' + ele.Nombre} value={ele.Usu}>
@@ -157,7 +157,7 @@ export const AsignaUsuario = () => {
                             name="sucursal_destino"
                             aria-label="Sucursal Destino"
                         >
-                            <option value="0">Selecciona una opción</option>
+                            <option value="0">SELECCIONA UNA OPCIÓN</option>
                             {
                                 catalogo[0]?.map((ele) => (
                                     <option key={ele.id + '-' + ele.descripcion}

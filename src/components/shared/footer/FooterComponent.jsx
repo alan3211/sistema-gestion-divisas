@@ -15,7 +15,7 @@ export const FooterComponent = () =>{
                     &copy; Copyright <strong><span>Sistema de Gestión de Divisas</span></strong>. Todos los derechos reservados.
                 </div>
                 <div className="credits">
-                    Grocerys Centro de Cambio - {year}
+                    Grocerys Centro Cambiario - {year}
                 </div>
             </footer>
 
