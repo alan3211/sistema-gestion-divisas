@@ -32,12 +32,12 @@ export let dataG = {
 };
 const App = () => {
     return (
-        <>
+        <div className="app-root content">
             <Router>
                 <Routes>
                     <Route exact path="/" element={<LoginComponent/>}/>
                     <Route path="/inicio" element={<MainLayout><MainComponent/></MainLayout>}/>
-                    <Route path="/altaClientes" element={
+                    <Route path="/altaUsuarios" element={
                         <MainLayout><AltaClienteProvider><AltaClientesComponent/></AltaClienteProvider></MainLayout>}/>
                     <Route path="/compraVenta" element={
                         <MainLayout><CompraVentaProvider><CompraVentaComponent/></CompraVentaProvider></MainLayout>}/>
@@ -48,12 +48,12 @@ const App = () => {
                            element={<MainLayout><TesoreriaProvider><Tesoreria/></TesoreriaProvider></MainLayout>}/>
                     <Route exact path="/cargaTipoCambio" element={
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
-                    <Route exact path="/usuarios" element={<MainLayout><Usuarios/></MainLayout>}/>
+                    <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>
                     <Route exact path="/catalogos" element={<MainLayout><Catalogo/></MainLayout>}/>
                 </Routes>
             </Router>
             <ToastContainer/>
-        </>
+        </div>
   );
 }
 export default App;

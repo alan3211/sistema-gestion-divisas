@@ -1,5 +1,5 @@
 import logo from '../../assets/logo.png';
-import {encryptRequest, recordValues, validarAlfaNumerico, year} from "../../utils";
+import {encryptRequest, OPTIONS, recordValues, validarAlfaNumerico, year} from "../../utils";
 import {useForm} from "react-hook-form";
 import {getUser} from "../../services";
 import {toast, ToastContainer} from "react-toastify";
@@ -27,7 +27,6 @@ export const LoginComponent = () => {
         if(!datos.hasOwnProperty('resultSize')){
             localStorage.setItem("token",datos.token); // Se guarda el token
             localStorage.setItem("refresh_token",datos.refresh_token); // Se guarda el refresh
-            console.log(datos)
             const decodedToken = jwt_decode(datos.token);
             if (decodedToken.usuario) {
                 dataG.sucursal = parseInt(decodedToken.sucursal);
@@ -45,14 +44,7 @@ export const LoginComponent = () => {
         }else {
             if(datos.resultSize === 0){
                 reset()
-                toast.warn('El usuario ingresado no existe.', {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    theme: "light",
-                });
+                toast.warn('El usuario ingresado no existe.', OPTIONS);
             }
         }
 

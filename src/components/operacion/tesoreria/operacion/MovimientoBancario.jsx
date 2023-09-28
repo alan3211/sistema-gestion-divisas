@@ -63,7 +63,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                         name="tipo_movimiento"
                         aria-label="tipo_movimiento"
                     >
-                        <option value="0">Selecciona una opción</option>
+                        <option value="0">SELECCIONA UNA OPCIÓN</option>
                         {catalogo[0]?.map((ele) => (
                             <option
                                 key={ele.id + "-" + ele.descripcion}

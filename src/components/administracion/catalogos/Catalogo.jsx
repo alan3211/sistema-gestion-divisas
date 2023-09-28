@@ -46,7 +46,7 @@ export const Catalogo = () => {
                                 name="catalogo"
                                 aria-label="Catálogo"
                             >
-                                <option value="0">Selecciona una opción</option>
+                                <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {catalogos[0]?.map((ele) => (
                                     <option
                                         key={ele.id + "-" + ele.descripcion}
