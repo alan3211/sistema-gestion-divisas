@@ -3,14 +3,14 @@ import {useCatalogo} from "../../../hook/useCatalogo";
 import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest,
+    eliminarDenominacionesConCantidadCero, encryptRequest, FormatoMoneda,
     formattedDateWS,
     getDenominacion,
     obtenerObjetoDenominaciones,
     opciones, validarMoneda
 } from "../../../utils";
 import {dataG} from "../../../App";
-import {realizarOperacionSucursalDotacion} from "../../../services/operacion-sucursal";
+import {getCantidadDisponible, realizarOperacionSucursalDotacion} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
 import {Denominacion} from "../denominacion";
 import {getUsuariosSistema} from "../../../services";
@@ -26,6 +26,10 @@ export const DotacionCajaSucursal = () => {
         recibe: true,
         entrega: true,
     });
+    const [showDisponible,setShowDisponible] = useState({
+        isAvailable:false,
+        title: ''
+    })
 
     const {denominacionD} = useContext(DenominacionContext);
 
@@ -92,7 +96,21 @@ export const DotacionCajaSucursal = () => {
         const encryptedData = encryptRequest(valores)
         const data_usuarios = await getUsuariosSistema(encryptedData);
         setUsuariosCombo(data_usuarios);
+    }
 
+    const obtieneDisponibilidad = async () =>{
+        const valores = {
+            sucursal:dataG.sucursal,
+            divisa: watch("moneda")
+        }
+        const encryptedData = encryptRequest(valores)
+        const disponibilidad = await getCantidadDisponible(encryptedData);
+        console.log(disponibilidad);
+        setShowDisponible({
+            isAvailable: true,
+            cantidad: disponibilidad.result_set[0].Disponible
+        });
+        console.log(showDisponible);
     }
 
     useEffect(()=>{
@@ -102,8 +120,13 @@ export const DotacionCajaSucursal = () => {
     useEffect(() => {
         if(watch("moneda") === '0'){
             setShowDenominacion(false);
+            setShowDisponible({
+                isAvailable: false,
+                cantidad: '0'
+            });
         }else{
             setShowDenominacion(true);
+            obtieneDisponibilidad();
         }
     }, [watch("moneda")]);
 
@@ -199,6 +222,16 @@ export const DotacionCajaSucursal = () => {
                         errors?.moneda && <div className="invalid-feedback-custom">{errors?.moneda.message}</div>
                     }
                 </div>
+            </div>
+            <div className="col-md-6 mx-auto">
+                {
+                    showDisponible.isAvailable &&
+                    (<h5 className="text-blue text-center">
+                        <i className="bi bi-bank me-2"></i>
+                        <span>Disponible:</span>
+                        <strong className="ms-2">{FormatoMoneda(parseFloat(showDisponible.cantidad),watch("moneda"))}</strong>
+                    </h5>)
+                }
             </div>
             <div className="d-flex justify-content-center">
                 {

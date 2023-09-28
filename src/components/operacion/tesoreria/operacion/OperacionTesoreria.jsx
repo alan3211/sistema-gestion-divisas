@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {DotacionSucursales} from "./DotacionSucursales";
 import {MovimientoBancario} from "./MovimientoBancario";
-import {formateaMoneda} from "../../../../utils";
+import {formateaMoneda, FormatoMoneda} from "../../../../utils";
 import {useSaldo} from "../../../../hook/useSaldo";
 import {getConsultaSaldoCuenta} from "../../../../services/operacion-tesoreria";
 
@@ -33,7 +33,7 @@ export const OperacionTesoreria = () => {
             <h5 className="text-blue text-center">
                 <i className="bi bi-bank me-2"></i>
                 <span>Cuenta Bancaria:</span>
-                <strong className="ms-2">{formateaMoneda(saldoGeneral)}</strong>
+                <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral),'MXP')}</strong>
             </h5>
         </div>
         <div className="search-options d-flex justify-content-center align-items-center mt-3">

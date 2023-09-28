@@ -7,19 +7,22 @@ import {
 } from "../../../../../utils";
 import {ModalAccionTesoreriaTool} from "../../../modals";
 import {toast} from "react-toastify";
-import {accionesSucursal,} from "../../../../../services/tools-services";
-import {useContext, useState} from "react";
+import {accionesSucursal, getDenominaciones,} from "../../../../../services/tools-services";
+import {useContext, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {Denominacion} from "../../../../operacion/denominacion";
 import {DenominacionContext} from "../../../../../context/denominacion/DenominacionContext";
+import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
 
 export const AccionesSucursales = ({item, index, refresh}) => {
 
     const [showModal, setShowModal] = useState(false);
+    const [totalMonto, setTotalMonto] = useState(0);
     const {
         register,
         handleSubmit,
-        formState: {errors}, reset
+        formState: {errors},
+        setValue,reset
         , watch
     } = useForm();
     const [optionBtn, setOptionBtn] = useState(1);
@@ -27,6 +30,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         recibe: true,
         entrega: true,
     });
+    const [datosDenominacion,setDatosDenominacion] = useState([]);
 
     const {denominacionD} = useContext(DenominacionContext);
 
@@ -35,6 +39,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         importe: parseFloat(item.Monto).toFixed(2),
         habilita,
         setHabilita,
+        setTotalMonto,
     }
 
     /*Aqui se diferencia entre un boton de aceptar y otro de rechazar*/
@@ -96,13 +101,42 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
     const options = {
         showModal,
-        closeCustomModal: () => setShowModal(false),
+        closeCustomModal: () => {
+            setShowModal(false);
+            setValue("motivo",'');
+        },
         title: (optionBtn === 1) ? 'Aceptar Operación' : 'Rechazar Operación',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas el movimiento.',
     };
 
+    useEffect(() => {
+        const getDenominacionesAsignadas =  async () => {
+            const valores = {
+                ticket: item["No Movimiento"]
+            }
+            const encryptedData = encryptRequest(valores);
+            const data_denominacion = await getDenominaciones(encryptedData)
+            console.log("Denominacion de la DATA:",data_denominacion)
+            setDatosDenominacion(data_denominacion);
+        }
+        if(item.Operacion !== 'Dotación Sucursal'){
+            getDenominacionesAsignadas();
+        }
+    }, []);
+
+    const validaBtn = () => {
+        if(optionBtn === 1){
+            if(item.Operacion === 'Dotación Sucursal'){
+                return watch("motivo") === '' || parseFloat(item.Monto) !== parseFloat(totalMonto);
+            }else{
+                return watch("motivo") === '';
+            }
+        }else {
+            return watch("motivo") === '';
+        }
+    }
 
     return (
         <td key={index} className="text-center">
@@ -155,7 +189,10 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                         </div>
                                         <div className="col-md-6">
                                             <h5 className="text-center">Monto recibido: <strong>{item.Monto}</strong> </h5>
-                                            <Denominacion type="D" moneda={item.Moneda} options={optionsDenominacion}/>
+                                            {
+                                                (item.Operacion === 'Dotación Sucursal') ? (<Denominacion type="D" moneda={item.Moneda} options={optionsDenominacion}/>)
+                                                : (<DenominacionTable moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} />)
+                                            }
                                         </div>
                                     </div>
                                 )
@@ -194,7 +231,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                             }
                             <div className="d-flex justify-content-end mt-2">
                                 <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
-                                        disabled={watch("motivo") === '' || denominacionD === undefined}>
+                                        disabled={validaBtn()}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
                                     {optionBtn === 1 ? 'Aceptar' : 'Rechazar'}
                                 </button>

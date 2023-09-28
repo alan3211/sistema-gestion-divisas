@@ -61,6 +61,7 @@ export const useCaja = () => {
 
     return{
         data,
+        setData,
         showTable,
         catalogo,
         getIconAndClass,

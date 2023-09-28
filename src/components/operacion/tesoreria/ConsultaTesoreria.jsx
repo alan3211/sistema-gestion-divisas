@@ -1,4 +1,4 @@
-import {formateaMoneda} from "../../../utils";
+import {formateaMoneda, FormatoMoneda} from "../../../utils";
 import {useSaldo} from "../../../hook/useSaldo";
 
 export const ConsultaTesoreria = () => {
@@ -10,7 +10,7 @@ export const ConsultaTesoreria = () => {
             <h5 className="text-blue text-center">
                 <i className="bi bi-bank me-2"></i>
                  <span>Cuenta Bancaria:</span>
-                <strong className="ms-2">{formateaMoneda(saldoGeneral)}</strong>
+                <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral),'USD')}</strong>
             </h5>
 
         </div>

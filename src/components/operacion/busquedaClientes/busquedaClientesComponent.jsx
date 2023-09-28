@@ -1,19 +1,17 @@
-import {useContext, useEffect, useState} from "react";
+import {useContext, useState} from "react";
 import './busquedaClientes.css';
 import {CardLayout,} from "../../commons";
 import {FormCliente} from "./FormCliente";
 import {ClienteCoincidenciaComponent} from "./ClienteCoincidenciaComponent";
 import {DatosClientes} from "./DatosClientes";
-
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
-import {ToastContainer} from "react-toastify";
 
 export const BusquedaClientesComponent = () => {
 
     const {busquedaCliente:{showCliente,setShowCliente,data,setData},operacion} = useContext(CompraVentaContext);
-
     const [selectedOption, setSelectedOption] = useState("cliente");
 
+    /*Funciona para seleccionar una opcion del radio button(No Cliente o Nombre Completo)*/
     const handleRadioChange = ({target:{value}}) => {
         setSelectedOption(value);
     };

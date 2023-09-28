@@ -164,3 +164,30 @@ export const DENOMINACIONES = {
     GBR: "LIBRAS",
     MXP:'PESOS MEXICANOS'
 }
+
+export const FormatoMoneda = (cantidad,moneda) => {
+    console.log("CANTIDAD: ",cantidad)
+    console.log("TIPO CANTIDAD: ",typeof cantidad)
+    if (typeof cantidad === 'number') {
+        const formatoNumero = cantidad.toLocaleString('es-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        return formatoNumero.replace('$', '$ ');
+    } else {
+        console.log('La variable cantidad no es un número válido.');
+        return 'E'; // Opcional: Devuelve una cadena vacía en caso de error.
+    }
+}
+
+export const OPTIONS = {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    theme: "light",
+}

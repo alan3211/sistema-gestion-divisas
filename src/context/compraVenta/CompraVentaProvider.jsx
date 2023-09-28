@@ -24,6 +24,7 @@ export const CompraVentaProvider = ({children}) => {
         total_rows:0
     });
 
+    const [datos,setDatos] = useState({});
     const busquedaCliente = {
         selectedOption,
         setSelectedOption,
@@ -57,6 +58,8 @@ export const CompraVentaProvider = ({children}) => {
         busquedaCliente,
         cliente,
         setCliente,
+        datos,
+        setDatos,
     }
 
     return(

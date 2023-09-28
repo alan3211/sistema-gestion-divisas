@@ -1,11 +1,19 @@
 import {useContext} from 'react';
 import {dataG} from "../../../App";
-import {realizaConversion} from "../../../services";
+import {hacerOperacion, realizaConversion} from "../../../services";
 import {ModalConfirm} from "../../commons/modals";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {useCatalogo} from "../../../hook/useCatalogo";
-import {DENOMINACIONES, encryptRequest, validarMoneda} from "../../../utils";
-import {toast, ToastContainer} from "react-toastify";
+import {
+    DENOMINACIONES,
+    encryptRequest,
+    FormatoMoneda,
+    formattedDate,
+    hora,
+    OPTIONS,
+    validarMoneda
+} from "../../../utils";
+import {toast} from "react-toastify";
 
 export const CalculadoraFormComponent = () => {
 
@@ -24,16 +32,18 @@ export const CalculadoraFormComponent = () => {
         errors,
         reset,
         watch,
-        busquedaCliente: {setShowCliente}
+        busquedaCliente: {setShowCliente},
+        datos,setDatos,
     } = useContext(CompraVentaContext);
-    const catalogo = useCatalogo([9, 4])
+    const catalogo = useCatalogo([9, 4]);
 
-
+    /*Cierra el modal cuando se le da en la "x"*/
     const closeModal = () => {
-        setContinuaOperacion(false);
         setShowModal(false);
+        clearForm();
     }
 
+    /*Muestra la divisa en el input de acuerdo al tipo de operación*/
     const muestraDivisa = (opcion) => {
 
         if (opcion === 1) {
@@ -44,6 +54,7 @@ export const CalculadoraFormComponent = () => {
 
     }
 
+    /*Sirve para obtener la divisa*/
     const obtieneDivisa = (tipoDivisa, formValues) => {
 
         const divisaValor = tipoDivisa.filter(elemento => {
@@ -62,6 +73,7 @@ export const CalculadoraFormComponent = () => {
         return valor;
     }
 
+    /*Cuando se le da click en cotizar*/
     const handleSubmitCotizacion = handleSubmit(async (data) => {
         data.sucursal = dataG.sucursal;
         const encryptData = encryptRequest(data);
@@ -70,25 +82,18 @@ export const CalculadoraFormComponent = () => {
         setCantidad(cantidad_entrega);
         data.cantidad_entregada = cantidad_entrega;
         data["tipo_cambio"] = obtieneDivisa(tipoDivisa, data);
+        setDatos(data);
 
         if (data["tipo_cambio"] === null) {
-
-
-            toast.error(`No se puede cotizar ya que no existe un tipo de cambio para ${DENOMINACIONES[watch("moneda")]}.`, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.error(`No se puede cotizar ya que no existe un tipo de cambio para ${DENOMINACIONES[watch("moneda")]}.`, OPTIONS);
             clearForm();
         } else {
             setOperacion(data);
+            validaCantidadEntregada();
         }
-
     });
 
+    /*Se usa para poder limpiar el formulario*/
     const clearForm = () => {
         reset();
         setShowCantidadEntregada(false);
@@ -96,26 +101,51 @@ export const CalculadoraFormComponent = () => {
         setContinuaOperacion(false); // ocula el modulo de busquedaclientes
         setShowCliente(false); // Oculta el modulo de datos clientes
     }
-    const continuarOperacion = () => {
+
+    /*Sirve para continuar la operacion*/
+    const continuarOperacion = async() => {
         setContinuaOperacion(true);
         setShowModal(false);
+        const datos = await getOperacion();
+        setDatos(datos);
     }
 
-    const closeModalAndReturn = () => {
+    /*Guarda la preoperacion*/
+    const getOperacion = async () => {
+
+        const operacionEnvia = {
+            cliente: '',
+            tipo_operacion: datos.tipo_operacion ,
+            sucursal: dataG.sucursal || 0,
+            nombre_operador: dataG.usuario,
+            fecha_operacion: formattedDate,
+            hora_operacion: hora,
+            monto: parseInt(datos.monto),
+            divisa: datos.moneda,
+            tipo_cambio: datos.tipo_cambio,
+            cantidad_entregar: datos.cantidad_entregada
+        }
+
+        console.log(operacionEnvia);
+
+        const encryptedData = encryptRequest(operacionEnvia);
+
+        const pre_operacion = await hacerOperacion(encryptedData);
+        return pre_operacion;
+    }
+
+    /*En esta opcion debo de guardar la preoperacion*/
+    const closeModalAndReturn = async() => {
         clearForm();
         closeModal();
+        const datos = await getOperacion();
+        setDatos(datos);
     }
 
+    /*Valida la cantidad entregada si rebasa el limite diario de una sucursal*/
     const validaCantidadEntregada = () => {
-        if (parseFloat(cantidad) > 500.00) {
-            toast.warn(`La sucursal solo permite un límite diario de $${dataG.limite_diario}  por cliente.`, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+        if (parseFloat(cantidad) > dataG.limite_diario) {
+            toast.warn(`Esta sucursal solo permite un límite diario de $${dataG.limite_diario} por cliente.`, OPTIONS);
         } else {
             setShowModal(true);
         }
@@ -195,7 +225,7 @@ export const CalculadoraFormComponent = () => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-8 mb-3 d-flex">
+                    <div className="col-md-6 mb-3 d-flex">
                         <div className="form-floating flex-grow-1">
                             <input
                                 {...register("monto", {
@@ -220,44 +250,35 @@ export const CalculadoraFormComponent = () => {
                             }
                         </div>
                     </div>
-                    <div className="col-md-4">
-                        <button
-                            type="submit"
-                            className="btn btn-success d-flex p-3"
-                        >
-                            <i className="bi bi-cash-coin me-2"></i>
-                            Cotizar
-                        </button>
+                    <div className="col-md-6 mb-3 d-flex">
+                        {showCantidadEntregada &&
+                                    <div className="form-floating">
+                                        <input type="text"
+                                               className={`form-control mb-1`}
+                                               id="floatingCE"
+                                               value={cantidad}
+                                               readOnly
+                                        />
+                                        <label htmlFor="floatingCE">Cantidad a Entregar <i>({muestraDivisa(2)})</i></label>
+                            </div>
+                        }
                     </div>
                 </div>
-
-                {showCantidadEntregada &&
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="form-floating">
-                                <input type="text"
-                                       className={`form-control mb-1 ${cantidad !== '' && 'valid-input'}`}
-                                       id="floatingCE"
-                                       value={cantidad}
-                                       readOnly
-                                />
-                                <label htmlFor="floatingCE">Cantidad a Entregar <i>({muestraDivisa(2)})</i></label>
-                            </div>
-                        </div>
-                    </div>
-                }
                 <div className="d-flex justify-content-center">
                     <button type="button" onClick={clearForm} className="btn btn-secondary me-2">
                         <i className="bi bi-file-earmark-plus"></i> Nueva Cotización
                     </button>
-                    <button type="button" className="btn btn-primary" onClick={validaCantidadEntregada}
-                            disabled={(cantidad === '')}>
-                        <i className="bi bi bi-calculator"></i> Operación
+                    <button
+                        type="submit"
+                        className="btn btn-success d-flex p-3"
+                    >
+                        <i className="bi bi-cash-coin me-2"></i>
+                        Cotizar
                     </button>
                 </div>
             </form>
 
-            <ModalConfirm title='¿Desea realizar una operación con esta cotización?'
+            <ModalConfirm title={`La cotización fue de ${FormatoMoneda(parseFloat(cantidad),'')} ¿Desea realizar una operación con esta cotización?`}
                           showModal={showModal}
                           closeModal={closeModal}
                           hacerOperacion={continuarOperacion}

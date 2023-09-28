@@ -21,7 +21,7 @@ import {getUsuariosSistema} from "../../../services";
 import {MessageComponent} from "../../commons";
 
 
-export const ResumenCaja = ({ data,moneda,setShowDetalle,tipo }) => {
+export const ResumenCaja = ({ data,moneda,setShowDetalle,tipo,refresh}) => {
     // Inicializa billetesFisicos usando la información real de los datos si está disponible.
     const billetesFisicosInicial = data.result_set.map((elemento) => elemento['Billetes Físicos'] || 0);
     const [billetesFisicos, setBilletesFisicos] = useState(billetesFisicosInicial);
@@ -160,6 +160,7 @@ export const ResumenCaja = ({ data,moneda,setShowDetalle,tipo }) => {
                 });
                 reset();
                 setShowDetalle(false);
+                refresh();
             }
         }
     });
@@ -181,6 +182,7 @@ export const ResumenCaja = ({ data,moneda,setShowDetalle,tipo }) => {
             reset();
             options.closeCustomModal();
             setShowDetalle(false);
+            refresh();
         }
     }
 

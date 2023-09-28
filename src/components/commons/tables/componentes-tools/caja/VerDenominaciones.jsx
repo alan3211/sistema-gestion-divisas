@@ -22,7 +22,7 @@ export const VerDenominaciones =  ({item, index,deps}) => {
 
     return (
         <td key={index} className="text-center">
-            <button className="btn btn-secondary me-2" data-bs-toggle="tooltip"
+            <button className="btn btn-secondary me-2" data-bs-toggle="tooltip" disabled={parseInt(item['No Billetes']) === 0}
                     onClick={getDenominaciones}
                     data-bs-placement="top" title="Ver Denominaciones">
                 <i className="bi bi-eye"></i>

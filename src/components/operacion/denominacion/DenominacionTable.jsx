@@ -1,4 +1,4 @@
-export const DenominacionTable = ({data,monto,moneda}) => {
+export const DenominacionTable = ({data=[],monto,moneda}) => {
     return (
         <div className="table-responsive text-center mt-2">
             <table className="table table-bordered table-hover">

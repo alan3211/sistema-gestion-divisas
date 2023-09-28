@@ -10,7 +10,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionD,
     } = useContext(DenominacionContext);
 
-    const {title,importe,calculaValorMonto,habilita,setHabilita,defaultValue} =  options;
+    const {title,importe,calculaValorMonto,habilita,setHabilita,setTotalMonto} =  options;
     let denominacion = {};
 
     if(type === 'R'){
@@ -50,6 +50,11 @@ export const useDenominacion = ({type,moneda,options}) => {
         data?.forEach((elemento) => {
             grandTotal += parseFloat(calculateTotal(elemento.denominacion));
         });
+
+        if(setTotalMonto){
+            setTotalMonto(grandTotal.toFixed(2));
+        }
+
         return grandTotal.toFixed(2); // Asegura que el resultado tenga 2 decimales
     };
 
