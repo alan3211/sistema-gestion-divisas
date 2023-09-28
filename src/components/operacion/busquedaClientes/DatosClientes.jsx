@@ -12,7 +12,9 @@ export const DatosClientes = ({operacion, cliente}) => {
 
     const {showModal, setShowModal, selectedItem, closeModal} = useOperaCliente();
     const [showCustomModal, setShowCustomModal] = useState(false);
-    const [data, setData] = useState({});
+    const {datos} = useContext(CompraVentaContext);
+
+    datos.Cliente = cliente.Cliente;
 
     const configuration = {
         showModal,
@@ -22,35 +24,12 @@ export const DatosClientes = ({operacion, cliente}) => {
         selectedItem,
         closeModal,
         operacion,
-        data,
+        datos,
     }
 
     console.log("DATOS CLIENTE: ",cliente)
 
-    const getOperacion = async () => {
-        const operacionEnvia = {
-            cliente: cliente.cliente,
-            tipo_operacion: operacion.tipo_operacion,
-            sucursal: dataG.sucursal || 0,
-            nombre_operador: dataG.usuario,
-            fecha_operacion: formattedDate,
-            hora_operacion: hora,
-            monto: parseInt(operacion.monto),
-            divisa: operacion.moneda,
-            tipo_cambio: operacion.tipo_cambio,
-            cantidad_entregar: operacion.cantidad_entregada
-        }
-
-        const encryptedData = encryptRequest(operacionEnvia);
-
-        const pre_operacion = await hacerOperacion(encryptedData);
-        return pre_operacion;
-    }
-
-
     const continuaOperacion = async () => {
-        const datos = await getOperacion();
-        setData(datos);
         setShowCustomModal(true);
     }
 

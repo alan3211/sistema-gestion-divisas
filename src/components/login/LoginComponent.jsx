@@ -39,7 +39,7 @@ export const LoginComponent = () => {
                 dataG.limite_diario = decodedToken.limite_diario;
                 dataG.limite_mensual = decodedToken.limite_mensual;
                 dataG.menus = decodedToken.menus;
-                localStorage.setItem("usuario",JSON.stringify(dataG));
+                localStorage.setItem("usuario_data",JSON.stringify(dataG));
                 navigator("/inicio");
             }
         }else {

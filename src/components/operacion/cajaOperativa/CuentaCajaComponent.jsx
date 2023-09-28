@@ -1,21 +1,33 @@
-import {formattedDateDD, mensajeSinElementos} from "../../../utils";
+import {encryptRequest, formattedDateDD, mensajeSinElementos} from "../../../utils";
 import {MessageComponent} from "../../commons";
 import {useCaja} from "../../../hook/useCaja";
 import {useState} from "react";
 import {TableComponent} from "../../commons/tables";
 import {ResumenCaja} from "./ResumenCaja";
+import {consultaCaja, getDotaciones} from "../../../services/operacion-caja";
+import {dataG} from "../../../App";
 
 export const CuentaCajaComponent = ({tipo}) => {
 
-    const {data,showTable} = useCaja();
+    const {data,setData,showTable} = useCaja();
     const [showDetalle,setShowDetalle] = useState(false);
     const [dataDenominacion,setDataDenominacion] = useState({});
     const [moneda,setMoneda] = useState('');
 
+    const refreshQuery = async () =>{
+           const values = {
+                usuario: dataG.usuario,
+                sucursal: dataG.sucursal,
+            }
+            const encryptedData = encryptRequest(values)
+            const data = await consultaCaja(encryptedData);
+            console.log("CAJA: ",data);
+            setData(data);
+    }
 
     const options = {
         tools: [
-            {columna:"Denominaciones",tool:'ver-denominaciones',deps:{setShowDetalle,setDataDenominacion,setMoneda}},
+            {columna:"Denominaciones",tool:'ver-denominaciones', deps:{setShowDetalle,setDataDenominacion,setMoneda}},
         ]
     }
 
@@ -39,7 +51,7 @@ export const CuentaCajaComponent = ({tipo}) => {
                {
                    showDetalle && (
                        <>
-                           <ResumenCaja data={dataDenominacion} moneda={moneda} setShowDetalle={setShowDetalle} tipo={tipo}/>
+                           <ResumenCaja data={dataDenominacion} moneda={moneda} setShowDetalle={setShowDetalle} tipo={tipo} refresh={refreshQuery}/>
                        </>
                    )
                }

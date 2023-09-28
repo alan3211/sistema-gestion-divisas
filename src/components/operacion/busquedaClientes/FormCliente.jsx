@@ -1,9 +1,9 @@
-import {useContext, useEffect} from "react";
+import {useContext} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {encryptRequest, validaFechas, validarNombreApellido, validarNumeros} from "../../../utils";
 import {buscaCliente} from "../../../services";
 import {dataG} from "../../../App";
-import {toast, ToastContainer} from "react-toastify";
+import {toast} from "react-toastify";
 
 export const FormCliente = ({tipo}) => {
 
