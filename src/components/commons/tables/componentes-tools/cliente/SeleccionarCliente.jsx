@@ -15,10 +15,9 @@ export const SeleccionarCliente = ({item, index, deps}) => {
             });
             setShowCliente(true);
         }
-        console.log("CLIENTE A ENVIAR DESDE -> CLIENTE COINCIDENCIA:", item)
         navigate("/compraVenta", {
             state: {
-                cliente: item.Cliente,
+                cliente: item.Usuario,
                 clienteActivo: true,
             },
         });

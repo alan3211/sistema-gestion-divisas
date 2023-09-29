@@ -51,6 +51,7 @@ export const FormCliente = ({tipo}) => {
             data.cliente = '';
         }
 
+        console.log("DATOS: ",data)
         const encryptedData = encryptRequest(data);
         const dataClientes = await buscaCliente(encryptedData);
         dataClientes.headers = ['Selecciona',...dataClientes.headers]
@@ -130,15 +131,15 @@ export const FormCliente = ({tipo}) => {
                                     {...formBuscarCliente.register("cliente", {
                                         required: {
                                             value: true,
-                                            message: 'El campo Número de Cliente no puede ser vacio.'
+                                            message: 'El campo Número de Usuario no puede ser vacio.'
                                         },
                                         minLength: {
                                             value: 2,
-                                            message: 'El campo Número de Cliente como mínimo debe de tener al menos 2 caracteres.'
+                                            message: 'El campo Número de Usuario como mínimo debe de tener al menos 2 caracteres.'
                                         },
                                         maxLength: {
                                             value: 10,
-                                            message: 'El campo Número de Cliente como máximo debe de tener no mas de 10 caracteres.'
+                                            message: 'El campo Número de Usuario como máximo debe de tener no mas de 10 caracteres.'
                                         },
                                         validate: (value) => validarNumeros("Número de Cliente", value)
                                     })}
@@ -146,9 +147,9 @@ export const FormCliente = ({tipo}) => {
                                     className={`form-control ${!!formBuscarCliente.formState.errors?.cliente ? 'invalid-input' : ''}`}
                                     id="cliente"
                                     name="cliente"
-                                    placeholder="Ingresa el número del cliente"
+                                    placeholder="Ingresa el número del usuario"
                                 />
-                                <label htmlFor="cliente">Número de Cliente</label>
+                                <label htmlFor="cliente">NÚMERO DE USUARIO</label>
                                 {
                                     formBuscarCliente.formState.errors?.cliente && <div
                                         className="invalid-feedback-custom">{formBuscarCliente.formState.errors?.cliente.message}</div>
@@ -180,9 +181,9 @@ export const FormCliente = ({tipo}) => {
                                         className={`form-control ${!!formBuscarCliente.formState.errors?.nombre ? 'invalid-input' : ''}`}
                                         id="nombre"
                                         name="nombre"
-                                        placeholder="Ingresa el nombre del cliente"
+                                        placeholder="Ingresa el nombre del usuario"
                                     />
-                                    <label htmlFor="nombre">Nombre(s)</label>
+                                    <label htmlFor="nombre">NOMBRE(S)</label>
                                     {
                                         formBuscarCliente.formState.errors?.nombre && <div
                                             className="invalid-feedback-custom">{formBuscarCliente.formState.errors?.nombre.message}</div>
@@ -213,7 +214,7 @@ export const FormCliente = ({tipo}) => {
                                         name="apellido_paterno"
                                         placeholder="Ingresa el apellido paterno"
                                     />
-                                    <label htmlFor="apellido_paterno">Apellido Paterno</label>
+                                    <label htmlFor="apellido_paterno">APELLIDO PATERNO</label>
                                     {
                                         formBuscarCliente.formState.errors?.apellido_paterno && <div
                                             className="invalid-feedback-custom">{formBuscarCliente.formState.errors?.apellido_paterno.message}</div>
@@ -244,7 +245,7 @@ export const FormCliente = ({tipo}) => {
                                         name="apellido_materno"
                                         placeholder="Ingresa el apellido materno"
                                     />
-                                    <label htmlFor="apellido_materno">Apellido Materno</label>
+                                    <label htmlFor="apellido_materno">APELLIDO MATERNO</label>
                                     {
                                         formBuscarCliente.formState.errors?.apellido_materno && <div
                                             className="invalid-feedback-custom">{formBuscarCliente.formState.errors?.apellido_materno.message}</div>
@@ -265,9 +266,9 @@ export const FormCliente = ({tipo}) => {
                                         className={`form-control ${!!formBuscarCliente.formState.errors?.fecha_nacimiento ? 'invalid-input' : ''}`}
                                         id="fecha_nacimiento"
                                         name="fecha_nacimiento"
-                                        placeholder="Ingresa el apellido paterno"
+                                        placeholder="Ingresa la fecha de nacimiento"
                                     />
-                                    <label htmlFor="fecha_nacimiento">Fecha Nacimiento</label>
+                                    <label htmlFor="fecha_nacimiento">FECHA NACIMIENTO</label>
                                     {
                                         formBuscarCliente.formState.errors?.fecha_nacimiento && <div
                                             className="invalid-feedback-custom">{formBuscarCliente.formState.errors?.fecha_nacimiento.message}</div>
@@ -283,13 +284,13 @@ export const FormCliente = ({tipo}) => {
                     type="button"
                     className="m-2 btn btn-secondary gap-2 p-2"
                     onClick={clearBuscaCliente}>
-                    Limpiar
-                    <i className="bi bi-x-circle ms-2"></i>
+                    <strong>LIMPIAR</strong>
+                    <i className="bi bi-trash-fill ms-2"></i>
                 </button>
                 <button
                     type="submit"
                     className="m-2 btn btn-primary gap-2 p-2">
-                    Buscar
+                    <strong>BUSCAR</strong>
                     <i className="bi bi-search ms-2"></i>
                 </button>
             </div>

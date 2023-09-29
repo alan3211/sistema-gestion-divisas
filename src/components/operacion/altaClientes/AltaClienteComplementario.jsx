@@ -724,7 +724,7 @@ export const AltaClienteComplementario = memo(() => {
                 selectedItem={propForm.dataClientes}
                 icon="bi bi-check-circle-fill text-success m-2"
                 hacerOperacion={hacerOperacion}
-                title={`El registro se ha completado satisfactoriamente con el número de cliente ${ propForm.dataClientes.cliente}. ¿Desea realizar una operación con este cliente?`}
+                title={`El registro se ha completado satisfactoriamente con el número de usuario ${ propForm.dataClientes.cliente}. ¿Desea realizar una operación con este usuario?`}
                 closeModalAndReturn={closeModalAndReturn}
             />
 
