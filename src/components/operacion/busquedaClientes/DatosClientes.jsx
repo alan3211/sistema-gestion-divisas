@@ -14,6 +14,7 @@ export const DatosClientes = ({operacion, cliente}) => {
     const [showCustomModal, setShowCustomModal] = useState(false);
     const {datos} = useContext(CompraVentaContext);
 
+    console.log("DATOS!!!",datos)
     datos.Cliente = cliente.Cliente;
 
     const configuration = {
@@ -26,8 +27,6 @@ export const DatosClientes = ({operacion, cliente}) => {
         operacion,
         datos,
     }
-
-    console.log("DATOS CLIENTE: ",cliente)
 
     const continuaOperacion = async () => {
         setShowCustomModal(true);

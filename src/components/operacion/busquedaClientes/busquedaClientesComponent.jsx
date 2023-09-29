@@ -18,7 +18,7 @@ export const BusquedaClientesComponent = () => {
 
     return (
         <>
-            <CardLayout title="Búsqueda de Clientes" icon="bi bi-search me-2">
+            <CardLayout title="Búsqueda de Usuarios" icon="bi bi-search me-2">
                 <div className="search-options">
                     <h6 className="card-title"> Buscar por:</h6>
                     <div className="radio-options m-2">
@@ -33,7 +33,7 @@ export const BusquedaClientesComponent = () => {
                                 checked={selectedOption === "cliente"}
                             />
                             <label className="form-check-label" htmlFor="cliente">
-                                Número de Cliente
+                                Número de Usuario
                             </label>
                         </div>
                         <div className="form-check">

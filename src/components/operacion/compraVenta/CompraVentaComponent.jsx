@@ -17,7 +17,7 @@ export const CompraVentaComponent = () =>{
         if (clienteActivo) {
             compraVentaProvider.setContinuaOperacion(true);
             console.log("CLIENTE:",cliente)
-            compraVentaProvider.setCliente(cliente);
+            compraVentaProvider.setCliente(cliente.cliente || cliente);
         }
     }, [clienteActivo, cliente]);
 

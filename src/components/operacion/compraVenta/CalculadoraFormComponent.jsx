@@ -98,7 +98,7 @@ export const CalculadoraFormComponent = () => {
         reset();
         setShowCantidadEntregada(false);
         setCantidad('');
-        setContinuaOperacion(false); // ocula el modulo de busquedaclientes
+        setContinuaOperacion(false); // oculta el modulo de busquedaclientes
         setShowCliente(false); // Oculta el modulo de datos clientes
     }
 
@@ -182,7 +182,7 @@ export const CalculadoraFormComponent = () => {
                                     ))
                                 }
                             </select>
-                            <label htmlFor="tipo_operacion">Tipo de operación</label>
+                            <label htmlFor="tipo_operacion">TIPO DE OPERACIÓN</label>
                             {
                                 errors?.tipo_operacion &&
                                 <div className="invalid-feedback-custom">{errors?.tipo_operacion.message}</div>
@@ -216,7 +216,7 @@ export const CalculadoraFormComponent = () => {
                                     ))
                                 }
                             </select>
-                            <label htmlFor="moneda">Divisa</label>
+                            <label htmlFor="moneda">DIVISA</label>
                             {
                                 errors?.moneda &&
                                 <div className="invalid-feedback-custom">{errors?.moneda.message}</div>
@@ -244,7 +244,7 @@ export const CalculadoraFormComponent = () => {
                                 name="monto"
                                 placeholder="Ingresa la cantidad recibida por el cliente"
                             />
-                            <label htmlFor="monto" className="form-label">Cantidad Recibida <i>({muestraDivisa(1)})</i></label>
+                            <label htmlFor="monto" className="form-label">CANTIDAD RECIBIDA <i>({muestraDivisa(1)})</i></label>
                             {
                                 errors?.monto && <div className="invalid-feedback">{errors?.monto.message}</div>
                             }
@@ -259,21 +259,21 @@ export const CalculadoraFormComponent = () => {
                                                value={cantidad}
                                                readOnly
                                         />
-                                        <label htmlFor="floatingCE">Cantidad a Entregar <i>({muestraDivisa(2)})</i></label>
+                                        <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>({muestraDivisa(2)})</i></label>
                             </div>
                         }
                     </div>
                 </div>
                 <div className="d-flex justify-content-center">
                     <button type="button" onClick={clearForm} className="btn btn-secondary me-2">
-                        <i className="bi bi-file-earmark-plus"></i> Nueva Cotización
+                        <i className="bi bi-file-earmark-plus"></i> <strong>NUEVA COTIZACIÓN</strong>
                     </button>
                     <button
                         type="submit"
                         className="btn btn-success d-flex p-3"
                     >
                         <i className="bi bi-cash-coin me-2"></i>
-                        Cotizar
+                        <strong>COTIZAR</strong>
                     </button>
                 </div>
             </form>

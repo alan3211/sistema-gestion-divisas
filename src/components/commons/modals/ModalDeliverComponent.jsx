@@ -51,30 +51,30 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
         let denominacionesRecibe = denominacionR.getValues();
         let denominacionesEntrega = denominacionE.getValues();
+        let formValuesE = {}
+        let formValuesR = {}
 
-        const formValuesR = getDenominacion('MXP',denominacionesRecibe)
-        const formValuesE = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesEntrega)
-
-        if(operacion.tipo_operacion === '1') {
-            formValuesR.tipoOperacion = "COMPRA";
-           formValuesE.tipoOperacion = "COMPRA";
-        }else{
-            formValuesR.tipoOperacion = "VENTA";
-           formValuesE.tipoOperacion = "VENTA";
-        }
-
-        if(formValuesR.divisa === "MXP" && operacion.tipo_operacion === '1'){
+        if (operacion.tipo_operacion === '1') {
+            formValuesE = getDenominacion('MXP',denominacionesEntrega)
+            formValuesR = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesRecibe)
+            formValuesE.movimiento = "RECIBE CLIENTE";
             formValuesR.movimiento = "ENTREGA CLIENTE";
-        }else if(formValuesR.divisa === "MXP" && operacion.tipo_operacion === '2'){
+            formValuesR.tipoOperacion = "COMPRA";
+            formValuesE.tipoOperacion = "COMPRA";
+        }else{
+            formValuesE = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesEntrega)
+            formValuesR = getDenominacion('MXP',denominacionesRecibe)
             formValuesR.movimiento = "RECIBE CLIENTE";
+            formValuesE.movimiento = "ENTREGA CLIENTE";
+            formValuesR.tipoOperacion = "VENTA";
+            formValuesE.tipoOperacion = "VENTA";
         }
 
-        if(formValuesE.divisa !== "MXP" && operacion.tipo_operacion === '1'){
-           formValuesE.movimiento = "RECIBE CLIENTE";
-        }else if(formValuesE.divisa !== "MXP" && operacion.tipo_operacion === '2'){
-           formValuesE.movimiento = "ENTREGA CLIENTE";
-        }
-        
+
+        console.log("RECIBE:",formValuesR)
+        console.log("ENTREGA:",formValuesE)
+
+
         eliminarDenominacionesConCantidadCero(formValuesR);
         eliminarDenominacionesConCantidadCero(formValuesE);
 
