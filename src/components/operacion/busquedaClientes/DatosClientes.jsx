@@ -1,9 +1,6 @@
 import {useOperaCliente} from "../../../hook";
 import {ModalDeliverComponent} from "../../commons/modals";
 import {useContext, useState} from "react";
-import {dataG} from "../../../App";
-import {encryptRequest, formattedDate, hora} from "../../../utils";
-import {hacerOperacion} from "../../../services";
 import {CardLayout} from "../../commons";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";

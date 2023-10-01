@@ -154,8 +154,7 @@ export const CalculadoraFormComponent = () => {
 
         const encryptedData = encryptRequest(operacionEnvia);
 
-        const pre_operacion = await hacerOperacion(encryptedData);
-        return pre_operacion;
+        return await hacerOperacion(encryptedData);
     }
 
     /*En esta opcion debo de guardar la preoperacion*/

@@ -52,8 +52,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
         let denominacionesRecibe = denominacionR.getValues();
         let denominacionesEntrega = denominacionE.getValues();
-        let formValuesE = {}
-        let formValuesR = {}
+        let formValuesE;
+        let formValuesR;
 
         if (operacion.tipo_operacion === '1') {
             formValuesE = getDenominacion('MXP',denominacionesEntrega)
