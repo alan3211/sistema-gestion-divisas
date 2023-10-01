@@ -6,7 +6,7 @@ export const CompraVentaProvider = ({children}) => {
 
     const {register,handleSubmit,formState:{errors},reset,watch} = useForm();
 
-    const [cantidad, setCantidad] = useState('');
+    const [cantidad, setCantidad] = useState(0);
     const [showCantidadEntregada, setShowCantidadEntregada] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [continuaOperacion,setContinuaOperacion] = useState(false);

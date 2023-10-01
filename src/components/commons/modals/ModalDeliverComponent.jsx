@@ -33,8 +33,9 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     // Calcula el valor del monto de la parte decimal con 2 digitos
     const calculaValorMonto = useMemo(() => {
+        console.log(operacion)
         if (operacion.tipo_operacion === '2') {
-            const valoresDecimalesDivisas = parseFloat(operacion.cantidad_entregada) - parseInt(operacion.cantidad_entregada);
+            const valoresDecimalesDivisas = parseFloat(operacion.cantidad_entregar) - parseInt(operacion.cantidad_entregada);
             const conversionAPesos = valoresDecimalesDivisas * parseFloat(operacion.tipo_cambio);
             const diferenciaAMostrar = parseFloat(operacion.monto) - conversionAPesos;
             return diferenciaAMostrar.toFixed(2);
@@ -69,11 +70,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
             formValuesR.tipoOperacion = "VENTA";
             formValuesE.tipoOperacion = "VENTA";
         }
-
-
-        console.log("RECIBE:",formValuesR)
-        console.log("ENTREGA:",formValuesE)
-
 
         eliminarDenominacionesConCantidadCero(formValuesR);
         eliminarDenominacionesConCantidadCero(formValuesE);

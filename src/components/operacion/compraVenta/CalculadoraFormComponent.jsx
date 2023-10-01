@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {dataG} from "../../../App";
 import {hacerOperacion, realizaConversion} from "../../../services";
 import {ModalConfirm} from "../../commons/modals";
@@ -14,6 +14,7 @@ import {
     validarMoneda
 } from "../../../utils";
 import {toast} from "react-toastify";
+import {Overlay} from "../../commons/toast/Overlay";
 
 export const CalculadoraFormComponent = () => {
 
@@ -36,6 +37,7 @@ export const CalculadoraFormComponent = () => {
         datos,setDatos,
     } = useContext(CompraVentaContext);
     const catalogo = useCatalogo([9, 4]);
+    const [showOverlay, setShowOverlay] = useState(false);
 
     /*Cierra el modal cuando se le da en la "x"*/
     const closeModal = () => {
@@ -75,15 +77,36 @@ export const CalculadoraFormComponent = () => {
 
     /*Cuando se le da click en cotizar*/
     const handleSubmitCotizacion = handleSubmit(async (data) => {
-        data.sucursal = dataG.sucursal;
+        data.sucursal = parseInt(dataG.sucursal);
+        data.cajero = dataG.usuario;
         const encryptData = encryptRequest(data);
-        const {cantidad_entrega} = await realizaConversion(encryptData);
-        setShowCantidadEntregada(true);
-        setCantidad(cantidad_entrega);
-        data.cantidad_entregada = cantidad_entrega;
+        const result = await realizaConversion(encryptData);
+        if (result.result_set[0].hasOwnProperty('Mensaje')) {
+            setCantidad(0);
+            setShowCantidadEntregada(false);
+            setShowOverlay(true);
+            toast.error(result.result_set[0].Mensaje,{
+                position: "top-center",
+                closeButton: true,
+                closeOnClick:false,
+                className: 'overlay-toast',
+                draggable:false,
+                autoClose:false,
+                theme: "colored",
+                onClose: () => {
+                    setShowOverlay(false); // Oculta el fondo de superposición cuando se cierra el toast
+                },
+            });
+            clearForm();
+        }else{
+            setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
+            data.cantidad_entregar = parseFloat(result.result_set[0].CantidadEntrega);
+            setShowCantidadEntregada(true);
+        }
         data["tipo_cambio"] = obtieneDivisa(tipoDivisa, data);
         setDatos(data);
-
+        console.log("DATA DEL FORM: ",data)
+        console.log("DATA DEL STATE: ",datos)
         if (data["tipo_cambio"] === null) {
             toast.error(`No se puede cotizar ya que no existe un tipo de cambio para ${DENOMINACIONES[watch("moneda")]}.`, OPTIONS);
             clearForm();
@@ -106,13 +129,14 @@ export const CalculadoraFormComponent = () => {
     const continuarOperacion = async() => {
         setContinuaOperacion(true);
         setShowModal(false);
-        const datos = await getOperacion();
-        setDatos(datos);
+        const response = await getOperacion();
+        console.log("RESPONSE: ",response)
+        setDatos(response);
     }
 
     /*Guarda la preoperacion*/
     const getOperacion = async () => {
-
+        console.log("DATOS! ",datos)
         const operacionEnvia = {
             cliente: '',
             tipo_operacion: datos.tipo_operacion ,
@@ -123,7 +147,7 @@ export const CalculadoraFormComponent = () => {
             monto: parseInt(datos.monto),
             divisa: datos.moneda,
             tipo_cambio: datos.tipo_cambio,
-            cantidad_entregar: datos.cantidad_entregada
+            cantidad_entregar: datos.cantidad_entregar
         }
 
         console.log(operacionEnvia);
@@ -252,7 +276,7 @@ export const CalculadoraFormComponent = () => {
                     </div>
                     <div className="col-md-6 mb-3 d-flex">
                         {showCantidadEntregada &&
-                                    <div className="form-floating">
+                                    <div className="form-floating flex-grow-1">
                                         <input type="text"
                                                className={`form-control mb-1`}
                                                id="floatingCE"
@@ -278,13 +302,16 @@ export const CalculadoraFormComponent = () => {
                 </div>
             </form>
 
-            <ModalConfirm title={`La cotización fue de ${FormatoMoneda(parseFloat(cantidad),'')} ¿Desea realizar una operación con esta cotización?`}
+            {
+                cantidad !== 0 && (<ModalConfirm title={`La cotización fue de ${FormatoMoneda(parseFloat(cantidad),'')} ¿Desea realizar una operación con esta cotización?`}
                           showModal={showModal}
                           closeModal={closeModal}
                           hacerOperacion={continuarOperacion}
                           closeModalAndReturn={closeModalAndReturn}
                           icon="bi bi-exclamation-triangle-fill text-warning m-2"
-            />
+                />)
+            }
+            <Overlay showOverlay={showOverlay}/>
         </>
     );
 };
