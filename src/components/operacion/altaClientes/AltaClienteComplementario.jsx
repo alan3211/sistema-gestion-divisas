@@ -7,6 +7,8 @@ import {useCatalogo} from "../../../hook/useCatalogo";
 import {useAltaComplementario} from "../../../hook/useAltaComplementario";
 import {dataG} from "../../../App";
 import {getCatalogo, getLocalidad, guardaCliente} from "../../../services";
+import {useComboInput} from "../../../hook";
+import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 
 export const AltaClienteComplementario = memo(() => {
 
@@ -98,6 +100,7 @@ export const AltaClienteComplementario = memo(() => {
     }, [propForm.watch("colonia")]);
 
 
+
     return (
         <>
             <form className="row g-3" onSubmit={handleValidateFinalForm} noValidate>
@@ -167,70 +170,20 @@ export const AltaClienteComplementario = memo(() => {
                             </div>
                         </div>
                         <div className="col-md-3">
-                            <div className="form-floating mb-3">
-                                <select
-                                    {...propForm.register("nacionalidad",{
-                                        required:{
-                                            value:true,
-                                            message:'Debes de seleccionar al menos una nacionalidad.'
-                                        },
-                                        validate: value => {
-                                            return value !== "0" || 'Debes seleccionar una nacionalidad válida.';
-                                        }
-                                    })}
-                                    className={`form-select ${!!propForm.errors?.nacionalidad ? 'invalid-input':''}`}
-                                    id="nacionalidad"
-                                    name="nacionalidad"
-                                    aria-label="Nacionalidad"
-                                >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
-                                    {
-                                        catalogo[1]?.map((ele) => (
-                                            <option key={ele.id + '-' + ele.descripcion}
-                                                    value={ele.id}>
-                                                {ele.descripcion}
-                                            </option>
-                                        ))
-                                    }
-                                </select>
-                                <label htmlFor="nacionalidad">NACIONALIDAD</label>
-                                {
-                                    propForm.errors?.nacionalidad && <div className="invalid-feedback-custom">{propForm.errors?.nacionalidad.message}</div>
-                                }
-                            </div>
+                            <FilterComboInput
+                                propForm={propForm}
+                                name="nacionalidad"
+                                label="NACIONALIDAD"
+                                options={catalogo[1] || []}
+                            />
                         </div>
                         <div className="col-md-3">
-                            <div className="form-floating mb-3">
-                                <select
-                                    {...propForm.register("pais_nacimiento",{
-                                        required:{
-                                            value:true,
-                                            message:'Debes de seleccionar al menos un pais de nacimiento.'
-                                        },
-                                        validate: value => {
-                                            return value !== "0" || 'Debes seleccionar un pais de nacimiento válido.';
-                                        }
-                                    })}
-                                    className={`form-select ${!!propForm.errors?.pais_nacimiento ? 'invalid-input':''}`}
-                                    id="pais_nacimiento"
-                                    name="pais_nacimiento"
-                                    aria-label="País Nacimiento"
-                                >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
-                                    {
-                                        catalogo[2]?.map((ele) => (
-                                            <option key={ele.id + '-' + ele.descripcion}
-                                                    value={ele.id}>
-                                                {ele.descripcion}
-                                            </option>
-                                        ))
-                                    }
-                                </select>
-                                <label htmlFor="pais_nacimiento">PAÍS NACIMIENTO</label>
-                                {
-                                    propForm.errors?.pais_nacimiento && <div className="invalid-feedback-custom">{propForm.errors?.pais_nacimiento.message}</div>
-                                }
-                            </div>
+                            <FilterComboInput
+                                propForm={propForm}
+                                name="pais_nacimiento"
+                                label="PAÍS NACIMIENTO"
+                                options={catalogo[1] || []}
+                            />
                         </div>
                     </div>
                     <div className="row">
@@ -395,7 +348,7 @@ export const AltaClienteComplementario = memo(() => {
                                     {...propForm.register("calle",{
                                         required:{
                                             value:true,
-                                            message:'El campo Calle no puede ser vacio.'
+                                            message:'El campo no puede ser vacio.'
                                         },
                                         validate: (value) => validarAlfaNumerico("Calle",value)
                                     })}
@@ -410,7 +363,7 @@ export const AltaClienteComplementario = memo(() => {
                                         propForm.setValue("calle", upperCaseValue);
                                     }}
                                 />
-                                <label htmlFor="calle">DIRECCIÓN</label>
+                                <label htmlFor="calle">CALLE, AVENIDA, BOULEVARD,CERRADA</label>
                                 {
                                     propForm.errors?.calle && <div className="invalid-feedback-custom">{propForm.errors?.calle.message}</div>
                                 }
