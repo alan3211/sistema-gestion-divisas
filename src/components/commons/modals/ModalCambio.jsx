@@ -65,14 +65,16 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         // Validar si tenemos que darle cambio
         if(resultado){
             console.log(resultado);
+            // TODO Integrar la parte de la impresion de tickets
             toast.success('Se ha entregado el cambio correspondiente.', {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
-                theme: "light",
+                theme: "colored",
             });
+
             navigator("/inicio");
         }
     }

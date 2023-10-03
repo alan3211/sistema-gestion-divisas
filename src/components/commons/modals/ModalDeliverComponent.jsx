@@ -18,6 +18,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
     console.log("Configuracion ",configuration)
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
     const [showCambio,setShowCambio] = useState(false);
+    const [showImpresion,setShowImpresion] = useState(false);
     const [habilita,setHabilita] =  useState({
         recibe: true,
         entrega: true,
@@ -121,6 +122,12 @@ export const ModalDeliverComponent = ({configuration}) =>{
                     setShowCambio(true);
                 } else {
                     toast.success('La operación fue exitosa.', OPTIONS);
+
+                    // TODO Integrar la parte de la impresion de tickets
+                    // 1.- Validar que se muestre el modal
+                    // 2.- Imprimir el ticket
+                    setShowImpresion(true);
+
                     navigator("/inicio");
                 }
                 console.log(resultadoPromise);
@@ -230,7 +237,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 showCambio
                     &&
                     <ModalCambio
-                        cambio={(redondearNumero(calculaValorMonto))}
+                        cambio={(redondearNumero(operacion.monto-calculaValorMonto))}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
                         operacion={operacion}
