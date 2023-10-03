@@ -183,11 +183,15 @@ export const FormatoMoneda = (cantidad,moneda) => {
     }
 }
 
+export const redondearNumero =(numero) => {
+    return Math.round(numero);
+}
+
 export const OPTIONS = {
     position: "top-center",
     autoClose: 3000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
-    theme: "light",
+    theme: "colored",
 }

@@ -15,12 +15,13 @@ export const Denominacion = ({type,moneda,options}) => {
     return (
         <>
             <div className="text-center mt-2">
-                <h5 className="p-2 ">{title}</h5>
+                <h5 className="p-2 "><strong>{title}</strong></h5>
                 <div className="card-body">
                     <div className="table-responsive">
                         <table className="table table-bordered table-hover">
                             <thead className="table-dark">
                             <tr>
+                                <th className="col-1">Billetes Disponibles</th>
                                 <th className="col-1">Denominación</th>
                                 <th className="col-1">Cantidad</th>
                                 <th className="col-1">Total</th>
@@ -28,10 +29,11 @@ export const Denominacion = ({type,moneda,options}) => {
                             </thead>
                             <tbody>
                                 {data?.map((elemento) => {
-                                    let name = denominacionMappings[elemento.denominacion] || elemento.denominacion;
+                                    let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
                                     return (
                                     <tr key={`denominacion_${name}`}>
-                                        <td>{elemento.denominacion}</td>
+                                        <td>{elemento['Billetes Disponibles']}</td>
+                                        <td>{elemento.Denominacion}</td>
                                         <td>
                                             <input
                                                 {...register(`denominacion_${name}`, {
@@ -47,14 +49,14 @@ export const Denominacion = ({type,moneda,options}) => {
                                                 placeholder="0"
                                             />
                                         </td>
-                                        <td>{calculateTotal(elemento.denominacion)}</td>
+                                        <td>{calculateTotal(elemento.Denominacion)}</td>
                                     </tr>
                                 )
                                 })}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th colSpan="2">Total</th>
+                                <th colSpan="3">Total</th>
                                 <th className={validacionColor()}>{calculateGrandTotal()}</th>
                             </tr>
                             </tfoot>

@@ -76,7 +76,7 @@ export const Sucursales = () => {
                                     name="numero_sucursal"
                                     placeholder="Ingresa el número de la sucursal"
                                 />
-                                <label htmlFor="numero_sucursal">Número de Sucursal</label>
+                                <label htmlFor="numero_sucursal">NÚMERO DE SUCURSAL</label>
                                 {
                                     errors?.numero_sucursal && <div className="invalid-feedback-custom">{errors?.numero_sucursal.message}</div>
                                 }
@@ -98,7 +98,7 @@ export const Sucursales = () => {
                                     name="nombre_sucursal"
                                     placeholder="Ingresa el nombre de sucursal"
                                 />
-                                <label htmlFor="nombre_sucursal">Nombre Sucursal</label>
+                                <label htmlFor="nombre_sucursal">NOMBRE SUCURSAL</label>
                                 {
                                     errors?.nombre_sucursal && <div className="invalid-feedback-custom">{errors?.nombre_sucursal.message}</div>
                                 }
@@ -120,7 +120,7 @@ export const Sucursales = () => {
                                     name="direccion"
                                     placeholder="Ingresa la direccion de la sucursal"
                                 />
-                                <label htmlFor="direccion">Dirección</label>
+                                <label htmlFor="direccion">DIRECCIÓN</label>
                                 {
                                     errors?.direccion && <div className="invalid-feedback-custom">{errors?.direccion.message}</div>
                                 }
@@ -142,7 +142,7 @@ export const Sucursales = () => {
                                     name="telefono"
                                     placeholder="Ingresa el teléfono"
                                 />
-                                <label htmlFor="telefono">Teléfono</label>
+                                <label htmlFor="telefono">TELÉFONO</label>
                                 {
                                     errors?.telefono && <div className="invalid-feedback-custom">{errors?.telefono.message}</div>
                                 }
@@ -177,7 +177,7 @@ export const Sucursales = () => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="region">Región</label>
+                                <label htmlFor="region">REGIÓN</label>
                                 {
                                     errors?.region &&
                                     <div className="invalid-feedback-custom">{errors?.region.message}</div>
@@ -211,7 +211,7 @@ export const Sucursales = () => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="estado">Estado</label>
+                                <label htmlFor="estado">ESTADO</label>
                                 {
                                     errors?.estado && <div className="invalid-feedback-custom">{errors?.estado.message}</div>
                                 }
@@ -245,7 +245,7 @@ export const Sucursales = () => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="municipio">Municipio</label>
+                                <label htmlFor="municipio">MUNICIPIO</label>
                                 {
                                     errors?.municipio && <div className="invalid-feedback-custom">{errors?.municipio.message}</div>
                                 }
@@ -278,7 +278,7 @@ export const Sucursales = () => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="tipo_establecimiento">Tipo</label>
+                                <label htmlFor="tipo_establecimiento">TIPO</label>
                                 {
                                     errors?.tipo_establecimiento && <div className="invalid-feedback-custom">{errors?.tipo_establecimiento.message}</div>
                                 }
@@ -301,7 +301,7 @@ export const Sucursales = () => {
                                     name="fecha_apertura"
                                     placeholder="Ingresa la fecha de apertura"
                                 />
-                                <label htmlFor="fecha_apertura">Fecha Apertura</label>
+                                <label htmlFor="fecha_apertura">FECHA APERTURA</label>
                                 {
                                     errors?.fecha_apertura && <div className="invalid-feedback-custom">
                                     {errors?.fecha_apertura.message}</div>
@@ -324,7 +324,7 @@ export const Sucursales = () => {
                                         name="limite_diario"
                                         placeholder="Ingresa el limite diario"
                                     />
-                                    <label htmlFor="limite_diario">Limite Diario</label>
+                                    <label htmlFor="limite_diario">LÍMITE DIARIO</label>
                                     {
                                         errors?.limite_diario && <div className="invalid-feedback-custom">{errors?.limite_diario.message}</div>
                                     }
@@ -346,7 +346,7 @@ export const Sucursales = () => {
                                     name="limite_mensual"
                                     placeholder="Ingresa el limite mensual"
                                 />
-                                <label htmlFor="limite_mensual">Limite Mensual</label>
+                                <label htmlFor="limite_mensual">LÍMITE MENSUAL</label>
                                 {
                                     errors?.limite_mensual && <div className="invalid-feedback-custom">{errors?.limite_mensual.message}</div>
                                 }
@@ -362,7 +362,7 @@ export const Sucursales = () => {
                                         role="status"
                                         aria-hidden="true">
                                         <span className="ms-2">
-                                            Guardar
+                                            GUARDAR
                                         </span>
                                     </span>
                                 </button>

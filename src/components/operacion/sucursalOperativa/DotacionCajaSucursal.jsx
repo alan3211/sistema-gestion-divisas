@@ -1,5 +1,5 @@
 import {useForm} from "react-hook-form";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {useCatalogo} from "../../../hook";
 import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {
@@ -159,7 +159,7 @@ export const DotacionCajaSucursal = () => {
                             ))
                         }
                     </select>
-                    <label htmlFor="cajero">Cajero</label>
+                    <label htmlFor="cajero">CAJEROS</label>
                     {
                         errors?.cajero && <div className="invalid-feedback-custom">{errors?.cajero.message}</div>
                     }
@@ -184,7 +184,7 @@ export const DotacionCajaSucursal = () => {
                         name="monto"
                         placeholder="Ingresa el monto"
                     />
-                    <label htmlFor="monto">Monto</label>
+                    <label htmlFor="monto">MONTO</label>
                     {
                         errors?.monto && <div className="invalid-feedback-custom">{errors?.monto.message}</div>
                     }
@@ -217,7 +217,7 @@ export const DotacionCajaSucursal = () => {
                             ))
                         }
                     </select>
-                    <label htmlFor="moneda">Moneda</label>
+                    <label htmlFor="moneda">MONEDA</label>
                     {
                         errors?.moneda && <div className="invalid-feedback-custom">{errors?.moneda.message}</div>
                     }
@@ -240,11 +240,11 @@ export const DotacionCajaSucursal = () => {
             </div>
             <div className="col-md-12 d-flex justify-content-center">
                 <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
-                    <i className="bi bi-plus"></i> Nueva Dotación
+                    <i className="bi bi-plus"></i> NUEVA DOTACIÓN
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={habilita.entrega}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
-                    Finalizar Operación
+                    FINALIZAR OPERACIÓN
                 </button>
             </div>
 

@@ -6,7 +6,7 @@ import {ModalCambio} from "./ModalCambio";
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest,
     getDenominacion,
-    obtenerObjetoDenominaciones, OPTIONS
+    obtenerObjetoDenominaciones, OPTIONS, redondearNumero, validarMoneda
 } from "../../../utils";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
@@ -15,6 +15,7 @@ import {DenominacionContext} from "../../../context/denominacion/DenominacionCon
 
 export const ModalDeliverComponent = ({configuration}) =>{
 
+    console.log("Configuracion ",configuration)
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
     const [showCambio,setShowCambio] = useState(false);
     const [habilita,setHabilita] =  useState({
@@ -33,15 +34,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     // Calcula el valor del monto de la parte decimal con 2 digitos
     const calculaValorMonto = useMemo(() => {
-        console.log(operacion)
+        console.log("OPERACIONES -*",operacion)
         if (operacion.tipo_operacion === '2') {
-            const valoresDecimalesDivisas = parseFloat(operacion.cantidad_entregar) - parseInt(operacion.cantidad_entregada);
-            const conversionAPesos = valoresDecimalesDivisas * parseFloat(operacion.tipo_cambio);
+            const conversionAPesos = operacion.decimal_sobrante * parseFloat(operacion.tipo_cambio);
             const diferenciaAMostrar = parseFloat(operacion.monto) - conversionAPesos;
             return diferenciaAMostrar.toFixed(2);
         }
         return parseFloat(operacion.monto);
-    }, [operacion.cantidad_entregada, operacion.tipo_cambio, operacion.monto, operacion.tipo_operacion]);
+    }, [operacion.cantidad_entregar, operacion.tipo_cambio, operacion.monto, operacion.tipo_operacion]);
 
     // Muestra la divisa correspondiente
     const muestraDivisa = () => operacion.tipo_operacion === "1" ? operacion.moneda : 'MXP';
@@ -119,7 +119,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
             // Resto de tu código
 
             if (resultadoPromise) {
-                if (parseFloat(operacion.monto) - parseFloat(calculaValorMonto) > 0) {
+                if (redondearNumero(parseFloat(operacion.monto) - parseFloat(calculaValorMonto)) >= 1) {
                     setShowCambio(true);
                 } else {
                     toast.success('La operación fue exitosa.', OPTIONS);
@@ -134,24 +134,25 @@ export const ModalDeliverComponent = ({configuration}) =>{
     }
 
     const options = {
-        title: `Recibido del cliente (${muestraDivisa()})`,
-        importe: parseFloat(parseInt(operacion.monto)).toFixed(2),
-        calculaValorMonto:parseFloat(calculaValorMonto).toFixed(2),
+        title: `Recibido del usuario (${muestraDivisa()})`,
+        importe: parseFloat(parseInt(operacion.monto)),
+        calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
     }
 
     const optionsE = {
-        title: `Entregado del cliente (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
-        importe: parseFloat(parseInt(operacion.cantidad_entregada)).toFixed(2),
-        calculaValorMonto:parseFloat(calculaValorMonto).toFixed(2),
+        title: `Entregado al usuario (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
+        importe:parseFloat(operacion.cantidad_entregar),
+        calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
     }
 
+
     return(
         <>
-            <Modal centered size="lg" show={showCustomModal} onHide={closeCustomModal}>
+            <Modal centered size="xl" show={showCustomModal} onHide={closeCustomModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>
                         <h5 className="text-blue">
@@ -162,25 +163,29 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 </Modal.Header>
 
                 <Modal.Body>
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label htmlFor="cantidad"><strong>Importe</strong></label>
-                                <input type="text" className="form-control" id="importe" value={calculaValorMonto} readOnly />
+                    <div className="row justify-content-center">
+                        <div className="col-md-4 mb-3 d-flex">
+                            <div className="form-floating flex-grow-1">
+                                <input
+                                    type="text"
+                                    id="monto"
+                                    name="monto"
+                                    className={`form-control mb-1`}
+                                    placeholder="Ingresa la cantidad a cotizar por el usuario"
+                                    value={calculaValorMonto} readOnly
+                                />
+                                <label htmlFor="monto" className="form-label">CANTIDAD A COTIZAR <i>({muestraDivisa()})</i></label>
                             </div>
                         </div>
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label htmlFor="cantidad"><strong>Cantidad a entregar</strong></label>
-                                <input type="text" className="form-control" id="cantidad" value={parseInt(operacion.cantidad_entregada)} readOnly />
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label htmlFor="tipoMoneda"><strong>Tipo de moneda</strong></label>
-                                <select className="form-control" id="tipoMoneda" disabled>
-                                    <option value={operacion.moneda}>{operacion.moneda}</option>
-                                </select>
+                        <div className="col-md-4 mb-3 d-flex">
+                            <div className="form-floating flex-grow-1">
+                                <input type="text"
+                                       className={`form-control mb-1`}
+                                       id="floatingCE"
+                                       value={operacion.cantidad_entregar}
+                                       readOnly
+                                />
+                                <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>({operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})</i></label>
                             </div>
                         </div>
                     </div>
@@ -212,7 +217,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 showCambio
                     &&
                     <ModalCambio
-                        cambio={(parseFloat(operacion.monto)-calculaValorMonto).toFixed(2)}
+                        cambio={(redondearNumero(operacion.monto)-calculaValorMonto)}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
                         operacion={operacion}

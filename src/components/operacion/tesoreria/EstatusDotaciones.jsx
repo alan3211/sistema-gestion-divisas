@@ -1,6 +1,6 @@
 import {encryptRequest, validaFechas} from "../../../utils";
 import {useForm} from "react-hook-form";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {useCatalogo} from "../../../hook";
 import {consultaEnvioSucursal, estatusOperaciones} from "../../../services/operacion-tesoreria";
 import {TableComponent} from "../../commons/tables";
 import {useState} from "react";
@@ -73,7 +73,7 @@ export const EstatusDotaciones = () => {
                                 </option>
                             ))}
                         </select>
-                        <label htmlFor="tipo_operacion">Tipo de Operación</label>
+                        <label htmlFor="tipo_operacion">TIPO DE OPERACIÓN</label>
                         {errors?.tipo_operacion && (
                             <div className="invalid-feedback-custom">
                                 {errors?.tipo_operacion.message}
@@ -110,7 +110,7 @@ export const EstatusDotaciones = () => {
                                 </option>
                             ))}
                         </select>
-                        <label htmlFor="sucursal">Sucursal</label>
+                        <label htmlFor="sucursal">SUCURSAL</label>
                         {errors?.sucursal && (
                             <div className="invalid-feedback-custom">
                                 {errors?.sucursal.message}
@@ -133,7 +133,7 @@ export const EstatusDotaciones = () => {
                             name="fecha_operacion"
                             placeholder="Ingresa la fecha de operación"
                         />
-                        <label htmlFor="fecha_operacion">Fecha Operación</label>
+                        <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {
                             errors?.fecha_operacion && <div className="invalid-feedback-custom">{errors?.fecha_operacion.message}</div>
                         }
@@ -144,7 +144,7 @@ export const EstatusDotaciones = () => {
                         type="submit"
                         className="m-2 btn btn-primary"
                     >
-                        Consultar
+                        CONSULTAR
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>

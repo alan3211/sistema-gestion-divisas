@@ -60,7 +60,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
     const options = {
         showModal,
         closeCustomModal: () => setShowModal(false),
-        title: (optionBtn === 1) ? 'Aceptar Dotación' : 'Rechazar Dotación',
+        title: (optionBtn === 1) ? 'ACEPTAR DOTACIÓN' : 'RECHAZAR DOTACIÓN',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn === 1) ? 'Ingresa el monto equivalente solicitado y el motivo para aceptar la dotación.'
             : 'Ingresa el motivo por el cual rechazas la dotación.',
@@ -69,11 +69,11 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
 
     return (
         <td key={index} className="text-center">
-            <button className="btn btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Aceptar"
+            <button className="btn btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTAR"
                     onClick={() => onHandleOptions(1)} disabled={item.Estatus !== 'Pendiente'}>
                 <i className="bi bi-check-circle"></i>
             </button>
-            <button className="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Rechazar"
+            <button className="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="RECHAZAR"
                     onClick={() => onHandleOptions(2)} disabled={item.Estatus !== 'Pendiente'}>
                 <i className="bi bi-x-circle"></i>
             </button>
@@ -96,7 +96,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
                                                 name="monto_equivalente"
                                                 placeholder="Ingresa el Monto Equivalente"
                                             />
-                                            <label htmlFor="monto_equivalente">Monto Equivalente de {item.Moneda} en MXP</label>
+                                            <label htmlFor="monto_equivalente">MONTO EQUIVALENTE DE {item.Moneda} EN MXP</label>
                                             {
                                                 errors?.monto_equivalente && <div
                                                     className="invalid-feedback-custom">{errors?.monto_equivalente.message}</div>
@@ -128,7 +128,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
                                             resize: 'none'
                                         }}
                                     />
-                                    <label htmlFor="motivo">Motivo</label>
+                                    <label htmlFor="motivo">MOTIVO</label>
                                     {
                                         errors?.motivo &&
                                         <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
@@ -138,7 +138,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
                             <div className="d-flex justify-content-end mt-2">
                                 <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
-                                    {optionBtn === 1 ? 'Aceptar' : 'Rechazar'}
+                                    {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
                         </form>

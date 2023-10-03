@@ -8,13 +8,13 @@ import {Denominacion} from "../denominacion";
 
 import {useForm} from "react-hook-form";
 
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {useCatalogo} from "../../../hook";
 import {dataG} from "../../../App";
 import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
-import {getUsuariosSistema} from "../../../services";
+
 
 
 export const EnvioValoresSucursal = () => {
@@ -116,7 +116,7 @@ export const EnvioValoresSucursal = () => {
                         name="monto"
                         placeholder="Ingresa el monto"
                     />
-                    <label htmlFor="monto">Monto</label>
+                    <label htmlFor="monto">MONTO</label>
                     {
                         errors?.monto && <div className="invalid-feedback-custom">{errors?.monto.message}</div>
                     }
@@ -149,7 +149,7 @@ export const EnvioValoresSucursal = () => {
                             ))
                         }
                     </select>
-                    <label htmlFor="moneda">Moneda</label>
+                    <label htmlFor="moneda">MONEDA</label>
                     {
                         errors?.moneda && <div className="invalid-feedback-custom">{errors?.moneda.message}</div>
                     }
@@ -162,11 +162,11 @@ export const EnvioValoresSucursal = () => {
             </div>
             <div className="col-md-12 d-flex justify-content-center">
                 <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
-                    <i className="bi bi-box-arrow-up-right"></i> Nuevo Envío
+                    <i className="bi bi-box-arrow-up-right"></i> NUEVO ENVÍO
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={habilita.entrega}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
-                    Finalizar Operación
+                   FINALIZAR OPERACIÓN
                 </button>
             </div>
 

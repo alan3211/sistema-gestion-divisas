@@ -1,6 +1,8 @@
 import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../context/denominacion/DenominacionContext";
 import {obtieneDenominaciones} from "../services";
+import {dataG} from "../App";
+import {encryptRequest} from "../utils";
 
 export const useDenominacion = ({type,moneda,options}) => {
     const {
@@ -29,8 +31,6 @@ export const useDenominacion = ({type,moneda,options}) => {
     const [data,setData] = useState([]);
 
     const denominacionMappings = {
-        '.10': 'p1',
-        '.20': 'p2',
         '.50': 'p5'
     };
 
@@ -38,24 +38,24 @@ export const useDenominacion = ({type,moneda,options}) => {
     // Función para calcular el total de una denominación parcial
     const calculateTotal = (denominacion) => {
         let name = denominacionMappings[denominacion] || denominacion;
-        const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0.0;
+        const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0;
         const denominacionValue = parseFloat(denominacion);
-        return (cantidad * denominacionValue).toFixed(2); // Asegura que el resultado tenga 2 decimales
+        return (cantidad * denominacionValue); // Asegura que el resultado tenga 2 decimales
     };
 
 
     // Calcula el total acumulado de todas las denominaciones
     const calculateGrandTotal = () => {
-        let grandTotal = 0.0;
+        let grandTotal = 0;
         data?.forEach((elemento) => {
-            grandTotal += parseFloat(calculateTotal(elemento.denominacion));
+            grandTotal += parseFloat(calculateTotal(elemento.Denominacion));
         });
 
         if(setTotalMonto){
-            setTotalMonto(grandTotal.toFixed(2));
+            setTotalMonto(grandTotal);
         }
 
-        return grandTotal.toFixed(2); // Asegura que el resultado tenga 2 decimales
+        return grandTotal; // Asegura que el resultado tenga 2 decimales
     };
 
 
@@ -63,8 +63,8 @@ export const useDenominacion = ({type,moneda,options}) => {
     // Valida solo cuando hace la operacion del cliente y entrega billetes
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
-            const denominacionValue = parseFloat(data[key].denominacion);
-            if ((type === 'E' || type === 'C') && denominacionValue > parseFloat(importe).toFixed(2)) {
+            const denominacionValue = parseFloat(data[key].Denominacion);
+            if ((type === 'E' || type === 'C') && denominacionValue > parseFloat(importe)) {
                 delete data[key];
             }
         }
@@ -72,10 +72,10 @@ export const useDenominacion = ({type,moneda,options}) => {
 
 
     const validacionColor = () => {
-        const grandTotal = parseFloat(calculateGrandTotal());
+        const grandTotal = calculateGrandTotal();
 
         if (type === 'R') {
-            if (grandTotal.toFixed(2) === calculaValorMonto) {
+            if (grandTotal === calculaValorMonto) {
                 return 'text-success';
             } else if (grandTotal > calculaValorMonto) {
                 return 'text-warning';
@@ -83,7 +83,7 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else if (type === 'C') {
-            if (grandTotal.toFixed(2) === importe) {
+            if (grandTotal === importe) {
                 return 'text-success';
             } else if (grandTotal > importe) {
                 return 'text-warning';
@@ -91,7 +91,7 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else {
-            if (grandTotal.toFixed(2) === importe) {
+            if (grandTotal === importe) {
                 return 'text-success';
             } else {
                 return 'text-danger';
@@ -114,7 +114,7 @@ export const useDenominacion = ({type,moneda,options}) => {
             isValid = calculateGrandTotal() >= parseFloat(calculaValorMonto);
             newHabilita.recibe = !isValid;
         } else {
-            isValid = calculateGrandTotal() === parseFloat(importe).toFixed(2);
+            isValid = calculateGrandTotal() === parseFloat(importe);
             newHabilita.entrega = !isValid;
         }
         setHabilita(newHabilita);
@@ -123,9 +123,18 @@ export const useDenominacion = ({type,moneda,options}) => {
     // Sirve para cargar la denominacion de la moneda que se envia
     useEffect(() => {
         const fetchData = async () => {
+
+            const valores = {
+                usuario: dataG.usuario,
+                sucursal: dataG.sucursal,
+                moneda: moneda,
+            }
+
+            const encryptedData = encryptRequest(valores);
+
             if(moneda !== '0'){
-                const denominaciones = await obtieneDenominaciones(moneda);
-                setData(denominaciones);
+                const denominaciones = await obtieneDenominaciones(encryptedData);
+                setData(denominaciones.result_set);
             }
         };
         fetchData();

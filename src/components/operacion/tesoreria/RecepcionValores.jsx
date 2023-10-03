@@ -61,7 +61,7 @@ export const RecepcionValores = () => {
                             name="fecha_operacion"
                             placeholder="Ingresa la fecha de operación"
                         />
-                        <label htmlFor="fecha_operacion">Fecha Operación</label>
+                        <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {
                             errors?.fecha_operacion && <div className="invalid-feedback-custom">{errors?.fecha_operacion.message}</div>
                         }
@@ -72,7 +72,7 @@ export const RecepcionValores = () => {
                         type="submit"
                         className="m-2 btn btn-primary"
                     >
-                        Consultar
+                        CONSULTAR
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>

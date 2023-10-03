@@ -1,5 +1,5 @@
-import {formateaMoneda, FormatoMoneda} from "../../../utils";
-import {useSaldo} from "../../../hook/useSaldo";
+import {FormatoMoneda} from "../../../utils";
+import {useSaldo} from "../../../hook";
 
 export const ConsultaTesoreria = () => {
 

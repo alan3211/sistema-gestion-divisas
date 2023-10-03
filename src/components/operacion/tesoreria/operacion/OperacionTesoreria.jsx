@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {DotacionSucursales} from "./DotacionSucursales";
 import {MovimientoBancario} from "./MovimientoBancario";
 import {formateaMoneda, FormatoMoneda} from "../../../../utils";
-import {useSaldo} from "../../../../hook/useSaldo";
+import {useSaldo} from "../../../../hook";
 import {getConsultaSaldoCuenta} from "../../../../services/operacion-tesoreria";
 
 export const OperacionTesoreria = () => {

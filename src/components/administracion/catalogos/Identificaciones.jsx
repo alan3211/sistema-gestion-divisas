@@ -66,7 +66,7 @@ export const Identificaciones = () => {
                                     name="identificacion"
                                     placeholder="Ingresa el tipo de identificación"
                                 />
-                                <label htmlFor="identificacion">Tipo de Identificación</label>
+                                <label htmlFor="identificacion">TIPO DE IDENTIFICACIÓN</label>
                                 {
                                     errors?.identificacion &&
                                     <div className="invalid-feedback-custom">{errors?.identificacion.message}</div>
@@ -76,7 +76,7 @@ export const Identificaciones = () => {
                         <div className="col-md-6">
                             <button type="submit" className="m-2 btn btn-primary">
                               <span className="me-2">
-                                Guardar
+                                GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
                               </span>
                             </button>

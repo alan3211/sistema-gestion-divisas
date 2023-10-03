@@ -49,7 +49,7 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
                 className="btn btn-danger"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
-                title="Cancelar"
+                title="CANCELAR"
                 disabled={item.Estatus !== 'Pendiente'}
                 onClick={showModalCancelar}
             >
@@ -81,7 +81,7 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
                                             resize: 'none'
                                         }}
                                     />
-                                <label htmlFor="motivo">Motivo</label>
+                                <label htmlFor="motivo">MOTIVO</label>
                                 {
                                     errors?.motivo &&
                                     <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
@@ -91,7 +91,7 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
                         <div className="d-flex justify-content-end mt-2">
                             <button type="submit" className="btn btn-danger">
                                 <i className="bi bi-x-circle me-1"></i>
-                                Cancelar Envío
+                                CANCELAR ENVÍO
                             </button>
                         </div>
                     </form>

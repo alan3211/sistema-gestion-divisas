@@ -56,7 +56,7 @@ export const Catalogo = () => {
                                     </option>
                                 ))}
                             </select>
-                            <label htmlFor="catalogo">Catálogo</label>
+                            <label htmlFor="catalogo">CATÁLOGO</label>
                             {errors?.catalogo && (
                                 <div className="invalid-feedback-custom">
                                     {errors?.catalogo.message}
