@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useCatalogo } from "../../../../hook/useCatalogo";
+import { useCatalogo } from "../../../../hook";
 import {encryptRequest, formattedDateWS, globalData, opciones, validarMoneda} from "../../../../utils";
 import {dotaSucursales} from "../../../../services/operacion-tesoreria";
 import {dataG} from "../../../../App";
@@ -67,7 +67,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                                 </option>
                             ))}
                         </select>
-                        <label htmlFor="sucursal">Sucursal</label>
+                        <label htmlFor="sucursal">SUCURSAL</label>
                         {errors?.sucursal && (
                             <div className="invalid-feedback-custom">
                                 {errors?.sucursal.message}
@@ -106,7 +106,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                                 </option>
                             ))}
                         </select>
-                        <label htmlFor="moneda">Moneda</label>
+                        <label htmlFor="moneda">MONEDA</label>
                         {errors?.moneda && (
                             <div className="invalid-feedback-custom">
                                 {errors?.moneda.message}
@@ -139,7 +139,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                             placeholder="Ingresa el monto"
                         />
                         <label htmlFor="monto" className="form-label">
-                            Monto
+                            MONTO
                         </label>
                         {errors?.monto && (
                             <div className="invalid-feedback">{errors?.monto.message}</div>
@@ -171,7 +171,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                             placeholder="Ingresa el equivalente en pesos"
                         />
                         <label htmlFor="monto_equivalente" className="form-label">
-                            Equivalente en MXP
+                            EQUIVALENTE EN MXP
                         </label>
                         {errors?.monto_equivalente && (
                             <div className="invalid-feedback">
@@ -186,7 +186,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                         className="m-2 btn btn-primary"
                     >
                       <i className="bi bi-save me-2"></i>
-                      Guardar
+                      GUARDAR
                     </button>
                 </div>
             </form>

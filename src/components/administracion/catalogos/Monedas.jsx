@@ -62,7 +62,7 @@ export const Monedas = () => {
                             name="id_moneda"
                             placeholder="Ingresa el ID de la moneda"
                         />
-                        <label htmlFor="id_moneda">ID Moneda</label>
+                        <label htmlFor="id_moneda">ID MONEDA</label>
                         {
                             errors?.id_moneda &&
                             <div className="invalid-feedback-custom">{errors?.id_moneda.message}</div>
@@ -93,7 +93,7 @@ export const Monedas = () => {
                             name="descripcion"
                             placeholder="Ingresa la descripcion"
                         />
-                        <label htmlFor="descripcion">Descripción</label>
+                        <label htmlFor="descripcion">DESCRIPCIÓN</label>
                         {
                             errors?.descripcion &&
                             <div className="invalid-feedback-custom">{errors?.descripcion.message}</div>
@@ -103,7 +103,7 @@ export const Monedas = () => {
                 <div className="col-md-4">
                     <button type="submit" className="m-2 btn btn-primary">
                               <span className="me-2">
-                                Guardar
+                                GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
                               </span>
                     </button>

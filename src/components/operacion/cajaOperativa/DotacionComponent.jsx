@@ -1,21 +1,10 @@
-import {useContext, useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDate,
-    formattedDateWS, getDenominacion,
-    obtenerObjetoDenominaciones,
-    validarMoneda,
+    encryptRequest, formattedDate,
 } from "../../../utils";
-
-import {CajaContext} from "../../../context/caja/CajaContext";
-import {useCatalogo} from "../../../hook/useCatalogo";
-import {realizarOperacion} from "../../../services";
 import {dataG} from "../../../App";
-import {toast} from "react-toastify";
-import {Denominacion} from "../denominacion";
-import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {getDotaciones} from "../../../services/operacion-caja";
 import {TableComponent} from "../../commons/tables";
-import {consultaDotacionSucursal} from "../../../services/operacion-sucursal";
 
 export const DotacionComponent = () => {
 

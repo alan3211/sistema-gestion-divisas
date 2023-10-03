@@ -1,6 +1,5 @@
 import {useForm} from "react-hook-form";
 import {useState} from "react";
-import {consultaEnvioSucursal} from "../../../../services/operacion-tesoreria";
 import {encryptRequest} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 import {dataG} from "../../../../App";
@@ -60,7 +59,7 @@ export const EnvioOperaciones = () => {
                             name="fecha_operacion"
                             placeholder="Ingresa la fecha de operación"
                         />
-                        <label htmlFor="fecha_operacion">Fecha Operación</label>
+                        <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {
                             errors?.fecha_operacion && <div className="invalid-feedback-custom">{errors?.fecha_operacion.message}</div>
                         }
@@ -71,7 +70,7 @@ export const EnvioOperaciones = () => {
                         type="submit"
                         className="m-2 btn btn-primary"
                     >
-                        Consultar
+                        CONSULTAR
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>

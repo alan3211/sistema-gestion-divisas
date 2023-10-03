@@ -3,7 +3,7 @@ import {dataG} from "../../../App";
 import {hacerOperacion, realizaConversion} from "../../../services";
 import {ModalConfirm} from "../../commons/modals";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {useCatalogo} from "../../../hook";
 import {
     DENOMINACIONES,
     encryptRequest,
@@ -99,14 +99,13 @@ export const CalculadoraFormComponent = () => {
             });
             clearForm();
         }else{
-            setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
-            data.cantidad_entregar = parseFloat(result.result_set[0].CantidadEntrega);
+            setCantidad(parseInt(result.result_set[0].CantidadEntrega,10));
+            data.cantidad_entregar = parseInt(result.result_set[0].CantidadEntrega,10);
+            data.decimal_sobrante = parseFloat(result.result_set[0].CantidadEntrega) - parseInt(result.result_set[0].CantidadEntrega,10);
             setShowCantidadEntregada(true);
         }
         data["tipo_cambio"] = obtieneDivisa(tipoDivisa, data);
         setDatos(data);
-        console.log("DATA DEL FORM: ",data)
-        console.log("DATA DEL STATE: ",datos)
         if (data["tipo_cambio"] === null) {
             toast.error(`No se puede cotizar ya que no existe un tipo de cambio para ${DENOMINACIONES[watch("moneda")]}.`, OPTIONS);
             clearForm();
@@ -120,7 +119,7 @@ export const CalculadoraFormComponent = () => {
     const clearForm = () => {
         reset();
         setShowCantidadEntregada(false);
-        setCantidad('');
+        setCantidad(0);
         setContinuaOperacion(false); // oculta el modulo de busquedaclientes
         setShowCliente(false); // Oculta el modulo de datos clientes
     }
@@ -254,20 +253,20 @@ export const CalculadoraFormComponent = () => {
                                 {...register("monto", {
                                     required: {
                                         value: true,
-                                        message: 'El campo Cantidad Recibida no puede estar vacío.'
+                                        message: 'El campo Cantidad a Cotizar no puede estar vacío.'
                                     },
                                     validate: {
-                                        moneda: (value) => validarMoneda("Cantidad Recibida", value),
-                                        mayorACero: value => parseFloat(value) > 0 || "La Cantidad Recibida debe ser mayor a 0"
+                                        moneda: (value) => validarMoneda("Cantidad a Cotizar", value),
+                                        mayorACero: value => parseFloat(value) > 0 || "La Cantidad a Cotizar debe ser mayor a 0"
                                     }
                                 })}
                                 type="text"
                                 className={`form-control ${!!errors?.monto ? 'is-invalid' : ''}`}
                                 id="monto"
                                 name="monto"
-                                placeholder="Ingresa la cantidad recibida por el cliente"
+                                placeholder="Ingresa la cantidad a cotizar por el usuario"
                             />
-                            <label htmlFor="monto" className="form-label">CANTIDAD RECIBIDA <i>({muestraDivisa(1)})</i></label>
+                            <label htmlFor="monto" className="form-label">CANTIDAD A COTIZAR <i>({muestraDivisa(1)})</i></label>
                             {
                                 errors?.monto && <div className="invalid-feedback">{errors?.monto.message}</div>
                             }

@@ -105,7 +105,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             setShowModal(false);
             setValue("motivo",'');
         },
-        title: (optionBtn === 1) ? 'Aceptar Operación' : 'Rechazar Operación',
+        title: (optionBtn === 1) ? 'ACEPTAR OPERACIÓN' : 'RECHAZAR OPERACIÓN',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas el movimiento.',
@@ -140,11 +140,11 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
     return (
         <td key={index} className="text-center">
-            <button className="btn btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Aceptar"
+            <button className="btn btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTAR"
                     onClick={() => onHandleOptions(1)} disabled={item.Estatus !== 'Pendiente'}>
                 <i className="bi bi-check-circle"></i>
             </button>
-            <button className="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Rechazar"
+            <button className="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="RECHAZAR"
                     onClick={() => onHandleOptions(2)} disabled={item.Estatus !== 'Pendiente'}>
                 <i className="bi bi-x-circle"></i>
             </button>
@@ -179,7 +179,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                         resize: 'none'
                                                     }}
                                                 />
-                                                <label htmlFor="motivo">Motivo</label>
+                                                <label htmlFor="motivo">MOTIVO</label>
                                                 {
                                                     errors?.motivo &&
                                                     <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
@@ -221,7 +221,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                 resize: 'none'
                                             }}
                                         />
-                                        <label htmlFor="motivo">Motivo</label>
+                                        <label htmlFor="motivo">MOTIVO</label>
                                         {
                                             errors?.motivo &&
                                             <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
@@ -233,7 +233,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                 <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
                                         disabled={validaBtn()}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
-                                    {optionBtn === 1 ? 'Aceptar' : 'Rechazar'}
+                                    {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
                         </form>

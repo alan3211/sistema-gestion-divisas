@@ -28,7 +28,7 @@ export const SeleccionarCliente = ({item, index, deps}) => {
             <span className="badge bg-primary m-2 p-2 cursor-pointer"
                   onClick={() => hacerOperacion(item)}>
                 <i className="ri-star-line me-2"></i>
-                Seleccionar
+                SELECCIONAR USUARIO
            </span>
         </td>
     );

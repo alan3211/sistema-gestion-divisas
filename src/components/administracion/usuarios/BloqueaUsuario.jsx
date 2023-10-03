@@ -100,7 +100,7 @@ export const BloqueaUsuario = () => {
                                 ))
                             }
                         </select>
-                        <label htmlFor="sucursal_origen">Sucursal Origen</label>
+                        <label htmlFor="sucursal_origen">SUCURSAL ORIGEN</label>
                         {
                             errors?.sucursal_origen &&
                             <div className="invalid-feedback-custom">{errors?.sucursal_origen.message}</div>
@@ -134,7 +134,7 @@ export const BloqueaUsuario = () => {
                                 ))
                             }
                         </select>
-                        <label htmlFor="usuario">Usuarios</label>
+                        <label htmlFor="usuario">USUARIOS DE SISTEMA</label>
                         {
                             errors?.usuario &&
                             <div className="invalid-feedback-custom">{errors?.usuario.message}</div>
@@ -149,7 +149,7 @@ export const BloqueaUsuario = () => {
                         disabled={ watch("sucursal_origen") === '0' && usuarios.length === 0}
                     >
                         <i className="bi bi-unlock-fill me-2"></i>
-                        Desbloquear Usuario
+                        DESBLOQUEAR USUARIO
                     </button>
                     <button
                         type="submit"
@@ -158,7 +158,7 @@ export const BloqueaUsuario = () => {
                         disabled={ watch("sucursal_origen") === '0' && usuarios.length === 0}
                     >
                         <i className="bi bi-lock-fill me-2"></i>
-                        Bloquear Usuario
+                       BLOQUEAR USUARIO
                     </button>
                 </div>
             </form>

@@ -11,7 +11,6 @@ import {
     obtenerArrayDifDenominaciones,
     obtenerObjetoDenominaciones,
     opciones,
-    validarNumeros
 } from "../../../utils";
 import { dataG } from "../../../App";
 import { toast } from "react-toastify";

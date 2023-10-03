@@ -1,7 +1,7 @@
 import {useContext} from "react";
 import {CargaTipoCambioContext} from "../../../context/CargaTipoCambio/CargaTipoCambioContext";
 import {AltaDivisas} from "./AltaDivisas";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {useCatalogo} from "../../../hook";
 import {getCargaTipoCambio} from "../../../services/administracion-services";
 import {encryptRequest, formattedDate} from "../../../utils";
 import {toast} from "react-toastify";
@@ -12,8 +12,6 @@ export const CargaTipoCambioOpera = ({id}) => {
     const catalogo = useCatalogo([16, 17])
 
     const onSubmit = handleSubmit(async(data) => {
-
-        console.log("DATOS DEL FORM",data)
 
         const updatedTipoCambio = currencies.map((currency) => {
 
@@ -102,7 +100,7 @@ export const CargaTipoCambioOpera = ({id}) => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="region">Región</label>
+                                <label htmlFor="region">REGIÓN</label>
                                 {
                                     errors?.region &&
                                     <div className="invalid-feedback-custom">{errors?.region.message}</div>
@@ -141,7 +139,7 @@ export const CargaTipoCambioOpera = ({id}) => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="sucursal">Sucursal</label>
+                                <label htmlFor="sucursal">SUCURSAL</label>
                                 {
                                     errors?.sucursal &&
                                     <div className="invalid-feedback-custom">{errors?.sucursal.message}</div>
@@ -153,7 +151,7 @@ export const CargaTipoCambioOpera = ({id}) => {
                 <AltaDivisas/>
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-primary">
-                        <i className="bi bi-save me-1"></i> Guardar
+                        <i className="bi bi-save me-1"></i> GUARDAR
                     </button>
                 </div>
             </form>

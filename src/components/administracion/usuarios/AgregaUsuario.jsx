@@ -63,7 +63,7 @@ export const AgregaUsuario = () => {
                             name="usuario"
                             placeholder="Ingresa el usuario"
                         />
-                        <label htmlFor="usuario">Usuario</label>
+                        <label htmlFor="usuario">USUARIO DE SISTEMA</label>
                         {
                             errors?.usuario && <div className="invalid-feedback-custom">{errors?.usuario.message}</div>
                         }
@@ -93,7 +93,7 @@ export const AgregaUsuario = () => {
                             name="nombre_usuario"
                             placeholder="Ingresa el nombre completo del usuario"
                         />
-                        <label htmlFor="nombre_usuario">Nombre Usuario</label>
+                        <label htmlFor="nombre_usuario">NOMBRE DE USUARIO</label>
                         {
                             errors?.nombre_usuario &&
                             <div className="invalid-feedback-custom">{errors?.nombre_usuario.message}</div>
@@ -119,7 +119,7 @@ export const AgregaUsuario = () => {
                             name="password"
                             placeholder="Ingresa la contraseña"
                         />
-                        <label htmlFor="password">Contraseña</label>
+                        <label htmlFor="password">CONTRASEÑA</label>
                         {
                             errors.password && <div className="invalid-feedback-custom">{errors.password.message}</div>
                         }
@@ -149,7 +149,7 @@ export const AgregaUsuario = () => {
                                 ))
                             }
                         </select>
-                        <label htmlFor="perfil">Perfil</label>
+                        <label htmlFor="perfil">PERFIL</label>
                         {
                             errors?.perfil && <div className="invalid-feedback-custom">{errors?.perfil.message}</div>
                         }
@@ -179,7 +179,7 @@ export const AgregaUsuario = () => {
                                 ))
                             }
                         </select>
-                        <label htmlFor="sucursal">Sucursal</label>
+                        <label htmlFor="sucursal">SUCURSAL</label>
                         {
                             errors?.sucursal && <div className="invalid-feedback-custom">{errors?.sucursal.message}</div>
                         }
@@ -191,7 +191,7 @@ export const AgregaUsuario = () => {
                         className="m-2 btn btn-primary"
                     >
                         <i className="bi bi-person-add me-2"></i>
-                        Registrar Usuario
+                      REGISTRAR USUARIO DE SISTEMA
                     </button>
                 </div>
             </form>

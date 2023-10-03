@@ -1,10 +1,10 @@
 import {encryptRequest, formattedDateWS, globalData, opciones, validarMoneda} from "../../../../utils";
 import {useForm} from "react-hook-form";
-import {useCatalogo} from "../../../../hook/useCatalogo";
+import {useCatalogo} from "../../../../hook";
 import {dataG} from "../../../../App";
 import {dotaSucursales} from "../../../../services/operacion-tesoreria";
 import {toast} from "react-toastify";
-import {useSaldo} from "../../../../hook/useSaldo";
+
 
 export const MovimientoBancario = ({actualizarSaldo}) => {
 
@@ -73,7 +73,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                             </option>
                         ))}
                     </select>
-                    <label htmlFor="tipo_movimiento">Tipo de Movimiento</label>
+                    <label htmlFor="tipo_movimiento">TIPO DE MOVIMIENTO</label>
                     {errors?.tipo_movimiento && (
                         <div className="invalid-feedback-custom">
                             {errors?.tipo_movimiento.message}
@@ -106,7 +106,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                         placeholder="Ingresa el monto"
                     />
                     <label htmlFor="monto" className="form-label">
-                        Monto
+                        MONTO
                     </label>
                     {errors?.monto && (
                         <div className="invalid-feedback">{errors?.monto.message}</div>
@@ -119,7 +119,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                     className="m-2 btn btn-primary"
                 >
                     <i className="bi bi-save me-2"></i>
-                    Guardar
+                    GUARDAR
                 </button>
             </div>
             </form>

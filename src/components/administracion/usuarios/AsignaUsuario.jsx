@@ -99,7 +99,7 @@ export const AsignaUsuario = () => {
                                 ))
                             }
                         </select>
-                        <label htmlFor="sucursal_origen">Sucursal Origen</label>
+                        <label htmlFor="sucursal_origen">SUCURSAL ORIGEN</label>
                         {
                             errors?.sucursal_origen &&
                             <div className="invalid-feedback-custom">{errors?.sucursal_origen.message}</div>
@@ -133,7 +133,7 @@ export const AsignaUsuario = () => {
                                 ))
                             }
                         </select>
-                        <label htmlFor="usuario">Usuarios</label>
+                        <label htmlFor="usuario">USUARIOS DE SISTEMA</label>
                         {
                             errors?.usuario &&
                             <div className="invalid-feedback-custom">{errors?.usuario.message}</div>
@@ -167,7 +167,7 @@ export const AsignaUsuario = () => {
                                 ))
                             }
                         </select>
-                        <label htmlFor="sucursal_destino">Sucursal Destino</label>
+                        <label htmlFor="sucursal_destino">SUCURSAL DESTINO</label>
                         {
                             errors?.sucursal_destino &&
                             <div className="invalid-feedback-custom">{errors?.sucursal_destino.message}</div>
@@ -181,7 +181,7 @@ export const AsignaUsuario = () => {
                         disabled={ watch("sucursal_origen") === '0' && usuarios.length === 0}
                     >
                         <i className="bi bi-person-check-fill me-2"></i>
-                        Reasignar Usuario
+                       REASIGNAR USUARIO DE SISTEMA
                     </button>
                 </div>
             </form>

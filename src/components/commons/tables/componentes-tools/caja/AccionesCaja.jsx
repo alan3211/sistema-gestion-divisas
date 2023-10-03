@@ -1,16 +1,14 @@
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {
-    eliminarDenominacionesConCantidadCero,
     encryptRequest,
-    getDenominacion, obtenerObjetoDenominaciones,
+    obtenerObjetoDenominaciones,
     validarAlfaNumerico
 } from "../../../../../utils";
 import {accionesCaja, getDenominaciones} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
 import {ModalAccionesTool} from "../../../modals";
 import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
-import {DenominacionContext} from "../../../../../context/denominacion/DenominacionContext";
 
 export const AccionesCaja = ({item, index, refresh}) => {
     const [showModal, setShowModal] = useState(false);
@@ -82,7 +80,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
     const options = {
         showModal,
         closeCustomModal: () => {setShowModal(false); reset()},
-        title: (optionBtn === 1) ? 'Aceptar Dotación' : 'Rechazar Dotación',
+        title: (optionBtn === 1) ? 'ACEPTAR DOTACIÓN' : 'RECHAZAR DOTACIÓN',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y validar las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas la dotación.',
@@ -142,7 +140,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                                         resize: 'none'
                                                     }}
                                                 />
-                                                <label htmlFor="motivo">Motivo</label>
+                                                <label htmlFor="motivo">MOTIVO</label>
                                                 {
                                                     errors?.motivo &&
                                                     <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
@@ -180,7 +178,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                                 resize: 'none'
                                             }}
                                         />
-                                        <label htmlFor="motivo">Motivo</label>
+                                        <label htmlFor="motivo">MOTIVO</label>
                                         {
                                             errors?.motivo &&
                                             <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
@@ -192,7 +190,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                 <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
                                         disabled={watch("motivo") === ''}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
-                                    {optionBtn === 1 ? 'Aceptar' : 'Rechazar'}
+                                    {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
                         </form>

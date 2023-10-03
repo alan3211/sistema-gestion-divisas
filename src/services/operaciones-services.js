@@ -135,14 +135,15 @@ export const buscaCliente = async (formValues) =>{
 
 export const obtieneDenominaciones = async (formValues) =>{
     try {
-        const url = `${OPERACIONES_CONSULTALDENOMINACIONES_URL}${formValues}`;
+        const url = `${OPERACIONES_CONSULTALDENOMINACIONES_URL}`;
 
         const response = await fetch(url, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
-            }
+            },
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {

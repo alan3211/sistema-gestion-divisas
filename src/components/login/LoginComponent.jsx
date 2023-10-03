@@ -71,7 +71,7 @@ export const LoginComponent = () => {
 
                                 <div className="card border-0 shadow-lg" style={{ maxWidth: "600px" }}>
                                     <div className="card-body p-4">
-                                        <h2 className="card-title text-center mb-2">¡Bienvenido!</h2>
+                                        <h5 className="text-blue text-center mb-4"><strong>¡Bienvenido!</strong></h5>
 
                                         <form onSubmit={handleLogin}>
                                             <div className="input-group mb-3">
@@ -96,7 +96,7 @@ export const LoginComponent = () => {
                                                     className={`form-control ${!!errors.usuario ? 'invalid-input':''}`}
                                                     id="usuario"
                                                     name="usuario"
-                                                    placeholder="Ingresa el usuario"
+                                                    placeholder="Usuario"
                                                 />
                                                 {
                                                     errors.usuario && <div className="invalid-feedback-custom">{errors.usuario.message}</div>
@@ -120,7 +120,7 @@ export const LoginComponent = () => {
                                                     className={`form-control ${!!errors.password ? 'invalid-input':''}`}
                                                     id="password"
                                                     name="password"
-                                                    placeholder="Ingresa la contraseña"
+                                                    placeholder="Contraseña"
                                                 />
                                                 {
                                                     errors.password && <div className="invalid-feedback-custom">{errors.password.message}</div>
@@ -138,13 +138,13 @@ export const LoginComponent = () => {
                                                         onChange={()=> recordValues(watch())}
                                                     />
                                                     <label className="form-check-label" htmlFor="rememberMe">
-                                                        Recuérdame
+                                                        <strong>Recuérdame</strong>
                                                     </label>
                                                 </div>
                                             </div>
 
                                             <button className="btn btn-primary w-100" type="submit">
-                                                Iniciar Sesión
+                                                <i className="bi bi-box-arrow-in-right"></i> <strong>INICIAR SESIÓN</strong>
                                             </button>
                                         </form>
                                     </div>

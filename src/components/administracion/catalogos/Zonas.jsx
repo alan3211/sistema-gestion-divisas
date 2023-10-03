@@ -65,7 +65,7 @@ export const Zonas = () => {
                                     name="descripcion"
                                     placeholder="Ingresa la nueva zona"
                                 />
-                                <label htmlFor="descripcion">Zona</label>
+                                <label htmlFor="descripcion">ZONA</label>
                                 {
                                     errors?.descripcion &&
                                     <div className="invalid-feedback-custom">{errors?.descripcion.message}</div>
@@ -75,7 +75,7 @@ export const Zonas = () => {
                         <div className="col-md-6">
                             <button type="submit" className="m-2 btn btn-primary">
                               <span className="me-2">
-                                Guardar
+                                GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
                               </span>
                             </button>
