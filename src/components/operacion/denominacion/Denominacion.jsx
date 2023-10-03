@@ -3,6 +3,7 @@ import {obtieneDenominaciones} from "../../../services";
 import {validarMoneda} from "../../../utils";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {useDenominacion} from "../../../hook/useDenominacion";
+import {dataG} from "../../../App";
 
 export const Denominacion = ({type,moneda,options}) => {
 
@@ -47,6 +48,7 @@ export const Denominacion = ({type,moneda,options}) => {
                                                 name={`denominacion_${name}`}
                                                 className={`form-control ${errors && errors[`denominacion_${name}`] ? 'is-invalid' : ''}`}
                                                 placeholder="0"
+                                                disabled={dataG.perfil === 'Cajero' && options.tipo !== 'R' && elemento['Billetes Disponibles'] <=0}
                                             />
                                         </td>
                                         <td>{calculateTotal(elemento.Denominacion)}</td>

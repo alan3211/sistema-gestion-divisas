@@ -79,6 +79,15 @@ export const CalculadoraFormComponent = () => {
     const handleSubmitCotizacion = handleSubmit(async (data) => {
         data.sucursal = parseInt(dataG.sucursal);
         data.cajero = dataG.usuario;
+        data["tipo_cambio"] = obtieneDivisa(tipoDivisa, data);
+        setDatos(data);
+        if (data["tipo_cambio"] === null) {
+            toast.error(`No se puede cotizar ya que no existe un tipo de cambio para ${DENOMINACIONES[watch("moneda")]}.`, OPTIONS);
+            clearForm();
+        } else {
+            setOperacion(data);
+            validaCantidadEntregada();
+        }
         const encryptData = encryptRequest(data);
         const result = await realizaConversion(encryptData);
         if (result.result_set[0].hasOwnProperty('Mensaje')) {
@@ -103,15 +112,6 @@ export const CalculadoraFormComponent = () => {
             data.cantidad_entregar = parseInt(result.result_set[0].CantidadEntrega,10);
             data.decimal_sobrante = parseFloat(result.result_set[0].CantidadEntrega) - parseInt(result.result_set[0].CantidadEntrega,10);
             setShowCantidadEntregada(true);
-        }
-        data["tipo_cambio"] = obtieneDivisa(tipoDivisa, data);
-        setDatos(data);
-        if (data["tipo_cambio"] === null) {
-            toast.error(`No se puede cotizar ya que no existe un tipo de cambio para ${DENOMINACIONES[watch("moneda")]}.`, OPTIONS);
-            clearForm();
-        } else {
-            setOperacion(data);
-            validaCantidadEntregada();
         }
     });
 
