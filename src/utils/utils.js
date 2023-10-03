@@ -1,7 +1,7 @@
 import CryptoJS from "crypto-js";
 
 const currentDate = new Date();
-export const globalData = JSON.parse(localStorage.getItem('usuario'))
+export const globalData = JSON.parse(localStorage.getItem('usuario_data'))
 
 export const year = currentDate.getFullYear();
 const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
@@ -80,8 +80,7 @@ export const obtenerArrayDifDenominaciones = (denominacionesObj) => {
 
 export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominaciones = [
-        'p1', 'p2', 'p5',
-        '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+        'p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
     ];
 
     const getDenominacionCantidad = (nombre) => {
@@ -107,8 +106,7 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
 
 export const getDiferenciaDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominaciones = [
-        'p1', 'p2', 'p5',
-        '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+        'p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
     ];
 
     const getDenominacionCantidad = (nombre) => {

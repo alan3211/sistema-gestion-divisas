@@ -106,15 +106,15 @@ export const useDenominacion = ({type,moneda,options}) => {
         let isValid;
 
         if(type === 'C'){
-            isValid = calculateGrandTotal() >= parseFloat(importe);
+            isValid = calculateGrandTotal() >= importe;
             newHabilita.recibe = !isValid;
         }
 
         if (type === 'R') {
-            isValid = calculateGrandTotal() >= parseFloat(calculaValorMonto);
+            isValid = calculateGrandTotal() >= calculaValorMonto;
             newHabilita.recibe = !isValid;
         } else {
-            isValid = calculateGrandTotal() === parseFloat(importe);
+            isValid = calculateGrandTotal() === importe;
             newHabilita.entrega = !isValid;
         }
         setHabilita(newHabilita);

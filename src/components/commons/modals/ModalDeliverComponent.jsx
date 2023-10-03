@@ -58,15 +58,15 @@ export const ModalDeliverComponent = ({configuration}) =>{
         if (operacion.tipo_operacion === '1') {
             formValuesE = getDenominacion('MXP',denominacionesEntrega)
             formValuesR = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesRecibe)
-            formValuesE.movimiento = "RECIBE CLIENTE";
-            formValuesR.movimiento = "ENTREGA CLIENTE";
+            formValuesR.movimiento = "RECIBIMOS DEL CLIENTE";
+            formValuesE.movimiento = "ENTREGA AL CLIENTE";
             formValuesR.tipoOperacion = "COMPRA";
             formValuesE.tipoOperacion = "COMPRA";
         }else{
             formValuesE = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesEntrega)
             formValuesR = getDenominacion('MXP',denominacionesRecibe)
-            formValuesR.movimiento = "RECIBE CLIENTE";
-            formValuesE.movimiento = "ENTREGA CLIENTE";
+            formValuesE.movimiento = "ENTREGA AL CLIENTE";
+            formValuesR.movimiento = "RECIBIMOS DEL CLIENTE";
             formValuesR.tipoOperacion = "VENTA";
             formValuesE.tipoOperacion = "VENTA";
         }
@@ -116,8 +116,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 }
             });
 
-            // Resto de tu código
-
             if (resultadoPromise) {
                 if (redondearNumero(parseFloat(operacion.monto) - parseFloat(calculaValorMonto)) >= 1) {
                     setShowCambio(true);
@@ -139,6 +137,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
+        tipo: 'R',
     }
 
     const optionsE = {
@@ -147,6 +146,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
+        tipo: 'E',
     }
 
 
@@ -164,6 +164,19 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
                 <Modal.Body>
                     <div className="row justify-content-center">
+                        <div className="col-md-4 mb-3 d-flex">
+                            <div className="form-floating flex-grow-1">
+                                <input
+                                    type="text"
+                                    id="monto"
+                                    name="monto"
+                                    className={`form-control mb-1`}
+                                    placeholder="Ingresa la cantidad a cotizar por el usuario"
+                                    value={operacion.monto} readOnly
+                                />
+                                <label htmlFor="monto" className="form-label">IMPORTE <i>({muestraDivisa()})</i></label>
+                            </div>
+                        </div>
                         <div className="col-md-4 mb-3 d-flex">
                             <div className="form-floating flex-grow-1">
                                 <input
@@ -217,7 +230,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 showCambio
                     &&
                     <ModalCambio
-                        cambio={(redondearNumero(operacion.monto)-calculaValorMonto)}
+                        cambio={(redondearNumero(calculaValorMonto))}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
                         operacion={operacion}

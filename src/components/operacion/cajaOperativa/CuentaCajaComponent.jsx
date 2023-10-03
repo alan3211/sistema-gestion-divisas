@@ -1,7 +1,7 @@
 import {encryptRequest, formattedDateDD, mensajeSinElementos} from "../../../utils";
 import {MessageComponent} from "../../commons";
 import {useCaja} from "../../../hook/useCaja";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {TableComponent} from "../../commons/tables";
 import {ResumenCaja} from "./ResumenCaja";
 import {consultaCaja, getDotaciones} from "../../../services/operacion-caja";
@@ -13,7 +13,6 @@ export const CuentaCajaComponent = ({tipo}) => {
     const [showDetalle,setShowDetalle] = useState(false);
     const [dataDenominacion,setDataDenominacion] = useState({});
     const [moneda,setMoneda] = useState('');
-
     const refreshQuery = async () =>{
            const values = {
                 usuario: dataG.usuario,
@@ -25,13 +24,23 @@ export const CuentaCajaComponent = ({tipo}) => {
             setData(data);
     }
 
+    const [resetFunction, setResetFunction] = useState();
+
+    // Función para recibir la función reset desde ResumenCaja
+    const receiveResetFunction = (reset) => {
+        setResetFunction(reset);
+    };
+
+
     const options = {
         tools: [
-            {columna:"Denominaciones",tool:'ver-denominaciones', deps:{setShowDetalle,setDataDenominacion,setMoneda}},
+            {columna:"Denominaciones",tool:'ver-denominaciones', deps:{setShowDetalle,setDataDenominacion,setMoneda,resetForm:resetFunction}},
         ]
     }
 
     console.log(dataDenominacion)
+
+
 
     if (data.total_rows === 0) {
         return (<div className="row d-flex justify-content-center">
@@ -51,7 +60,14 @@ export const CuentaCajaComponent = ({tipo}) => {
                {
                    showDetalle && (
                        <>
-                           <ResumenCaja data={dataDenominacion} moneda={moneda} setShowDetalle={setShowDetalle} tipo={tipo} refresh={refreshQuery}/>
+                           <ResumenCaja
+                               data={dataDenominacion}
+                               moneda={moneda}
+                               setShowDetalle={setShowDetalle}
+                               tipo={tipo}
+                               refresh={refreshQuery}
+                               resetForm={receiveResetFunction}
+                           />
                        </>
                    )
                }
