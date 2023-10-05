@@ -130,8 +130,6 @@ export const getDiferenciaDenominacion = (divisa = 'MXP', replaceValues) => {
     return denominacionObj;
 };
 
-
-
 export const encryptRequest = (data) => {
     const jsonDataString = JSON.stringify(data);
     const key = CryptoJS.enc.Utf8.parse('KtsmylMOoT735gRWHUFj7alBJypXlVNw');
