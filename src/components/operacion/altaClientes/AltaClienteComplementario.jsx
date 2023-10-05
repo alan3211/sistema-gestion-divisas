@@ -2,12 +2,11 @@ import {memo, useContext, useEffect, useState} from "react";
 import {ModalConfirm} from "../../commons/modals";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {encryptRequest, validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
-import {useCatalogo} from "../../../hook/useCatalogo";
-import {useAltaComplementario} from "../../../hook/useAltaComplementario";
+import {encryptRequest, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
+import {useCatalogo} from "../../../hook";
+import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
-import {getCatalogo, getLocalidad, guardaCliente} from "../../../services";
-import {useComboInput} from "../../../hook";
+import {getLocalidad, guardaCliente} from "../../../services";
 import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 
 export const AltaClienteComplementario = memo(() => {

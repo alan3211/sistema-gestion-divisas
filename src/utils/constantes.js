@@ -1,6 +1,6 @@
-//const URL = 'http://grocerys-backend.cpd2aadzgsaweuax.eastus.azurecontainer.io:9000/';
+const URL = 'https://grocerys-back.redcliff-1d57ab6c.eastus2.azurecontainerapps.io/';
 //const URL = 'http://192.168.101.45:9000/';
-const URL = 'http://localhost:9000/';
+//const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
