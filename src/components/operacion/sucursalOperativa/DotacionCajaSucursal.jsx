@@ -35,7 +35,7 @@ export const DotacionCajaSucursal = () => {
 
     const options = {
         title: '',
-        importe: parseFloat(watch('monto')).toFixed(2),
+        importe: parseInt(watch('monto')),
         habilita,
         setHabilita,
     }

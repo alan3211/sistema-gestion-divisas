@@ -81,13 +81,10 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         'Diferencia Monto': 'bi bi-calculator',
     };
 
-
-
     useEffect(() => {
         // Cuando el componente se monta, envía la función reset al padre
         resetForm(reiniciaState);
     }, [resetForm]);
-
 
     useEffect(() => {
         // Calcula el total de la columna "Billetes Físicos" y la diferencia
@@ -126,7 +123,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         //Calcula el total de diferencia de monto
         const totalDifMontos = data.result_set.reduce((total, elemento, index) => {
             const newValue = billetesFisicos[index];
-            const diferenciaMonto = elemento.Denominacion * newValue;
+            const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;
             return total + diferenciaMonto;
         }, 0);
 
@@ -137,7 +134,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
     const onSubmit = handleSubmit(async (datos) => {
         console.log("Array de objetos:", datos);
-        const usuario_traspaso = datos.usuario_traspaso;
+        const usuario_traspaso = datos.usuario_traspaso || '';
         console.log("Diferencia", totalDiferencia);
         console.log("total_billetes", totalBilletesFisicos);
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
@@ -160,10 +157,13 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         }
 
         const formValuesD = getDenominacion(cierreCaja.moneda, datos)
+        console.log("CIERRE FORMD: ", formValuesD);
         eliminarDenominacionesConCantidadCero(formValuesD);
+        console.log("CIERRE DESP FORMD: ", formValuesD);
 
         const formValuesDif = getDiferenciaDenominacion(cierreCaja.moneda, datos)
         eliminarDenominacionesConCantidadCero(formValuesDif);
+
 
         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
         denominaciones.divisa = cierreCaja.moneda;
@@ -339,7 +339,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                         : 'bi bi-exclamation-circle-fill text-danger';
 
                             /*Hace la diferencia entre el monto actual con el monto*/
-                            const diferenciaMonto = billetesFisicos[index] *  elemento.Denominacion; // Calcular la diferencia de montos
+                            const diferenciaMonto = (billetesFisicos[index] *  elemento.Denominacion) - elemento.Monto; // Calcular la diferencia de montos
 
 
                             return (
@@ -382,7 +382,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                                 const diferencia = elemento['No Billetes'] - newValue;
                                                 setValue(`diferencia_${elemento.Denominacion}`, diferencia);
 
-                                                const diferenciaMonto = elemento.Denominacion * newValue;
+                                                const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;
                                                 setValue(`diferenciaMonto_${elemento.Denominacion}`, diferenciaMonto);
 
                                             }}
