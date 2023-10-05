@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from "react";
 import {obtieneDenominaciones} from "../../../services";
-import {validarMoneda} from "../../../utils";
+import {FormatoMoneda, validarMoneda} from "../../../utils";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {useDenominacion} from "../../../hook/useDenominacion";
 import {dataG} from "../../../App";
@@ -59,7 +59,7 @@ export const Denominacion = ({type,moneda,options}) => {
                             <tfoot>
                             <tr>
                                 <th colSpan="3">Total</th>
-                                <th className={validacionColor()}>{calculateGrandTotal()}</th>
+                                <th className={validacionColor()}>{FormatoMoneda(calculateGrandTotal())}</th>
                             </tr>
                             </tfoot>
                         </table>

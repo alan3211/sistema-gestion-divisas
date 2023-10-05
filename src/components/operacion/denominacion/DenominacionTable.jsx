@@ -1,3 +1,5 @@
+import {FormatoMoneda} from "../../../utils";
+
 export const DenominacionTable = ({data=[],monto,moneda}) => {
     return (
         <div className="table-responsive text-center mt-2">
@@ -13,7 +15,7 @@ export const DenominacionTable = ({data=[],monto,moneda}) => {
                     let name = elemento.nombre;
                     return (
                         <tr key={`denominacion_${name}`}>
-                            <td>{parseInt(elemento.nombre)}</td>
+                            <td>{elemento.nombre}</td>
                             <td>{parseInt(elemento.cantidad)}</td>
                         </tr>
                     )
@@ -22,7 +24,7 @@ export const DenominacionTable = ({data=[],monto,moneda}) => {
                 <tfoot>
                 <tr>
                     <th>Monto Total</th>
-                    <th>{monto}</th>
+                    <th>{FormatoMoneda(monto)}</th>
                 </tr>
                 </tfoot>
             </table>

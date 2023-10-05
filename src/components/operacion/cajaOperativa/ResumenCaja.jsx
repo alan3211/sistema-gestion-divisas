@@ -430,7 +430,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                         </tfoot>
                     </table>
                     <div className="col-md-12">
-                        <button type="submit" className="m-2 btn btn-primary">
+                        <button type="submit" className="m-2 btn btn-primary" disabled={totalDiferencia  === 0}>
                               <span className="me-2">
                                 GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
