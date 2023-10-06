@@ -1,19 +1,17 @@
 import {useContext} from "react";
 import {CargaTipoCambioContext} from "../../../context/CargaTipoCambio/CargaTipoCambioContext";
 import {AltaDivisas} from "./AltaDivisas";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {useCatalogo} from "../../../hook";
 import {getCargaTipoCambio} from "../../../services/administracion-services";
 import {encryptRequest, formattedDate} from "../../../utils";
 import {toast} from "react-toastify";
 
-export const CargaTipoCambioOpera = () => {
+export const CargaTipoCambioOpera = ({id}) => {
 
-    const {showTab,tipo, register,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
+    const {tipo, register,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
     const catalogo = useCatalogo([16, 17])
 
     const onSubmit = handleSubmit(async(data) => {
-
-        console.log("DATOS DEL FORM",data)
 
         const updatedTipoCambio = currencies.map((currency) => {
 
@@ -73,7 +71,7 @@ export const CargaTipoCambioOpera = () => {
         <>
             <form onSubmit={onSubmit}>
                 {
-                    showTab.tab2
+                    id === 'Region'
                     && (
                         <div className="d-flex align-items-center justify-content-center mt-5">
                             <div className="form-floating mb-3">
@@ -92,7 +90,7 @@ export const CargaTipoCambioOpera = () => {
                                     name="region"
                                     aria-label="Región"
                                 >
-                                    <option value="0">Selecciona una opción</option>
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[0]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -102,7 +100,7 @@ export const CargaTipoCambioOpera = () => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="region">Región</label>
+                                <label htmlFor="region">REGIÓN</label>
                                 {
                                     errors?.region &&
                                     <div className="invalid-feedback-custom">{errors?.region.message}</div>
@@ -112,7 +110,7 @@ export const CargaTipoCambioOpera = () => {
                     )
                 }
                 {
-                    showTab.tab3
+                    id === 'Sucursal'
                     && (
                         <div className="d-flex align-items-center justify-content-center mt-5">
                             <div className="form-floating mb-3">
@@ -131,7 +129,7 @@ export const CargaTipoCambioOpera = () => {
                                     name="sucursal"
                                     aria-label="Sucursal"
                                 >
-                                    <option value="0">Selecciona una opción</option>
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[1]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -141,7 +139,7 @@ export const CargaTipoCambioOpera = () => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="sucursal">Sucursal</label>
+                                <label htmlFor="sucursal">SUCURSAL</label>
                                 {
                                     errors?.sucursal &&
                                     <div className="invalid-feedback-custom">{errors?.sucursal.message}</div>
@@ -153,7 +151,7 @@ export const CargaTipoCambioOpera = () => {
                 <AltaDivisas/>
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-primary">
-                        <i className="bi bi-save me-1"></i> Guardar
+                        <i className="bi bi-save me-1"></i> GUARDAR
                     </button>
                 </div>
             </form>

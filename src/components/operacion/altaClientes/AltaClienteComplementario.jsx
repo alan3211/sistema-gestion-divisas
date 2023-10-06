@@ -2,11 +2,12 @@ import {memo, useContext, useEffect, useState} from "react";
 import {ModalConfirm} from "../../commons/modals";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {encryptRequest, validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
-import {useCatalogo} from "../../../hook/useCatalogo";
-import {useAltaComplementario} from "../../../hook/useAltaComplementario";
+import {encryptRequest, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
+import {useCatalogo} from "../../../hook";
+import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
-import {getCatalogo, getLocalidad, guardaCliente} from "../../../services";
+import {getLocalidad, guardaCliente} from "../../../services";
+import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 
 export const AltaClienteComplementario = memo(() => {
 
@@ -34,7 +35,6 @@ export const AltaClienteComplementario = memo(() => {
         const encryptedBase64 = encryptRequest(data)
 
         const dataClientes = await guardaCliente(encryptedBase64);
-        console.log(dataClientes)
         if (dataClientes) {
             propForm.setDataClientes(dataClientes);
             setShowModal(true);
@@ -45,6 +45,8 @@ export const AltaClienteComplementario = memo(() => {
         closeModal();
         propForm.reset();
         propForm.setComplementarios(false);
+        propForm.setShowEdit(false);
+
     }
 
     const [municipios,setMunicipios] = useState([]);
@@ -59,7 +61,6 @@ export const AltaClienteComplementario = memo(() => {
                 municipio:'',
                 colonia:''
             }
-            console.log(values)
             const encryptedData =  encryptRequest(values);
             const mun = await getLocalidad(encryptedData);
             setMunicipios(mun)
@@ -75,8 +76,6 @@ export const AltaClienteComplementario = memo(() => {
                 municipio:propForm.watch("municipio"),
                 colonia:''
             }
-            console.log("2 -->",values)
-            console.log("municipio -->",propForm.watch("municipio"))
             const encryptedData =  encryptRequest(values);
             const colonias = await getLocalidad(encryptedData);
             setColonias(colonias)
@@ -92,8 +91,6 @@ export const AltaClienteComplementario = memo(() => {
                 municipio:propForm.watch("municipio"),
                 colonia:propForm.watch("colonia")
             }
-            console.log("3 -->",values)
-            console.log("colonia -->",propForm.watch("colonia"))
             const encryptedData =  encryptRequest(values);
             const codigo_postal = await getLocalidad(encryptedData);
             setCodigoPostal(codigo_postal)
@@ -102,9 +99,9 @@ export const AltaClienteComplementario = memo(() => {
     }, [propForm.watch("colonia")]);
 
 
+
     return (
         <>
-            {/*Sección de Datos complementarios*/}
             <form className="row g-3" onSubmit={handleValidateFinalForm} noValidate>
                 <CardLayout title="Datos Complementarios" icon="ri-file-list-2-fill p-2">
                     <div className="row">
@@ -120,9 +117,9 @@ export const AltaClienteComplementario = memo(() => {
                                         className={`form-select ${!!propForm.errors?.genero ? 'invalid-input':''}`}
                                         id="genero"
                                         name="genero"
-                                        aria-label="Genero"
+                                        aria-label="GENERO"
                                     >
-                                        <option value="0">Selecciona una opción</option>
+                                        <option value="0">SELECCIONA UNA OPCIÓN</option>
                                         {
                                             catalogo[9]?.map((ele) => (
                                                 <option key={ele.id + '-' + ele.descripcion}
@@ -132,7 +129,7 @@ export const AltaClienteComplementario = memo(() => {
                                             ))
                                         }
                                     </select>
-                                    <label htmlFor="genero">Genero</label>
+                                    <label htmlFor="genero">GENERO</label>
                                     {
                                         propForm.errors?.genero && <div className="invalid-feedback-custom">{propForm.errors?.genero.message}</div>
                                     }
@@ -155,7 +152,7 @@ export const AltaClienteComplementario = memo(() => {
                                     name="id_actividad_economica"
                                     aria-label="Actividad Económica"
                                 >
-                                    <option value="0">Selecciona una opción</option>
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[0]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -165,77 +162,27 @@ export const AltaClienteComplementario = memo(() => {
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="id_actividad_economica">Actividad Económica</label>
+                                <label htmlFor="id_actividad_economica">ACTIVIDAD ECONÓMICA</label>
                                 {
                                     propForm.errors?.id_actividad_economica && <div className="invalid-feedback-custom">{propForm.errors?.id_actividad_economica.message}</div>
                                 }
                             </div>
                         </div>
                         <div className="col-md-3">
-                            <div className="form-floating mb-3">
-                                <select
-                                    {...propForm.register("nacionalidad",{
-                                        required:{
-                                            value:true,
-                                            message:'Debes de seleccionar al menos una nacionalidad.'
-                                        },
-                                        validate: value => {
-                                            return value !== "0" || 'Debes seleccionar una nacionalidad válida.';
-                                        }
-                                    })}
-                                    className={`form-select ${!!propForm.errors?.nacionalidad ? 'invalid-input':''}`}
-                                    id="nacionalidad"
-                                    name="nacionalidad"
-                                    aria-label="Nacionalidad"
-                                >
-                                    <option value="0">Selecciona una opción</option>
-                                    {
-                                        catalogo[1]?.map((ele) => (
-                                            <option key={ele.id + '-' + ele.descripcion}
-                                                    value={ele.id}>
-                                                {ele.descripcion}
-                                            </option>
-                                        ))
-                                    }
-                                </select>
-                                <label htmlFor="nacionalidad">Nacionalidad</label>
-                                {
-                                    propForm.errors?.nacionalidad && <div className="invalid-feedback-custom">{propForm.errors?.nacionalidad.message}</div>
-                                }
-                            </div>
+                            <FilterComboInput
+                                propForm={propForm}
+                                name="nacionalidad"
+                                label="NACIONALIDAD"
+                                options={catalogo[1] || []}
+                            />
                         </div>
                         <div className="col-md-3">
-                            <div className="form-floating mb-3">
-                                <select
-                                    {...propForm.register("pais_nacimiento",{
-                                        required:{
-                                            value:true,
-                                            message:'Debes de seleccionar al menos un pais de nacimiento.'
-                                        },
-                                        validate: value => {
-                                            return value !== "0" || 'Debes seleccionar un pais de nacimiento válido.';
-                                        }
-                                    })}
-                                    className={`form-select ${!!propForm.errors?.pais_nacimiento ? 'invalid-input':''}`}
-                                    id="pais_nacimiento"
-                                    name="pais_nacimiento"
-                                    aria-label="País Nacimiento"
-                                >
-                                    <option value="0">Selecciona una opción</option>
-                                    {
-                                        catalogo[2]?.map((ele) => (
-                                            <option key={ele.id + '-' + ele.descripcion}
-                                                    value={ele.id}>
-                                                {ele.descripcion}
-                                            </option>
-                                        ))
-                                    }
-                                </select>
-                                <label htmlFor="pais_nacimiento">País Nacimiento</label>
-                                {
-                                    propForm.errors?.pais_nacimiento && <div className="invalid-feedback-custom">{propForm.errors?.pais_nacimiento.message}</div>
-                                }
-                            </div>
+                            <FilterComboInput
+                                propForm={propForm}
+                                name="pais_nacimiento"
+                                label="PAÍS NACIMIENTO"
+                                options={catalogo[1] || []}
+                            />
                         </div>
                     </div>
                     <div className="row">
@@ -256,17 +203,17 @@ export const AltaClienteComplementario = memo(() => {
                                     name="estado"
                                     aria-label="Estado"
                                 >
-                                    <option value="0">Selecciona una opción</option>
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[3]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
                                                     value={ele.id}>
-                                                {ele.descripcion}
+                                                {ele.descripcion.toUpperCase()}
                                             </option>
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="estado">Estado</label>
+                                <label htmlFor="estado">ESTADO</label>
                                 {
                                     propForm.errors?.estado && <div className="invalid-feedback-custom">{propForm.errors?.estado.message}</div>
                                 }
@@ -290,17 +237,17 @@ export const AltaClienteComplementario = memo(() => {
                                     aria-label="Municipio"
                                     disabled={(propForm.watch('municipio') === '0') && municipios.length === 0}
                                 >
-                                    <option value="0">Selecciona una opción</option>
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         municipios?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
                                                     value={ele.id}>
-                                                {ele.descripcion}
+                                                {ele.descripcion.toUpperCase()}
                                             </option>
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="municipio">Municipio</label>
+                                <label htmlFor="municipio">MUNICIPIO</label>
                                 {
                                     propForm.errors?.municipio && <div className="invalid-feedback-custom">{propForm.errors?.municipio.message}</div>
                                 }
@@ -324,17 +271,17 @@ export const AltaClienteComplementario = memo(() => {
                                     aria-label="Colonia"
                                     disabled={(propForm.watch('colonia') === '0') && colonias.length === 0}
                                 >
-                                    <option value="0">Selecciona una opción</option>
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         colonias?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
                                                     value={ele.id}>
-                                                {ele.descripcion}
+                                                {ele.descripcion.toUpperCase()}
                                             </option>
                                         ))
                                     }
                                 </select>
-                                <label htmlFor="colonia">Colonia</label>
+                                <label htmlFor="colonia">COLONIA</label>
                                 {
                                     propForm.errors?.colonia && <div className="invalid-feedback-custom">{propForm.errors?.colonia.message}</div>
                                 }
@@ -358,7 +305,7 @@ export const AltaClienteComplementario = memo(() => {
                                 aria-label="Código Postal"
                                 disabled={(propForm.watch('codigo_postal') === '0') && codigoPostal.length === 0}
                             >
-                                <option value="0">Selecciona una opción</option>
+                                <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     codigoPostal?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -368,7 +315,7 @@ export const AltaClienteComplementario = memo(() => {
                                     ))
                                 }
                             </select>
-                            <label htmlFor="codigo_postal">Código Postal</label>
+                            <label htmlFor="codigo_postal">CÓDIGO POSTAL</label>
                             {
                                 propForm.errors?.codigo_postal && <div className="invalid-feedback-custom">{propForm.errors?.codigo_postal.message}</div>
                             }
@@ -380,10 +327,6 @@ export const AltaClienteComplementario = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("telefono",{
-                                        required:{
-                                            value:true,
-                                            message:'El campo Telefono no puede ser vacio.'
-                                        },
                                         validate: (value) => validarNumeroTelefono("Telefono",value)
                                     })}
                                     type="text"
@@ -392,7 +335,7 @@ export const AltaClienteComplementario = memo(() => {
                                     name="telefono"
                                     placeholder="Ingresa el teléfono"
                                 />
-                                <label htmlFor="telefono">Teléfono</label>
+                                <label htmlFor="telefono">TELÉFONO</label>
                                 {
                                     propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>
                                 }
@@ -404,7 +347,7 @@ export const AltaClienteComplementario = memo(() => {
                                     {...propForm.register("calle",{
                                         required:{
                                             value:true,
-                                            message:'El campo Calle no puede ser vacio.'
+                                            message:'El campo no puede ser vacio.'
                                         },
                                         validate: (value) => validarAlfaNumerico("Calle",value)
                                     })}
@@ -413,8 +356,13 @@ export const AltaClienteComplementario = memo(() => {
                                     id="calle"
                                     name="calle"
                                     placeholder="Ingresa la calle"
+                                    onChange={(e) => {
+                                        const upperCaseValue = e.target.value.toUpperCase();
+                                        e.target.value = upperCaseValue;
+                                        propForm.setValue("calle", upperCaseValue);
+                                    }}
                                 />
-                                <label htmlFor="calle">Calle</label>
+                                <label htmlFor="calle">CALLE, AVENIDA, BOULEVARD,CERRADA</label>
                                 {
                                     propForm.errors?.calle && <div className="invalid-feedback-custom">{propForm.errors?.calle.message}</div>
                                 }
@@ -435,8 +383,13 @@ export const AltaClienteComplementario = memo(() => {
                                     id="numero_exterior"
                                     name="numero_exterior"
                                     placeholder="Ingresa el Número Exterior"
+                                    onChange={(e) => {
+                                        const upperCaseValue = e.target.value.toUpperCase();
+                                        e.target.value = upperCaseValue;
+                                        propForm.setValue("numero_exterior", upperCaseValue);
+                                    }}
                                 />
-                                <label htmlFor="numero_exterior">Número Exterior</label>
+                                <label htmlFor="numero_exterior">NÚMERO EXTERIOR</label>
                                 {
                                     propForm.errors?.numero_exterior && <div className="invalid-feedback-custom">{propForm.errors?.numero_exterior.message}</div>
                                 }
@@ -453,8 +406,13 @@ export const AltaClienteComplementario = memo(() => {
                                     id="numero_interior"
                                     name="numero_interior"
                                     placeholder="Ingresa el Número Interior"
+                                    onChange={(e) => {
+                                        const upperCaseValue = e.target.value.toUpperCase();
+                                        e.target.value = upperCaseValue;
+                                        propForm.setValue("numero_interior", upperCaseValue);
+                                    }}
                                 />
-                                <label htmlFor="numero_interior">Número Interior</label>
+                                <label htmlFor="numero_interior">NÚMERO INTERIOR</label>
                                 {
                                     propForm.errors?.numero_interior && <div className="invalid-feedback-custom">{propForm.errors?.numero_interior.message}</div>
                                 }
@@ -482,7 +440,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="monto"
                                 aria-label="Monto"
                             >
-                                <option value="0">Selecciona una opción</option>
+                                <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[4]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -492,7 +450,7 @@ export const AltaClienteComplementario = memo(() => {
                                     ))
                                 }
                             </select>
-                            <label htmlFor="monto">Monto</label>
+                            <label htmlFor="monto">MONTO</label>
                             {
                                 propForm.errors?.monto && <div className="invalid-feedback-custom">{propForm.errors?.monto.message}</div>
                             }
@@ -515,7 +473,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="frecuencia"
                                 aria-label="Frecuencia"
                             >
-                                <option value="0">Selecciona una opción</option>
+                                <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[5]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -525,7 +483,7 @@ export const AltaClienteComplementario = memo(() => {
                                     ))
                                 }
                             </select>
-                            <label htmlFor="frecuencia">Frecuencia</label>
+                            <label htmlFor="frecuencia">FRECUENCIA</label>
                             {
                                 propForm.errors?.frecuencia && <div className="invalid-feedback-custom">{propForm.errors?.frecuencia.message}</div>
                             }
@@ -548,7 +506,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="numero_operaciones"
                                 aria-label="# Operaciones"
                             >
-                                <option value="0">Selecciona una opción</option>
+                                <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[6]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -558,7 +516,7 @@ export const AltaClienteComplementario = memo(() => {
                                     ))
                                 }
                             </select>
-                            <label htmlFor="numero_operaciones"># Operaciones</label>
+                            <label htmlFor="numero_operaciones"># OPERACIONES</label>
                             {
                                 propForm.errors?.numero_operaciones && <div className="invalid-feedback-custom">{propForm.errors?.numero_operaciones.message}</div>
                             }
@@ -583,7 +541,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="origen_recursos"
                                 aria-label="Origen Recursos"
                             >
-                                <option value="0">Selecciona una opción</option>
+                                <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[7]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -593,7 +551,7 @@ export const AltaClienteComplementario = memo(() => {
                                     ))
                                 }
                             </select>
-                            <label htmlFor="origen_recursos">Origen Recursos</label>
+                            <label htmlFor="origen_recursos">ORIGEN RECURSOS</label>
                             {
                                 propForm.errors?.origen_recursos && <div className="invalid-feedback-custom">{propForm.errors?.origen_recursos.message}</div>
                             }
@@ -616,8 +574,13 @@ export const AltaClienteComplementario = memo(() => {
                                     id="esp_origen_recursos"
                                     name="esp_origen_recursos"
                                     placeholder="Especifique Origen Recursos"
+                                    onChange={(e) => {
+                                        const upperCaseValue = e.target.value.toUpperCase();
+                                        e.target.value = upperCaseValue;
+                                        propForm.setValue("esp_origen_recursos", upperCaseValue);
+                                    }}
                                 />
-                                <label htmlFor="esp_origen_recursos">Especifique Origen Recursos</label>
+                                <label htmlFor="esp_origen_recursos">ESPECIFIQUE ORIGEN RECURSOS</label>
                                 {
                                     propForm.errors?.esp_origen_recursos && <div className="invalid-feedback-custom">{propForm.errors?.esp_origen_recursos.message}</div>
                                 }
@@ -641,7 +604,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="destino_recursos"
                                 aria-label="Destino Recursos"
                             >
-                                <option value="0">Selecciona una opción</option>
+                                <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[8]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -651,7 +614,7 @@ export const AltaClienteComplementario = memo(() => {
                                     ))
                                 }
                             </select>
-                            <label htmlFor="destino_recursos">Destino Recursos</label>
+                            <label htmlFor="destino_recursos">DESTINO RECURSOS</label>
                             {
                                 propForm.errors?.destino_recursos && <div className="invalid-feedback-custom">{propForm.errors?.destino_recursos.message}</div>
                             }
@@ -674,8 +637,13 @@ export const AltaClienteComplementario = memo(() => {
                                     id="esp_destino_recursos"
                                     name="esp_destino_recursos"
                                     placeholder="Especifique Destino Recursos"
+                                    onChange={(e) => {
+                                        const upperCaseValue = e.target.value.toUpperCase();
+                                        e.target.value = upperCaseValue;
+                                        propForm.setValue("esp_destino_recursos", upperCaseValue);
+                                    }}
                                 />
-                                <label htmlFor="esp_destino_recursos">Especifique Destino Recursos</label>
+                                <label htmlFor="esp_destino_recursos">ESPECIFIQUE DESTINO RECURSOS</label>
                                 {
                                     propForm.errors?.esp_destino_recursos && <div className="invalid-feedback-custom">{propForm.errors?.esp_destino_recursos.message}</div>
                                 }
@@ -693,7 +661,7 @@ export const AltaClienteComplementario = memo(() => {
                                     role="status"
                                     aria-hidden="true">
                                     <span className="ms-2">
-                                        Finalizar
+                                        FINALIZAR
                                     </span>
                                 </span>
                             </button>
@@ -708,7 +676,7 @@ export const AltaClienteComplementario = memo(() => {
                 selectedItem={propForm.dataClientes}
                 icon="bi bi-check-circle-fill text-success m-2"
                 hacerOperacion={hacerOperacion}
-                title={`El registro se ha completado satisfactoriamente con el número de cliente ${ propForm.dataClientes.cliente}. ¿Desea realizar una operación con este cliente?`}
+                title={`El registro se ha completado satisfactoriamente con el número de usuario ${ propForm.dataClientes.cliente}. ¿Desea realizar una operación con este usuario?`}
                 closeModalAndReturn={closeModalAndReturn}
             />
 

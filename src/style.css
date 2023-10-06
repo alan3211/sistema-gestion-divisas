@@ -62,6 +62,7 @@ h6 {
 
 .bg-blue{
   background-color: #012970;
+  color:white;
 }
 
 .pagetitle {
@@ -1425,12 +1426,12 @@ h6 {
 
 
 .datatable-sorter::before {
-  border-top: 4px solid #000;
+  border-top: 4px solid #FFF;
   bottom: 0px;
 }
 
 .datatable-sorter::after {
-  border-bottom: 4px solid #000;
+  border-bottom: 4px solid #FFF;
   border-top: 4px solid transparent;
   top: 0px;
 }
@@ -1477,4 +1478,31 @@ table.datatable-table:focus tr.datatable-cursor > td:first-child {
 table.datatable-table:focus {
   outline: solid 1px black;
   outline-offset: -1px;
+}
+
+td,th,pre {
+  white-space: nowrap;
+}
+
+.app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Altura mínima para ajustarse a la ventana del navegador */
+}
+
+.overlay-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  z-index: 999; /* Asegura que esté por encima de otros elementos */
+}
+
+.content {
+  /* Estilos para el contenido principal de tu aplicación */
+  flex: 1; /* Ocupa todo el espacio disponible en la dirección vertical */
+  overflow-y: hidden; /* Agrega un scroll vertical solo si es necesario */
+  /* Otros estilos según tus necesidades */
 }

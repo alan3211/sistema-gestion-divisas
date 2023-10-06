@@ -11,12 +11,13 @@ export const CompraVentaComponent = () =>{
     const compraVentaProvider = useContext(CompraVentaContext);
 
     const location = useLocation();
-    const { cliente={},clienteActivo } = location.state;
+    const { cliente='',clienteActivo } = location.state;
 
     useEffect(() => {
         if (clienteActivo) {
             compraVentaProvider.setContinuaOperacion(true);
-            compraVentaProvider.setCliente(cliente);
+            console.log("CLIENTE:",cliente)
+            compraVentaProvider.setCliente(cliente.cliente || cliente);
         }
     }, [clienteActivo, cliente]);
 

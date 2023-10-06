@@ -66,13 +66,24 @@ export const validarNumeros = (name,value) => {
     return true;
 }
 
-export const validarAlfaNumerico = (name,value) => {
-    const numerosRegex = /^$|^[a-zA-Z\s\d]+$/;
-    if (!numerosRegex.test(value)) {
-        return `El campo ${name} debe contener solo caracteres alfanumericos.`;
+export const validarAlfaNumerico = (name, value) => {
+    const alfanumericoRegex = /^$|^[a-zA-Z\s\d;,.'()//[\]{}!¡"#$%&´*-_+áéíóúÁÉÍÓÚ]+$/;
+    if (!alfanumericoRegex.test(value)) {
+        return `El campo ${name} debe contener solo caracteres alfanuméricos y los caracteres especiales permitidos.`;
     }
     return true;
-}
+};
+
+export const validarMayus = (name, value) => {
+    const mayusculasRegex = /^[A-Z]{1,4}$/;
+    if (!mayusculasRegex.test(value)) {
+        return `El campo ${name} debe contener solo letras mayúsculas y tener un máximo de 4 caracteres.`;
+    }
+    return true;
+};
+
+
+
 
 export const validarNumeroTelefono = (name,value) => {
     const phoneNumberRegex = /^\d{10}$/;

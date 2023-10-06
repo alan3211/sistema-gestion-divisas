@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import {dataG} from "../../../App";
 
@@ -11,13 +11,10 @@ function renderSubMenu({IdModulo,Nombre,subMenus}) {
                     return(
                     <li key={subMenuItem.IdModulo}>
                         <Link to={subMenuItem.Mapeo}
-                              state={ subMenuItem.Mapeo === '/compraVenta' ?  {
-                                cliente: {},
-                                clienteActivo: true,
-                            } : {
-                                  cliente: {},
-                                  clienteActivo: false,
-                              }
+                              state={ subMenuItem.Mapeo === '/compraVenta' &&  {
+                                cliente: '',
+                                clienteActivo: false,
+                            }
                         } >
                             <i className={subMenuItem.Icono}></i><span>{subMenuItem.Nombre}</span>
                         </Link>
@@ -51,6 +48,27 @@ function MenuComponent() {
 
     const usuario = JSON.parse(localStorage.getItem("usuario"));
 
+    const [modulos, setModulos] = useState(dataG.menus);
+
+    // Función recursiva para ordenar los submenús
+    function ordenarSubmenus(submenus) {
+        if (submenus) {
+            submenus.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+            submenus.forEach((submenu) => ordenarSubmenus(submenu.subMenus));
+        }
+    }
+
+    // Ordenar los módulos principales
+    useEffect(() => {
+        const modulosOrdenados = [...modulos];
+        modulosOrdenados.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+
+        // Ordenar los submenús dentro de cada módulo
+        modulosOrdenados.forEach((modulo) => ordenarSubmenus(modulo.subMenus));
+
+        setModulos(modulosOrdenados);
+    }, []);
+
     return (
             <ul className="sidebar-nav" id="sidebar-nav">
 
@@ -61,8 +79,8 @@ function MenuComponent() {
                     </Link>
                 </li>
                 {
-                    dataG.menus.length!== 0
-                    ? dataG.menus.map((menu) => renderMenu(menu))
+                    modulos.length!== 0
+                    ? modulos.map((menu) => renderMenu(menu))
                     : usuario.menus.map((menu) => renderMenu(menu))
                 }
             </ul>

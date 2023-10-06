@@ -11,7 +11,7 @@ export const AltaClientesComponent = () => {
 
     const optionModule ={
         title:'Operación',
-        module:'Alta de Clientes'
+        module:'Alta de Usuarios'
     }
 
     const {propForm} = useContext(AltaClienteContext);

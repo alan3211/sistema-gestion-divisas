@@ -92,7 +92,7 @@ export const InputComponent = (
                             name={name}
                             aria-label={texto}
                     >
-                        <option value="">Selecciona una opción</option>
+                        <option value="">SELECCIONA UNA OPCIÓN</option>
                         {
                             catalogo?.map((ele) => (
                                 <option key={ele.id + '-' + ele.descripcion}

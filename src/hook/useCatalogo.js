@@ -8,7 +8,6 @@ export const useCatalogo = (id_catalogos) => {
         const fetchData = async () => {
             try {
                 const results = await Promise.all(id_catalogos.map(id => getCatalogo(id)));
-                console.log(results);
                 setCatalogos(results);
             } catch (error) {
                 // Manejar el error de obtener los datos del catálogo

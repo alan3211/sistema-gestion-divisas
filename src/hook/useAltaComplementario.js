@@ -10,7 +10,6 @@ export const useAltaComplementario = () => {
     const navigate = useNavigate(); // Asegúrate de importar useNavigate si es necesario
 
     const hacerOperacion = (item) => {
-        console.log("CLIENTE A ENVIAR DESDE -> ALTA CLIENTE:",item)
         navigate("/compraVenta", {
             state: {
                 cliente: item,

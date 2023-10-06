@@ -10,7 +10,7 @@ import {dataG} from "../../../App";
 import {realizarOperacion} from "../../../services";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
-import {Denominacion} from "../../operacion/denominacion/Denominacion";
+import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 
 export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion,data,habilita,setHabilita}) => {
@@ -40,7 +40,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         }
 
         formValuesC.divisa = 'MXP';
-        formValuesC.movimiento = 'CAMBIO CLIENTE';
+        formValuesC.movimiento = 'CAMBIO AL CLIENTE';
 
         eliminarDenominacionesConCantidadCero(formValuesC);
 
@@ -65,14 +65,16 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         // Validar si tenemos que darle cambio
         if(resultado){
             console.log(resultado);
+            // TODO Integrar la parte de la impresion de tickets
             toast.success('Se ha entregado el cambio correspondiente.', {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
-                theme: "light",
+                theme: "colored",
             });
+
             navigator("/inicio");
         }
     }
@@ -80,22 +82,27 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     return(
         <>
-            <Modal centered show={showModalCambio} onHide={closeCustomModal}>
+            <Modal centered size="lg" show={showModalCambio} onHide={closeCustomModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>
                         <h5 className="text-blue">
                             <i className="bx bx-money m-2"></i>
-                            Entrega de Cambio
+                            Entrega de Cambio (MXP)
                         </h5>
                     </Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
                     <div className="row justify-content-center">
-                        <div className="col-md-5">
-                            <div className="form-group">
-                                <label htmlFor="cantidad"><strong>Cantidad a entregar</strong></label>
-                                <input type="text" className="form-control" id="cantidad" value={cambio} readOnly />
+                        <div className="col-md-7 mb-3 d-flex">
+                            <div className="form-floating flex-grow-1">
+                                <input type="text"
+                                       className={`form-control mb-1`}
+                                       id="floatingCE"
+                                       value={cambio}
+                                       readOnly
+                                />
+                                <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>(MXP)</i></label>
                             </div>
                         </div>
                     </div>

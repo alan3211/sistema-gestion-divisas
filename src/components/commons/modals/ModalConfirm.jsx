@@ -3,7 +3,7 @@ import {Button, Modal} from "react-bootstrap";
 export const ModalConfirm = ({showModal,closeModal,selectedItem,hacerOperacion,title,icon,closeModalAndReturn}) => {
 
     return(
-        <Modal centered show={showModal} onHide={closeModal}>
+        <Modal show={showModal} onHide={closeModal}>
         <Modal.Header closeButton>
             <Modal.Title>
                 <i className={icon}></i>
@@ -16,10 +16,10 @@ export const ModalConfirm = ({showModal,closeModal,selectedItem,hacerOperacion,t
 
         <Modal.Footer>
             <Button variant="secondary" onClick={closeModalAndReturn}>
-                No
+                NO
             </Button>
             <Button variant="primary" onClick={()=> hacerOperacion(selectedItem)}>
-                Sí
+                SÍ
             </Button>
         </Modal.Footer>
     </Modal>);

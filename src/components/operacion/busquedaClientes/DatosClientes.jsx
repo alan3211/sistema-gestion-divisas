@@ -1,19 +1,18 @@
 import {useOperaCliente} from "../../../hook";
 import {ModalDeliverComponent} from "../../commons/modals";
 import {useContext, useState} from "react";
-import {dataG} from "../../../App";
-import {encryptRequest, formattedDate, hora} from "../../../utils";
-import {hacerOperacion} from "../../../services";
 import {CardLayout} from "../../commons";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
 export const DatosClientes = ({operacion, cliente}) => {
 
-    const compraVentaProvider = useContext(CompraVentaContext);
     const {showModal, setShowModal, selectedItem, closeModal} = useOperaCliente();
     const [showCustomModal, setShowCustomModal] = useState(false);
-    const [data, setData] = useState({});
+    const {datos} = useContext(CompraVentaContext);
+
+    console.log("DATOS!!!",datos)
+    datos.Cliente = cliente.Cliente;
 
     const configuration = {
         showModal,
@@ -23,39 +22,16 @@ export const DatosClientes = ({operacion, cliente}) => {
         selectedItem,
         closeModal,
         operacion,
-        data,
+        datos,
     }
-
-    const getOperacion = async () => {
-        const operacionEnvia = {
-            cliente: cliente.cliente,
-            tipo_operacion: operacion.tipo_operacion,
-            sucursal: dataG.sucursal,
-            nombre_operador: dataG.usuario,
-            fecha_operacion: formattedDate,
-            hora_operacion: hora,
-            monto: parseInt(operacion.monto),
-            divisa: operacion.moneda,
-            tipo_cambio: operacion.tipo_cambio,
-            cantidad_entregar: operacion.cantidad_entregada
-        }
-
-        const encryptedData = encryptRequest(operacionEnvia);
-
-        const pre_operacion = await hacerOperacion(encryptedData);
-        return pre_operacion;
-    }
-
 
     const continuaOperacion = async () => {
-        const datos = await getOperacion();
-        setData(datos);
         setShowCustomModal(true);
     }
 
     return (
         <>
-            <CardLayout title="Información de Clientes" icon="bi bi-person-fill me-2">
+            <CardLayout title="Información de Usuarios" icon="bi bi-person-fill me-2">
                 <div className="row">
                     <div className="col-md-2">
                         <div className="form-floating">
@@ -63,10 +39,10 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="cliente"
-                                value={cliente.cliente}
+                                value={cliente.Cliente}
                                 readOnly
                             />
-                            <label htmlFor="cliente">Número de Cliente</label>
+                            <label htmlFor="cliente">NÚMERO USUARIO</label>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -75,10 +51,10 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="nombre"
-                                value={cliente.nombre}
+                                value={cliente.Nombre}
                                 readOnly
                             />
-                            <label htmlFor="nombre">Nombre</label>
+                            <label htmlFor="nombre">NOMBRE(S)</label>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -87,10 +63,10 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="apellidoPaterno"
-                                value={cliente.apellidoPaterno}
+                                value={cliente.ApellidoPaterno}
                                 readOnly
                             />
-                            <label htmlFor="apellidoPaterno">Apellido Paterno</label>
+                            <label htmlFor="apellidoPaterno">APELLIDO PATERNO</label>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -99,10 +75,10 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="apellidoMaterno"
-                                value={cliente.apellidoMaterno}
+                                value={cliente.ApellidoMaterno}
                                 readOnly
                             />
-                            <label htmlFor="apellidoMaterno">Apellido Materno</label>
+                            <label htmlFor="apellidoMaterno">APELLIDO MATERNO</label>
                         </div>
                     </div>
                 </div>
@@ -113,10 +89,10 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="fechaNacimiento"
-                                value={cliente.fechaNacimiento}
+                                value={cliente.FechaNacimiento}
                                 readOnly
                             />
-                            <label htmlFor="fechaNacimiento">Fecha de Nacimiento</label>
+                            <label htmlFor="fechaNacimiento">FECHA NACIMIENTO</label>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -128,7 +104,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 disabled={Object.keys(operacion).length === 0}
                             >
                                 <span className="me-2">
-                                    Continuar
+                                    <strong>CONTINUAR</strong>
                                       <span
                                           className="bi bi-arrow-right-circle-fill ms-2"
                                           role="status"

@@ -17,10 +17,8 @@ export const MainComponent = () => {
     };
 
     const validaTipoCambio = async() =>{
-        console.log("Entre a tipo de cambio")
         formValue.id = 1;
         const encryptedData = encryptRequest(formValue);
-
         const {resultado} = await getValidaTipoCambioDia(encryptedData);
         if(resultado){
             toast.error(resultado, {
@@ -35,7 +33,6 @@ export const MainComponent = () => {
     }
 
     const validaDotacion = async() =>{
-        console.log("Entre a dotacion")
         formValue.id = 2;
         const encryptedData = encryptRequest(formValue);
         const {resultado} = await getValidaTipoCambioDia(encryptedData);
@@ -64,7 +61,6 @@ export const MainComponent = () => {
                     ? <LogoGrocerys/>
                     :  <TableroComponent/>
             }
-            <ToastContainer/>
         </>
     );
 }

@@ -1,5 +1,5 @@
 import logo from '../../assets/logo.png';
-import {encryptRequest, recordValues, validarAlfaNumerico, year} from "../../utils";
+import {encryptRequest, OPTIONS, recordValues, validarAlfaNumerico, year} from "../../utils";
 import {useForm} from "react-hook-form";
 import {getUser} from "../../services";
 import {toast, ToastContainer} from "react-toastify";
@@ -27,7 +27,6 @@ export const LoginComponent = () => {
         if(!datos.hasOwnProperty('resultSize')){
             localStorage.setItem("token",datos.token); // Se guarda el token
             localStorage.setItem("refresh_token",datos.refresh_token); // Se guarda el refresh
-            console.log(datos)
             const decodedToken = jwt_decode(datos.token);
             if (decodedToken.usuario) {
                 dataG.sucursal = parseInt(decodedToken.sucursal);
@@ -39,20 +38,13 @@ export const LoginComponent = () => {
                 dataG.limite_diario = decodedToken.limite_diario;
                 dataG.limite_mensual = decodedToken.limite_mensual;
                 dataG.menus = decodedToken.menus;
-                localStorage.setItem("usuario",JSON.stringify(dataG));
+                localStorage.setItem("usuario_data",JSON.stringify(dataG));
                 navigator("/inicio");
             }
         }else {
             if(datos.resultSize === 0){
                 reset()
-                toast.warn('El usuario ingresado no existe.', {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    theme: "light",
-                });
+                toast.warn('El usuario ingresado no existe.', OPTIONS);
             }
         }
 
@@ -79,7 +71,7 @@ export const LoginComponent = () => {
 
                                 <div className="card border-0 shadow-lg" style={{ maxWidth: "600px" }}>
                                     <div className="card-body p-4">
-                                        <h2 className="card-title text-center mb-2">¡Bienvenido!</h2>
+                                        <h5 className="text-blue text-center mb-4"><strong>¡Bienvenido!</strong></h5>
 
                                         <form onSubmit={handleLogin}>
                                             <div className="input-group mb-3">
@@ -104,7 +96,7 @@ export const LoginComponent = () => {
                                                     className={`form-control ${!!errors.usuario ? 'invalid-input':''}`}
                                                     id="usuario"
                                                     name="usuario"
-                                                    placeholder="Ingresa el usuario"
+                                                    placeholder="Usuario"
                                                 />
                                                 {
                                                     errors.usuario && <div className="invalid-feedback-custom">{errors.usuario.message}</div>
@@ -128,7 +120,7 @@ export const LoginComponent = () => {
                                                     className={`form-control ${!!errors.password ? 'invalid-input':''}`}
                                                     id="password"
                                                     name="password"
-                                                    placeholder="Ingresa la contraseña"
+                                                    placeholder="Contraseña"
                                                 />
                                                 {
                                                     errors.password && <div className="invalid-feedback-custom">{errors.password.message}</div>
@@ -146,13 +138,13 @@ export const LoginComponent = () => {
                                                         onChange={()=> recordValues(watch())}
                                                     />
                                                     <label className="form-check-label" htmlFor="rememberMe">
-                                                        Recuérdame
+                                                        <strong>Recuérdame</strong>
                                                     </label>
                                                 </div>
                                             </div>
 
                                             <button className="btn btn-primary w-100" type="submit">
-                                                Iniciar Sesión
+                                                <i className="bi bi-box-arrow-in-right"></i> <strong>INICIAR SESIÓN</strong>
                                             </button>
                                         </form>
                                     </div>
@@ -168,7 +160,6 @@ export const LoginComponent = () => {
                     </div>
                 </section>
             </div>
-            <ToastContainer/>
         </main>
     );
 }
