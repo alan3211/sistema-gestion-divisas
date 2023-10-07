@@ -1,6 +1,6 @@
-const URL = 'https://grocerys-back.redcliff-1d57ab6c.eastus2.azurecontainerapps.io/';
+//const URL = 'https://grocerys-back.redcliff-1d57ab6c.eastus2.azurecontainerapps.io/';
 //const URL = 'http://192.168.101.45:9000/';
-//const URL = 'http://localhost:9000/';
+const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -43,6 +43,8 @@ export const SUCURSAL_DISPONIBLE_URL = `${SUCURSAL_URL}operativa/disponible`
 export const CAJA_CONSULTA_DOTACIONES_URL = `${CAJA_URL}consulta/dotaciones`
 export const CAJA_CONSULTA_URL = `${CAJA_URL}consulta`
 export const CAJA_ENTREGA_URL = `${CAJA_URL}entrega`
+export const CAJA_CONSULTA_DIVISAS_URL = `${CAJA_URL}consulta/divisas`
+export const CAJA_CONSULTA_MOVIMIENTOS_URL = `${CAJA_URL}consulta/movimientos`
 
 
 /*ENDPOINTS DE TOOLS*/

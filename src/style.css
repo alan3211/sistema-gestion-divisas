@@ -839,10 +839,33 @@ h6 {
   background: #e0f8e9;
 }
 
+.revenue-card .card-icon {
+  color: #2eca6a;
+  background: #e0f8e9;
+}
+
 .dashboard .customers-card .card-icon {
   color: #ff771d;
   background: #ffecdf;
 }
+
+.card-icon {
+  font-size: 32px;
+  line-height: 0;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.info-card h6 {
+  font-size: 28px;
+  color: #012970;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+}
+
 
 /* Activity */
 .dashboard .activity {

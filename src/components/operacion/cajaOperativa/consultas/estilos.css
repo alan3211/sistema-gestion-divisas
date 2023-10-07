@@ -1,0 +1,27 @@
+.custom-radio input[type="radio"] {
+    display: none;
+}
+
+.custom-radio label {
+    position: relative;
+    padding-left: 30px; /* Espacio para el punto */
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.custom-radio label::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #f1f1f1; /* Color base */
+    transition: background-color 0.3s ease;
+}
+
+.custom-radio input[type="radio"]:checked + label::before {
+    background-color: #007bff; /* Color al seleccionar */
+}
