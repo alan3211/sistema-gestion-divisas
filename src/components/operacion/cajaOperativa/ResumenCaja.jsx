@@ -23,10 +23,15 @@ import { MessageComponent } from "../../commons";
 export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetForm }) => {
 
     // Inicializa billetesFisicos
-    const billetesFisicosInicial = data.result_set.map((elemento) => parseInt(elemento['Billetes Físicos']) || 0);
+    const billetesFisicosInicial = data.result_set.map((elemento) => {
+        return {[`denominacion_${elemento.Denominacion}`]: parseInt(elemento['Billetes Físicos']) || 0}
+    });
     const [billetesFisicos, setBilletesFisicos] = useState(billetesFisicosInicial);
     const [totalBilletesFisicos, setTotalBilletesFisicos] = useState(
-        billetesFisicosInicial.reduce((total, valor) => total + valor, 0)
+        billetesFisicosInicial.reduce((total, valor) => {
+            const key = Object.keys(valor)[0]; // Obtener la clave del objeto
+            return total + valor[key]; // Sumar el valor del objeto al total
+        }, 0)
     );
 
     const reiniciaState = () => {
@@ -45,17 +50,20 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
     const [totalDiferenciaMontos, setTotalDiferenciaMontos] = useState(0);
 
-    const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm();
+    const { register,
+        handleSubmit,
+        setValue,
+        formState: { errors },
+        reset } = useForm();
     const [showModal, setShowModal] = useState(false);
     const [datosEnvio, setDatosEnvio] = useState({});
     // Calcula el monto total para cada columna
     const calcularTotales = () => {
         const totales = Array(data.headers.length).fill(0);
-
         data.result_set.forEach((elemento) => {
             data.headers.forEach((header, index) => {
                 if (typeof elemento[header] === 'number') {
-                    if (header !== 'Denominacion') { // Excluir 'Denominacion' y 'Monto'
+                    if (header !== 'Denominacion') { //Excluir 'Denominacion'
                         totales[index] += elemento[header];
                     } else {
                         totales[index] = 'Total'; // Para 'Denominacion' dejarlo vacío
@@ -63,7 +71,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                 }
             });
         });
-
         return totales;
     };
 
@@ -89,12 +96,15 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     useEffect(() => {
         // Calcula el total de la columna "Billetes Físicos" y la diferencia
         console.log("BILLETES FISICOS: ", billetesFisicos)
-        const totalBilletes = billetesFisicos.reduce((total, valor) => total + valor, 0);
+        const totalBilletes = billetesFisicos.reduce((total, valor) => {
+            const key = Object.keys(valor)[0]; // Obtener la clave del objeto
+            return total + valor[key];
+        }, 0);
         setTotalBilletesFisicos(totalBilletes);
         console.log("TOTAL BILLETES FISICOS: ", totalBilletesFisicos)
 
         const diferencias = data.result_set.map((elemento, index) => {
-            const diferencia = elemento['No Billetes'] - billetesFisicos[index];
+            const diferencia = elemento['No Billetes'] - billetesFisicos[elemento.Denominacion];
             // Cambia el icono de "Diferencia" según las condiciones
             if (diferencia === 0) {
                 return {
@@ -117,12 +127,15 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         console.log("Diferencias!: ",diferencias);
 
         // Calcula el total de diferencias usando map y luego reduce
-        const totalDif = diferencias.map((valor) => valor.diferencia).reduce((total, valor) => total + valor, 0);
+        const totalDif = diferencias.map((valor) => valor.diferencia).reduce((total, valor) => {
+            const key = Object.keys(valor)[0]; // Obtener la clave del objeto
+            return total + valor[key];
+        }, 0);
         setTotalDiferencia(totalDif);
 
         //Calcula el total de diferencia de monto
         const totalDifMontos = data.result_set.reduce((total, elemento, index) => {
-            const newValue = billetesFisicos[index];
+            const newValue = billetesFisicos[elemento.Denominacion];
             const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;
             return total + diferenciaMonto;
         }, 0);
@@ -372,9 +385,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                             onChange={(e) => {
                                                 const inputValue = parseInt(e.target.value);
                                                 const newValue = /^[0-9]\d*$/.test(inputValue) || inputValue === "" ? inputValue : 0;
-
+                                                console.log("ONCHANGE");
+                                                console.log(billetesFisicos);
                                                 setBilletesFisicos((prevBilletes) => {
                                                     const newBilletes = [...prevBilletes];
+                                                    console.log("BILLETESF: ",newBilletes);
                                                     newBilletes[index] = newValue;
                                                     return newBilletes;
                                                 });
@@ -386,9 +401,8 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                                 setValue(`diferenciaMonto_${elemento.Denominacion}`, diferenciaMonto);
 
                                             }}
-                                            value={billetesFisicos[index]}
+                                            value={billetesFisicos[`denominacion_${elemento.Denominacion}`]}
                                         />
-
                                     </td>
                                     {/* Columna de Input de Diferencia */}
                                     <td>
@@ -430,7 +444,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                         </tfoot>
                     </table>
                     <div className="col-md-12">
-                        <button type="submit" className="m-2 btn btn-primary" disabled={totalDiferencia  === 0}>
+                        <button type="submit" className="m-2 btn btn-primary" disabled={totalDiferencia  > 0}>
                               <span className="me-2">
                                 GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
