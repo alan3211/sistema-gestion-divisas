@@ -24,7 +24,7 @@ export const DenominacionTable = ({data=[],monto,moneda}) => {
                 <tfoot>
                 <tr>
                     <th>Monto Total</th>
-                    <th>{FormatoMoneda(monto)}</th>
+                    <th>{FormatoMoneda(parseFloat(monto))}</th>
                 </tr>
                 </tfoot>
             </table>

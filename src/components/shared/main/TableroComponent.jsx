@@ -1,6 +1,18 @@
-import {ToastContainer} from "react-toastify";
+import {useEstadisticas} from "../../../hook/useEstadisticas";
+import {useEffect, useState} from "react";
 
-export const TableroComponent = () =>{
+export const TableroComponent = () => {
+
+    const [isLoading,setIsLoading] = useState(true);
+    const estadistica = useEstadisticas([2,3,1,4]);
+    console.log(estadistica);
+
+    useEffect(() => {
+        if(estadistica.length !== 0){
+            setIsLoading(false)
+        }
+    }, [estadistica]);
+
     return (
         <main id="main" className="main">
             <div className="pagetitle">
@@ -12,29 +24,29 @@ export const TableroComponent = () =>{
                 </nav>
             </div>
 
-            <section className="section dashboard">
+            {!isLoading &&
+                (<section className="section dashboard">
                 <div className="row">
                     <div className="col-lg-8">
                         <div className="row">
                             <div className="col-xxl-4 col-md-6">
                                 <div className="card info-card sales-card">
-
                                     <div className="filter">
                                         <a className="icon" href="#" data-bs-toggle="dropdown"><i
                                             className="bi bi-three-dots"></i></a>
                                         <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                             <li className="dropdown-header text-start">
-                                                <h6>Filter</h6>
+                                                <h6>Filtro</h6>
                                             </li>
 
-                                            <li><a className="dropdown-item" href="#">Today</a></li>
-                                            <li><a className="dropdown-item" href="#">This Month</a></li>
-                                            <li><a className="dropdown-item" href="#">This Year</a></li>
+                                            <li><a className="dropdown-item" href="#">Hoy</a></li>
+                                            <li><a className="dropdown-item" href="#">Este Mes</a></li>
+                                            <li><a className="dropdown-item" href="#">Este Año</a></li>
                                         </ul>
                                     </div>
 
                                     <div className="card-body">
-                                        <h5 className="card-title">Sales <span>| Today</span></h5>
+                                        <h5 className="card-title">Ventas <span>| Hoy</span></h5>
 
                                         <div className="d-flex align-items-center">
                                             <div
@@ -42,9 +54,11 @@ export const TableroComponent = () =>{
                                                 <i className="bi bi-cart"></i>
                                             </div>
                                             <div className="ps-3">
-                                                <h6>145</h6>
-                                                <span className="text-success small pt-1 fw-bold">12%</span> <span
-                                                className="text-muted small pt-2 ps-1">increase</span>
+                                                <h6>{estadistica[0].result_set[0]['No Operaciones']}</h6>
+                                                <span
+                                                    className="text-success small pt-1 fw-bold">{estadistica[0].result_set[0].Porcentaje}%</span>
+                                                <span
+                                                    className="text-muted small pt-2 ps-1">{estadistica[0].result_set[0].Sucursal}</span>
 
                                             </div>
                                         </div>
@@ -71,7 +85,7 @@ export const TableroComponent = () =>{
                                     </div>
 
                                     <div className="card-body">
-                                        <h5 className="card-title">Revenue <span>| This Month</span></h5>
+                                        <h5 className="card-title">Compras <span>| Hoy</span></h5>
 
                                         <div className="d-flex align-items-center">
                                             <div
@@ -79,9 +93,11 @@ export const TableroComponent = () =>{
                                                 <i className="bi bi-currency-dollar"></i>
                                             </div>
                                             <div className="ps-3">
-                                                <h6>$3,264</h6>
-                                                <span className="text-success small pt-1 fw-bold">8%</span> <span
-                                                className="text-muted small pt-2 ps-1">increase</span>
+                                                <h6>{estadistica[1].result_set[0]['No Operaciones']}</h6>
+                                                <span
+                                                    className="text-success small pt-1 fw-bold">{estadistica[1].result_set[0].Porcentaje}%</span>
+                                                <span
+                                                    className="text-muted small pt-2 ps-1">{estadistica[1].result_set[0].Sucursal}</span>
 
                                             </div>
                                         </div>
@@ -109,7 +125,7 @@ export const TableroComponent = () =>{
                                     </div>
 
                                     <div className="card-body">
-                                        <h5 className="card-title">Customers <span>| This Year</span></h5>
+                                        <h5 className="card-title">Clientes <span>| Hoy</span></h5>
 
                                         <div className="d-flex align-items-center">
                                             <div
@@ -117,7 +133,7 @@ export const TableroComponent = () =>{
                                                 <i className="bi bi-people"></i>
                                             </div>
                                             <div className="ps-3">
-                                                <h6>1244</h6>
+                                                <h6>{estadistica[2].result_set[0]['No Clientes']}</h6>
                                                 <span className="text-danger small pt-1 fw-bold">12%</span> <span
                                                 className="text-muted small pt-2 ps-1">decrease</span>
                                             </div>
@@ -145,9 +161,7 @@ export const TableroComponent = () =>{
 
                                     <div className="card-body">
                                         <h5 className="card-title">Reports <span>/Today</span></h5>
-
                                         <div id="reportsChart"></div>
-
                                     </div>
 
                                 </div>
@@ -482,7 +496,7 @@ export const TableroComponent = () =>{
                                     </div>
 
                                     <div className="post-item clearfix">
-                                        <img src="assets/img/news-4.jpg" alt="" />
+                                        <img src="assets/img/news-4.jpg" alt=""/>
                                         <h4><a href="#">Laborum corporis quo dara net para</a></h4>
                                         <p>Qui enim quia optio. Eligendi aut asperiores enim repellendusvel rerum
                                             cuder...</p>
@@ -502,7 +516,7 @@ export const TableroComponent = () =>{
                         </div>
                     </div>
                 </div>
-            </section>
+            </section>)}
         </main>
     );
 }
