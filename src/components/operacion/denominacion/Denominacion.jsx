@@ -59,7 +59,7 @@ export const Denominacion = ({type,moneda,options}) => {
                             <tfoot>
                             <tr>
                                 <th colSpan="3">Total</th>
-                                <th className={validacionColor()}>{FormatoMoneda(calculateGrandTotal())}</th>
+                                <th className={validacionColor()}>{FormatoMoneda(parseFloat(calculateGrandTotal()))}</th>
                             </tr>
                             </tfoot>
                         </table>

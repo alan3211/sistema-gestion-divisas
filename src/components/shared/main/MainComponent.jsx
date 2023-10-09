@@ -1,6 +1,6 @@
 import {dataG} from "../../../App";
 import {getValidaTipoCambioDia} from "../../../services/inicio-services";
-import {toast, ToastContainer} from "react-toastify";
+import {toast} from "react-toastify";
 import {useEffect} from "react";
 import {TableroComponent} from "./TableroComponent";
 import {LogoGrocerys} from "./LogoGrocerys";
@@ -53,11 +53,21 @@ export const MainComponent = () => {
         validaDotacion();
     },);
 
+    const validaTableros = () => {
+        if (
+            (dataG.perfil && (dataG.perfil.includes('Administrador') || dataG.perfil.includes('Tesorero')))
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     return(
         <>
             {
-                (dataG.perfil || usuario.perfil) !== 'Administrador'
+                !validaTableros()
                     ? <LogoGrocerys/>
                     :  <TableroComponent/>
             }
