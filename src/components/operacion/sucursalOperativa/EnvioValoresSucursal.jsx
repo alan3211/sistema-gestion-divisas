@@ -29,13 +29,16 @@ export const EnvioValoresSucursal = () => {
         entrega: true,
     });
 
+    const [finalizaOperacion,setFinalizaOperacion] = useState(true);
+
     const {denominacionD} = useContext(DenominacionContext);
 
     const options = {
         title: '',
-        importe: parseFloat(watch('monto')).toFixed(2),
+        importe: parseInt(watch('monto')),
         habilita,
         setHabilita,
+        setFinalizaOperacion
     }
 
     const terminarDotacion = handleSubmit(async(data)=>{
@@ -73,7 +76,7 @@ export const EnvioValoresSucursal = () => {
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
-                theme: "light",
+                theme: "colored",
             });
             reset();
             setShowDenominacion(false);
@@ -164,7 +167,7 @@ export const EnvioValoresSucursal = () => {
                 <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
                     <i className="bi bi-box-arrow-up-right"></i> NUEVO ENVÍO
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={habilita.entrega}>
+                <button type="submit" className="btn btn-primary" disabled={finalizaOperacion}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                    FINALIZAR OPERACIÓN
                 </button>

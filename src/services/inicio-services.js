@@ -1,4 +1,4 @@
-import {INICIO_URL, LOGIN_URL, REFRESH_TOKEN_URL, TOKEN_URL} from "../utils";
+import {CATALOGOS_URL, INICIO_URL, LOGIN_URL, REFRESH_TOKEN_URL, TOKEN_URL} from "../utils";
 
 // Valida si existe el tipo de cambio en la sucursal indicada
 export const getValidaTipoCambioDia = async (formValues) => {
@@ -54,6 +54,30 @@ export const renovarToken = async (refresh_token) => {
                 'refresh': `${refresh_token}`
             },
         });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+};
+
+export const getEstadistica = async (idCatalogo) => {
+    try {
+        const url = `${CATALOGOS_URL}estadistica/${idCatalogo}`;
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
 
         const data = await response.json();
         return data;

@@ -1,9 +1,9 @@
 import {CardLayout, Layout} from "../../commons";
 import {CajaProvider} from "../../../context/caja/CajaProvider";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
-import {DotacionComponent,CierreComponent} from "./index";
 import {EntregaComponent} from "./EntregaComponent";
 import {TabsLayout} from "../../commons/tabs";
+import {TipoConsultas} from "./consultas/TipoConsultas";
 
 export const CajaComponent = () => {
 
@@ -14,7 +14,7 @@ export const CajaComponent = () => {
     };
 
     const tabs = [
-        {id:'dotacion-consulta',name:'Consulta Dotaciones',icon:'bi bi-briefcase me-2', element: <DotacionComponent/>},
+        {id:'consulta',name:'Consultas',icon:'bi bi-search me-2', element: <TipoConsultas/>},
         {id:'entrega',name:'Entrega',icon:'bi bi-arrow-right-circle me-2',element:<EntregaComponent/>},
     ];
 

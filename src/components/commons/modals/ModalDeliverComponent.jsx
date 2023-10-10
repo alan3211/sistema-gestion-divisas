@@ -15,7 +15,6 @@ import {DenominacionContext} from "../../../context/denominacion/DenominacionCon
 
 export const ModalDeliverComponent = ({configuration}) =>{
 
-    console.log("Configuracion ",configuration)
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
     const [showCambio,setShowCambio] = useState(false);
     const [showImpresion,setShowImpresion] = useState(false);
@@ -72,8 +71,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
             formValuesE.tipoOperacion = "VENTA";
         }
 
+        console.log("TIENE_CEROS: ",formValuesR);
+        console.log("TIENE_CEROS: ",formValuesE);
+
         eliminarDenominacionesConCantidadCero(formValuesR);
         eliminarDenominacionesConCantidadCero(formValuesE);
+
+        console.log("NO_TIENE_CEROS: ",formValuesR);
+        console.log("NO_TIENE_CEROS: ",formValuesE);
 
         const values = {
             cliente: datos.Cliente,
@@ -91,50 +96,25 @@ export const ModalDeliverComponent = ({configuration}) =>{
             ]
         }
 
-        const encryptedData = encryptRequest(values);
+        console.log("ENVIO DE DENOMINACIONES",values);
 
+        const encryptedData = encryptRequest(values);
         const resultadoPromise = realizarOperacion(encryptedData);
 
-        try {
-            await toast.promise(resultadoPromise, {
-                pending: {
-                    message:'La operación está en proceso...',
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    theme: "light",
-                },
-                error: {
-                    message:'Hubo un error en la operación 🤯',
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    theme: "light",
-                }
-            });
+        if (resultadoPromise) {
+            if (redondearNumero(parseFloat(operacion.monto) - parseFloat(calculaValorMonto)) >= 1) {
+                setShowCambio(true);
+            } else {
+                toast.success('La operación fue exitosa.', OPTIONS);
 
-            if (resultadoPromise) {
-                if (redondearNumero(parseFloat(operacion.monto) - parseFloat(calculaValorMonto)) >= 1) {
-                    setShowCambio(true);
-                } else {
-                    toast.success('La operación fue exitosa.', OPTIONS);
+                // TODO Integrar la parte de la impresion de tickets
+                // 1.- Validar que se muestre el modal
+                // 2.- Imprimir el ticket
+                setShowImpresion(true);
 
-                    // TODO Integrar la parte de la impresion de tickets
-                    // 1.- Validar que se muestre el modal
-                    // 2.- Imprimir el ticket
-                    setShowImpresion(true);
-
-                    navigator("/inicio");
-                }
-                console.log(resultadoPromise);
+                navigator("/inicio");
             }
-        } catch (error) {
-            // Manejar el error si la promesa es rechazada
-            console.error(error);
+            console.log(resultadoPromise);
         }
     }
 

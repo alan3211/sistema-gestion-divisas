@@ -43,6 +43,8 @@ export const SUCURSAL_DISPONIBLE_URL = `${SUCURSAL_URL}operativa/disponible`
 export const CAJA_CONSULTA_DOTACIONES_URL = `${CAJA_URL}consulta/dotaciones`
 export const CAJA_CONSULTA_URL = `${CAJA_URL}consulta`
 export const CAJA_ENTREGA_URL = `${CAJA_URL}entrega`
+export const CAJA_CONSULTA_DIVISAS_URL = `${CAJA_URL}consulta/divisas`
+export const CAJA_CONSULTA_MOVIMIENTOS_URL = `${CAJA_URL}consulta/movimientos`
 
 
 /*ENDPOINTS DE TOOLS*/
@@ -55,6 +57,8 @@ export const TOOLS_OBTIENE_DENOMINACIONES_URL = `${TOOLS_URL}consulta/denominaci
 
 export const TOOLS_ACCIONES_CAJA_URL = `${TOOLS_URL}acciones/dotacion-caja`
 export const TOOLS_MUESTRA_DENOMINACIONES_URL = `${TOOLS_URL}muestra/denominaciones`
+
+export const TOOLS_CONSULTA_DETALLE_DENOMINACIOENS_URL = `${TOOLS_URL}consulta/detalle/denominaciones`
 
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`
