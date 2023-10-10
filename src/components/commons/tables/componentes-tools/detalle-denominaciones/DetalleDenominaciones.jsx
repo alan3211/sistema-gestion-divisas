@@ -22,6 +22,12 @@ export const DetalleDenominaciones = ({item, index, columna, params}) => {
         setShowModal(true);
     }
 
+    const opciones = {
+        showMostrar:true,
+        buscar: true,
+        paginacion: true,
+    }
+
     const options = {
         showModal,
         closeCustomModal: () => setShowModal(false),
@@ -35,7 +41,7 @@ export const DetalleDenominaciones = ({item, index, columna, params}) => {
                 <i className="bi bi-folder"></i>
             </button>
             {showModal && <ModalDetalleTool options={options}>
-                <TableComponent data={dataDetalle} />
+                <TableComponent data={dataDetalle} options={opciones} />
             </ModalDetalleTool>}
         </td>
     );

@@ -12,7 +12,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionD,
     } = useContext(DenominacionContext);
 
-    const {title,importe,calculaValorMonto,habilita,setHabilita,setTotalMonto} =  options;
+    const {title,importe,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion} =  options;
     let denominacion = {};
 
     if(type === 'R'){
@@ -25,7 +25,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacion = denominacionD;
     }
 
-    const {register,formState:{errors},watch,trigger} = denominacion;
+    const {register,formState:{errors},watch,trigger,reset} = denominacion;
     const watchAllInputs = watch();
 
     const [data,setData] = useState([]);
@@ -33,7 +33,6 @@ export const useDenominacion = ({type,moneda,options}) => {
     const denominacionMappings = {
         '.50': 'p5'
     };
-
 
     // Función para calcular el total de una denominación parcial
     const calculateTotal = (denominacion) => {
@@ -55,7 +54,15 @@ export const useDenominacion = ({type,moneda,options}) => {
             setTotalMonto(grandTotal);
         }
 
-        return grandTotal; // Asegura que el resultado tenga 2 decimales
+        if(options.hasOwnProperty('setFinalizaOperacion')){
+            if(importe === grandTotal){
+                setFinalizaOperacion(false);
+            }else{
+                setFinalizaOperacion(true);
+            }
+        }
+
+        return grandTotal;
     };
 
 
@@ -136,6 +143,7 @@ export const useDenominacion = ({type,moneda,options}) => {
                 const denominaciones = await obtieneDenominaciones(encryptedData);
                 setData(denominaciones.result_set);
             }
+            reset();
         };
         fetchData();
     },[moneda])

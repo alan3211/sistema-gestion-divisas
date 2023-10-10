@@ -86,7 +86,6 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const getDenominacionCantidad = (nombre) => {
         if (replaceValues && replaceValues.hasOwnProperty(`denominacion_${nombre}`)) {
             const cantidad = replaceValues[`denominacion_${nombre}`];
-            console.log("MI CANTIDAD;",cantidad)
             return cantidad == '' ? 0 : parseInt(cantidad);
         }
         return 0; // Si no existe la propiedad, asignar 0 por defecto
@@ -101,7 +100,6 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
             cantidad: getDenominacionCantidad(nombre)
         };
     }
-    console.log("DENO",denominacionObj)
     return denominacionObj;
 };
 
@@ -163,8 +161,6 @@ export const DENOMINACIONES = {
 }
 
 export const FormatoMoneda = (cantidad,moneda) => {
-    console.log("CANTIDAD: ",cantidad)
-    console.log("TIPO CANTIDAD: ",typeof cantidad)
     if (typeof cantidad === 'number') {
         const formatoNumero = cantidad.toLocaleString('es-US', {
             style: 'currency',
@@ -175,7 +171,6 @@ export const FormatoMoneda = (cantidad,moneda) => {
 
         return formatoNumero.replace('$', '$ ');
     } else {
-        console.log('La variable cantidad no es un número válido.');
         return 'E'; // Opcional: Devuelve una cadena vacía en caso de error.
     }
 }
