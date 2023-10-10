@@ -22,17 +22,39 @@ import { MessageComponent } from "../../commons";
 
 export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetForm }) => {
 
+    const getPropiedad = (elemento) => {
+        let propiedad='';
+        if(elemento.Denominacion === '0.5'){
+            propiedad = 'denominacion_p5';
+        }else{
+            propiedad = `denominacion_${parseInt(elemento.Denominacion)}`;
+        }
+        return propiedad;
+    }
+    const getPropiedadDif = (elemento) => {
+        let propiedad='';
+        if(elemento.Denominacion === '0.5'){
+            propiedad = 'diferencia_p5';
+        }else{
+            propiedad = `diferencia_${parseInt(elemento.Denominacion)}`;
+        }
+        return propiedad;
+    }
+
     // Inicializa billetesFisicos
     const billetesFisicosInicial = data.result_set.map((elemento) => {
-        return {[`denominacion_${elemento.Denominacion}`]: parseInt(elemento['Billetes Físicos']) || 0}
+        return {
+            [getPropiedad(elemento)]:parseInt(elemento['Billetes Físicos']) || 0
+        }
     });
     const [billetesFisicos, setBilletesFisicos] = useState(billetesFisicosInicial);
-    const [totalBilletesFisicos, setTotalBilletesFisicos] = useState(
-        billetesFisicosInicial.reduce((total, valor) => {
-            const key = Object.keys(valor)[0]; // Obtener la clave del objeto
-            return total + valor[key]; // Sumar el valor del objeto al total
-        }, 0)
-    );
+    const totalInicial = billetesFisicosInicial.reduce((total, elemento) => {
+        const valor = parseInt(Object.values(elemento)[0]) || 0;
+        return total + valor;
+    }, 0);
+
+    console.log("Total inicial de billetes físicos:", totalInicial);
+    const [totalBilletesFisicos, setTotalBilletesFisicos] = useState(totalInicial);
 
     const reiniciaState = () => {
         setBilletesFisicos(billetesFisicosInicial);
@@ -43,10 +65,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     const [totalDiferencia, setTotalDiferencia] = useState(0);
 
     const montosIniciales = data.result_set.map((elemento) => elemento['Monto'] || 0);
-    const [montos, setMontos] = useState(montosIniciales);
-    const [totalMontos, setTotalMontos] = useState(
-        montosIniciales.reduce((total, valor) => total + valor, 0)
-    );
 
     const [totalDiferenciaMontos, setTotalDiferenciaMontos] = useState(0);
 
@@ -54,16 +72,17 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         handleSubmit,
         setValue,
         formState: { errors },
-        reset } = useForm();
+        reset,watch } = useForm();
     const [showModal, setShowModal] = useState(false);
     const [datosEnvio, setDatosEnvio] = useState({});
     // Calcula el monto total para cada columna
     const calcularTotales = () => {
         const totales = Array(data.headers.length).fill(0);
+
         data.result_set.forEach((elemento) => {
             data.headers.forEach((header, index) => {
                 if (typeof elemento[header] === 'number') {
-                    if (header !== 'Denominacion') { //Excluir 'Denominacion'
+                    if (header !== 'Denominacion') { // Excluir 'Denominacion' y 'Monto'
                         totales[index] += elemento[header];
                     } else {
                         totales[index] = 'Total'; // Para 'Denominacion' dejarlo vacío
@@ -71,6 +90,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                 }
             });
         });
+
         return totales;
     };
 
@@ -95,16 +115,17 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
     useEffect(() => {
         // Calcula el total de la columna "Billetes Físicos" y la diferencia
-        console.log("BILLETES FISICOS: ", billetesFisicos)
-        const totalBilletes = billetesFisicos.reduce((total, valor) => {
-            const key = Object.keys(valor)[0]; // Obtener la clave del objeto
-            return total + valor[key];
+        const totalBilletes = billetesFisicos.reduce((total, elemento) => {
+            const valor = parseInt(Object.values(elemento)[0]) || 0;
+            return total + valor;
         }, 0);
         setTotalBilletesFisicos(totalBilletes);
+
         console.log("TOTAL BILLETES FISICOS: ", totalBilletesFisicos)
+        console.log("BILLETES FISICOS USEEFFECT: ", billetesFisicos)
 
         const diferencias = data.result_set.map((elemento, index) => {
-            const diferencia = elemento['No Billetes'] - billetesFisicos[elemento.Denominacion];
+            const diferencia = elemento['No Billetes'] - billetesFisicos[index][getPropiedad(elemento)];
             // Cambia el icono de "Diferencia" según las condiciones
             if (diferencia === 0) {
                 return {
@@ -127,15 +148,12 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         console.log("Diferencias!: ",diferencias);
 
         // Calcula el total de diferencias usando map y luego reduce
-        const totalDif = diferencias.map((valor) => valor.diferencia).reduce((total, valor) => {
-            const key = Object.keys(valor)[0]; // Obtener la clave del objeto
-            return total + valor[key];
-        }, 0);
+        const totalDif = diferencias.map((valor) => valor.diferencia).reduce((total, valor) => total + valor, 0);
         setTotalDiferencia(totalDif);
 
         //Calcula el total de diferencia de monto
         const totalDifMontos = data.result_set.reduce((total, elemento, index) => {
-            const newValue = billetesFisicos[elemento.Denominacion];
+            const newValue = billetesFisicos[index][getPropiedad(elemento)];
             const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;
             return total + diferenciaMonto;
         }, 0);
@@ -170,13 +188,9 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         }
 
         const formValuesD = getDenominacion(cierreCaja.moneda, datos)
-        console.log("CIERRE FORMD: ", formValuesD);
         eliminarDenominacionesConCantidadCero(formValuesD);
-        console.log("CIERRE DESP FORMD: ", formValuesD);
-
         const formValuesDif = getDiferenciaDenominacion(cierreCaja.moneda, datos)
         eliminarDenominacionesConCantidadCero(formValuesDif);
-
 
         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
         denominaciones.divisa = cierreCaja.moneda;
@@ -343,7 +357,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                             const iconoSalidas = 'bi bi-arrow-down-circle-fill text-danger';
 
                             /*Calcula la diferencia del número de billetes con los físicos actuales*/
-                            const diferencia = elemento['No Billetes'] - billetesFisicos[index];
+                            const diferencia = elemento['No Billetes'] - billetesFisicos[index][getPropiedad(elemento)];
                             const iconoDiferencia =
                                 diferencia === 0
                                     ? 'bi bi-exclamation-circle-fill text-success'
@@ -352,8 +366,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                         : 'bi bi-exclamation-circle-fill text-danger';
 
                             /*Hace la diferencia entre el monto actual con el monto*/
-                            const diferenciaMonto = (billetesFisicos[index] *  elemento.Denominacion) - elemento.Monto; // Calcular la diferencia de montos
-
+                            const diferenciaMonto = (billetesFisicos[index][getPropiedad(elemento)] *  elemento.Denominacion) - elemento.Monto; // Calcular la diferencia de montos
 
                             return (
                                 <tr key={elemento.Denominacion}>
@@ -373,38 +386,34 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                     {/* Columna de Billetes Físicos */}
                                     <td nowrap>
                                         <input
-                                            {...register(`denominacion_${elemento.Denominacion}`, {
+                                            {...register(`${getPropiedad(elemento)}`, {
                                                 validate: {
                                                     validacionMN: (value) => /^[1-9]\d*$/.test(value) || value === 0,
                                                 },
                                             })}
                                             type="text"
-                                            name={`denominacion_${elemento.Denominacion}`}
-                                            className={` text-center form-control ${errors && errors[`denominacion_${elemento.Denominacion}`] ? 'is-invalid' : ''}`}
+                                            name={`${getPropiedad(elemento)}`}
+                                            className={` text-center form-control ${errors && errors[`${getPropiedad(elemento)}`] ? 'is-invalid' : ''}`}
                                             placeholder="$"
                                             onChange={(e) => {
-                                                const inputValue = parseInt(e.target.value);
-                                                const newValue = /^[0-9]\d*$/.test(inputValue) || inputValue === "" ? inputValue : 0;
-                                                console.log("ONCHANGE");
-                                                console.log(billetesFisicos);
+                                                const inputValue = e.target.value;
+                                                const newValue = /^[0-9]\d*$/.test(inputValue) ? inputValue : 0;
                                                 setBilletesFisicos((prevBilletes) => {
                                                     const newBilletes = [...prevBilletes];
-                                                    console.log("BILLETESF: ",newBilletes);
-                                                    newBilletes[index] = newValue;
+                                                    newBilletes[index][getPropiedad(elemento)] = parseInt(newValue);
                                                     return newBilletes;
                                                 });
 
                                                 const diferencia = elemento['No Billetes'] - newValue;
-                                                setValue(`diferencia_${elemento.Denominacion}`, diferencia);
-
+                                                setValue(`${getPropiedadDif(elemento)}`, diferencia);
                                                 const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;
                                                 setValue(`diferenciaMonto_${elemento.Denominacion}`, diferenciaMonto);
 
                                             }}
-                                            value={billetesFisicos[`denominacion_${elemento.Denominacion}`]}
+                                            value={billetesFisicos[index][getPropiedad(elemento)]}
                                         />
+
                                     </td>
-                                    {/* Columna de Input de Diferencia */}
                                     <td>
                                         <i className={iconoDiferencia}></i> {diferencia}
                                     </td>

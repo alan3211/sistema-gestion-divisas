@@ -38,10 +38,6 @@ export const CuentaCajaComponent = ({tipo}) => {
         ]
     }
 
-    console.log(dataDenominacion)
-
-
-
     if (data.total_rows === 0) {
         return (<div className="row d-flex justify-content-center">
             <div className="col-md-4 mb-3">

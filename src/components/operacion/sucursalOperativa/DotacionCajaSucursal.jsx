@@ -31,6 +31,8 @@ export const DotacionCajaSucursal = () => {
         title: ''
     })
 
+    const [finalizaOperacion,setFinalizaOperacion] = useState(true);
+
     const {denominacionD} = useContext(DenominacionContext);
 
     const options = {
@@ -38,6 +40,7 @@ export const DotacionCajaSucursal = () => {
         importe: parseInt(watch('monto')),
         habilita,
         setHabilita,
+        setFinalizaOperacion
     }
 
     const terminarDotacion = handleSubmit(async(data)=>{
@@ -242,7 +245,7 @@ export const DotacionCajaSucursal = () => {
                 <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
                     <i className="bi bi-plus"></i> NUEVA DOTACIÓN
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={habilita.entrega}>
+                <button type="submit" className="btn btn-primary" disabled={finalizaOperacion}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                     FINALIZAR OPERACIÓN
                 </button>
