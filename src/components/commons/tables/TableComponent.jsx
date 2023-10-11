@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {MessageComponent} from "../MessageComponent";
-import {mensajeSinElementos} from "../../../utils";
+import {FormatoMoneda, mensajeSinElementos} from "../../../utils";
 
 import './table.css';
 import {getTools} from "./operaciones/operaciones-tools";
@@ -18,6 +18,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         buscar = false,
         paginacion = false,
         tools = [],
+        filters=[]
     } = options || {};
 
 
@@ -73,6 +74,12 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
             setSortDirection("asc");
         }
     };
+
+    const applyFilter = (filtro, valor) => {
+        if(filtro === 'currency'){
+            return FormatoMoneda(valor);
+        }
+    }
 
     return (<>
             <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns"
@@ -134,9 +141,21 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                         if (toolInfo) {
                                             return getTools(toolInfo,item,index)
                                         } else {
-                                            return (<td key={index} className="text-center">
-                                                    {item[key]}
-                                                </td>);
+                                            const filterElement = filters.find(element => element.columna === key);
+
+                                            if (filterElement) {
+                                                return (
+                                                    <td key={index} className="text-center">
+                                                        {applyFilter(filterElement.filter, parseFloat(item[key]))}
+                                                    </td>
+                                                );
+                                            } else {
+                                                return (
+                                                    <td key={index} className="text-center">
+                                                        {item[key]}
+                                                    </td>
+                                                );
+                                            }
                                         }
                                     })}
                                 </tr>))}

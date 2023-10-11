@@ -1,6 +1,6 @@
-const URL = 'https://grocerys-back.redcliff-1d57ab6c.eastus2.azurecontainerapps.io/';
+//const URL = 'https://grocerys-back.redcliff-1d57ab6c.eastus2.azurecontainerapps.io/';
 //const URL = 'http://192.168.101.45:9000/';
-//const URL = 'http://localhost:9000/';
+const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -31,6 +31,7 @@ export const TESORERIA_CONSULTA_SALDO_URL = `${TESORERIA_URL}consulta`
 export const TESORERIA_DOTACION_SUCURSALES_URL = `${TESORERIA_URL}dotacion-sucursal/dota`
 export const TESORERIA_ESTATUS_DOTACIONES_URL = `${TESORERIA_URL}dotacion-sucursal/estatus`
 export const TESORERIA_ENVIO_SUCURSAL_URL = `${TESORERIA_URL}dotacion-sucursal/consulta-envio`
+export const TESORERIA_RESUMEN_SUCURSAL_URL = `${TESORERIA_URL}consulta/resumen-sucursal`
 
 /*OPERACION SUCURSAL*/
 export const SUCURSAL_ENVIO_VALORES_URL = `${SUCURSAL_URL}operativa/envio-valores`
