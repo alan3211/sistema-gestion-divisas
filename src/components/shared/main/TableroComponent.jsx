@@ -30,7 +30,6 @@ export const TableroComponent = () => {
 
             {!isLoading &&
                 (<section className="section dashboard">
-
                         <div className="row justify-content-center">
                             <Ventas data={estadistica[0].result_set[0]}/>
                             <Compras data={estadistica[1].result_set[0]}/>
