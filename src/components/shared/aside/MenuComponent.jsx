@@ -28,7 +28,7 @@ function renderSubMenu({IdModulo,Nombre,subMenus}) {
     }
 }
 
-function renderMenu(menu) {
+export const renderMenu = (menu) => {
     return (
         <li className="nav-item" key={menu.IdModulo}>
             <a

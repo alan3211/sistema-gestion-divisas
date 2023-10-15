@@ -1546,3 +1546,50 @@ td,th,pre {
   --bs-btn-disabled-bg: #4e13c1;
   --bs-btn-disabled-border-color: #4e13c1;
 }
+
+.search-bar {
+  position: relative; /* Establece 'position: relative' en el contenedor padre */
+}
+
+.combo-dropdown-search {
+  position: absolute;
+  border: 1px solid #ccc;
+  max-height: 100px;
+  overflow-y: auto;
+  width: 89%;
+  background-color: white;
+  z-index: 9999;
+  top: 100%; /* Ajusta la posición para que aparezca debajo del input */
+}
+
+.combo-dropdown-search .option {
+  padding: 6px;
+  cursor: pointer;
+}
+
+.combo-dropdown-search .option:hover {
+  background-color: #f0f0f0;
+}
+
+/* Agrega este CSS a tu archivo de estilos o componente CSS */
+.datatable-container::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.datatable-container::-webkit-scrollbar-thumb {
+  background-color: rgba(136, 136, 136, 0.33); /* Color del thumb del scroll */
+  border-radius: 10px; /* Radio de esquinas del thumb */
+}
+
+.datatable-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Color del thumb del scroll al pasar el mouse sobre él */
+}
+
+.datatable-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Color de la pista del scroll */
+}
+
+.datatable-container::-webkit-scrollbar-track:hover {
+  background-color: #d4d4d4; /* Color de la pista del scroll al pasar el mouse sobre él */
+}
