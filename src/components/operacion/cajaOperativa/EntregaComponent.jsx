@@ -7,7 +7,7 @@ import {CierreParcialComponent} from "./CierreParcialComponent";
 
 export const EntregaComponent = () => {
 
-    const [selectedOption, setSelectedOption] = useState("cierre");
+    const [selectedOption, setSelectedOption] = useState("cierre_parcial");
 
     const handleRadioChange = ({target:{value}}) => {
         setSelectedOption(value);

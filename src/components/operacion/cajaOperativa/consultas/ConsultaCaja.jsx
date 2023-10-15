@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { dataG } from "../../../../App";
 import {encryptRequest, formattedDate} from "../../../../utils";
-import { consultaCantidadDivisas, consultaMovimientos } from "../../../../services/operacion-caja";
+import {consultaCantidadDivisas, consultaMovimientos, getDotaciones} from "../../../../services/operacion-caja";
 import { ConsultaTotalesCaja } from "./ConsultaTotalesCaja";
 import { TableComponent } from "../../../commons/tables";
 import {TitleComponent} from "../../../commons";
@@ -15,8 +15,41 @@ export const ConsultaCaja = () => {
     const [isLoading, setIsLoading] = useState(true);
     const {register,reset,
         handleSubmit,formState:{errors}} = useForm();
+    const [formData,setFormData] = useState('');
+    const getCantidadDivisas = async () => {
+        const values = {
+            usuario: dataG.usuario,
+            sucursal: dataG.sucursal,
+        }
+        const encryptedData = encryptRequest(values);
+        const result = await consultaCantidadDivisas(encryptedData);
+        if(result.total_rows > 0){
+            setDatos(result.result_set);
+        }else{
+            setDatos([]);
+        }
+    }
+
+    const refreshQuery = async () =>{
+        const result = await consultaMovimientos(formData);
+        result.headers = ['Cancelar Operación',...result.headers];
+        setDatosMov(result);
+    }
+
 
     const options = {
+        showMostrar: true,
+        buscar: true,
+        paginacion: true,
+        tools: [
+            {columna:"Estatus",tool:'estatus'},
+            { columna: "Denominaciones", tool: 'ver-detalle-denominacion' },
+            { columna: "Reimpresión ticket", tool: 'impresion-ticket' },
+            { columna: "Cancelar Operación", tool: 'cancelar-operacion',refresh:refreshQuery },
+        ]
+    }
+
+    const optionsHist = {
         showMostrar: true,
         buscar: true,
         paginacion: true,
@@ -55,7 +88,9 @@ export const ConsultaCaja = () => {
                 fecha: formattedDate
             }
             const encryptedData = encryptRequest(values);
+            setFormData(encryptedData)
             const result = await consultaMovimientos(encryptedData);
+            result.headers = ['Cancelar Operación',...result.headers];
             setDatosMov(result);
             setIsLoading(false);
         }
@@ -139,7 +174,7 @@ export const ConsultaCaja = () => {
                 {
                     isLoadingHist &&
                     <>
-                        <TableComponent data={datosMovHist} options={options} />
+                        <TableComponent data={datosMovHist} options={optionsHist} />
                     </>
                 }
             </div>

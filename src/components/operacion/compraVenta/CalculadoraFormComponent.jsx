@@ -1,6 +1,6 @@
 import {useContext, useState} from 'react';
 import {dataG} from "../../../App";
-import {hacerOperacion, realizaConversion} from "../../../services";
+import {enviaMensaje, hacerOperacion, realizaConversion} from "../../../services";
 import {ModalConfirm} from "../../commons/modals";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {useCatalogo} from "../../../hook";
@@ -14,7 +14,6 @@ import {
     validarMoneda
 } from "../../../utils";
 import {toast} from "react-toastify";
-import {Overlay} from "../../commons/toast/Overlay";
 
 export const CalculadoraFormComponent = () => {
 
@@ -37,11 +36,22 @@ export const CalculadoraFormComponent = () => {
         datos,setDatos,
     } = useContext(CompraVentaContext);
     const catalogo = useCatalogo([9, 4]);
-    const [showOverlay, setShowOverlay] = useState(false);
 
+    const [showModalDotacion,setShowModalDotacion] = useState([{
+        show:false,
+        mensaje:'',
+        monto:0.0,
+        moneda:''
+    }]);
     /*Cierra el modal cuando se le da en la "x"*/
     const closeModal = () => {
         setShowModal(false);
+        setShowModalDotacion({
+            show:false,
+            mensaje:'',
+            monto:0.0,
+            moneda:'',
+        });
         clearForm();
     }
 
@@ -93,18 +103,11 @@ export const CalculadoraFormComponent = () => {
         if (result.result_set[0].hasOwnProperty('Mensaje')) {
             setCantidad(0);
             setShowCantidadEntregada(false);
-            setShowOverlay(true);
-            toast.error(result.result_set[0].Mensaje,{
-                position: "top-center",
-                closeButton: true,
-                closeOnClick:false,
-                className: 'overlay-toast',
-                draggable:false,
-                autoClose:false,
-                theme: "colored",
-                onClose: () => {
-                    setShowOverlay(false); // Oculta el fondo de superposición cuando se cierra el toast
-                },
+            setShowModalDotacion({
+                show:true,
+                mensaje: result.result_set[0].Mensaje,
+                monto:result.result_set[0].Monto,
+                moneda:result.result_set[0].Moneda,
             });
             clearForm();
         }else{
@@ -131,6 +134,26 @@ export const CalculadoraFormComponent = () => {
         const response = await getOperacion();
         console.log("RESPONSE: ",response)
         setDatos(response);
+    }
+
+    const enviarNotificacion = async() => {
+        const valores = {
+            id:0,
+            accion:1,
+            sucursal: dataG.sucursal,
+            caja: dataG.usuario,
+            mensaje: `La caja ${dataG.usuario} requiere una dotación de ${showModalDotacion.monto} ${showModalDotacion.moneda} para continuar la operación.`
+        }
+        const encryptedData = encryptRequest(valores)
+
+        const response = await enviaMensaje(encryptedData);
+        toast.warn(response.result_set[0].Mensaje,OPTIONS);
+        setShowModalDotacion({
+            show:false,
+            mensaje:'',
+            monto:0.0,
+            moneda:'',
+        });
     }
 
     /*Guarda la preoperacion*/
@@ -309,7 +332,16 @@ export const CalculadoraFormComponent = () => {
                           icon="bi bi-exclamation-triangle-fill text-warning m-2"
                 />)
             }
-            <Overlay showOverlay={showOverlay}/>
+            {
+                showModalDotacion.show && (
+                    <ModalConfirm title={showModalDotacion.mensaje}
+                                  showModal={showModalDotacion.show}
+                                  closeModal={closeModal}
+                                  hacerOperacion={enviarNotificacion}
+                                  closeModalAndReturn={closeModalAndReturn}
+                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
         </>
     );
 };

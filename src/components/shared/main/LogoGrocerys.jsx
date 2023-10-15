@@ -1,4 +1,4 @@
-import logo from '../../../assets/logo.png';
+import logo from '../../../assets/logoF.png';
 import './logo.css'
 export const LogoGrocerys = () => {
 

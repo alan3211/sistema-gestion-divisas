@@ -65,8 +65,8 @@ export const LoginComponent = () => {
                         <div className="row justify-content-center">
                             <div
                                 className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-                                <div className="d-flex justify-content-center">
-                                    <img src={logo} alt="Grocerys Centro Cambiario" width="350" height="350"/>
+                                <div className="d-flex justify-content-center m-5 p-5">
+                                    <img src={logo} alt="Grocerys Centro Cambiario"/>
                                 </div>
 
                                 <div className="card border-0 shadow-lg" style={{ maxWidth: "600px" }}>

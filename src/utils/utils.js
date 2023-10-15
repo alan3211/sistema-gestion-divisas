@@ -11,6 +11,7 @@ export const opciones = { hour12: false, hour: '2-digit', minute: '2-digit', sec
 export const formattedDate = `${year}-${month}-${day}`;
 export const formattedDateWS = `${year}${month}${day}`;
 export const formattedDateDD = `${day}-${month}-${year}`;
+export const formattedDateDD2 = `${day}/${month}/${year}`;
 
 export const formateaMoneda = (cantidad) =>{
     // Convierte la cadena en un número decimal con 2 decimales
@@ -80,7 +81,7 @@ export const obtenerArrayDifDenominaciones = (denominacionesObj) => {
 
 export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominaciones = [
-        'p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+        'p05','p1','p2','p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
     ];
 
     const getDenominacionCantidad = (nombre) => {
@@ -105,7 +106,7 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
 
 export const getDiferenciaDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominaciones = [
-        'p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+        'p05','p1','p2','p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
     ];
 
     const getDenominacionCantidad = (nombre) => {
@@ -186,4 +187,19 @@ export const OPTIONS = {
     closeOnClick: true,
     pauseOnHover: true,
     theme: "colored",
+}
+
+export const getTextDivisa = (divisa) => {
+    const divisas = {
+        "USD": { plural: "dólares", singular: "dólar" },
+        "EUR": { plural: "euros", singular: "euro" },
+        "GBR": { plural: "libras", singular: "libra" }
+    };
+
+    // Validación de la divisa
+    if (divisas.hasOwnProperty(divisa)) {
+        return divisas[divisa];
+    } else {
+        throw new Error("Divisa no reconocida");
+    }
 }

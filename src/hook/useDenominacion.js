@@ -31,6 +31,9 @@ export const useDenominacion = ({type,moneda,options}) => {
     const [data,setData] = useState([]);
 
     const denominacionMappings = {
+        '.05': 'p05',
+        '.10': 'p1',
+        '.20': 'p2',
         '.50': 'p5'
     };
 
@@ -39,7 +42,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         let name = denominacionMappings[denominacion] || denominacion;
         const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0;
         const denominacionValue = parseFloat(denominacion);
-        return (cantidad * denominacionValue); // Asegura que el resultado tenga 2 decimales
+        return (cantidad * denominacionValue);
     };
 
 
@@ -60,6 +63,12 @@ export const useDenominacion = ({type,moneda,options}) => {
             }else{
                 setFinalizaOperacion(true);
             }
+        }
+
+        if(type === 'R'){
+            denominacionR.calculateGrandTotal = calculateGrandTotal;
+        }else{
+            denominacionE.calculateGrandTotal = calculateGrandTotal;
         }
 
         return grandTotal;

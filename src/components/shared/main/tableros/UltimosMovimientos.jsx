@@ -1,4 +1,4 @@
-import {FormatoMoneda, formattedDate} from "../../../../utils";
+import {formattedDate} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 
 export const UltimosMovimientos = ({data}) => {
@@ -25,8 +25,7 @@ export const UltimosMovimientos = ({data}) => {
                         Últimos Movimientos <span>|  {formattedDate}</span>
                     </h5>
 
-                    <TableComponent data={data} options={options}/>
-
+                    <TableComponent data={data} options={options} />
                 </div>
 
             </div>

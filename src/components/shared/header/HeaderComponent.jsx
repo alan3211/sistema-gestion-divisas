@@ -19,7 +19,7 @@ export const HeaderComponent = () => {
 
             <div className="d-flex align-items-center justify-content-between">
 
-                    <img src={logo} alt="" width="80" height="60"/>
+                    <img src={logo} alt="" width="50" height="50"/>
 
                 <i className="bi bi-list toggle-sidebar-btn" onClick={toggle}></i>
             </div>
