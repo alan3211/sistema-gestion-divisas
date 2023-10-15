@@ -1,18 +1,14 @@
 name: Trigger auto deployment for grocerys-front
 
-# When this action will be executed
 on:
-  # Automatically trigger it when detected changes in repo
   push:
-    branches: 
-      [ buho_01102023 ]
+    branches:
+      - buho_01102023
     paths:
-    - '**'
-    - '.github/workflows/grocerys-front-AutoDeployTrigger-59f36190-f7cb-4bf0-952d-74c6180a49e3.yml'
-
-  # Allow manual trigger 
+      - '**'
+      - '.github/workflows/grocerys-front-AutoDeployTrigger-59f36190-f7cb-4bf0-952d-74c6180a49e3.yml'
   workflow_dispatch:
-      
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -21,21 +17,31 @@ jobs:
       - name: Checkout to the branch
         uses: actions/checkout@v2
 
+      - name: Build Docker image
+        run: |
+          docker build -t grocerys-front:${{ github.sha }} .
+          docker login -u ${{ secrets.GROCERYSFRONT_REGISTRY_USERNAME }} -p ${{ secrets.GROCERYSFRONT_REGISTRY_PASSWORD }} groceryscentrocambiario.azurecr.io
+          docker tag grocerys-front:${{ github.sha }} groceryscentrocambiario.azurecr.io/grocerys-front:${{ github.sha }}
+          docker push groceryscentrocambiario.azurecr.io/grocerys-front:${{ github.sha }}
+        env:
+          DOCKER_BUILDKIT: 1
+
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.GROCERYSFRONT_AZURE_CREDENTIALS }}
 
-      - name: Build and push container image to registry
+      - name: Deploy container image to Azure Container Registry
         uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: ${{ github.workspace }} 
+          appSourcePath: ${{ github.workspace }}
           registryUrl: groceryscentrocambiario.azurecr.io
           registryUsername: ${{ secrets.GROCERYSFRONT_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.GROCERYSFRONT_REGISTRY_PASSWORD }}
           containerAppName: grocerys-front
           resourceGroup: SistemaDIV
           imageToBuild: groceryscentrocambiario.azurecr.io/grocerys-front:${{ github.sha }}
+
           
 
      
