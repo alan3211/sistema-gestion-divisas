@@ -27,25 +27,25 @@
     max-height: 400px;
 }
 
-/* Agrega este CSS a tu archivo de estilos o componente CSS */
-.datatable-container::-webkit-scrollbar {
-    height: 10px;
+/* Archivo de estilos o componente CSS */
+.custom-scrollbar::-webkit-scrollbar {
     width: 10px;
+    height: 10px;
 }
 
-.datatable-container::-webkit-scrollbar-thumb {
-    background-color: rgba(136, 136, 136, 0.33); /* Color del thumb del scroll */
-    border-radius: 10px; /* Radio de esquinas del thumb */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(136, 136, 136, 0.33);
+    border-radius: 10px;
 }
 
-.datatable-container::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Color del thumb del scroll al pasar el mouse sobre él */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
 }
 
-.datatable-container::-webkit-scrollbar-track {
-    background-color: #f1f1f1; /* Color de la pista del scroll */
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
 }
 
-.datatable-container::-webkit-scrollbar-track:hover {
-    background-color: #d4d4d4; /* Color de la pista del scroll al pasar el mouse sobre él */
+.custom-scrollbar::-webkit-scrollbar-track:hover {
+    background-color: #d4d4d4;
 }

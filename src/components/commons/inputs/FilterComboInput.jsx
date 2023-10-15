@@ -1,6 +1,4 @@
-import {useComboInput} from "../../../hook";
 import './CombosComponent.css';
-import {useFormContext} from "react-hook-form";
 import {useContext, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 
