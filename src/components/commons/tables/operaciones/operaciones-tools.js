@@ -6,8 +6,9 @@ import {
     CancelarTesoreria,
     Detalle,
     EstatusTool,
-    SeleccionarCliente, VerDenominaciones, ImpresionTicket, DetalleDenominaciones, VerSucursales
+    SeleccionarCliente, VerDenominaciones, ImpresionTicket, DetalleDenominaciones, VerSucursales,CancelarOperacion
 } from "../componentes-tools";
+
 
 const toolComponents = {
     estatus: EstatusTool,
@@ -22,6 +23,7 @@ const toolComponents = {
     'impresion-ticket': ImpresionTicket,
     'ver-detalle-denominacion': DetalleDenominaciones,
     'ver-sucursales': VerSucursales,
+    'cancelar-operacion': CancelarOperacion,
 };
 
 export const getTools = (toolInfo, item, index) => {

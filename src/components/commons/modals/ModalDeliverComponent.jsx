@@ -12,12 +12,13 @@ import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
+import {usePrinter} from "../../../hook/usePrinter";
+import {ModalTicket} from "./ModalTicket";
 
 export const ModalDeliverComponent = ({configuration}) =>{
 
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
     const [showCambio,setShowCambio] = useState(false);
-    const [showImpresion,setShowImpresion] = useState(false);
     const [habilita,setHabilita] =  useState({
         recibe: true,
         entrega: true,
@@ -27,7 +28,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
         denominacionR,
         denominacionE,
     } = useContext(DenominacionContext);
-
+    const {imprimir,imprimeTicketNuevamente} = usePrinter();
+    const [showModal,setShowModal] = useState(false)
 
     //Muestra el título correcto
     const titulo = `Operación ${operacion.tipo_operacion === "1" ? 'Compra': 'Venta'}`;
@@ -71,14 +73,12 @@ export const ModalDeliverComponent = ({configuration}) =>{
             formValuesE.tipoOperacion = "VENTA";
         }
 
-        console.log("TIENE_CEROS: ",formValuesR);
-        console.log("TIENE_CEROS: ",formValuesE);
-
         eliminarDenominacionesConCantidadCero(formValuesR);
         eliminarDenominacionesConCantidadCero(formValuesE);
 
-        console.log("NO_TIENE_CEROS: ",formValuesR);
-        console.log("NO_TIENE_CEROS: ",formValuesE);
+        console.log(" TOTAL INGRESADO: ",denominacionR.calculateGrandTotal());
+        console.log(" monto: ",parseFloat(calculaValorMonto));
+        console.log("RESTA: ",denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto));
 
         const values = {
             cliente: datos.Cliente,
@@ -90,6 +90,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
             sucursal: dataG.sucursal,
             traspaso: '',
             diferencia:0.0,
+            totalRecibido:denominacionR.calculateGrandTotal(),
+            cambio:denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto),
             denominacion:[
                 obtenerObjetoDenominaciones(formValuesR),
                 obtenerObjetoDenominaciones(formValuesE),
@@ -105,14 +107,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
             if (redondearNumero(parseFloat(operacion.monto) - parseFloat(calculaValorMonto)) >= 1) {
                 setShowCambio(true);
             } else {
-                toast.success('La operación fue exitosa.', OPTIONS);
-
-                // TODO Integrar la parte de la impresion de tickets
-                // 1.- Validar que se muestre el modal
-                // 2.- Imprimir el ticket
-                setShowImpresion(true);
-
-                navigator("/inicio");
+                //imprimir(0);
+                setShowModal(true)
             }
             console.log(resultadoPromise);
         }
@@ -136,6 +132,9 @@ export const ModalDeliverComponent = ({configuration}) =>{
         tipo: 'E',
     }
 
+    const imprimeTicket = () =>{
+        imprimeTicketNuevamente(0)
+    }
 
     return(
         <>
@@ -217,7 +216,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 showCambio
                     &&
                     <ModalCambio
-                        cambio={(redondearNumero(operacion.monto-calculaValorMonto))}
+                        cambio={(denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto))}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
                         operacion={operacion}
@@ -225,6 +224,20 @@ export const ModalDeliverComponent = ({configuration}) =>{
                         habilita={habilita}
                         setHabilita={setHabilita}
                     />
+            }
+
+            {
+                showModal && (
+                    <ModalTicket title="¿Se imprimió el ticket correctamente?"
+                                 showModal={showModal}
+                                 closeModalAndReturn={imprimeTicket}
+                                 hacerOperacion={()=> {
+                                     toast.success('La operación fue exitosa.', OPTIONS);
+                                     setShowModal(false)
+                                     navigator('/inicio')
+                                 }}
+                                 icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
             }
 
         </>

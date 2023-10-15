@@ -2,12 +2,13 @@ import {memo, useContext, useEffect, useState} from "react";
 import {ModalConfirm} from "../../commons/modals";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {encryptRequest, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
 import {useCatalogo} from "../../../hook";
 import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
 import {getLocalidad, guardaCliente} from "../../../services";
 import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
+import {toast} from "react-toastify";
 
 export const AltaClienteComplementario = memo(() => {
 
@@ -35,8 +36,12 @@ export const AltaClienteComplementario = memo(() => {
         const encryptedBase64 = encryptRequest(data)
 
         const dataClientes = await guardaCliente(encryptedBase64);
-        if (dataClientes) {
-            propForm.setDataClientes(dataClientes);
+
+        if(dataClientes.result_set[0].hasOwnProperty('Mensaje')){
+            toast.warn(dataClientes.result_set[0].Mensaje,OPTIONS);
+            closeModalAndReturn();
+        }else{
+            propForm.setDataClientes(dataClientes.result_set[0]);
             setShowModal(true);
         }
     });
@@ -676,7 +681,7 @@ export const AltaClienteComplementario = memo(() => {
                 selectedItem={propForm.dataClientes}
                 icon="bi bi-check-circle-fill text-success m-2"
                 hacerOperacion={hacerOperacion}
-                title={`El registro se ha completado satisfactoriamente con el número de usuario ${ propForm.dataClientes.cliente}. ¿Desea realizar una operación con este usuario?`}
+                title={`El registro se ha completado satisfactoriamente con el número de usuario ${ propForm.dataClientes.Cliente}. ¿Desea realizar una operación con este usuario?`}
                 closeModalAndReturn={closeModalAndReturn}
             />
 

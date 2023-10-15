@@ -22,21 +22,18 @@ import { MessageComponent } from "../../commons";
 
 export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetForm }) => {
 
-    const getPropiedad = (elemento) => {
+    const getPropiedad = (property,elemento) => {
         let propiedad='';
-        if(elemento.Denominacion === '0.5'){
-            propiedad = 'denominacion_p5';
+        if(elemento.Denominacion === '0.05'){
+            propiedad = `${property}_p05`;
+        }else if(elemento.Denominacion === '0.1'){
+            propiedad = `${property}_p1`;
+        }else if(elemento.Denominacion === '0.2'){
+            propiedad = `${property}_p2`;
+        }else if(elemento.Denominacion === '0.5'){
+            propiedad = `${property}_p5`;
         }else{
-            propiedad = `denominacion_${parseInt(elemento.Denominacion)}`;
-        }
-        return propiedad;
-    }
-    const getPropiedadDif = (elemento) => {
-        let propiedad='';
-        if(elemento.Denominacion === '0.5'){
-            propiedad = 'diferencia_p5';
-        }else{
-            propiedad = `diferencia_${parseInt(elemento.Denominacion)}`;
+            propiedad = `${property}_${parseInt(elemento.Denominacion)}`;
         }
         return propiedad;
     }
@@ -44,7 +41,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     // Inicializa billetesFisicos
     const billetesFisicosInicial = data.result_set.map((elemento) => {
         return {
-            [getPropiedad(elemento)]:parseInt(elemento['Billetes Físicos']) || 0
+            [getPropiedad('denominacion',elemento)]:parseInt(elemento['Billetes Físicos']) || 0
         }
     });
     const [billetesFisicos, setBilletesFisicos] = useState(billetesFisicosInicial);
@@ -53,7 +50,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         return total + valor;
     }, 0);
 
-    console.log("Total inicial de billetes físicos:", totalInicial);
     const [totalBilletesFisicos, setTotalBilletesFisicos] = useState(totalInicial);
 
     const reiniciaState = () => {
@@ -72,10 +68,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         handleSubmit,
         setValue,
         formState: { errors },
-        reset,watch } = useForm();
+        reset } = useForm();
     const [showModal, setShowModal] = useState(false);
     const [datosEnvio, setDatosEnvio] = useState({});
     // Calcula el monto total para cada columna
+
     const calcularTotales = () => {
         const totales = Array(data.headers.length).fill(0);
 
@@ -121,11 +118,8 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         }, 0);
         setTotalBilletesFisicos(totalBilletes);
 
-        console.log("TOTAL BILLETES FISICOS: ", totalBilletesFisicos)
-        console.log("BILLETES FISICOS USEEFFECT: ", billetesFisicos)
-
         const diferencias = data.result_set.map((elemento, index) => {
-            const diferencia = elemento['No Billetes'] - billetesFisicos[index][getPropiedad(elemento)];
+            const diferencia = elemento['No Billetes'] - billetesFisicos[index][getPropiedad('denominacion',elemento)];
             // Cambia el icono de "Diferencia" según las condiciones
             if (diferencia === 0) {
                 return {
@@ -145,18 +139,20 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
             }
         });
 
-        console.log("Diferencias!: ",diferencias);
-
         // Calcula el total de diferencias usando map y luego reduce
         const totalDif = diferencias.map((valor) => valor.diferencia).reduce((total, valor) => total + valor, 0);
         setTotalDiferencia(totalDif);
 
+        console.log("Total Diferencias: ",totalDif);
+
         //Calcula el total de diferencia de monto
         const totalDifMontos = data.result_set.reduce((total, elemento, index) => {
-            const newValue = billetesFisicos[index][getPropiedad(elemento)];
+            const newValue = billetesFisicos[index][getPropiedad('denominacion',elemento)];
             const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;
             return total + diferenciaMonto;
         }, 0);
+
+        console.log("Total Diferencias Montos: ",totalDifMontos);
 
         setTotalDiferenciaMontos(totalDifMontos);
 
@@ -183,7 +179,9 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
         if (tipo === 'traspaso') {
             cierreCaja.ticket = `TRASPASO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
-        } else {
+        } else if(tipo === 'cierre_parcial') {
+            cierreCaja.ticket = `CIERREPARCIAL${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        }else {
             cierreCaja.ticket = `CIERRE${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
         }
 
@@ -201,13 +199,14 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
             denominaciones,
         ]
 
-        console.log("VALORES!!!", cierreCaja)
+        cierreCaja.totalDiferenciaMonto = totalDiferenciaMontos;
+        cierreCaja.totalDiferenciaBilletes = totalDiferencia;
+
         if (totalDiferencia !== 0) {
             cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
             setDatosEnvio(cierreCaja);
-            setShowModal(true);
-        } else {
-            console.log("CIERRE FINAL: ", cierreCaja);
+            onEnviaNotas();
+        } else if(totalDiferencia !== 0 && totalDiferenciaMontos === 0){
             const encryptedData = encryptRequest(cierreCaja);
             const response = await entregaCaja(encryptedData);
 
@@ -224,7 +223,25 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                 setShowDetalle(false);
                 refresh();
             }
+        } else{
+            const encryptedData = encryptRequest(cierreCaja);
+           const response = await entregaCaja(encryptedData);
+
+            if (response !== '') {
+                toast.success(response, {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    theme: "light",
+                });
+                reset();
+                setShowDetalle(false);
+                refresh();
+            }
         }
+        console.warn("Cierre CAJA",cierreCaja)
     });
 
     const onEnviaNotas = async () => {
@@ -247,7 +264,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
             refresh();
         }
     }
-
 
     const options = {
         showModal,
@@ -280,11 +296,9 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         }
     }
 
-
     useEffect(() => {
         obtieneUsuarios();
     }, []);
-
 
     return (
         <form onSubmit={onSubmit} className="text-center mt-2" style={{ fontSize: "12px" }}>
@@ -357,7 +371,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                             const iconoSalidas = 'bi bi-arrow-down-circle-fill text-danger';
 
                             /*Calcula la diferencia del número de billetes con los físicos actuales*/
-                            const diferencia = elemento['No Billetes'] - billetesFisicos[index][getPropiedad(elemento)];
+                            const diferencia = elemento['No Billetes'] - billetesFisicos[index][getPropiedad('denominacion',elemento)];
                             const iconoDiferencia =
                                 diferencia === 0
                                     ? 'bi bi-exclamation-circle-fill text-success'
@@ -366,7 +380,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                         : 'bi bi-exclamation-circle-fill text-danger';
 
                             /*Hace la diferencia entre el monto actual con el monto*/
-                            const diferenciaMonto = (billetesFisicos[index][getPropiedad(elemento)] *  elemento.Denominacion) - elemento.Monto; // Calcular la diferencia de montos
+                            const diferenciaMonto = (billetesFisicos[index][getPropiedad('denominacion',elemento)] *  elemento.Denominacion) - elemento.Monto; // Calcular la diferencia de montos
 
                             return (
                                 <tr key={elemento.Denominacion}>
@@ -386,31 +400,31 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                     {/* Columna de Billetes Físicos */}
                                     <td nowrap>
                                         <input
-                                            {...register(`${getPropiedad(elemento)}`, {
+                                            {...register(`${getPropiedad('denominacion',elemento)}`, {
                                                 validate: {
                                                     validacionMN: (value) => /^[1-9]\d*$/.test(value) || value === 0,
                                                 },
                                             })}
                                             type="text"
-                                            name={`${getPropiedad(elemento)}`}
-                                            className={` text-center form-control ${errors && errors[`${getPropiedad(elemento)}`] ? 'is-invalid' : ''}`}
+                                            name={`${getPropiedad('denominacion',elemento)}`}
+                                            className={` text-center form-control ${errors && errors[`${getPropiedad('denominacion',elemento)}`] ? 'is-invalid' : ''}`}
                                             placeholder="$"
                                             onChange={(e) => {
                                                 const inputValue = e.target.value;
                                                 const newValue = /^[0-9]\d*$/.test(inputValue) ? inputValue : 0;
                                                 setBilletesFisicos((prevBilletes) => {
                                                     const newBilletes = [...prevBilletes];
-                                                    newBilletes[index][getPropiedad(elemento)] = parseInt(newValue);
+                                                    newBilletes[index][getPropiedad('denominacion',elemento)] = parseInt(newValue);
                                                     return newBilletes;
                                                 });
 
                                                 const diferencia = elemento['No Billetes'] - newValue;
-                                                setValue(`${getPropiedadDif(elemento)}`, diferencia);
+                                                setValue(`${getPropiedad('diferencia',elemento)}`, diferencia);
                                                 const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;
                                                 setValue(`diferenciaMonto_${elemento.Denominacion}`, diferenciaMonto);
 
                                             }}
-                                            value={billetesFisicos[index][getPropiedad(elemento)]}
+                                            value={billetesFisicos[index][getPropiedad('denominacion',elemento)]}
                                         />
 
                                     </td>
@@ -460,26 +474,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                               </span>
                         </button>
                     </div>
-                    {
-                        showModal && (
-                            <ModalGenericTool options={options}>
-                                <div className="col-md-12 d-flex justify-content-center">
-                                    <button type="button" className="m-2 btn btn-success" onClick={onEnviaNotas}>
-                              <span className="me-2">
-                                <span className="bi bi-check-circle me-2" role="status" aria-hidden="true"></span>
-                                  Sí
-                              </span>
-                                    </button>
-                                    <button type="button" className="m-2 btn btn-danger" onClick={options.closeCustomModal}>
-                              <span className="me-2">
-                                <span className="bi bi-x-circle me-2" role="status" aria-hidden="true"></span>
-                                  No
-                              </span>
-                                    </button>
-                                </div>
-                            </ModalGenericTool>
-                        )
-                    }
                 </>)
             }
         </form>

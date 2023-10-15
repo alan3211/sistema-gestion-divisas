@@ -12,7 +12,7 @@ export const useAltaComplementario = () => {
     const hacerOperacion = (item) => {
         navigate("/compraVenta", {
             state: {
-                cliente: item,
+                cliente: item.Cliente,
                 clienteActivo: true,
             },
         });

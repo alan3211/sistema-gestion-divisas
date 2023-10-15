@@ -1,7 +1,7 @@
 /*Herramienta para mostrar las acciones del tesorero (Aceptar o rechazar)*/
 import {
     eliminarDenominacionesConCantidadCero,
-    encryptRequest,
+    encryptRequest, FormatoMoneda,
     getDenominacion, obtenerObjetoDenominaciones,
     validarAlfaNumerico,
 } from "../../../../../utils";
@@ -36,7 +36,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
     const optionsDenominacion = {
         title: `Moneda ${item.Moneda}`,
-        importe: parseFloat(item.Monto).toFixed(2),
+        importe: parseFloat(item.Monto),
         habilita,
         setHabilita,
         setTotalMonto,
@@ -188,7 +188,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
                                         </div>
                                         <div className="col-md-6">
-                                            <h5 className="text-center">Monto recibido: <strong>{item.Monto}</strong> </h5>
+                                            <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
                                                 (item.Operacion === 'Dotación Sucursal') ? (<Denominacion type="D" moneda={item.Moneda} options={optionsDenominacion}/>)
                                                 : (<DenominacionTable moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} />)

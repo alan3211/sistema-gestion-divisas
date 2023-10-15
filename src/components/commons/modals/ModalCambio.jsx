@@ -1,5 +1,5 @@
 import {Button, Modal} from "react-bootstrap";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {
     eliminarDenominacionesConCantidadCero,
     encryptRequest,
@@ -12,11 +12,16 @@ import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
+import {usePrinter} from "../../../hook/usePrinter";
+import {ModalTicket} from "./ModalTicket";
+
 
 export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion,data,habilita,setHabilita}) => {
 
     const navigator = useNavigate();
     const {denominacionC} = useContext(DenominacionContext);
+    const {imprimir,imprimeTicketNuevamente} = usePrinter();
+    const [showModal,setShowModal] = useState(false)
 
     const options = {
         title: '',
@@ -64,21 +69,14 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
         // Validar si tenemos que darle cambio
         if(resultado){
-            console.log(resultado);
-            // TODO Integrar la parte de la impresion de tickets
-            toast.success('Se ha entregado el cambio correspondiente.', {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "colored",
-            });
-
-            navigator("/inicio");
+            //imprimir(0);
+            setShowModal(true)
         }
     }
 
+    const imprimeTicket = () =>{
+        imprimeTicketNuevamente(0)
+    }
 
     return(
         <>
@@ -123,7 +121,26 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                 </Modal.Footer>
             </Modal>
 
-
+            {
+                showModal && (
+                    <ModalTicket title="¿Se imprimió el ticket correctamente?"
+                                  showModal={showModal}
+                                  closeModalAndReturn={imprimeTicket}
+                                  hacerOperacion={()=> {
+                                      toast.success('Se ha entregado el cambio correspondiente.', {
+                                          position: "top-center",
+                                          autoClose: 5000,
+                                          hideProgressBar: false,
+                                          closeOnClick: true,
+                                          pauseOnHover: true,
+                                          theme: "colored",
+                                      });
+                                      setShowModal(false)
+                                      navigator('/inicio')
+                                  }}
+                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
 
         </>
     );

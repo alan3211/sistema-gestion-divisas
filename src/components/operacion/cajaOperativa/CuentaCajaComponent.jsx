@@ -1,10 +1,10 @@
 import {encryptRequest, formattedDateDD, mensajeSinElementos} from "../../../utils";
 import {MessageComponent} from "../../commons";
-import {useCaja} from "../../../hook/useCaja";
-import {useEffect, useState} from "react";
+import {useCaja} from "../../../hook/";
+import {useState} from "react";
 import {TableComponent} from "../../commons/tables";
 import {ResumenCaja} from "./ResumenCaja";
-import {consultaCaja, getDotaciones} from "../../../services/operacion-caja";
+import {consultaCaja} from "../../../services/operacion-caja";
 import {dataG} from "../../../App";
 
 export const CuentaCajaComponent = ({tipo}) => {
