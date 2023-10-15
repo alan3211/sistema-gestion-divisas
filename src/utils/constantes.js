@@ -1,4 +1,4 @@
-const URL = 'https://grocerys-back--7jlhw6n.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+const URL = 'https://grocerys-back--9nkih98.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
 //const URL = 'http://192.168.101.45:9000/';
 //const URL = 'http://localhost:9000/';
 
