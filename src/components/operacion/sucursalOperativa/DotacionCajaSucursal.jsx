@@ -231,8 +231,8 @@ export const DotacionCajaSucursal = () => {
                     showDisponible.isAvailable &&
                     (<h5 className="text-blue text-center">
                         <i className="bi bi-cash me-2"></i>
-                        <span>Total Billetes Disponibles </span>
-                        <strong className="ms-2">{parseFloat(showDisponible.cantidad)}</strong>
+                        <span>Cantidad Disponible </span>
+                        <strong className="ms-2">{FormatoMoneda(parseFloat(showDisponible.cantidad))}</strong>
                     </h5>)
                 }
             </div>

@@ -50,7 +50,7 @@ export const usePrinter = (datos) => {
             centSingular: "centavo"
         }
 
-        if(dataTicket["Operación"] === 'COMPRA'){
+        if(dataTicket["Operación"] !== 'COMPRA'){
             currency.plural = getTextDivisa(dataTicket.Divisa).plural;
             currency.singular = getTextDivisa(dataTicket.Divisa).singular;
         }
@@ -71,7 +71,7 @@ export const usePrinter = (datos) => {
         conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas`)
         conector.text("------------------------------------------")
         conector.text(dataTicket["Operación"])
-        conector.text(`Divisa: ${DENOMINACIONESM[dataTicket.Divisa]}           $ ${dataTicket["Monto Entregado"]} ${dataTicket.Divisa} `)
+        conector.text(`Divisa: ${DENOMINACIONESM[dataTicket.Divisa]}           $ ${dataTicket["Operación"] === 'COMPRA' ? dataTicket["Total Recibido"] :dataTicket["Monto Entregado"]} ${dataTicket.Divisa} `)
         conector.text("------------------------------------------")
         conector.text(`Tipo de Cambio:         $ ${dataTicket["Tipo Cambio"]} MXN `)
         conector.text("------------------------------------------")
