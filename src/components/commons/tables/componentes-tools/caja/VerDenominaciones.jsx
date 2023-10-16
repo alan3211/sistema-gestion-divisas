@@ -4,6 +4,7 @@ import {muestraDenominaciones} from "../../../../../services/tools-services";
 export const VerDenominaciones =  ({item, index,deps}) => {
 
     const getDenominaciones = async () => {
+        deps.setShowDetalle(false);
         console.log(deps.resetForm)
         if(deps.resetForm) deps.resetForm();
         deps.setMoneda(item.Moneda);

@@ -69,14 +69,15 @@ export const CuentaCajaComponent = ({tipo}) => {
                                            resetForm={receiveResetFunction}
                                        />
                                    ):
-                                   <ResumenCajaParcial
-                                       data={dataDenominacion}
-                                       moneda={moneda}
-                                       setShowDetalle={setShowDetalle}
-                                       tipo={tipo}
-                                       refresh={refreshQuery}
-                                       resetForm={receiveResetFunction}
-                                   />
+                                   <>
+                                       <ResumenCajaParcial
+                                           data={dataDenominacion}
+                                           moneda={moneda}
+                                           setShowDetalle={setShowDetalle}
+                                           refresh={refreshQuery}
+                                           resetForm={receiveResetFunction}
+                                       />
+                                   </>
                            }
                        </>
                    )
