@@ -15,7 +15,6 @@ import {
 import { dataG } from "../../../App";
 import { toast } from "react-toastify";
 import { entregaCaja } from "../../../services/operacion-caja";
-import { ModalGenericTool } from "../../commons/modals";
 import { getUsuariosSistema } from "../../../services";
 import { MessageComponent } from "../../commons";
 
@@ -54,7 +53,8 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     const [totalBilletesFisicos, setTotalBilletesFisicos] = useState(totalInicial);
 
     const reiniciaState = () => {
-        setBilletesFisicos(billetesFisicosInicial);
+        //reset();
+        //setBilletesFisicos(billetesFisicosInicial);
     }
 
     const [showMessage, setShowMessage] = useState(false);

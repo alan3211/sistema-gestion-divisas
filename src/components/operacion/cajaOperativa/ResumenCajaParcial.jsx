@@ -2,12 +2,10 @@ import {useState, useEffect} from 'react';
 import {useForm} from 'react-hook-form';
 import {
     DENOMINACIONES,
-    eliminarDenominacionesConCantidadCero,
     encryptRequest, FormatoMoneda,
     formattedDateWS,
     getDenominacion,
     getDiferenciaDenominacion,
-    mensajeSinElementos,
     obtenerArrayDifDenominaciones,
     obtenerObjetoDenominaciones,
     opciones,
@@ -15,12 +13,9 @@ import {
 import {dataG} from "../../../App";
 import {toast} from "react-toastify";
 import {entregaCaja} from "../../../services/operacion-caja";
-import {ModalGenericTool} from "../../commons/modals";
-import {getUsuariosSistema} from "../../../services";
-import {MessageComponent} from "../../commons";
 
 
-export const ResumenCajaParcial = ({data, moneda, setShowDetalle, tipo, refresh, resetForm}) => {
+export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, resetForm}) => {
 
     const getPropiedad = (property, elemento) => {
         let propiedad = '';
@@ -45,6 +40,7 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, tipo, refresh,
         }
     });
     const [billetesFisicos, setBilletesFisicos] = useState(billetesFisicosInicial);
+
     const totalInicial = billetesFisicosInicial.reduce((total, elemento) => {
         console.log("INICIAL TOTAL: ", Object.values(elemento));
         const valor = parseInt(Object.values(elemento)[0]) || 0;
@@ -52,6 +48,14 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, tipo, refresh,
     }, 0);
 
     const [totalBilletesFisicos, setTotalBilletesFisicos] = useState(totalInicial);
+
+    const validaMontosIniciales = data.result_set.map((elemento) => {
+        return {
+            [getPropiedad('denominacion', elemento)]: true
+        }
+    });
+
+    const [difParcial,setDifParcial] = useState(validaMontosIniciales);
 
     const reiniciaState = () => {
         setBilletesFisicos(billetesFisicosInicial);
@@ -210,67 +214,17 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, tipo, refresh,
                 setShowDetalle(false);
                 refresh();
             }
-        console.warn("Cierre CAJA", cierreCaja)
+        console.warn("Cierre Parcial CAJA", cierreCaja)
     });
 
-    const onEnviaNotas = async () => {
-        console.log("CIERRE FINAL: ", datosEnvio);
-        const encryptedData = encryptRequest(datosEnvio);
-        const response = await entregaCaja(encryptedData);
-
-        if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
-            reset();
-            options.closeCustomModal();
-            setShowDetalle(false);
-            refresh();
+    const validaDiferencia = difParcial.every(objeto => {
+        for (const llave in objeto) {
+            if (objeto[llave] !== true) {
+                return false;
+            }
         }
-    }
-
-    const options = {
-        showModal,
-        closeCustomModal: () => {
-            setShowModal(false);
-            reset()
-        },
-        title: 'Notas a Favor',
-        icon: 'bi-credit-card me-2',
-        subtitle: 'Existen diferencias en los montos, ¿Aceptas tener saldo pendiente?.',
-        size: ''
-    };
-
-    const [usuariosCombo, setUsuariosCombo] = useState([]);
-
-    const obtieneUsuarios = async () => {
-
-        const valores = {
-            sucursal: dataG.sucursal,
-            usuario: dataG.usuario
-        }
-        const encryptedData = encryptRequest(valores);
-
-        const data_usuarios = await getUsuariosSistema(encryptedData);
-
-        console.log("CAJEROS: ", data_usuarios)
-        if (data_usuarios.hasOwnProperty("resultSize")) {
-            setUsuariosCombo([]);
-            setShowMessage(true);
-        } else {
-            setUsuariosCombo(data_usuarios);
-            setShowMessage(false);
-        }
-    }
-
-    useEffect(() => {
-        obtieneUsuarios();
-    }, []);
+        return true;
+    });
 
     return (
         <form onSubmit={onSubmit} className="text-center mt-2" style={{fontSize: "12px"}}>
@@ -298,7 +252,6 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, tipo, refresh,
                     // Iconos para las columnas de Entradas y Salidas
                     const iconoEntradas = 'bi bi-arrow-up-circle-fill text-success';
                     const iconoSalidas = 'bi bi-arrow-down-circle-fill text-danger';
-
                     /*Calcula la diferencia del número de billetes con los físicos actuales*/
                     const diferencia = elemento['No Billetes'] - billetesFisicos[index][getPropiedad('denominacion', elemento)];
                     const iconoDiferencia =
@@ -350,12 +303,46 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, tipo, refresh,
                                                 newBilletes[index][getPropiedad('denominacion', elemento)] = parseInt(newValue);
                                                 return newBilletes;
                                             });
+                                            setDifParcial((prevDifParcial) => {
+                                                // Crear una copia del estado actual
+                                                const updatedDifParcial = [...prevDifParcial];
+
+                                                // Encontrar el objeto que deseas actualizar
+                                                const index = updatedDifParcial.findIndex((obj) => obj.hasOwnProperty(getPropiedad('denominacion', elemento)));
+
+                                                if (index !== -1) {
+                                                    // Actualizar el objeto existente
+                                                    updatedDifParcial[index] = {
+                                                        [getPropiedad('denominacion', elemento)]: false,
+                                                    };
+                                                }
+
+                                                return updatedDifParcial; // Devolver la copia actualizada del estado
+                                            });
+
                                             errors[`${getPropiedad('denominacion', elemento)}`] = {
                                                 type: 'manual',
                                                 message: 'No cuentas con esa cantidad de billetes.'
                                             }
                                         }else {
                                             delete errors[`${getPropiedad('denominacion', elemento)}`];
+                                            setDifParcial((prevDifParcial) => {
+                                                // Crear una copia del estado actual
+                                                const updatedDifParcial = [...prevDifParcial];
+
+                                                // Encontrar el objeto que deseas actualizar
+                                                const index = updatedDifParcial.findIndex((obj) => obj.hasOwnProperty(getPropiedad('denominacion', elemento)));
+
+                                                if (index !== -1) {
+                                                    // Actualizar el objeto existente
+                                                    updatedDifParcial[index] = {
+                                                        [getPropiedad('denominacion', elemento)]: true,
+                                                    };
+                                                }
+
+                                                return updatedDifParcial; // Devolver la copia actualizada del estado
+                                            });
+
                                             setBilletesFisicos((prevBilletes) => {
                                                 const newBilletes = [...prevBilletes];
                                                 newBilletes[index][getPropiedad('denominacion', elemento)] = parseInt(newValue);
@@ -411,7 +398,7 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, tipo, refresh,
                 </tfoot>
             </table>
             <div className="col-md-12">
-                <button type="submit" className="m-2 btn btn-primary" disabled={(totales[1] < totalBilletesFisicos)}>
+                <button type="submit" className="m-2 btn btn-primary" disabled={(totales[1] < totalBilletesFisicos) || !validaDiferencia}>
                               <span className="me-2">
                                 GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
