@@ -3,10 +3,15 @@ import {CardLayout} from "../../commons";
 import {memo, useContext, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 import {validaCliente} from "../../../services";
-import {encryptRequest, validaFechas, validarAlfaNumerico, validarNombreApellido} from "../../../utils";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {
+    encryptRequest,
+    validaFechas,
+    validarAlfaNumerico,
+    validarCorreoElectronico,
+    validarNombreApellido
+} from "../../../utils";
+import {useCatalogo} from "../../../hook/";
 import {toast} from "react-toastify";
-import {ModalAlerts} from "../../commons/modals";
 import {Overlay} from "../../commons/toast/Overlay";
 
 export const AltaClienteFormComponent = memo(() => {
@@ -255,7 +260,31 @@ export const AltaClienteFormComponent = memo(() => {
                                 }
                             </div>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-3">
+                            <div className="form-floating">
+                                <input
+                                    {...propForm.register("correo_electronico", {
+                                        required: {
+                                            value: true,
+                                            message: 'El campo Correo Electrónico no puede ser vacio.'
+                                        },
+                                        validate: (value) => validarCorreoElectronico(value)
+                                    })}
+                                    type="text"
+                                    className={`form-control ${!!propForm.errors?.correo_electronico ? 'invalid-input' : ''}`}
+                                    id="correo_electronico"
+                                    name="correo_electronico"
+                                    placeholder="Correo Electrónico"
+                                    disabled={propForm.showEdit}
+                                />
+                                <label htmlFor="correo_electronico">CORREO ELECTRÓNICO</label>
+                                {
+                                    propForm.errors?.correo_electronico && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.correo_electronico.message}</div>
+                                }
+                            </div>
+                        </div>
+                        <div className="col-md-4">
                             <div className="d-flex">
                                 <button
                                     type="submit"

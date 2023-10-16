@@ -22,7 +22,7 @@ export const Denominacion = ({type,moneda,options}) => {
                         <table className="table table-bordered table-hover">
                             <thead className="table-dark">
                             <tr>
-                                <th className="col-1">Billetes Disponibles</th>
+                                {type !== 'R' && <th className="col-1">Billetes Disponibles</th>}
                                 <th className="col-1">Denominación</th>
                                 <th className="col-1">Cantidad</th>
                                 <th className="col-1">Total</th>
@@ -33,7 +33,7 @@ export const Denominacion = ({type,moneda,options}) => {
                                     let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
                                     return (
                                     <tr key={`denominacion_${name}`}>
-                                        <td>{elemento['Billetes Disponibles']}</td>
+                                        { type !== 'R' && <td>{elemento['Billetes Disponibles']}</td>}
                                         <td>{elemento.Denominacion}</td>
                                         <td>
                                             <input
@@ -58,7 +58,7 @@ export const Denominacion = ({type,moneda,options}) => {
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th colSpan="3">Total</th>
+                                <th colSpan={type !== 'R'?3:2}>Total</th>
                                 <th className={validacionColor()}>{FormatoMoneda(parseFloat(calculateGrandTotal()))}</th>
                             </tr>
                             </tfoot>
