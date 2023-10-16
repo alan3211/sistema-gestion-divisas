@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {dataG} from "../../../App";
 import {encryptRequest} from "../../../utils";
+import {obtieneNotificaciones} from "../../../services/inicio-services";
 
 export const Notifications = () => {
 
@@ -26,19 +27,16 @@ export const Notifications = () => {
 
         const encryptedData = encryptRequest(valores);
 
-        //const newNotification = await obtieneNotificaciones();
+        const {result_set,total_rows} = await obtieneNotificaciones(encryptedData);
 
-        const new1Notification = {
-            title: 'Nueva notificación',
-            message: 'Esto es una notificación de prueba',
-            timestamp: new Date(),
-        };
-
-        // Agrega la nueva notificación al estado
-       // setNotifications([newNotification, ...notifications]);
+        if (total_rows === 0){
+            setNotifications([]);
+        }else{
+            // Agrega la nueva notificación al estado
+            setNotifications(result_set);
+        }
 
     }
-
 
     useEffect(() => {
         // Simula una notificación periódica
@@ -48,7 +46,6 @@ export const Notifications = () => {
 
         return () => clearInterval(interval);
     }, [notifications]);
-
 
     return (
         <li className="nav-item dropdown">
@@ -79,9 +76,10 @@ export const Notifications = () => {
                         <li key={index} className="notification-item" onClick={() => handleNotificationClick(index)}>
                             <i className="bi bi-exclamation-circle text-warning"></i>
                             <div>
-                                <h4>{notification.title}</h4>
-                                <p>{notification.message}</p>
-                                <p>{notification.timestamp.toLocaleTimeString()}</p>
+                                <h4>{notification.Caja}</h4>
+                                <p>{notification.Mensaje}</p>
+                                <small className={notification.Estatus === 'Pendiente' ? 'text-danger':'text-success'}>{notification.Estatus}</small>
+                                <p>{new Date().toLocaleTimeString()}</p>
                             </div>
                         </li>
                     ))}
