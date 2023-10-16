@@ -6,6 +6,7 @@ import {TableComponent} from "../../commons/tables";
 import {ResumenCaja} from "./ResumenCaja";
 import {consultaCaja} from "../../../services/operacion-caja";
 import {dataG} from "../../../App";
+import {ResumenCajaParcial} from "./ResumenCajaParcial";
 
 export const CuentaCajaComponent = ({tipo}) => {
 
@@ -56,14 +57,27 @@ export const CuentaCajaComponent = ({tipo}) => {
                {
                    showDetalle && (
                        <>
-                           <ResumenCaja
-                               data={dataDenominacion}
-                               moneda={moneda}
-                               setShowDetalle={setShowDetalle}
-                               tipo={tipo}
-                               refresh={refreshQuery}
-                               resetForm={receiveResetFunction}
-                           />
+                           {
+                               tipo !== 'Cierre Parcial'
+                                   ? (
+                                       <ResumenCaja
+                                           data={dataDenominacion}
+                                           moneda={moneda}
+                                           setShowDetalle={setShowDetalle}
+                                           tipo={tipo}
+                                           refresh={refreshQuery}
+                                           resetForm={receiveResetFunction}
+                                       />
+                                   ):
+                                   <ResumenCajaParcial
+                                       data={dataDenominacion}
+                                       moneda={moneda}
+                                       setShowDetalle={setShowDetalle}
+                                       tipo={tipo}
+                                       refresh={refreshQuery}
+                                       resetForm={receiveResetFunction}
+                                   />
+                           }
                        </>
                    )
                }
