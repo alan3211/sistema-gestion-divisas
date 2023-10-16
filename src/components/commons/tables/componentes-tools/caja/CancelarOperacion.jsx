@@ -33,7 +33,7 @@ export const CancelarOperacion = ({item, index, refresh}) => {
     return (
         <td key={index} className="text-center">
             <button className="btn btn-danger me-2" data-bs-toggle="tooltip"
-                    data-bs-placement="top" title="Cancelar Operación">
+                    data-bs-placement="top" title="Cancelar Operación" disabled={item.Estatus === 'Cotizado'}>
                 <i className="bi bi-x-circle"></i>
             </button>
             {

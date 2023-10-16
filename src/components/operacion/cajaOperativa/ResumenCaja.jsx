@@ -26,11 +26,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         let propiedad='';
         if(elemento.Denominacion === '0.05'){
             propiedad = `${property}_p05`;
-        }else if(elemento.Denominacion === '0.1'){
+        }else if(elemento.Denominacion === '0.10'){
             propiedad = `${property}_p1`;
-        }else if(elemento.Denominacion === '0.2'){
+        }else if(elemento.Denominacion === '0.20'){
             propiedad = `${property}_p2`;
-        }else if(elemento.Denominacion === '0.5'){
+        }else if(elemento.Denominacion === '0.50'){
             propiedad = `${property}_p5`;
         }else{
             propiedad = `${property}_${parseInt(elemento.Denominacion)}`;
@@ -46,6 +46,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     });
     const [billetesFisicos, setBilletesFisicos] = useState(billetesFisicosInicial);
     const totalInicial = billetesFisicosInicial.reduce((total, elemento) => {
+        console.log("INICIAL TOTAL: ", Object.values(elemento));
         const valor = parseInt(Object.values(elemento)[0]) || 0;
         return total + valor;
     }, 0);
@@ -418,6 +419,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                                     return newBilletes;
                                                 });
 
+                                                console.log("BILLETS FIS: ", billetesFisicos)
                                                 const diferencia = elemento['No Billetes'] - newValue;
                                                 setValue(`${getPropiedad('diferencia',elemento)}`, diferencia);
                                                 const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;

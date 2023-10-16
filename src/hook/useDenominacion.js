@@ -144,6 +144,7 @@ export const useDenominacion = ({type,moneda,options}) => {
                 usuario: dataG.usuario,
                 sucursal: dataG.sucursal,
                 moneda: moneda,
+                tipo_movimiento: type
             }
 
             const encryptedData = encryptRequest(valores);
