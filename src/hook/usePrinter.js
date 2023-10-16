@@ -1,6 +1,6 @@
 import {connetor_plugin} from "../js/plugin_impresora_termica";
 import {
-    DENOMINACIONES,
+    DENOMINACIONES, DENOMINACIONESM,
     encryptRequest,
     formattedDateDD2,
     getTextDivisa,
@@ -17,15 +17,13 @@ export const usePrinter = (datos) => {
     useEffect(() => {
 
         const getEstructuraTicket = async () => {
-            console.log("RECIBE DATOS: ",datos);
             try {
                 const valores = {
-                    usuario: datos["No Cliente"],
+                    usuario: datos["No Usuario"],
                     ticket: datos["No Ticket"]
                 }
                 const encryptedData = encryptRequest(valores);
                 const response = await obtieneTicket(encryptedData);
-                console.log("DATOS TICKET: ",response)
                 setDataTicket(response.result_set[0]);
             } catch (error) {
                 console.error(error);
@@ -73,11 +71,13 @@ export const usePrinter = (datos) => {
         conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas`)
         conector.text("------------------------------------------")
         conector.text(dataTicket["Operación"])
-        conector.text(`Divisa: ${DENOMINACIONES[dataTicket.Divisa]}           $ ${dataTicket["Monto"]} ${dataTicket.Divisa} `)
+        conector.text(`Divisa: ${DENOMINACIONESM[dataTicket.Divisa]}           $ ${dataTicket["Monto"]} ${dataTicket["Operación"] === 'COMPRA' ? dataTicket.Divisa:'MXN'} `)
+        conector.text("------------------------------------------")
         conector.text(`Tipo de Cambio:         $ ${dataTicket["Tipo Cambio"]} MXN `)
+        conector.text("------------------------------------------")
         conector.feed("1")
-        conector.text(`Cantidad recibida:      $ ${dataTicket["Monto"]} ${dataTicket["Operación"] === 'COMPRA' ? dataTicket.Divisa:'MXN'}`)
-        conector.text(`Su cambio:              $  0.00 ${dataTicket["Operación"] === 'COMPRA' ? dataTicket.Divisa:'MXN'}`)
+        conector.text(`Cantidad recibida:      $ ${dataTicket["Total Recibido"]} ${dataTicket["Operación"] === 'COMPRA' ? dataTicket.Divisa:'MXN'}`)
+        conector.text(`Su cambio:              $ ${dataTicket.Cambio} ${dataTicket["Operación"] === 'COMPRA' ?'MXN': dataTicket.Divisa}`)
         conector.feed("1")
         conector.text("------------------------------------------")
         conector.feed("1")

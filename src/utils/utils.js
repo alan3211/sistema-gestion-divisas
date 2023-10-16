@@ -161,6 +161,13 @@ export const DENOMINACIONES = {
     MXP:'PESOS MEXICANOS'
 }
 
+export const DENOMINACIONESM = {
+    USD: "dólar",
+    EUR: "euro",
+    GBR: "libra",
+    MXP:'pesos mexicanos'
+}
+
 export const FormatoMoneda = (cantidad,moneda) => {
     if (typeof cantidad === 'number') {
         const formatoNumero = cantidad.toLocaleString('es-US', {
