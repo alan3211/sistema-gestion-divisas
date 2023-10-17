@@ -13,10 +13,12 @@ import {
 import {dataG} from "../../../App";
 import {toast} from "react-toastify";
 import {entregaCaja} from "../../../services/operacion-caja";
+import {ModalLoading} from "../../commons/modals/ModalLoading";
 
 
 export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, resetForm}) => {
 
+    const [guarda,setGuarda] = useState(false);
     const getPropiedad = (property, elemento) => {
         let propiedad = '';
         if (elemento.Denominacion === '0.05') {
@@ -42,7 +44,6 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
     const [billetesFisicos, setBilletesFisicos] = useState(billetesFisicosInicial);
 
     const totalInicial = billetesFisicosInicial.reduce((total, elemento) => {
-        console.log("INICIAL TOTAL: ", Object.values(elemento));
         const valor = parseInt(Object.values(elemento)[0]) || 0;
         return total + valor;
     }, 0);
@@ -165,6 +166,11 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
 
     }, [billetesFisicos]);
 
+    const optionsLoad = {
+        showModal:guarda,
+        closeCustomModal: ()=> setGuarda(false),
+        title:'Guardando...'
+    }
 
     const onSubmit = handleSubmit(async (datos) => {
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
@@ -199,9 +205,11 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
 
 
             const encryptedData = encryptRequest(cierreCaja);
+            setGuarda(true)
             const response = await entregaCaja(encryptedData);
 
             if (response !== '') {
+                setGuarda(false)
                 toast.success('Se ha realizado el cierre parcial', {
                     position: "top-center",
                     autoClose: 3000,
@@ -227,7 +235,8 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
     });
 
     return (
-        <form onSubmit={onSubmit} className="text-center mt-2" style={{fontSize: "12px"}}>
+        <>
+         <form onSubmit={onSubmit} className="text-center mt-2" style={{fontSize: "12px"}}>
 
             <h5 className="p-2 ">Denominación <strong>{DENOMINACIONES[moneda] || ''}</strong></h5>
             <table className="table table-bordered table-hover table-responsive">
@@ -406,5 +415,9 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
                 </button>
             </div>
         </form>
+        {
+            guarda && <ModalLoading options={optionsLoad} />
+        }
+        </>
     );
 };
