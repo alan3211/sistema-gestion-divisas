@@ -41,7 +41,7 @@ export const CancelarOperacion = ({item, index, refresh}) => {
                 && (
                     <ModalAccionesTool options={options}>
                         <form onSubmit={handleSubmit(onEnvioValores)} noValidate>
-                            <div className="col-md-12">
+                            <div className="col-md-6">
                                 <div className="form-floating">
                                         <textarea
                                             {...register("motivo", {
@@ -71,10 +71,37 @@ export const CancelarOperacion = ({item, index, refresh}) => {
                                     }
                                 </div>
                             </div>
-                            )
+                            <div className="col-md-6">
+                                <div className="form-floating">
+                                    <div className="input-group mb-3">
+                                        <span className="input-group-text text-blue"><i className="bi bi-lock-fill"></i></span>
+                                        <input
+                                            {...register("password",{
+                                                required:{
+                                                    value:true,
+                                                    message:'El campo contraseña no puede ser vacio.'
+                                                },
+                                                minLength:{
+                                                    value:5,
+                                                    message:'El campo contraseña como mínimo debe de tener al menos 5 caracteres.'
+                                                }
+                                            })}
+                                            type="password"
+                                            className={`form-control ${!!errors.password ? 'invalid-input':''}`}
+                                            id="password"
+                                            name="password"
+                                            placeholder="Contraseña"
+                                        />
+                                        <label htmlFor="motivo">CONTRASEÑA</label>
+                                        {
+                                            errors.password && <div className="invalid-feedback-custom">{errors.password.message}</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
 
                             <div className="d-flex justify-content-end mt-2">
-                                <button type="submit" className='btn btn-primary'>
+                                <button type="submit" className='btn btn-primary' >
                                     <i className='bi bi-check-circle m-2'></i>
                                     AUTORIZAR
                                 </button>
@@ -82,6 +109,9 @@ export const CancelarOperacion = ({item, index, refresh}) => {
                         </form>
                     </ModalAccionesTool>
                 )}
+            {
+
+            }
         </td>
     );
 }
