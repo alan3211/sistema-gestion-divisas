@@ -17,10 +17,12 @@ import { toast } from "react-toastify";
 import { entregaCaja } from "../../../services/operacion-caja";
 import { getUsuariosSistema } from "../../../services";
 import { MessageComponent } from "../../commons";
+import {ModalLoading} from "../../commons/modals/ModalLoading";
 
 
 export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetForm }) => {
 
+    const [guarda,setGuarda] = useState(false);
     const getPropiedad = (property,elemento) => {
         let propiedad='';
         if(elemento.Denominacion === '0.05'){
@@ -158,6 +160,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
     }, [billetesFisicos]);
 
+    const optionsLoad = {
+        showModal:guarda,
+        closeCustomModal: ()=> setGuarda(false),
+        title:'Guardando...'
+    }
 
     const onSubmit = handleSubmit(async (datos) => {
         console.log("Array de objetos:", datos);
@@ -208,9 +215,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
             onEnviaNotas();
         } else if(totalDiferencia !== 0 && totalDiferenciaMontos === 0){
             const encryptedData = encryptRequest(cierreCaja);
+            setGuarda(true)
             const response = await entregaCaja(encryptedData);
 
             if (response !== '') {
+                setGuarda(false)
                 toast.success(response, {
                     position: "top-center",
                     autoClose: 3000,
@@ -225,9 +234,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
             }
         } else{
             const encryptedData = encryptRequest(cierreCaja);
+            setGuarda(true)
            const response = await entregaCaja(encryptedData);
 
             if (response !== '') {
+                setGuarda(false)
                 toast.success(response, {
                     position: "top-center",
                     autoClose: 3000,
@@ -247,9 +258,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     const onEnviaNotas = async () => {
         console.log("CIERRE FINAL: ", datosEnvio);
         const encryptedData = encryptRequest(datosEnvio);
+        setGuarda(true)
         const response = await entregaCaja(encryptedData);
 
         if (response !== '') {
+            setGuarda(false)
             toast.success(response, {
                 position: "top-center",
                 autoClose: 3000,
@@ -300,7 +313,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         obtieneUsuarios();
     }, []);
 
-    return (
+    return (<>
         <form onSubmit={onSubmit} className="text-center mt-2" style={{ fontSize: "12px" }}>
             {
                 (tipo === 'traspaso' && !showMessage) && (
@@ -478,5 +491,9 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                 </>)
             }
         </form>
+            {
+                guarda && <ModalLoading options={optionsLoad} />
+            }
+        </>
     );
 };
