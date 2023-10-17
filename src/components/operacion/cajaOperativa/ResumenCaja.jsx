@@ -54,6 +54,14 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
     const [totalBilletesFisicos, setTotalBilletesFisicos] = useState(totalInicial);
 
+    const validaMontosIniciales = data.result_set.map((elemento) => {
+        return {
+            [getPropiedad('denominacion', elemento)]: true
+        }
+    });
+
+    const [difParcial,setDifParcial] = useState(validaMontosIniciales);
+
     const reiniciaState = () => {
         setBilletesFisicos(billetesFisicosInicial);
     }
@@ -186,9 +194,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
         if (tipo === 'traspaso') {
             cierreCaja.ticket = `TRASPASO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
-        } else if(tipo === 'cierre_parcial') {
-            cierreCaja.ticket = `CIERREPARCIAL${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
-        }else {
+        } else {
             cierreCaja.ticket = `CIERRE${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
         }
 
@@ -211,8 +217,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
         if (totalDiferencia !== 0) {
             cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
-            setDatosEnvio(cierreCaja);
-            onEnviaNotas();
+            onEnviaNotas(cierreCaja);
         } else if(totalDiferencia !== 0 && totalDiferenciaMontos === 0){
             const encryptedData = encryptRequest(cierreCaja);
             setGuarda(true)
@@ -255,12 +260,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         console.warn("Cierre CAJA",cierreCaja)
     });
 
-    const onEnviaNotas = async () => {
-        console.log("CIERRE FINAL: ", datosEnvio);
-        const encryptedData = encryptRequest(datosEnvio);
+    const onEnviaNotas = async (cierreCaja) => {
+        console.log("CIERRE FINAL: ", cierreCaja);
+        const encryptedData = encryptRequest(cierreCaja);
         setGuarda(true)
         const response = await entregaCaja(encryptedData);
-
         if (response !== '') {
             setGuarda(false)
             toast.success(response, {
@@ -312,6 +316,15 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     useEffect(() => {
         obtieneUsuarios();
     }, []);
+
+    const validaDiferencia = difParcial.every(objeto => {
+        for (const llave in objeto) {
+            if (objeto[llave] !== true) {
+                return false;
+            }
+        }
+        return true;
+    });
 
     return (<>
         <form onSubmit={onSubmit} className="text-center mt-2" style={{ fontSize: "12px" }}>
@@ -415,7 +428,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                         <input
                                             {...register(`${getPropiedad('denominacion',elemento)}`, {
                                                 validate: {
-                                                    validacionMN: (value) => /^[0-9]\d*$/.test(value) || value === 0,
+                                                    validacionMN: (value) => /^[1-9]\d*$/.test(value) || value === 0,
                                                 },
                                             })}
                                             type="text"
@@ -425,6 +438,43 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                             onChange={(e) => {
                                                 const inputValue = e.target.value;
                                                 const newValue = /^[0-9]\d*$/.test(inputValue) ? inputValue : 0;
+
+                                                if(parseInt(newValue) > 0) {
+                                                    setDifParcial((prevDifParcial) => {
+                                                        // Crear una copia del estado actual
+                                                        const updatedDifParcial = [...prevDifParcial];
+
+                                                        // Encontrar el objeto que deseas actualizar
+                                                        const index = updatedDifParcial.findIndex((obj) => obj.hasOwnProperty(getPropiedad('denominacion', elemento)));
+
+                                                        if (index !== -1) {
+                                                            // Actualizar el objeto existente
+                                                            updatedDifParcial[index] = {
+                                                                [getPropiedad('denominacion', elemento)]: true,
+                                                            };
+                                                        }
+
+                                                        return updatedDifParcial; // Devolver la copia actualizada del estado
+                                                    });
+                                                }else {
+                                                    setDifParcial((prevDifParcial) => {
+                                                        // Crear una copia del estado actual
+                                                        const updatedDifParcial = [...prevDifParcial];
+
+                                                        // Encontrar el objeto que deseas actualizar
+                                                        const index = updatedDifParcial.findIndex((obj) => obj.hasOwnProperty(getPropiedad('denominacion', elemento)));
+
+                                                        if (index !== -1) {
+                                                            // Actualizar el objeto existente
+                                                            updatedDifParcial[index] = {
+                                                                [getPropiedad('denominacion', elemento)]: false,
+                                                            };
+                                                        }
+
+                                                        return updatedDifParcial; // Devolver la copia actualizada del estado
+                                                    });
+                                                }
+
                                                 setBilletesFisicos((prevBilletes) => {
                                                     const newBilletes = [...prevBilletes];
                                                     newBilletes[index][getPropiedad('denominacion',elemento)] = parseInt(newValue);
@@ -481,7 +531,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                         </tfoot>
                     </table>
                     <div className="col-md-12">
-                        <button type="submit" className="m-2 btn btn-primary" disabled={totalDiferencia  > 0}>
+                        <button type="submit" className="m-2 btn btn-primary" disabled={totalBilletesFisicos === 0 || !validaDiferencia}>
                               <span className="me-2">
                                 GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>

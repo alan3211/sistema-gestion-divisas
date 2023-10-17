@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {dataG} from "../../../App";
 import {encryptRequest} from "../../../utils";
-import {obtieneNotificaciones} from "../../../services/inicio-services";
+import {obtieneNotificaciones} from "../../../services/tools-services";
 
 export const Notifications = () => {
 
