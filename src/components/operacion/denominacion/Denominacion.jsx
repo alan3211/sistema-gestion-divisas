@@ -1,8 +1,5 @@
-import {useContext, useEffect, useState} from "react";
-import {obtieneDenominaciones} from "../../../services";
 import {FormatoMoneda, validarMoneda} from "../../../utils";
-import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
-import {useDenominacion} from "../../../hook/useDenominacion";
+import {useDenominacion} from "../../../hook";
 import {dataG} from "../../../App";
 
 export const Denominacion = ({type,moneda,options}) => {
@@ -10,7 +7,7 @@ export const Denominacion = ({type,moneda,options}) => {
     const valores = {type,moneda,options}
 
     const {
-        title,data,denominacionMappings,register,trigger,errors,calculateTotal,
+        title,data,denominacionMappings,register,trigger,errors,setValue,calculateTotal,
         validacionColor,calculateGrandTotal} = useDenominacion(valores)
 
     return (
@@ -39,7 +36,17 @@ export const Denominacion = ({type,moneda,options}) => {
                                             <input
                                                 {...register(`denominacion_${name}`, {
                                                     validate: {
-                                                        validacionMN: (value) => validarMoneda(`denominacion_${name}`,value),
+                                                        validacionMN: (value) => {
+                                                            if(dataG.perfil === 'Oficina Sucursal' ){
+                                                                return validarMoneda(`denominacion_${name}`, value);
+                                                            }else{
+                                                                if (type !== 'R'  && parseInt(value) > elemento['Billetes Disponibles']) {
+                                                                    setValue(`denominacion_${name}`,0)
+                                                                    return "No hay suficientes billetes disponibles.";
+                                                                }
+                                                                return validarMoneda(`denominacion_${name}`, value);
+                                                            }
+                                                            }
                                                     }}
                                                     )
                                                 }
@@ -51,7 +58,7 @@ export const Denominacion = ({type,moneda,options}) => {
                                                 disabled={dataG.perfil === 'Cajero' && options.tipo !== 'R' && elemento['Billetes Disponibles'] <=0}
                                             />
                                         </td>
-                                        <td>{calculateTotal(elemento.Denominacion)}</td>
+                                        <td>{calculateTotal(elemento)}</td>
                                     </tr>
                                 )
                                 })}

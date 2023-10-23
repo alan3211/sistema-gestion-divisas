@@ -275,6 +275,11 @@ export const AltaClienteFormComponent = memo(() => {
                                     id="correo_electronico"
                                     name="correo_electronico"
                                     placeholder="Correo Electrónico"
+                                    onChange={(e) => {
+                                        const upperCaseValue = e.target.value.toUpperCase();
+                                        e.target.value = upperCaseValue;
+                                        propForm.setValue("correo_electronico", upperCaseValue);
+                                    }}
                                     disabled={propForm.showEdit}
                                 />
                                 <label htmlFor="correo_electronico">CORREO ELECTRÓNICO</label>

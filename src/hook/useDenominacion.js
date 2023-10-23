@@ -2,7 +2,7 @@ import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../context/denominacion/DenominacionContext";
 import {obtieneDenominaciones} from "../services";
 import {dataG} from "../App";
-import {encryptRequest} from "../utils";
+import {encryptRequest, redondearNumero} from "../utils";
 
 export const useDenominacion = ({type,moneda,options}) => {
     const {
@@ -25,7 +25,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacion = denominacionD;
     }
 
-    const {register,formState:{errors},watch,trigger,reset} = denominacion;
+    const {register,formState:{errors},watch,trigger,reset,setValue} = denominacion;
     const watchAllInputs = watch();
 
     const [data,setData] = useState([]);
@@ -37,20 +37,32 @@ export const useDenominacion = ({type,moneda,options}) => {
         '.50': 'p5'
     };
 
-    // Función para calcular el total de una denominación parcial
-    const calculateTotal = (denominacion) => {
-        let name = denominacionMappings[denominacion] || denominacion;
-        const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0;
-        const denominacionValue = parseFloat(denominacion);
-        return (cantidad * denominacionValue);
-    };
 
+    // Función para calcular el total de una denominación parcial
+    const calculateTotal = (elemento) => {
+        let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
+        const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0;
+        const denominacionValue = parseFloat(elemento.Denominacion);
+        if(elemento.hasOwnProperty("Billetes Disponibles")){
+            if(dataG.perfil === 'Oficina Sucursal'){
+                return redondearNumero(parseFloat(cantidad * denominacionValue));
+            }else{
+                if(elemento["Billetes Disponibles"] >= cantidad){
+                    return redondearNumero(parseFloat(cantidad * denominacionValue));
+                }else{
+                    return redondearNumero(0.0);
+                }
+            }
+        }else{
+            return redondearNumero(parseFloat(cantidad * denominacionValue));
+        }
+    };
 
     // Calcula el total acumulado de todas las denominaciones
     const calculateGrandTotal = () => {
-        let grandTotal = 0;
+        let grandTotal = 0.0;
         data?.forEach((elemento) => {
-            grandTotal += parseFloat(calculateTotal(elemento.Denominacion));
+            grandTotal += parseFloat(calculateTotal(elemento));
         });
 
         if(setTotalMonto){
@@ -58,22 +70,24 @@ export const useDenominacion = ({type,moneda,options}) => {
         }
 
         if(options.hasOwnProperty('setFinalizaOperacion')){
+            console.log("CI: ",importe)
+            console.log("CG: ",grandTotal)
+            console.log("C: ",importe === grandTotal)
             if(importe === grandTotal){
                 setFinalizaOperacion(false);
             }else{
                 setFinalizaOperacion(true);
             }
         }
-
-        if(type === 'R'){
-            denominacionR.calculateGrandTotal = calculateGrandTotal;
-        }else{
-            denominacionE.calculateGrandTotal = calculateGrandTotal;
-        }
-
         return grandTotal;
     };
 
+    if(type === 'R'){
+        denominacionR.calculateGrandTotal = calculateGrandTotal;
+    }else{
+        denominacionE.calculateGrandTotal = calculateGrandTotal;
+        denominacion.calculateGrandTotal = calculateGrandTotal;
+    }
 
 
     // Valida solo cuando hace la operacion del cliente y entrega billetes
@@ -89,7 +103,6 @@ export const useDenominacion = ({type,moneda,options}) => {
 
     const validacionColor = () => {
         const grandTotal = calculateGrandTotal();
-
         if (type === 'R') {
             if (grandTotal === calculaValorMonto) {
                 return 'text-success';
@@ -99,10 +112,9 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else if (type === 'C') {
-            if (grandTotal === importe) {
+            if (grandTotal === parseFloat(importe)) {
+                denominacionC.calculateGrandTotal = grandTotal;
                 return 'text-success';
-            } else if (grandTotal > importe) {
-                return 'text-warning';
             } else {
                 return 'text-danger';
             }
@@ -160,6 +172,6 @@ export const useDenominacion = ({type,moneda,options}) => {
 
 
     return {
-        title,data,denominacionMappings,register,trigger,errors,calculateTotal,
+        title,data,denominacionMappings,register,trigger,errors,setValue,calculateTotal,
         validacionColor,calculateGrandTotal};
 }

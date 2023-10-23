@@ -23,7 +23,7 @@ export const validaFechas = (fecha) => {
     const esMayorDeEdad = edad >= 18;
 
     if(!esMayorDeEdad){
-        return "El cliente cliente es menor de edad";
+        return "El usuario es menor de edad";
     }
 
     // Validar año bisiesto

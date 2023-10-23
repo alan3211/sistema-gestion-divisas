@@ -24,6 +24,7 @@ export const usePrinter = (datos) => {
                 }
                 const encryptedData = encryptRequest(valores);
                 const response = await obtieneTicket(encryptedData);
+                console.log(response);
                 setDataTicket(response.result_set[0]);
             } catch (error) {
                 console.error(error);
@@ -109,7 +110,7 @@ export const usePrinter = (datos) => {
         let api_key = "a3c8f13a-8722-4387-f0bf-0ac2e9dd74f7"
 
 
-        const conector = new connetor_plugin()
+        const conector = new connetor_plugin("https://grocerys-front.wittysmoke-209c31ac.eastus.azurecontainerapps.io")
 
         if (tipo === 0) {
             ticket(0, conector)

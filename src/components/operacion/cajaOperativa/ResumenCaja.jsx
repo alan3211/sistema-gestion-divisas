@@ -415,7 +415,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                         <i className={iconoNoBilletes}></i> {elemento['No Billetes']}
                                     </td>
                                     <td>
-                                        {FormatoMoneda(elemento.Monto)}
+                                        {FormatoMoneda(parseFloat(elemento.Monto))}
                                     </td>
                                     <td>
                                         <i className={iconoEntradas}></i> {elemento.Entradas}
