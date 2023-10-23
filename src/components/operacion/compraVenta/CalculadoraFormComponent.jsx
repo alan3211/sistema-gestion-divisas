@@ -95,6 +95,7 @@ export const CalculadoraFormComponent = () => {
             toast.error(`No se puede cotizar ya que no existe un tipo de cambio para ${DENOMINACIONES[watch("moneda")]}.`, OPTIONS);
             clearForm();
         } else {
+            console.log("OPERACION: ",data)
             setOperacion(data);
             validaCantidadEntregada();
         }

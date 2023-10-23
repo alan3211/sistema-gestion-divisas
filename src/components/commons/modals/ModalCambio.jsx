@@ -4,7 +4,7 @@ import {
     eliminarDenominacionesConCantidadCero,
     encryptRequest,
     getDenominacion,
-    obtenerObjetoDenominaciones
+    obtenerObjetoDenominaciones, redondearNumero
 } from "../../../utils";
 import {dataG} from "../../../App";
 import {realizarOperacion} from "../../../services";
@@ -20,14 +20,20 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     const navigator = useNavigate();
     const {denominacionC} = useContext(DenominacionContext);
-    const {imprimir,imprimeTicketNuevamente} = usePrinter();
+    const {imprimir,imprimeTicketNuevamente} = usePrinter({"No Usuario": data.Cliente,
+        "No Ticket": data.ticket});
     const [showModal,setShowModal] = useState(false)
 
     const options = {
         title: '',
-        importe: parseFloat(cambio),
+        importe: redondearNumero(cambio),
         habilita,
         setHabilita
+    }
+
+    // Solicitud de cambio
+    const solicitaCambio = () => {
+
     }
 
     const closeCustomModal = () => setShowModalCambio(false);
@@ -45,15 +51,17 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         }
 
         formValuesC.divisa = 'MXP';
-        formValuesC.movimiento = 'CAMBIO AL CLIENTE';
+        formValuesC.movimiento = 'CAMBIO AL USUARIO';
 
         eliminarDenominacionesConCantidadCero(formValuesC);
+
+        console.log("CAMBIO!: ",cambio);
 
         const values = {
             cliente: data.cliente,
             ticket: data.ticket,
             cantidad_entregar: parseInt(cambio),
-            monto: parseFloat(cambio),
+            monto: '0.0',
             divisa:'MXP',
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
@@ -80,8 +88,8 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     return(
         <>
-            <Modal centered size="lg" show={showModalCambio} onHide={closeCustomModal}>
-                <Modal.Header closeButton>
+            <Modal centered size="lg" show={showModalCambio}>
+                <Modal.Header>
                     <Modal.Title>
                         <h5 className="text-blue">
                             <i className="bx bx-money m-2"></i>
@@ -92,12 +100,12 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
                 <Modal.Body>
                     <div className="row justify-content-center">
-                        <div className="col-md-7 mb-3 d-flex">
+                        <div className="col-md-5 mb-3 d-flex">
                             <div className="form-floating flex-grow-1">
                                 <input type="text"
                                        className={`form-control mb-1`}
                                        id="floatingCE"
-                                       value={cambio}
+                                       value={redondearNumero(cambio)}
                                        readOnly
                                 />
                                 <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>(MXP)</i></label>
@@ -114,9 +122,13 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button variant="primary" disabled={habilita.recibe} onClick={guardarCambio}>
-                        <i className="bi bi-save me-1"></i>
-                        Guardar
+                    <Button variant="success" onClick={()=> solicitaCambio()}>
+                        <i className="bi bi-cash me-2"></i>
+                        SOLICITAR CAMBIO
+                    </Button>
+                    <Button variant="primary" disabled={denominacionC.calculateGrandTotal != redondearNumero(cambio)} onClick={guardarCambio}>
+                        <i className="bi bi-arrow-left-right me-2"></i>
+                        ENTREGAR CAMBIO
                     </Button>
                 </Modal.Footer>
             </Modal>

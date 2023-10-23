@@ -280,7 +280,7 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
                                 <i className={iconoNoBilletes}></i> {elemento['No Billetes']}
                             </td>
                             <td>
-                                {FormatoMoneda(elemento.Monto)}
+                                {FormatoMoneda(parseFloat(elemento.Monto))}
                             </td>
                             <td>
                                 <i className={iconoEntradas}></i> {elemento.Entradas}

@@ -250,7 +250,6 @@ export const DotacionCajaSucursal = () => {
                     FINALIZAR OPERACIÓN
                 </button>
             </div>
-
         </form>
     );
 }

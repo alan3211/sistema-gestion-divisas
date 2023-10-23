@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {dataG} from "../../../App";
 import {SearchModules} from "./SearchModules";
 import {Notifications} from "./Notifications";
+import Avatar from "react-avatar";
 
 const toggle = () => document.body.classList.toggle('toggle-sidebar');
 
@@ -14,6 +15,10 @@ export const HeaderComponent = () => {
     const cerrarSesion = () => {
         localStorage.clear();
         navigate('/');
+    }
+
+    const miPerfil = () => {
+        navigate('/mi-perfil');
     }
 
 
@@ -33,12 +38,18 @@ export const HeaderComponent = () => {
                             <i className="bi bi-search"></i>
                         </a>
                     </li>
-
                     <Notifications/>
 
                     <li className="nav-item dropdown pe-3">
                         <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                            data-bs-toggle="dropdown">
+                            <Avatar
+                                name={dataG.username}
+                                size="45"
+                                round
+                                color={Avatar.getRandomColor('sitebase')}
+                                fgColor="#fff"
+                            />
                             <span
                                 className="d-none d-md-block dropdown-toggle ps-2">{dataG.username || usuario.username}</span>
                         </a>
@@ -52,39 +63,33 @@ export const HeaderComponent = () => {
                             </li>
 
                             <li>
-                                <a className="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                <a className="dropdown-item d-flex align-items-center" onClick={miPerfil}>
                                     <i className="bi bi-person"></i>
-                                    <span>Mi Perfil</span>
+                                    <span>MI PERFIL</span>
                                 </a>
                             </li>
                             <li>
                                 <hr className="dropdown-divider"/>
                             </li>
 
-                            <li>
+                            { /*<li>
                                 <a className="dropdown-item d-flex align-items-center" href="users-profile.html">
                                     <i className="bi bi-gear"></i>
                                     <span>Configuración de la cuenta</span>
                                 </a>
                             </li>
-                            <li>
-                                <hr className="dropdown-divider"/>
-                            </li>
 
-                            <li>
+                             <li>
                                 <a className="dropdown-item d-flex align-items-center" href="pages-faq.html">
                                     <i className="bi bi-question-circle"></i>
                                     <span>Ayuda</span>
                                 </a>
-                            </li>
-                            <li>
-                                <hr className="dropdown-divider"/>
-                            </li>
+                            </li>*/}
 
                             <li>
                                 <a className="dropdown-item d-flex align-items-center" href="#" onClick={cerrarSesion}>
                                     <i className="bi bi-box-arrow-right"></i>
-                                    <span>Cerrar Sesión</span>
+                                    <span>CERRAR SESIÓN</span>
                                 </a>
                             </li>
                         </ul>

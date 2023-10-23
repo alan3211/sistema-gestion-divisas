@@ -18,6 +18,7 @@ import {Tesoreria} from "./components/operacion/tesoreria/Tesoreria";
 import {TesoreriaProvider} from "./context/tesoreria/TesoreriaProvider";
 import {SucursalOperativa} from "./components/operacion/sucursalOperativa/SucursalOperativa";
 import {ToastContainer} from "react-toastify";
+import {PerfilComponent} from "./components/usuario/PerfilComponent";
 
 export let dataG = {
     sucursal:0,
@@ -50,6 +51,7 @@ const App = () => {
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>
                     <Route exact path="/catalogos" element={<MainLayout><Catalogo/></MainLayout>}/>
+                    <Route exact path="/mi-perfil" element={<MainLayout><PerfilComponent/></MainLayout>}/>
                 </Routes>
             </Router>
             <ToastContainer/>

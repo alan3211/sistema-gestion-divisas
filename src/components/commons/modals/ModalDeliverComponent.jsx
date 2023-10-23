@@ -6,7 +6,7 @@ import {ModalCambio} from "./ModalCambio";
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest,
     getDenominacion,
-    obtenerObjetoDenominaciones, OPTIONS, redondearNumero, validarMoneda
+    obtenerObjetoDenominaciones, OPTIONS, redondearNumero
 } from "../../../utils";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
@@ -28,7 +28,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
         denominacionR,
         denominacionE,
     } = useContext(DenominacionContext);
-    const {imprimir,imprimeTicketNuevamente} = usePrinter();
+    const {imprimir,imprimeTicketNuevamente} = usePrinter({"No Usuario": datos.Cliente,
+        "No Ticket": datos.ticket});
     const [showModal,setShowModal] = useState(false)
 
     //Muestra el título correcto
@@ -40,9 +41,9 @@ export const ModalDeliverComponent = ({configuration}) =>{
         if (operacion.tipo_operacion === '2') {
             const conversionAPesos = operacion.decimal_sobrante * parseFloat(operacion.tipo_cambio);
             const diferenciaAMostrar = parseFloat(operacion.monto) - conversionAPesos;
-            return diferenciaAMostrar.toFixed(2);
+            return redondearNumero(diferenciaAMostrar.toFixed(2));
         }
-        return parseFloat(operacion.monto);
+        return redondearNumero(operacion.monto);
     }, [operacion.cantidad_entregar, operacion.tipo_cambio, operacion.monto, operacion.tipo_operacion]);
 
     // Muestra la divisa correspondiente
@@ -60,15 +61,15 @@ export const ModalDeliverComponent = ({configuration}) =>{
         if (operacion.tipo_operacion === '1') {
             formValuesE = getDenominacion('MXP',denominacionesEntrega)
             formValuesR = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesRecibe)
-            formValuesR.movimiento = "RECIBIMOS DEL CLIENTE";
-            formValuesE.movimiento = "ENTREGA AL CLIENTE";
+            formValuesR.movimiento = "RECIBIMOS DEL USUARIO";
+            formValuesE.movimiento = "ENTREGA AL USUARIO";
             formValuesR.tipoOperacion = "COMPRA";
             formValuesE.tipoOperacion = "COMPRA";
         }else{
             formValuesE = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesEntrega)
             formValuesR = getDenominacion('MXP',denominacionesRecibe)
-            formValuesE.movimiento = "ENTREGA AL CLIENTE";
-            formValuesR.movimiento = "RECIBIMOS DEL CLIENTE";
+            formValuesE.movimiento = "ENTREGA AL USUARIO";
+            formValuesR.movimiento = "RECIBIMOS DEL USUARIO";
             formValuesR.tipoOperacion = "VENTA";
             formValuesE.tipoOperacion = "VENTA";
         }
@@ -84,14 +85,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
             cliente: datos.Cliente,
             ticket: datos.ticket,
             divisa: operacion.moneda,
-            cantidad_entregar: parseInt(operacion.cantidad_entregada),
-            monto: parseFloat(calculaValorMonto),
+            cantidad_entregar: parseInt(operacion.cantidad_entregar),
+            monto: parseFloat(calculaValorMonto).toFixed(2),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
             traspaso: '',
             diferencia:0.0,
             totalRecibido:denominacionR.calculateGrandTotal(),
-            cambio:denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto),
+            cambio:parseFloat(denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto)),
             denominacion:[
                 obtenerObjetoDenominaciones(formValuesR),
                 obtenerObjetoDenominaciones(formValuesE),
@@ -102,16 +103,19 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
         const encryptedData = encryptRequest(values);
         const resultadoPromise = realizarOperacion(encryptedData);
-
-        if (resultadoPromise) {
-            if (redondearNumero(parseFloat(operacion.monto) - parseFloat(calculaValorMonto)) >= 1) {
-                setShowCambio(true);
-            } else {
-                //imprimir(0);
-                setShowModal(true)
-            }
-            console.log(resultadoPromise);
+        let cambioFinal = denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto);
+        if (redondearNumero(cambioFinal) > 1) {
+            setShowCambio(true);
+        } else {
+            //imprimir(0);
+            setShowModal(true)
         }
+        console.log(resultadoPromise);
+    }
+
+    // Solicitud de cambio
+    const solicitaCambio = () => {
+
     }
 
     const options = {
@@ -157,7 +161,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     id="monto"
                                     name="monto"
                                     className={`form-control mb-1`}
-                                    placeholder="Ingresa la cantidad a cotizar por el usuario"
                                     value={operacion.monto} readOnly
                                 />
                                 <label htmlFor="monto" className="form-label">IMPORTE <i>({muestraDivisa()})</i></label>
@@ -205,9 +208,13 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 </Modal.Body>
 
                 <Modal.Footer>
+                    <Button variant="success" onClick={()=> solicitaCambio()}>
+                        <i className="bi bi-cash me-2"></i>
+                        SOLICITAR CAMBIO
+                    </Button>
                     <Button variant="primary" onClick={()=> hacerOperacion()} disabled={habilita.entrega || habilita.recibe}>
-                        <i className="bi bi-check-circle-fill me-2"></i>
-                        Finalizar Operación
+                        <i className="bi bi-arrow-left-right me-2"></i>
+                        FINALIZAR OPERACIÓN
                     </Button>
                 </Modal.Footer>
             </Modal>

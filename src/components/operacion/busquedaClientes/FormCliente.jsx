@@ -40,7 +40,7 @@ export const FormCliente = ({tipo}) => {
         if (operacion.tipo_operacion === '1') {
             data.monto = parseInt(operacion.monto);
         } else {
-            data.monto = parseInt(operacion.cantidad_entregada)
+            data.monto = parseInt(operacion.cantidad_entregar)
         }
         if (data.tipo_busqueda === 1) {
             data.nombre = '';

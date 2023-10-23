@@ -15,6 +15,7 @@ export const OPERACIONES_URL = `${URL}operaciones/`;
 export const TESORERIA_URL = `${URL}tesoreria/`;
 export const SUCURSAL_URL = `${URL}sucursal/`;
 export const CAJA_URL = `${URL}caja/`;
+export const PERFIL_URL = `${URL}perfil/`;
 export const ADMINISTRACION_URL = `${URL}administracion/`;
 export const TOOLS_URL = `${URL}tools/`;
 
@@ -40,6 +41,8 @@ export const SUCURSAL_DOTA_CAJA_URL = `${SUCURSAL_URL}operativa/dota-caja`
 export const SUCURSAL_CONSULTA_DOTACIONES_URL = `${SUCURSAL_URL}operativa/consulta-dotacion`
 export const SUCURSAL_MOVIMIENTOS_URL = `${SUCURSAL_URL}operativa/movimientos`
 export const SUCURSAL_DISPONIBLE_URL = `${SUCURSAL_URL}operativa/disponible`
+export const SUCURSAL_DISPONIBLE_DIVISAS_URL = `${SUCURSAL_URL}consulta/disponible`
+export const SUCURSAL_DISPONIBLE_DIVISAS_CAJA_URL = `${SUCURSAL_URL}consulta/disponible/cajas`
 
 /*OPERACION CAJA*/
 export const CAJA_CONSULTA_DOTACIONES_URL = `${CAJA_URL}consulta/dotaciones`
@@ -48,6 +51,9 @@ export const CAJA_ENTREGA_URL = `${CAJA_URL}entrega`
 export const CAJA_CONSULTA_DIVISAS_URL = `${CAJA_URL}consulta/divisas`
 export const CAJA_CONSULTA_MOVIMIENTOS_URL = `${CAJA_URL}consulta/movimientos`
 
+/* USUARIO PERFIL*/
+export const PERFIL_EDITA_URL = `${PERFIL_URL}actualiza`
+export const PERFIL_CAMBIA_PASS_URL = `${PERFIL_URL}cambia/password`
 
 /*ENDPOINTS DE TOOLS*/
 export const TOOLS_CONSULTA_DETALLE_URL = `${TOOLS_URL}consulta/detalle`
@@ -64,6 +70,7 @@ export const TOOLS_CONSULTA_DETALLE_DENOMINACIOENS_URL = `${TOOLS_URL}consulta/d
 
 export const TOOLS_OBTIENE_DATOS_TICKET_URL = `${TOOLS_URL}consulta/datosTicket`
 export const TOOLS_OBTIENE_NOTIFICACIONES_URL = `${TOOLS_URL}obtiene/notificaciones`
+export const TOOLS_CANCELAR_OPERACION_URL = `${TOOLS_URL}cancelar/operacion`
 
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`

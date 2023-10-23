@@ -39,6 +39,11 @@ export const mensajeSinElementos = {
     icono: 'ri-error-warning-fill'
 }
 
+export const mensajeSinOperaciones = {
+    estilo: 'alert-warning',
+    icono: 'ri-error-warning-fill'
+}
+
 // Función para eliminar objetos con cantidad 0
 export const eliminarDenominacionesConCantidadCero = (denominacionesObj) => {
     for (const key in denominacionesObj) {
@@ -184,7 +189,16 @@ export const FormatoMoneda = (cantidad,moneda) => {
 }
 
 export const redondearNumero =(numero) => {
-    return Math.round(numero);
+    const parteEntera = parseInt(numero)
+    const parteDec = parseFloat(numero - parteEntera).toPrecision(2);
+    let decenas = Math.floor(parteDec * 10)/10;
+    let redondeado = Math.round((parteDec * 100) % 10) / 100;
+    if(redondeado >= 0.00 && redondeado < 0.05){
+        redondeado = 0.00;
+    }else if (redondeado >= 0.05 && redondeado <= 0.09){
+        redondeado = 0.05;
+    }
+    return parseFloat(parteEntera + decenas+ redondeado).toFixed(2);
 }
 
 export const OPTIONS = {
