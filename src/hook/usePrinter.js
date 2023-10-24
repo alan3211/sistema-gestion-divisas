@@ -60,7 +60,7 @@ export const usePrinter = (datos) => {
         conector.fontsize("1")
         conector.textaling("center")
         conector.text(`${opcion === 0 ? '-- ORIGINAL --' : opcion === 1 ? '-- COPIA USUARIO --' : ' -- REIMPRESION --'}`)
-        conector.img_url("http://localhost:3000/static/media/logo.024785155dae25af5d6a.png")
+        conector.img_url("https://grocerys-front--k83k6h5.wittysmoke-209c31ac.eastus.azurecontainerapps.io/static/media/logo.024785155dae25af5d6a.png")
         conector.fontsize("1")
         conector.text(dataTicket.Registro)
         conector.text(dataTicket.Nombre)
@@ -110,7 +110,7 @@ export const usePrinter = (datos) => {
         let api_key = "a3c8f13a-8722-4387-f0bf-0ac2e9dd74f7"
 
 
-        const conector = new connetor_plugin("https://grocerys-front.wittysmoke-209c31ac.eastus.azurecontainerapps.io")
+        const conector = new connetor_plugin()
 
         if (tipo === 0) {
             ticket(0, conector)
