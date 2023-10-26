@@ -112,7 +112,7 @@ export const CalculadoraFormComponent = () => {
             });
             clearForm();
         }else{
-            setCantidad(parseInt(result.result_set[0].CantidadEntrega,10));
+            setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
             data.cantidad_entregar = parseInt(result.result_set[0].CantidadEntrega,10);
             data.decimal_sobrante = parseFloat(result.result_set[0].CantidadEntrega) - parseInt(result.result_set[0].CantidadEntrega,10);
             setShowCantidadEntregada(true);

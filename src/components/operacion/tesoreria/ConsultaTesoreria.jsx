@@ -41,11 +41,7 @@ export const ConsultaTesoreria = () => {
             {columna:"Monto MXP",tool:"indicadores-divisas"},
         ],
         filters:[
-            {columna:"USD",filter:'currency'},
-            {columna:"MXP",filter:'currency'},
-            {columna:"EUR",filter:'currency'},
             {columna:"Monto EUR",filter:'currency'},
-            {columna:"GBR",filter:'currency'},
             {columna:"Monto GBR",filter:'currency'}
         ],
         disabledColumns:['indicadorUSD','indicadorMXP']
@@ -56,13 +52,9 @@ export const ConsultaTesoreria = () => {
         buscar: true,
         paginacion: true,
         filters:[
-            {columna:"USD",filter:'currency'},
             {columna:"Monto USD",filter:'currency'},
-            {columna:"MXP",filter:'currency'},
             {columna:"Monto MXP",filter:'currency'},
-            {columna:"EUR",filter:'currency'},
             {columna:"Monto EUR",filter:'currency'},
-            {columna:"GBR",filter:'currency'},
             {columna:"Monto GBR",filter:'currency'}
         ]
     }

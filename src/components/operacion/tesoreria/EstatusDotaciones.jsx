@@ -26,7 +26,8 @@ export const EstatusDotaciones = () => {
             {columna:"Estatus",tool:'estatus'},
             {columna:"Detalle",tool:'detalle',params:{opcion:2}},
             {columna:"Cancelar",tool:'cancelar-tesoreria',refresh:refreshQuery}
-        ]
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
     }
 
     const onSubmitEstatus = handleSubmit(async (data) => {
