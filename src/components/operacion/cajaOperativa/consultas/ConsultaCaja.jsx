@@ -16,19 +16,6 @@ export const ConsultaCaja = () => {
     const {register,reset,
         handleSubmit,formState:{errors}} = useForm();
     const [formData,setFormData] = useState('');
-    const getCantidadDivisas = async () => {
-        const values = {
-            usuario: dataG.usuario,
-            sucursal: dataG.sucursal,
-        }
-        const encryptedData = encryptRequest(values);
-        const result = await consultaCantidadDivisas(encryptedData);
-        if(result.total_rows > 0){
-            setDatos(result.result_set);
-        }else{
-            setDatos([]);
-        }
-    }
 
     const refreshQuery = async () =>{
         const result = await consultaMovimientos(formData);
