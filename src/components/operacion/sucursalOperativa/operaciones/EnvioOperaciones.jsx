@@ -23,7 +23,7 @@ export const EnvioOperaciones = () => {
         tools:[
             {columna:"Estatus",tool:"estatus"},
             {columna:"Cancelar",tool:"cancelar-envio-sucursal",refresh:refreshQuery},
-            {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
+            {columna:"Detalle",tool:"detalle",  params:{opcion:3}},
         ]
     }
 
