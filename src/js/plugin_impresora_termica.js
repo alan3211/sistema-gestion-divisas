@@ -122,10 +122,6 @@ export const connetor_plugin = ((() => {
                 _0x3970b3 = await fetch(this[_0x4dd20e(0x1f0)] + _0x4dd20e(0x1ea), {
                     'method': _0x4dd20e(0x209),
                     'body': JSON[_0x4dd20e(0x202)](_0x4d291b),
-                    'headers': {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem("token")}`
-                    }
                 });
             return await _0x3970b3[_0x4dd20e(0x20a)]();
         }
