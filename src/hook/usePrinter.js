@@ -103,9 +103,9 @@ export const usePrinter = (datos) => {
         conector.cut("0")
     }
 
-    const imprimeTicketNuevamente = (tipo) => imprimir(tipo);
+    const imprimeTicketNuevamente = (tipo) => imprimirDoc(tipo);
 
-    const imprimir = async (tipo) => {
+    const imprimirDoc = async (tipo) => {
         let nombreImpresora = "EPSON TM-T88VI Receipt";
         let api_key = "a3c8f13a-8722-4387-f0bf-0ac2e9dd74f7"
 
@@ -129,7 +129,7 @@ export const usePrinter = (datos) => {
     }
 
     return {
-        imprimir,
+        imprimir:imprimirDoc,
         mostrar_impresoras,
         imprimeTicketNuevamente,
     }
