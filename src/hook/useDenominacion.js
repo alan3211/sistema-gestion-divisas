@@ -86,6 +86,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionR.calculateGrandTotal = calculateGrandTotal;
     }else{
         denominacionE.calculateGrandTotal = calculateGrandTotal;
+        denominacionD.calculateGrandTotal = calculateGrandTotal;
         denominacion.calculateGrandTotal = calculateGrandTotal;
     }
 
@@ -94,7 +95,7 @@ export const useDenominacion = ({type,moneda,options}) => {
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             const denominacionValue = parseFloat(data[key].Denominacion);
-            if ((type === 'E' || type === 'C') && denominacionValue > parseFloat(importe)) {
+            if ((type === 'E' || type === 'C' || type === 'D') && denominacionValue > parseFloat(importe)) {
                 delete data[key];
             }
         }
@@ -163,6 +164,19 @@ export const useDenominacion = ({type,moneda,options}) => {
 
             if(moneda !== '0'){
                 const denominaciones = await obtieneDenominaciones(encryptedData);
+
+                if(type === 'D'){
+                    console.log("IMPORTE: ",importe)
+                    for (const key in denominaciones.result_set) {
+                        if (denominaciones.result_set.hasOwnProperty(key)) {
+                            const denominacionValue = parseFloat(denominaciones.result_set[key].Denominacion);
+                            if (denominacionValue >= parseFloat(importe)) {
+                                delete denominaciones.result_set[key];
+                            }
+                        }
+                    }
+                }
+
                 setData(denominaciones.result_set);
             }
             reset();

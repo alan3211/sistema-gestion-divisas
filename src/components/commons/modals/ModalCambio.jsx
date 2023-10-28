@@ -31,8 +31,12 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         setHabilita
     }
 
-    // Solicitud de cambio
+    // Solicitud de Denominacion
     const solicitaCambio = () => {
+    }
+
+    // Solicitud de dotación rápida
+    const solicitudDotacionRapida = () => {
 
     }
 
@@ -77,7 +81,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
         // Validar si tenemos que darle cambio
         if(resultado){
-            //imprimir(0);
+            imprimir(0);
             setShowModal(true)
         }
     }
@@ -122,9 +126,13 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button variant="success" onClick={()=> solicitaCambio()}>
+                    <button className="btn btn-orange" onClick={solicitudDotacionRapida}>
+                        <i className="bi bi-currency-exchange me-2"></i>
+                        DOTACIÓN RAPIDA
+                    </button>
+                    <Button variant="success" onClick={solicitaCambio}>
                         <i className="bi bi-cash me-2"></i>
-                        SOLICITAR CAMBIO
+                        SOLICITAR DENOMINACIÓN
                     </Button>
                     <Button variant="primary" disabled={denominacionC.calculateGrandTotal != redondearNumero(cambio)} onClick={guardarCambio}>
                         <i className="bi bi-arrow-left-right me-2"></i>
