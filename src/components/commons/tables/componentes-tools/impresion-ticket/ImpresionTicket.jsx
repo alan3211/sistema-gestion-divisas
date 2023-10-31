@@ -1,4 +1,4 @@
-import {usePrinter} from "../../../../../hook/usePrinter";
+import {usePrinter} from "../../../../../hook";
 import {ModalTicket} from "../../../modals/ModalTicket";
 import {useState} from "react";
 

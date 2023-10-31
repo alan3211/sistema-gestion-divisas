@@ -12,27 +12,30 @@ import {numeroALetras} from "../utils/numerosANombre";
 
 export const usePrinter = (datos) => {
 
+    console.log("Datos HOOK",datos)
+
     const [dataTicket, setDataTicket] = useState({});
 
-    useEffect(() => {
-
-        const getEstructuraTicket = async () => {
-            try {
-                const valores = {
-                    usuario: datos["No Usuario"],
-                    ticket: datos["No Ticket"]
-                }
-                const encryptedData = encryptRequest(valores);
-                const response = await obtieneTicket(encryptedData);
-                console.log(response);
-                setDataTicket(response.result_set[0]);
-            } catch (error) {
-                console.error(error);
+    const getEstructuraTicket = async () => {
+        try {
+            const valores = {
+                usuario: datos["No Usuario"],
+                ticket: datos["No Ticket"]
             }
+            const encryptedData = encryptRequest(valores);
+            const response = await obtieneTicket(encryptedData);
+            console.log(response);
+            setDataTicket(response.result_set[0]);
+        } catch (error) {
+            console.error(error);
         }
+    }
 
-        getEstructuraTicket();
-    }, []);
+    useEffect(() => {
+        if(datos['No Usuario'] !== ''){
+            getEstructuraTicket();
+        }
+    }, [datos['No Usuario']]);
 
     // Busca todas las impresoras que estan conectadas al equipo
     const mostrar_impresoras = () => {
@@ -49,6 +52,12 @@ export const usePrinter = (datos) => {
             singular: "peso mexicano",
             centPlural: "centavos",
             centSingular: "centavo"
+        }
+
+        if(!dataTicket){
+            if(datos['No Usuario'] !== ''){
+                getEstructuraTicket();
+            }
         }
 
         if(dataTicket["Operación"] !== 'COMPRA'){

@@ -70,9 +70,6 @@ export const useDenominacion = ({type,moneda,options}) => {
         }
 
         if(options.hasOwnProperty('setFinalizaOperacion')){
-            console.log("CI: ",importe)
-            console.log("CG: ",grandTotal)
-            console.log("C: ",importe === grandTotal)
             if(importe === grandTotal){
                 setFinalizaOperacion(false);
             }else{
@@ -95,7 +92,7 @@ export const useDenominacion = ({type,moneda,options}) => {
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             const denominacionValue = parseFloat(data[key].Denominacion);
-            if ((type === 'E' || type === 'C' || type === 'D') && denominacionValue > parseFloat(importe)) {
+            if ((type === 'E' || type === 'C' || type === 'SD') && denominacionValue > parseFloat(importe)) {
                 delete data[key];
             }
         }
@@ -165,7 +162,7 @@ export const useDenominacion = ({type,moneda,options}) => {
             if(moneda !== '0'){
                 const denominaciones = await obtieneDenominaciones(encryptedData);
 
-                if(type === 'D'){
+                if(type === 'SD'){
                     console.log("IMPORTE: ",importe)
                     for (const key in denominaciones.result_set) {
                         if (denominaciones.result_set.hasOwnProperty(key)) {
