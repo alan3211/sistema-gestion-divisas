@@ -146,7 +146,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         calculaValorMonto:0,
         habilita,
         setHabilita,
-        tipo: 'D',
+        tipo: 'SD',
     }
 
     const imprimeTicket = () =>{
@@ -400,7 +400,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     </div>
                                 </div>
                             { estadoDotacion && (<div className="row">
-                                <Denominacion type="D"
+                                <Denominacion type="SD"
                                               moneda={operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda}
                                               options={optionsDot}/>
                                 <div className="col-md-6 mx-auto">
@@ -411,7 +411,10 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                           </span>
                                     </button>
 
-                                    <button type="submit" className="m-2 btn btn-primary">
+                                    <button type="submit" className="m-2 btn btn-primary"
+                                            disabled={ parseFloat(solicitaDotacionFormulario.watch("denominacion")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad")) > 0
+                                        && parseFloat(solicitaDotacionFormulario.watch("denominacion")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad")) !== denominacionD.calculateGrandTotal()}
+                                    >
                                           <span className="me-2">
                                             GUARDAR
                                             <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
