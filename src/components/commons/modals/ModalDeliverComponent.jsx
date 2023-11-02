@@ -4,9 +4,9 @@ import {dataG} from "../../../App";
 import {obtieneDenominaciones, realizarOperacion} from "../../../services";
 import {ModalCambio} from "./ModalCambio";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest,
+    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateWS,
     getDenominacion,
-    obtenerObjetoDenominaciones, OPTIONS, redondearNumero, validarMoneda, validarNumeros
+    obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarMoneda, validarNumeros
 } from "../../../utils";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
@@ -16,6 +16,8 @@ import {usePrinter,useMovimientosDotaciones} from "../../../hook/";
 import {ModalTicket} from "./ModalTicket";
 import {ModalGenericTool} from "./ModalTools";
 import {useForm} from "react-hook-form";
+import {realizarOperacionSucursal, realizarSolicitudCambio} from "../../../services/operacion-sucursal";
+import {ModalLoading} from "./ModalLoading";
 
 export const ModalDeliverComponent = ({configuration}) =>{
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
@@ -25,6 +27,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         entrega: true,
     });
     const navigator = useNavigate();
+    const [guarda,setGuarda] = useState(false);
     const {
         denominacionR,
         denominacionE,
@@ -138,12 +141,20 @@ export const ModalDeliverComponent = ({configuration}) =>{
         habilita,
         setHabilita,
         tipo: 'E',
+        reRender: guarda,
     }
 
     const optionsDot = {
         title: `Solicitando cambio en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
-        importe: solicitaDotacionFormulario.watch("denominacion") !== '0' ? parseFloat(solicitaDotacionFormulario.watch("denominacion")):0,
-        calculaValorMonto:0,
+        importe: solicitaDotacionFormulario.watch("denominacion_cambio") !== '0' ? parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")):0,
+        importeFinal: solicitaDotacionFormulario.watch("denominacion_cambio") !== '0' ?(parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad"))):0,
+        habilita,
+        setHabilita,
+        tipo: 'SD',
+    }
+
+    const optionsDotRap = {
+        title: `Solicitando dotación rápida en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
         habilita,
         setHabilita,
         tipo: 'SD',
@@ -165,7 +176,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
             const encryptedData = encryptRequest(valores);
 
-            if(solicitaDotacionFormulario.watch("denominacion") !== '0'){
+            if(solicitaDotacionFormulario.watch("denominacion_cambio") !== '0'){
                 setEstadoDotacion(false);
                 const denominaciones = await obtieneDenominaciones(encryptedData);
                     if(['USD', 'EUR', 'GBR'].includes(valores.moneda)){
@@ -195,14 +206,114 @@ export const ModalDeliverComponent = ({configuration}) =>{
             }
         };
         fetchData();
-    },[solicitaDotacionFormulario.watch("denominacion")])
+    },[solicitaDotacionFormulario.watch("denominacion_cambio")])
 
     // Se valida lo que se ingresa en el formulario
     const handleDotacionDenominacionForm = solicitaDotacionFormulario.handleSubmit(async(dataFormulario)=>{
+        setGuarda(true);
+        const moneda = operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda;
 
-        console.log("DATA", dataFormulario);
-        console.log("DATA DENO", denominacionD.watch());
+        const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
+        const horaOperacion = horaDelDia.split(":").join("");
+
+        dataFormulario.denominacion_cambio =  dataFormulario.denominacion_cambio.split("-")[0];
+        dataFormulario.operacionEntrega = 'ENTREGA CAMBIO';
+        dataFormulario.operacionRecibe = 'RECIBE CAMBIO';
+        dataFormulario.usuario = dataG.usuario;
+        dataFormulario.sucursal = dataG.sucursal;
+        dataFormulario.ticketEntrega = `ENTCAM${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.ticketRecibe = `RECCAM${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.noCliente='0';
+        dataFormulario.traspaso='';
+
+        let denominacionesDotacion = denominacionD.getValues();
+        const formValuesD = getDenominacion(moneda,denominacionesDotacion)
+        eliminarDenominacionesConCantidadCero(formValuesD);
+        const denominaciones = obtenerObjetoDenominaciones(formValuesD);
+        denominaciones.divisa = moneda;
+        denominaciones.tipoOperacion = '0';
+        denominaciones.movimiento = '0';
+
+        dataFormulario.denominacion = [
+            denominaciones,
+        ]
+
+        const encryptedData = encryptRequest(dataFormulario);
+
+        const resultado = await realizarSolicitudCambio(encryptedData);
+
+        if(resultado){
+            toast.success(`Se ha realizado la solicitud del cambio exitosamente.`,{
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "colored",
+            });
+            OPTIONS_SOL_DENOMINACION.closeModal();
+            setGuarda(false);
+            solicitaDotacionFormulario.reset();
+            denominacionD.reset();
+        }
+
     });
+
+
+    // Sección de dotación Rapida
+    const handleDotacionRapida = async()=>{
+        setGuarda(true);
+        const moneda = operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda;
+
+        const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
+        const horaOperacion = horaDelDia.split(":").join("");
+
+        const dataFormulario = {};
+
+        dataFormulario.operacion = 'DOTACION RAPIDA';
+        dataFormulario.usuario = dataG.usuario;
+        dataFormulario.sucursal = dataG.sucursal;
+        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.noCliente='0';
+        dataFormulario.traspaso='';
+
+        let denominacionesDotacion = denominacionD.getValues();
+        const formValuesD = getDenominacion(moneda,denominacionesDotacion)
+        eliminarDenominacionesConCantidadCero(formValuesD);
+        const denominaciones = obtenerObjetoDenominaciones(formValuesD);
+        denominaciones.divisa = moneda;
+        denominaciones.tipoOperacion = '0';
+        denominaciones.movimiento = 'DOTACION RAPIDA';
+
+        dataFormulario.denominacion = [
+            denominaciones,
+        ]
+
+        const encryptedData = encryptRequest(dataFormulario);
+
+        const resultado = await realizarOperacionSucursal(encryptedData);
+
+        if(resultado){
+            toast.success(`Se ha realizado la solicitud rápida exitosamente.`,{
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "colored",
+            });
+            OPTIONS_DOTACION_RAPIDA.closeModal();
+            setGuarda(false);
+            denominacionD.reset();
+        }
+
+    }
+
+    const optionsLoad = {
+        showModal:guarda,
+        closeCustomModal: ()=> setGuarda(false),
+        title:'Guardando...'
+    }
 
     return(
         <>
@@ -317,7 +428,27 @@ export const ModalDeliverComponent = ({configuration}) =>{
             {
                 showDotacionRapida && (
                     <ModalGenericTool options={OPTIONS_DOTACION_RAPIDA}>
-                        EN DESARROLLO!
+                        { estadoDotacion && (<div className="row">
+                            <Denominacion type="SD"
+                                          moneda={operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda}
+                                          options={optionsDotRap}/>
+                            <div className="col-md-6 mx-auto">
+                                <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_DOTACION_RAPIDA.closeModal}>
+                                      <span className="ms-2">
+                                        <i className="bi bi-arrow-left me-2"></i>
+                                        REGRESAR
+                                      </span>
+                                </button>
+
+                                <button type="button" className="m-2 btn btn-primary" onClick={handleDotacionRapida}
+                                disabled={denominacionD.calculateGrandTotal() === 0}>
+                                      <span className="me-2">
+                                        GUARDAR
+                                        <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
+                                      </span>
+                                </button>
+                            </div>
+                        </div>)}
                     </ModalGenericTool>
                 )
             }
@@ -330,7 +461,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     <div className="col-md-4 mx-auto">
                                         <div className="form-floating mb-3">
                                             <select
-                                                {...solicitaDotacionFormulario.register("denominacion",{
+                                                {...solicitaDotacionFormulario.register("denominacion_cambio",{
                                                     required:{
                                                         value:true,
                                                         message:'Debes de seleccionar al menos una denominación.'
@@ -339,9 +470,9 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                                         menorAlDisponible: (value,key) => parseFloat(value.split("-")[1]) >= solicitaDotacionFormulario.watch("cantidad") || "La Cantidad no debe de ser mayor al disponible."
                                                     }
                                                 })}
-                                                className={`form-select ${!!solicitaDotacionFormulario.formState.errors?.denominacion ? 'invalid-input':''}`}
-                                                id="denominacion"
-                                                name="denominacion"
+                                                className={`form-select ${!!solicitaDotacionFormulario.formState.errors?.denominacion_cambio ? 'invalid-input':''}`}
+                                                id="denominacion_cambio"
+                                                name="denominacion_cambio"
                                                 aria-label="DENOMINACION"
                                             >
                                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
@@ -357,7 +488,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                             </select>
                                             <label htmlFor="denominacion">DENOMINACION</label>
                                             {
-                                                solicitaDotacionFormulario.formState.errors?.denominacion && <div className="invalid-feedback-custom">{solicitaDotacionFormulario.formState.errors?.denominacion.message}</div>
+                                                solicitaDotacionFormulario.formState.errors?.denominacion_cambio && <div className="invalid-feedback-custom">{solicitaDotacionFormulario.formState.errors?.denominacion_cambio.message}</div>
                                             }
                                         </div>
                                     </div>
@@ -393,7 +524,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                                 id="total_cambiar"
                                                 name="total_cambiar"
                                                 className={`form-control mb-1`}
-                                                value={parseFloat(solicitaDotacionFormulario.watch("denominacion")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad")) } readOnly
+                                                value={parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad") || 0) } readOnly
                                             />
                                             <label htmlFor="monto" className="form-label">TOTAL A CAMBIAR ({operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda})</label>
                                         </div>
@@ -412,8 +543,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     </button>
 
                                     <button type="submit" className="m-2 btn btn-primary"
-                                            disabled={ parseFloat(solicitaDotacionFormulario.watch("denominacion")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad")) > 0
-                                        && parseFloat(solicitaDotacionFormulario.watch("denominacion")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad")) !== denominacionD.calculateGrandTotal()}
+                                            disabled={!parseInt(solicitaDotacionFormulario.watch("cantidad")) > 0
+                                        || (parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio").split("-")[0]) *  parseFloat(solicitaDotacionFormulario.watch("cantidad"))) !== denominacionD.calculateGrandTotal()}
                                     >
                                           <span className="me-2">
                                             GUARDAR
@@ -423,6 +554,9 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                 </div>
                             </div>)}
                         </form>
+                        {
+                            guarda && <ModalLoading options={optionsLoad} />
+                        }
                     </ModalGenericTool>
                 )
             }

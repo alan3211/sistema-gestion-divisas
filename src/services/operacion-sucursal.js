@@ -6,7 +6,7 @@ import {
     SUCURSAL_DISPONIBLE_URL,
     SUCURSAL_DOTA_CAJA_URL,
     SUCURSAL_ENVIO_VALORES_URL,
-    SUCURSAL_MOVIMIENTOS_URL,
+    SUCURSAL_MOVIMIENTOS_URL, SUCURSAL_SOLICITUD_CAMBIO_URL,
     TESORERIA_ENVIO_SUCURSAL_URL
 } from "../utils";
 
@@ -168,6 +168,31 @@ export const consultaCantidadDivisasCaja =  async(formValues) => {
 
         const response = await fetch(url, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const realizarSolicitudCambio =  async(formValues) => {
+    try {
+        const url = `${SUCURSAL_SOLICITUD_CAMBIO_URL}`;
+
+        const response = await fetch(url, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem("token")}`

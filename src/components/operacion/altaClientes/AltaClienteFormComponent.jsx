@@ -19,6 +19,11 @@ export const AltaClienteFormComponent = memo(() => {
     const {propForm} = useContext(AltaClienteContext);
     const catalogo = useCatalogo([2]);
     const [showOverlay, setShowOverlay] = useState(false);
+    const [controlName, setControlName] = useState({
+        lastName:false,
+        secondlastName:false,
+    });
+
 
     const nuevoCliente = () => {
         propForm.setComplementarios(true);
@@ -65,6 +70,33 @@ export const AltaClienteFormComponent = memo(() => {
             propForm.setComplementarios(true);
         }
     });
+
+    const toggleName = (value) => {
+        setControlName((prevControlName) => {
+            if (value === 'apellido_paterno') {
+                if (prevControlName.lastName) {
+                    propForm.setValue("apellido_paterno", "");
+                } else {
+                    propForm.setValue("apellido_paterno", "SIN APELLIDO PATERNO");
+                }
+                return {
+                    ...prevControlName,
+                    lastName: !prevControlName.lastName,
+                };
+            } else {
+                if (prevControlName.secondlastName) {
+                    propForm.setValue("apellido_materno", "");
+                } else {
+                    propForm.setValue("apellido_materno", "SIN APELLIDO MATERNO");
+                }
+                return {
+                    ...prevControlName,
+                    secondlastName: !prevControlName.secondlastName,
+                };
+            }
+        });
+    };
+
 
     return (
         <>
@@ -143,6 +175,13 @@ export const AltaClienteFormComponent = memo(() => {
                                     propForm.errors?.apellido_paterno && <div
                                         className="invalid-feedback-custom">{propForm.errors?.apellido_paterno.message}</div>
                                 }
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="lastNameCheck"
+                                    onClick={()=>toggleName('apellido_paterno')} checked={controlName.lastName}
+                                           disabled={controlName.secondlastName}
+                                    />
+                                        <label className="form-check-label" htmlFor="lastNameCheck">SIN APELLIDO PATERNO</label>
+                                </div>
                             </div>
                         </div>
                         <div className="col-md-3">
@@ -168,6 +207,13 @@ export const AltaClienteFormComponent = memo(() => {
                                     propForm.errors?.apellido_materno && <div
                                         className="invalid-feedback-custom">{propForm.errors?.apellido_materno.message}</div>
                                 }
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="secondLastNameCheck"
+                                           onClick={()=>toggleName('apellido_materno')} checked={controlName.secondlastName}
+                                        disabled={controlName.lastName}
+                                    />
+                                    <label className="form-check-label" htmlFor="secondLastNameCheck">SIN APELLIDO MATERNO</label>
+                                </div>
                             </div>
                         </div>
                         <div className="col-md-3">

@@ -18,8 +18,12 @@ export const useMovimientosDotaciones = ({solicitaDotacionFormulario,solicitaDot
     const OPTIONS_DOTACION_RAPIDA = {
         size: 'lg',
         showModal: () => setShowDotacionRapida(true),
-        closeModal: () => setShowDotacionRapida(false),
-        icon:'bi bi-currency-exchange me-2',
+        closeModal: () => {
+            setShowDotacionRapida(false)
+            solicitaDotacionRapidaFormulario.reset();
+            setEstadoDotacion(false);
+        },
+        icon:'bi bi-currency-exchange text-warning me-2',
         title:'Solicita Dotación Rápida',
         subtitle:'Selecciona las denominaciones necesarias para concluir la operación.'
     }

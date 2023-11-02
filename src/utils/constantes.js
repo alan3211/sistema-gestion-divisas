@@ -1,5 +1,5 @@
-//const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-const URL = 'http://192.168.101.45:9000/';
+const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+//const URL = 'http://192.168.101.45:9000/';
 //const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
@@ -43,6 +43,7 @@ export const SUCURSAL_MOVIMIENTOS_URL = `${SUCURSAL_URL}operativa/movimientos`
 export const SUCURSAL_DISPONIBLE_URL = `${SUCURSAL_URL}operativa/disponible`
 export const SUCURSAL_DISPONIBLE_DIVISAS_URL = `${SUCURSAL_URL}consulta/disponible`
 export const SUCURSAL_DISPONIBLE_DIVISAS_CAJA_URL = `${SUCURSAL_URL}consulta/disponible/cajas`
+export const SUCURSAL_SOLICITUD_CAMBIO_URL = `${SUCURSAL_URL}solicitud/cambio`
 
 /*OPERACION CAJA*/
 export const CAJA_CONSULTA_DOTACIONES_URL = `${CAJA_URL}consulta/dotaciones`

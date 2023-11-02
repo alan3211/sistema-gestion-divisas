@@ -54,7 +54,7 @@ export const usePrinter = (datos) => {
             centSingular: "centavo"
         }
 
-        if(!dataTicket){
+        if(Object.keys(dataTicket).length === 0){
             if(datos['No Usuario'] !== ''){
                 getEstructuraTicket();
             }
@@ -78,7 +78,7 @@ export const usePrinter = (datos) => {
         conector.textaling("left")
         conector.text("------------------------------------------")
         conector.text(`Fecha: ${formattedDateDD2}    Folio: ${dataTicket.Folio}`)
-        conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas`)
+        conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas          # Usuario: ${dataTicket.Usuario}`)
         conector.text("------------------------------------------")
         conector.text(dataTicket["Operación"])
         conector.text(`Divisa: ${DENOMINACIONESM[dataTicket.Divisa]}           $ ${dataTicket["Operación"] === 'COMPRA' ? dataTicket["Total Recibido"] :dataTicket["Monto Entregado"]} ${dataTicket.Divisa} `)
