@@ -12,7 +12,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionD,
     } = useContext(DenominacionContext);
 
-    const {title,importe,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion} =  options;
+    const {title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion} =  options;
     let denominacion = {};
 
     if(type === 'R'){
@@ -116,6 +116,12 @@ export const useDenominacion = ({type,moneda,options}) => {
             } else {
                 return 'text-danger';
             }
+        } else if (type === 'SD') {
+            if (grandTotal === parseFloat(importeFinal)) {
+                return 'text-success';
+            } else {
+                return 'text-danger';
+            }
         } else {
             if (grandTotal === importe) {
                 return 'text-success';
@@ -146,41 +152,47 @@ export const useDenominacion = ({type,moneda,options}) => {
         setHabilita(newHabilita);
     }, [calculateGrandTotal(), type]);
 
-    // Sirve para cargar la denominacion de la moneda que se envia
-    useEffect(() => {
-        const fetchData = async () => {
 
-            const valores = {
-                usuario: dataG.usuario,
-                sucursal: dataG.sucursal,
-                moneda: moneda,
-                tipo_movimiento: type
-            }
+    const fetchData = async () => {
 
-            const encryptedData = encryptRequest(valores);
+        const valores = {
+            usuario: dataG.usuario,
+            sucursal: dataG.sucursal,
+            moneda: moneda,
+            tipo_movimiento: type
+        }
 
-            if(moneda !== '0'){
-                const denominaciones = await obtieneDenominaciones(encryptedData);
+        const encryptedData = encryptRequest(valores);
 
-                if(type === 'SD'){
-                    console.log("IMPORTE: ",importe)
-                    for (const key in denominaciones.result_set) {
-                        if (denominaciones.result_set.hasOwnProperty(key)) {
-                            const denominacionValue = parseFloat(denominaciones.result_set[key].Denominacion);
-                            if (denominacionValue >= parseFloat(importe)) {
-                                delete denominaciones.result_set[key];
-                            }
+        if(moneda !== '0'){
+            const denominaciones = await obtieneDenominaciones(encryptedData);
+
+            if(type === 'SD'){
+                console.log("IMPORTE: ",importe)
+                for (const key in denominaciones.result_set) {
+                    if (denominaciones.result_set.hasOwnProperty(key)) {
+                        const denominacionValue = parseFloat(denominaciones.result_set[key].Denominacion);
+                        if (denominacionValue >= parseFloat(importe)) {
+                            delete denominaciones.result_set[key];
                         }
                     }
                 }
-
-                setData(denominaciones.result_set);
             }
-            reset();
-        };
+
+            setData(denominaciones.result_set);
+        }
+        reset();
+    };
+
+    // Sirve para cargar la denominacion de la moneda que se envia
+    useEffect(() => {
         fetchData();
     },[moneda])
 
+    if(options.reRender){
+        console.log("RERENDER")
+        fetchData();
+    }
 
     return {
         title,data,denominacionMappings,register,trigger,errors,setValue,calculateTotal,
