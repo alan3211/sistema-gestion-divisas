@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useCatalogo } from "../../../../hook";
-import {encryptRequest, formattedDateWS, globalData, opciones, validarMoneda} from "../../../../utils";
+import {encryptRequest, formattedDateWS, globalData, opciones, OPTIONS, validarMoneda} from "../../../../utils";
 import {dotaSucursales} from "../../../../services/operacion-tesoreria";
 import {dataG} from "../../../../App";
 import {toast} from "react-toastify";
@@ -17,17 +17,19 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
         data.ticket = `DOTSUC${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`
         const encryptedData = encryptRequest(data);
         const response = await dotaSucursales(encryptedData);
-        if(response.mensaje !== ''){
+        if(response.mensaje.includes("exitosamente")){
             toast.success(response.mensaje, {
                 position: "top-center",
                 autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
-                theme: "light",
+                theme: "colored",
                 onClose:actualizarSaldo,
             });
             reset();
+        }else{
+            toast.error(response.mensaje, OPTIONS);
         }
     });
 

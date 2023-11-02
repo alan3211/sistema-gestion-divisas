@@ -1,10 +1,10 @@
 import {Button, Modal} from "react-bootstrap";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {
     eliminarDenominacionesConCantidadCero,
     encryptRequest,
     getDenominacion,
-    obtenerObjetoDenominaciones
+    obtenerObjetoDenominaciones, redondearNumero
 } from "../../../utils";
 import {dataG} from "../../../App";
 import {realizarOperacion} from "../../../services";
@@ -12,17 +12,32 @@ import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
+import {usePrinter} from "../../../hook/usePrinter";
+import {ModalTicket} from "./ModalTicket";
+
 
 export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion,data,habilita,setHabilita}) => {
 
     const navigator = useNavigate();
     const {denominacionC} = useContext(DenominacionContext);
+    const {imprimir,imprimeTicketNuevamente} = usePrinter({"No Usuario": data.Cliente,
+        "No Ticket": data.ticket});
+    const [showModal,setShowModal] = useState(false)
 
     const options = {
         title: '',
-        importe: parseFloat(cambio),
+        importe: redondearNumero(cambio),
         habilita,
         setHabilita
+    }
+
+    // Solicitud de Denominacion
+    const solicitaCambio = () => {
+    }
+
+    // Solicitud de dotación rápida
+    const solicitudDotacionRapida = () => {
+
     }
 
     const closeCustomModal = () => setShowModalCambio(false);
@@ -40,15 +55,17 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         }
 
         formValuesC.divisa = 'MXP';
-        formValuesC.movimiento = 'CAMBIO AL CLIENTE';
+        formValuesC.movimiento = 'CAMBIO AL USUARIO';
 
         eliminarDenominacionesConCantidadCero(formValuesC);
+
+        console.log("CAMBIO!: ",cambio);
 
         const values = {
             cliente: data.cliente,
             ticket: data.ticket,
             cantidad_entregar: parseInt(cambio),
-            monto: parseFloat(cambio),
+            monto: '0.0',
             divisa:'MXP',
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
@@ -64,26 +81,19 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
         // Validar si tenemos que darle cambio
         if(resultado){
-            console.log(resultado);
-            // TODO Integrar la parte de la impresion de tickets
-            toast.success('Se ha entregado el cambio correspondiente.', {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "colored",
-            });
-
-            navigator("/inicio");
+            imprimir(0);
+            setShowModal(true)
         }
     }
 
+    const imprimeTicket = () =>{
+        imprimeTicketNuevamente(0)
+    }
 
     return(
         <>
-            <Modal centered size="lg" show={showModalCambio} onHide={closeCustomModal}>
-                <Modal.Header closeButton>
+            <Modal centered size="lg" show={showModalCambio}>
+                <Modal.Header>
                     <Modal.Title>
                         <h5 className="text-blue">
                             <i className="bx bx-money m-2"></i>
@@ -94,12 +104,12 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
                 <Modal.Body>
                     <div className="row justify-content-center">
-                        <div className="col-md-7 mb-3 d-flex">
+                        <div className="col-md-5 mb-3 d-flex">
                             <div className="form-floating flex-grow-1">
                                 <input type="text"
                                        className={`form-control mb-1`}
                                        id="floatingCE"
-                                       value={cambio}
+                                       value={redondearNumero(cambio)}
                                        readOnly
                                 />
                                 <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>(MXP)</i></label>
@@ -116,14 +126,41 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button variant="primary" disabled={habilita.recibe} onClick={guardarCambio}>
-                        <i className="bi bi-save me-1"></i>
-                        Guardar
+                    <button className="btn btn-orange" onClick={solicitudDotacionRapida}>
+                        <i className="bi bi-currency-exchange me-2"></i>
+                        DOTACIÓN RAPIDA
+                    </button>
+                    <Button variant="success" onClick={solicitaCambio}>
+                        <i className="bi bi-cash me-2"></i>
+                        SOLICITAR DENOMINACIÓN
+                    </Button>
+                    <Button variant="primary" disabled={denominacionC.calculateGrandTotal != redondearNumero(cambio)} onClick={guardarCambio}>
+                        <i className="bi bi-arrow-left-right me-2"></i>
+                        ENTREGAR CAMBIO
                     </Button>
                 </Modal.Footer>
             </Modal>
 
-
+            {
+                showModal && (
+                    <ModalTicket title="¿Se imprimió el ticket correctamente?"
+                                  showModal={showModal}
+                                  closeModalAndReturn={imprimeTicket}
+                                  hacerOperacion={()=> {
+                                      toast.success('Se ha entregado el cambio correspondiente.', {
+                                          position: "top-center",
+                                          autoClose: 5000,
+                                          hideProgressBar: false,
+                                          closeOnClick: true,
+                                          pauseOnHover: true,
+                                          theme: "colored",
+                                      });
+                                      setShowModal(false)
+                                      navigator('/inicio')
+                                  }}
+                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
 
         </>
     );

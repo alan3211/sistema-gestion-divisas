@@ -108,10 +108,10 @@ export const DotacionCajaSucursal = () => {
         }
         const encryptedData = encryptRequest(valores)
         const disponibilidad = await getCantidadDisponible(encryptedData);
-        console.log(disponibilidad);
+        console.log("DISPONIBLE: ",disponibilidad);
         setShowDisponible({
             isAvailable: true,
-            cantidad: disponibilidad.result_set[0].Disponible
+            cantidad: disponibilidad.result_set[0].Disponible ? disponibilidad.result_set[0].Disponible:0
         });
         console.log(showDisponible);
     }
@@ -230,9 +230,9 @@ export const DotacionCajaSucursal = () => {
                 {
                     showDisponible.isAvailable &&
                     (<h5 className="text-blue text-center">
-                        <i className="bi bi-bank me-2"></i>
-                        <span>Disponible:</span>
-                        <strong className="ms-2">{FormatoMoneda(parseFloat(showDisponible.cantidad),watch("moneda"))}</strong>
+                        <i className="bi bi-cash me-2"></i>
+                        <span>Cantidad Disponible </span>
+                        <strong className="ms-2">{FormatoMoneda(parseFloat(showDisponible.cantidad))}</strong>
                     </h5>)
                 }
             </div>
@@ -245,12 +245,11 @@ export const DotacionCajaSucursal = () => {
                 <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
                     <i className="bi bi-plus"></i> NUEVA DOTACIÓN
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={finalizaOperacion}>
+                <button type="submit" className="btn btn-primary" disabled={finalizaOperacion || parseFloat(showDisponible.cantidad) === 0}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                     FINALIZAR OPERACIÓN
                 </button>
             </div>
-
         </form>
     );
 }

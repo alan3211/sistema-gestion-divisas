@@ -1,32 +1,54 @@
 import {Button, Modal} from "react-bootstrap";
-import {useContext, useMemo, useState} from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import {dataG} from "../../../App";
-import {realizarOperacion} from "../../../services";
+import {obtieneDenominaciones, realizarOperacion} from "../../../services";
 import {ModalCambio} from "./ModalCambio";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest,
+    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateWS,
     getDenominacion,
-    obtenerObjetoDenominaciones, OPTIONS, redondearNumero, validarMoneda
+    obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarMoneda, validarNumeros
 } from "../../../utils";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
+import {usePrinter,useMovimientosDotaciones} from "../../../hook/";
+import {ModalTicket} from "./ModalTicket";
+import {ModalGenericTool} from "./ModalTools";
+import {useForm} from "react-hook-form";
+import {realizarOperacionSucursal, realizarSolicitudCambio} from "../../../services/operacion-sucursal";
+import {ModalLoading} from "./ModalLoading";
 
 export const ModalDeliverComponent = ({configuration}) =>{
-
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
     const [showCambio,setShowCambio] = useState(false);
-    const [showImpresion,setShowImpresion] = useState(false);
     const [habilita,setHabilita] =  useState({
         recibe: true,
         entrega: true,
     });
     const navigator = useNavigate();
+    const [guarda,setGuarda] = useState(false);
     const {
         denominacionR,
         denominacionE,
+        denominacionD,
     } = useContext(DenominacionContext);
+    const {imprimir,imprimeTicketNuevamente} = usePrinter({"No Usuario": datos.Cliente,
+        "No Ticket": datos.ticket});
+    const [showModal,setShowModal] = useState(false)
+
+    const solicitaDotacionFormulario =  useForm();
+    const solicitaDotacionRapidaFormulario =  useForm();
+    const [dataMoneda,setDataMoneda] = useState([]);
+    const [estadoDotacion,setEstadoDotacion] = useState(false);
+    const {solicitaCambio,solicitudDotacionRapida, showDotacionRapida, showCambioDeno,
+        OPTIONS_DOTACION_RAPIDA,
+        OPTIONS_SOL_DENOMINACION} =  useMovimientosDotaciones(
+            {
+                solicitaDotacionFormulario,
+                solicitaDotacionRapidaFormulario,
+                setEstadoDotacion,
+            });
 
 
     //Muestra el título correcto
@@ -34,18 +56,18 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     // Calcula el valor del monto de la parte decimal con 2 digitos
     const calculaValorMonto = useMemo(() => {
-        console.log("OPERACIONES -*",operacion)
         if (operacion.tipo_operacion === '2') {
             const conversionAPesos = operacion.decimal_sobrante * parseFloat(operacion.tipo_cambio);
             const diferenciaAMostrar = parseFloat(operacion.monto) - conversionAPesos;
-            return diferenciaAMostrar.toFixed(2);
+            return redondearNumero(diferenciaAMostrar.toFixed(2));
         }
-        return parseFloat(operacion.monto);
+        return redondearNumero(operacion.monto);
     }, [operacion.cantidad_entregar, operacion.tipo_cambio, operacion.monto, operacion.tipo_operacion]);
 
     // Muestra la divisa correspondiente
     const muestraDivisa = () => operacion.tipo_operacion === "1" ? operacion.moneda : 'MXP';
 
+    //Cierra el modal
     const closeCustomModal = () => setShowCustomModal(false);
 
     const hacerOperacion = async () => {
@@ -58,63 +80,48 @@ export const ModalDeliverComponent = ({configuration}) =>{
         if (operacion.tipo_operacion === '1') {
             formValuesE = getDenominacion('MXP',denominacionesEntrega)
             formValuesR = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesRecibe)
-            formValuesR.movimiento = "RECIBIMOS DEL CLIENTE";
-            formValuesE.movimiento = "ENTREGA AL CLIENTE";
+            formValuesR.movimiento = "RECIBIMOS DEL USUARIO";
+            formValuesE.movimiento = "ENTREGA AL USUARIO";
             formValuesR.tipoOperacion = "COMPRA";
             formValuesE.tipoOperacion = "COMPRA";
         }else{
             formValuesE = getDenominacion(operacion.moneda === "MXP" ? `MXP`:operacion.moneda,denominacionesEntrega)
             formValuesR = getDenominacion('MXP',denominacionesRecibe)
-            formValuesE.movimiento = "ENTREGA AL CLIENTE";
-            formValuesR.movimiento = "RECIBIMOS DEL CLIENTE";
+            formValuesE.movimiento = "ENTREGA AL USUARIO";
+            formValuesR.movimiento = "RECIBIMOS DEL USUARIO";
             formValuesR.tipoOperacion = "VENTA";
             formValuesE.tipoOperacion = "VENTA";
         }
 
-        console.log("TIENE_CEROS: ",formValuesR);
-        console.log("TIENE_CEROS: ",formValuesE);
-
         eliminarDenominacionesConCantidadCero(formValuesR);
         eliminarDenominacionesConCantidadCero(formValuesE);
-
-        console.log("NO_TIENE_CEROS: ",formValuesR);
-        console.log("NO_TIENE_CEROS: ",formValuesE);
 
         const values = {
             cliente: datos.Cliente,
             ticket: datos.ticket,
             divisa: operacion.moneda,
-            cantidad_entregar: parseInt(operacion.cantidad_entregada),
-            monto: parseFloat(calculaValorMonto),
+            cantidad_entregar: parseInt(operacion.cantidad_entregar),
+            monto: parseFloat(calculaValorMonto).toFixed(2),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
             traspaso: '',
             diferencia:0.0,
+            totalRecibido:denominacionR.calculateGrandTotal(),
+            cambio:parseFloat(denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto)),
             denominacion:[
                 obtenerObjetoDenominaciones(formValuesR),
                 obtenerObjetoDenominaciones(formValuesE),
             ]
         }
 
-        console.log("ENVIO DE DENOMINACIONES",values);
-
         const encryptedData = encryptRequest(values);
-        const resultadoPromise = realizarOperacion(encryptedData);
-
-        if (resultadoPromise) {
-            if (redondearNumero(parseFloat(operacion.monto) - parseFloat(calculaValorMonto)) >= 1) {
-                setShowCambio(true);
-            } else {
-                toast.success('La operación fue exitosa.', OPTIONS);
-
-                // TODO Integrar la parte de la impresion de tickets
-                // 1.- Validar que se muestre el modal
-                // 2.- Imprimir el ticket
-                setShowImpresion(true);
-
-                navigator("/inicio");
-            }
-            console.log(resultadoPromise);
+        const resultadoPromise = await realizarOperacion(encryptedData);
+        let cambioFinal = denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto);
+        if (redondearNumero(cambioFinal) > 0) {
+            setShowCambio(true);
+        } else {
+            imprimir(0);
+            setShowModal(true)
         }
     }
 
@@ -134,8 +141,179 @@ export const ModalDeliverComponent = ({configuration}) =>{
         habilita,
         setHabilita,
         tipo: 'E',
+        reRender: guarda,
     }
 
+    const optionsDot = {
+        title: `Solicitando cambio en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
+        importe: solicitaDotacionFormulario.watch("denominacion_cambio") !== '0' ? parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")):0,
+        importeFinal: solicitaDotacionFormulario.watch("denominacion_cambio") !== '0' ?(parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad"))):0,
+        habilita,
+        setHabilita,
+        tipo: 'SD',
+    }
+
+    const optionsDotRap = {
+        title: `Solicitando dotación rápida en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
+        habilita,
+        setHabilita,
+        tipo: 'SD',
+    }
+
+    const imprimeTicket = () =>{
+        imprimeTicketNuevamente(0)
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+
+            const valores = {
+                usuario: dataG.usuario,
+                sucursal: dataG.sucursal,
+                moneda: operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda,
+                tipo_movimiento: "D"
+            }
+
+            const encryptedData = encryptRequest(valores);
+
+            if(solicitaDotacionFormulario.watch("denominacion_cambio") !== '0'){
+                setEstadoDotacion(false);
+                const denominaciones = await obtieneDenominaciones(encryptedData);
+                    if(['USD', 'EUR', 'GBR'].includes(valores.moneda)){
+                        for (const key in denominaciones.result_set) {
+                            if (denominaciones.result_set.hasOwnProperty(key)) {
+                                const denominacionValue = parseFloat(denominaciones.result_set[key].Denominacion);
+                                if (denominacionValue === 1) {
+                                    delete denominaciones.result_set[key];
+                                }
+                            }
+                        }
+                    }else{
+                        for (const key in denominaciones.result_set) {
+                            if (denominaciones.result_set.hasOwnProperty(key)) {
+                                const denominacionValue = parseFloat(denominaciones.result_set[key].Denominacion);
+                                if (denominacionValue === 0.05) {
+                                    delete denominaciones.result_set[key];
+                                }
+                            }
+                        }
+                    }
+                solicitaDotacionFormulario.setValue("cantidad",0);
+                setDataMoneda(denominaciones.result_set);
+                setEstadoDotacion(true);
+            }else{
+                setEstadoDotacion(false);
+            }
+        };
+        fetchData();
+    },[solicitaDotacionFormulario.watch("denominacion_cambio")])
+
+    // Se valida lo que se ingresa en el formulario
+    const handleDotacionDenominacionForm = solicitaDotacionFormulario.handleSubmit(async(dataFormulario)=>{
+        setGuarda(true);
+        const moneda = operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda;
+
+        const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
+        const horaOperacion = horaDelDia.split(":").join("");
+
+        dataFormulario.denominacion_cambio =  dataFormulario.denominacion_cambio.split("-")[0];
+        dataFormulario.operacionEntrega = 'ENTREGA CAMBIO';
+        dataFormulario.operacionRecibe = 'RECIBE CAMBIO';
+        dataFormulario.usuario = dataG.usuario;
+        dataFormulario.sucursal = dataG.sucursal;
+        dataFormulario.ticketEntrega = `ENTCAM${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.ticketRecibe = `RECCAM${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.noCliente='0';
+        dataFormulario.traspaso='';
+
+        let denominacionesDotacion = denominacionD.getValues();
+        const formValuesD = getDenominacion(moneda,denominacionesDotacion)
+        eliminarDenominacionesConCantidadCero(formValuesD);
+        const denominaciones = obtenerObjetoDenominaciones(formValuesD);
+        denominaciones.divisa = moneda;
+        denominaciones.tipoOperacion = '0';
+        denominaciones.movimiento = '0';
+
+        dataFormulario.denominacion = [
+            denominaciones,
+        ]
+
+        const encryptedData = encryptRequest(dataFormulario);
+
+        const resultado = await realizarSolicitudCambio(encryptedData);
+
+        if(resultado){
+            toast.success(`Se ha realizado la solicitud del cambio exitosamente.`,{
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "colored",
+            });
+            OPTIONS_SOL_DENOMINACION.closeModal();
+            setGuarda(false);
+            solicitaDotacionFormulario.reset();
+            denominacionD.reset();
+        }
+
+    });
+
+
+    // Sección de dotación Rapida
+    const handleDotacionRapida = async()=>{
+        setGuarda(true);
+        const moneda = operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda;
+
+        const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
+        const horaOperacion = horaDelDia.split(":").join("");
+
+        const dataFormulario = {};
+
+        dataFormulario.operacion = 'DOTACION RAPIDA';
+        dataFormulario.usuario = dataG.usuario;
+        dataFormulario.sucursal = dataG.sucursal;
+        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.noCliente='0';
+        dataFormulario.traspaso='';
+
+        let denominacionesDotacion = denominacionD.getValues();
+        const formValuesD = getDenominacion(moneda,denominacionesDotacion)
+        eliminarDenominacionesConCantidadCero(formValuesD);
+        const denominaciones = obtenerObjetoDenominaciones(formValuesD);
+        denominaciones.divisa = moneda;
+        denominaciones.tipoOperacion = '0';
+        denominaciones.movimiento = 'DOTACION RAPIDA';
+
+        dataFormulario.denominacion = [
+            denominaciones,
+        ]
+
+        const encryptedData = encryptRequest(dataFormulario);
+
+        const resultado = await realizarOperacionSucursal(encryptedData);
+
+        if(resultado){
+            toast.success(`Se ha realizado la solicitud rápida exitosamente.`,{
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                theme: "colored",
+            });
+            OPTIONS_DOTACION_RAPIDA.closeModal();
+            setGuarda(false);
+            denominacionD.reset();
+        }
+
+    }
+
+    const optionsLoad = {
+        showModal:guarda,
+        closeCustomModal: ()=> setGuarda(false),
+        title:'Guardando...'
+    }
 
     return(
         <>
@@ -158,7 +336,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     id="monto"
                                     name="monto"
                                     className={`form-control mb-1`}
-                                    placeholder="Ingresa la cantidad a cotizar por el usuario"
                                     value={operacion.monto} readOnly
                                 />
                                 <label htmlFor="monto" className="form-label">IMPORTE <i>({muestraDivisa()})</i></label>
@@ -206,9 +383,17 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 </Modal.Body>
 
                 <Modal.Footer>
+                    <button className="btn btn-orange" onClick={solicitudDotacionRapida}>
+                        <i className="bi bi-currency-exchange me-2"></i>
+                        DOTACIÓN RAPIDA
+                    </button>
+                    <Button variant="success" onClick={solicitaCambio}>
+                        <i className="bi bi-cash me-2"></i>
+                        SOLICITAR DENOMINACIÓN
+                    </Button>
                     <Button variant="primary" onClick={()=> hacerOperacion()} disabled={habilita.entrega || habilita.recibe}>
-                        <i className="bi bi-check-circle-fill me-2"></i>
-                        Finalizar Operación
+                        <i className="bi bi-arrow-left-right me-2"></i>
+                        FINALIZAR OPERACIÓN
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -217,7 +402,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 showCambio
                     &&
                     <ModalCambio
-                        cambio={(redondearNumero(operacion.monto-calculaValorMonto))}
+                        cambio={(denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto))}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
                         operacion={operacion}
@@ -227,6 +412,154 @@ export const ModalDeliverComponent = ({configuration}) =>{
                     />
             }
 
+            {
+                showModal && (
+                    <ModalTicket title="¿Se imprimió el ticket correctamente?"
+                                 showModal={showModal}
+                                 closeModalAndReturn={imprimeTicket}
+                                 hacerOperacion={()=> {
+                                     toast.success('La operación fue exitosa.', OPTIONS);
+                                     setShowModal(false)
+                                     navigator('/inicio')
+                                 }}
+                                 icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
+            {
+                showDotacionRapida && (
+                    <ModalGenericTool options={OPTIONS_DOTACION_RAPIDA}>
+                        { estadoDotacion && (<div className="row">
+                            <Denominacion type="SD"
+                                          moneda={operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda}
+                                          options={optionsDotRap}/>
+                            <div className="col-md-6 mx-auto">
+                                <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_DOTACION_RAPIDA.closeModal}>
+                                      <span className="ms-2">
+                                        <i className="bi bi-arrow-left me-2"></i>
+                                        REGRESAR
+                                      </span>
+                                </button>
+
+                                <button type="button" className="m-2 btn btn-primary" onClick={handleDotacionRapida}
+                                disabled={denominacionD.calculateGrandTotal() === 0}>
+                                      <span className="me-2">
+                                        GUARDAR
+                                        <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
+                                      </span>
+                                </button>
+                            </div>
+                        </div>)}
+                    </ModalGenericTool>
+                )
+            }
+            {
+                showCambioDeno && (
+                    <ModalGenericTool options={OPTIONS_SOL_DENOMINACION}>
+
+                        <form className="row justify-content-center" onSubmit={handleDotacionDenominacionForm} noValidate>
+                                <div className="row">
+                                    <div className="col-md-4 mx-auto">
+                                        <div className="form-floating mb-3">
+                                            <select
+                                                {...solicitaDotacionFormulario.register("denominacion_cambio",{
+                                                    required:{
+                                                        value:true,
+                                                        message:'Debes de seleccionar al menos una denominación.'
+                                                    },
+                                                    validate: {
+                                                        menorAlDisponible: (value,key) => parseFloat(value.split("-")[1]) >= solicitaDotacionFormulario.watch("cantidad") || "La Cantidad no debe de ser mayor al disponible."
+                                                    }
+                                                })}
+                                                className={`form-select ${!!solicitaDotacionFormulario.formState.errors?.denominacion_cambio ? 'invalid-input':''}`}
+                                                id="denominacion_cambio"
+                                                name="denominacion_cambio"
+                                                aria-label="DENOMINACION"
+                                            >
+                                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                                {
+                                                    dataMoneda?.map((ele) => (
+                                                        <option key={ele.Denominacion + '-' + ele["Billetes Disponibles"]}
+                                                                value={`${ele.Denominacion}-${ele["Billetes Disponibles"]}`}>
+                                                            {ele.Denominacion} - {ele["Billetes Disponibles"]}
+                                                            {ele["Billetes Disponibles"] > 1 ? ' disponibles':' disponible'}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                            <label htmlFor="denominacion">DENOMINACION</label>
+                                            {
+                                                solicitaDotacionFormulario.formState.errors?.denominacion_cambio && <div className="invalid-feedback-custom">{solicitaDotacionFormulario.formState.errors?.denominacion_cambio.message}</div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4 mx-auto">
+                                        <div className="form-floating flex-grow-1">
+                                            <input
+                                                {...solicitaDotacionFormulario.register("cantidad", {
+                                                    required: {
+                                                        value: true,
+                                                        message: 'El campo Cantidad no puede estar vacío.'
+                                                    },
+                                                    validate: {
+                                                        moneda: (value) => validarNumeros("Cantidad", value),
+                                                        mayorACero: value => parseFloat(value) > 0 || "La Cantidad  debe ser mayor a 0"
+                                                    }
+                                                })}
+                                                type="text"
+                                                className={`form-control ${!!solicitaDotacionFormulario.formState.errors?.cantidad ? 'is-invalid' : ''}`}
+                                                id="cantidad"
+                                                name="cantidad"
+                                                placeholder="Ingresa la cantidad a cambiar"
+                                            />
+                                            <label htmlFor="cantidad" className="form-label">CANTIDAD</label>
+                                            {
+                                                solicitaDotacionFormulario.formState.errors?.cantidad && <div className="invalid-feedback">{solicitaDotacionFormulario.formState.errors?.cantidad.message}</div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4 mx-auto">
+                                        <div className="form-floating flex-grow-1">
+                                            <input
+                                                type="text"
+                                                id="total_cambiar"
+                                                name="total_cambiar"
+                                                className={`form-control mb-1`}
+                                                value={parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad") || 0) } readOnly
+                                            />
+                                            <label htmlFor="monto" className="form-label">TOTAL A CAMBIAR ({operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda})</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            { estadoDotacion && (<div className="row">
+                                <Denominacion type="SD"
+                                              moneda={operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda}
+                                              options={optionsDot}/>
+                                <div className="col-md-6 mx-auto">
+                                    <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_SOL_DENOMINACION.closeModal}>
+                                          <span className="ms-2">
+                                            <i className="bi bi-arrow-left me-2"></i>
+                                            REGRESAR
+                                          </span>
+                                    </button>
+
+                                    <button type="submit" className="m-2 btn btn-primary"
+                                            disabled={!parseInt(solicitaDotacionFormulario.watch("cantidad")) > 0
+                                        || (parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio").split("-")[0]) *  parseFloat(solicitaDotacionFormulario.watch("cantidad"))) !== denominacionD.calculateGrandTotal()}
+                                    >
+                                          <span className="me-2">
+                                            GUARDAR
+                                            <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
+                                          </span>
+                                    </button>
+                                </div>
+                            </div>)}
+                        </form>
+                        {
+                            guarda && <ModalLoading options={optionsLoad} />
+                        }
+                    </ModalGenericTool>
+                )
+            }
         </>
     );
 }

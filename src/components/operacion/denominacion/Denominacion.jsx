@@ -1,8 +1,5 @@
-import {useContext, useEffect, useState} from "react";
-import {obtieneDenominaciones} from "../../../services";
 import {FormatoMoneda, validarMoneda} from "../../../utils";
-import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
-import {useDenominacion} from "../../../hook/useDenominacion";
+import {useDenominacion} from "../../../hook";
 import {dataG} from "../../../App";
 
 export const Denominacion = ({type,moneda,options}) => {
@@ -10,7 +7,7 @@ export const Denominacion = ({type,moneda,options}) => {
     const valores = {type,moneda,options}
 
     const {
-        title,data,denominacionMappings,register,trigger,errors,calculateTotal,
+        title,data,denominacionMappings,register,trigger,errors,setValue,calculateTotal,
         validacionColor,calculateGrandTotal} = useDenominacion(valores)
 
     return (
@@ -22,7 +19,7 @@ export const Denominacion = ({type,moneda,options}) => {
                         <table className="table table-bordered table-hover">
                             <thead className="table-dark">
                             <tr>
-                                <th className="col-1">Billetes Disponibles</th>
+                                {(type !== "R" && type !== "SD") && <th className="col-1">Billetes Disponibles</th>}
                                 <th className="col-1">Denominación</th>
                                 <th className="col-1">Cantidad</th>
                                 <th className="col-1">Total</th>
@@ -33,13 +30,23 @@ export const Denominacion = ({type,moneda,options}) => {
                                     let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
                                     return (
                                     <tr key={`denominacion_${name}`}>
-                                        <td>{elemento['Billetes Disponibles']}</td>
+                                        { (type !== "R" && type !== "SD")  && <td>{elemento['Billetes Disponibles']}</td>}
                                         <td>{elemento.Denominacion}</td>
                                         <td>
                                             <input
                                                 {...register(`denominacion_${name}`, {
                                                     validate: {
-                                                        validacionMN: (value) => validarMoneda(`denominacion_${name}`,value),
+                                                        validacionMN: (value) => {
+                                                            if(dataG.perfil === 'Oficina Sucursal' ){
+                                                                return validarMoneda(`denominacion_${name}`, value);
+                                                            }else{
+                                                                if (type !== 'R'  && parseInt(value) > elemento['Billetes Disponibles']) {
+                                                                    setValue(`denominacion_${name}`,0)
+                                                                    return "No hay suficientes billetes disponibles.";
+                                                                }
+                                                                return validarMoneda(`denominacion_${name}`, value);
+                                                            }
+                                                            }
                                                     }}
                                                     )
                                                 }
@@ -51,14 +58,14 @@ export const Denominacion = ({type,moneda,options}) => {
                                                 disabled={dataG.perfil === 'Cajero' && options.tipo !== 'R' && elemento['Billetes Disponibles'] <=0}
                                             />
                                         </td>
-                                        <td>{calculateTotal(elemento.Denominacion)}</td>
+                                        <td>{calculateTotal(elemento)}</td>
                                     </tr>
                                 )
                                 })}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th colSpan="3">Total</th>
+                                <th colSpan={(type !== "R" && type !== "SD")?3:2}>Total</th>
                                 <th className={validacionColor()}>{FormatoMoneda(parseFloat(calculateGrandTotal()))}</th>
                             </tr>
                             </tfoot>

@@ -1,4 +1,4 @@
-import {encryptRequest, formattedDateWS, globalData, opciones, validarMoneda} from "../../../../utils";
+import {encryptRequest, formattedDateWS, globalData, opciones, OPTIONS, validarMoneda} from "../../../../utils";
 import {useForm} from "react-hook-form";
 import {useCatalogo} from "../../../../hook";
 import {dataG} from "../../../../App";
@@ -22,17 +22,12 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
         data.ticket = `MOVBAN${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`
         const encryptedData = encryptRequest(data);
         const response = await dotaSucursales(encryptedData);
-        if(response.mensaje !== ''){
-            toast.success(response.mensaje, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-                onClose: actualizarSaldo,
-            });
+        if(response.mensaje.includes("exitosamente")){
+            OPTIONS.onClose = actualizarSaldo;
+            toast.success(response.mensaje, OPTIONS);
             reset();
+        }else{
+            toast.error(response.mensaje, OPTIONS);
         }
     });
 

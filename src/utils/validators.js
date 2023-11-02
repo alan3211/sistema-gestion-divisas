@@ -23,7 +23,7 @@ export const validaFechas = (fecha) => {
     const esMayorDeEdad = edad >= 18;
 
     if(!esMayorDeEdad){
-        return "El cliente cliente es menor de edad";
+        return "El usuario es menor de edad";
     }
 
     // Validar año bisiesto
@@ -82,8 +82,16 @@ export const validarMayus = (name, value) => {
     return true;
 };
 
+export const validarCorreoElectronico = (correo) => {
+    console.log(correo);
+    // Expresión regular más permisiva para validar correos electrónicos
+    const correoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-
+    if (!correoRegex.test(correo)) {
+        return `El correo electrónico ingresado en el campo no es válido.`;
+    }
+    return true;
+};
 
 export const validarNumeroTelefono = (name,value) => {
     const phoneNumberRegex = /^\d{10}$/;

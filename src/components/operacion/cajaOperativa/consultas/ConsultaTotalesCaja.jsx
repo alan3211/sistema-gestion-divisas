@@ -19,7 +19,7 @@ export const ConsultaTotalesCaja = ({data}) => {
                                 </span>
                                 <span className="text-muted small pt-2 ps-1">
                                     {
-                                        parseInt(data.Billetes) > 1 ? 'billetes disponibles':'billete disponible'
+                                         parseInt(data.Billetes) > 1 || parseInt(data.Billetes) === 0 ? 'billetes disponibles':'billete disponible'
                                     }
                                 </span>
                             </div>

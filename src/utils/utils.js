@@ -11,6 +11,7 @@ export const opciones = { hour12: false, hour: '2-digit', minute: '2-digit', sec
 export const formattedDate = `${year}-${month}-${day}`;
 export const formattedDateWS = `${year}${month}${day}`;
 export const formattedDateDD = `${day}-${month}-${year}`;
+export const formattedDateDD2 = `${day}/${month}/${year}`;
 
 export const formateaMoneda = (cantidad) =>{
     // Convierte la cadena en un número decimal con 2 decimales
@@ -35,6 +36,11 @@ export const formatTime = (seconds) => {
 
 export const mensajeSinElementos = {
     estilo: 'alert-info',
+    icono: 'ri-error-warning-fill'
+}
+
+export const mensajeSinOperaciones = {
+    estilo: 'alert-warning',
     icono: 'ri-error-warning-fill'
 }
 
@@ -80,7 +86,7 @@ export const obtenerArrayDifDenominaciones = (denominacionesObj) => {
 
 export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominaciones = [
-        'p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+        'p05','p1','p2','p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
     ];
 
     const getDenominacionCantidad = (nombre) => {
@@ -105,7 +111,7 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
 
 export const getDiferenciaDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominaciones = [
-        'p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+        'p05','p1','p2','p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
     ];
 
     const getDenominacionCantidad = (nombre) => {
@@ -160,6 +166,13 @@ export const DENOMINACIONES = {
     MXP:'PESOS MEXICANOS'
 }
 
+export const DENOMINACIONESM = {
+    USD: "dólar",
+    EUR: "euro",
+    GBR: "libra",
+    MXP:'pesos mexicanos'
+}
+
 export const FormatoMoneda = (cantidad,moneda) => {
     if (typeof cantidad === 'number') {
         const formatoNumero = cantidad.toLocaleString('es-US', {
@@ -176,7 +189,16 @@ export const FormatoMoneda = (cantidad,moneda) => {
 }
 
 export const redondearNumero =(numero) => {
-    return Math.round(numero);
+    const parteEntera = parseInt(numero)
+    const parteDec = parseFloat(numero - parteEntera).toPrecision(2);
+    let decenas = Math.floor(parteDec * 10)/10;
+    let redondeado = Math.round((parteDec * 100) % 10) / 100;
+    if(redondeado >= 0.00 && redondeado < 0.05){
+        redondeado = 0.00;
+    }else if (redondeado >= 0.05 && redondeado <= 0.09){
+        redondeado = 0.05;
+    }
+    return parseFloat(parteEntera + decenas+ redondeado).toFixed(2);
 }
 
 export const OPTIONS = {
@@ -186,4 +208,19 @@ export const OPTIONS = {
     closeOnClick: true,
     pauseOnHover: true,
     theme: "colored",
+}
+
+export const getTextDivisa = (divisa) => {
+    const divisas = {
+        "USD": { plural: "dólares", singular: "dólar" },
+        "EUR": { plural: "euros", singular: "euro" },
+        "GBR": { plural: "libras", singular: "libra" }
+    };
+
+    // Validación de la divisa
+    if (divisas.hasOwnProperty(divisa)) {
+        return divisas[divisa];
+    } else {
+        throw new Error("Divisa no reconocida");
+    }
 }

@@ -2,7 +2,7 @@ import {HeaderComponent} from "./header/HeaderComponent";
 import {AsideComponent} from "./aside/AsideComponent";
 import {FooterComponent} from "./footer/FooterComponent";
 import {Button, Modal} from "react-bootstrap";
-import {useMonitorSesion} from "../../hook/useMonitorSesion";
+import {useMonitorSesion} from "../../hook/";
 import {formatTime} from "../../utils";
 
 export const MainLayout = ({children}) => {

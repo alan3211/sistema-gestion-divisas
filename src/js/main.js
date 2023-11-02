@@ -6,6 +6,9 @@ import * as simpleDatatables from "simple-datatables";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
+import './plugin_impresora_termica';
+import {connetor_plugin} from "./plugin_impresora_termica";
+
   /**
    * Easy selector helper function
    */

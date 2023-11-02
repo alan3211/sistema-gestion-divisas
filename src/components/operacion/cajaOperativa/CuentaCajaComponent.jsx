@@ -1,11 +1,12 @@
 import {encryptRequest, formattedDateDD, mensajeSinElementos} from "../../../utils";
 import {MessageComponent} from "../../commons";
-import {useCaja} from "../../../hook/useCaja";
-import {useEffect, useState} from "react";
+import {useCaja} from "../../../hook/";
+import {useState} from "react";
 import {TableComponent} from "../../commons/tables";
 import {ResumenCaja} from "./ResumenCaja";
-import {consultaCaja, getDotaciones} from "../../../services/operacion-caja";
+import {consultaCaja} from "../../../services/operacion-caja";
 import {dataG} from "../../../App";
+import {ResumenCajaParcial} from "./ResumenCajaParcial";
 
 export const CuentaCajaComponent = ({tipo}) => {
 
@@ -56,14 +57,28 @@ export const CuentaCajaComponent = ({tipo}) => {
                {
                    showDetalle && (
                        <>
-                           <ResumenCaja
-                               data={dataDenominacion}
-                               moneda={moneda}
-                               setShowDetalle={setShowDetalle}
-                               tipo={tipo}
-                               refresh={refreshQuery}
-                               resetForm={receiveResetFunction}
-                           />
+                           {
+                               tipo !== 'Cierre Parcial'
+                                   ? (
+                                       <ResumenCaja
+                                           data={dataDenominacion}
+                                           moneda={moneda}
+                                           setShowDetalle={setShowDetalle}
+                                           tipo={tipo}
+                                           refresh={refreshQuery}
+                                           resetForm={receiveResetFunction}
+                                       />
+                                   ):
+                                   <>
+                                       <ResumenCajaParcial
+                                           data={dataDenominacion}
+                                           moneda={moneda}
+                                           setShowDetalle={setShowDetalle}
+                                           refresh={refreshQuery}
+                                           resetForm={receiveResetFunction}
+                                       />
+                                   </>
+                           }
                        </>
                    )
                }
