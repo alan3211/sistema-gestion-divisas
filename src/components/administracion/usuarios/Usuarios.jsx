@@ -3,6 +3,7 @@ import {AgregaUsuario} from "./AgregaUsuario";
 import {TabsLayout} from "../../commons/tabs";
 import {AsignaUsuario} from "./AsignaUsuario";
 import {BloqueaUsuario} from "./BloqueaUsuario";
+import {ConsultaUsuarios} from "./ConsultaUsuarios";
 
 export const Usuarios = () => {
 
@@ -14,6 +15,7 @@ export const Usuarios = () => {
 
     const tabs = [
         {id:'alta-usuario',name:'Alta Usuario',icon:'bi bi-person-plus-fill me-2', element: <AgregaUsuario/>},
+        {id:'consulta-usuario',name:'Consulta Usuario',icon:'bi bi-search me-2', element: <ConsultaUsuarios/>},
         {id:'asigna-suc',name:'Asignar Usuarios',icon:'bi bi-person-check-fill me-2',element:<AsignaUsuario/>},
         {id:'bloq-usuario',name:'Bloquear/Desbloquear Usuario',icon:'bi bi-person-fill me-2',element: <BloqueaUsuario/>},
     ];
