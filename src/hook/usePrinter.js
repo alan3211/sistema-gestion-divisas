@@ -12,8 +12,6 @@ import {numeroALetras} from "../utils/numerosANombre";
 
 export const usePrinter = (datos) => {
 
-    console.log("Datos HOOK",datos)
-
     const [dataTicket, setDataTicket] = useState({});
 
     const getEstructuraTicket = async () => {
@@ -112,6 +110,66 @@ export const usePrinter = (datos) => {
         conector.cut("0")
     }
 
+
+    //Ticket para Cajero y Administrador Sucursal
+    const ticketCajaSucursal = (opcion, conector) => {
+        const currency = {
+            plural:"pesos mexicanos",
+            singular: "peso mexicano",
+            centPlural: "centavos",
+            centSingular: "centavo"
+        }
+
+        if(Object.keys(dataTicket).length === 0){
+            if(datos['No Usuario'] !== ''){
+                getEstructuraTicket();
+            }
+        }
+
+        if(dataTicket["Operación"] !== 'COMPRA'){
+            currency.plural = getTextDivisa(datos.Moneda).plural;
+            currency.singular = getTextDivisa(datos.Moneda).singular;
+        }
+        const valor = numeroALetras(parseFloat(dataTicket["Monto Entregado"]), currency);
+
+        conector.fontsize("1")
+        conector.textaling("center")
+        conector.text(`${opcion === 3 ? '-- CAJERO --' : ' -- OFICINA ADMINISTRATIVA --'}`)
+        conector.img_url("https://grocerys-front--k83k6h5.wittysmoke-209c31ac.eastus.azurecontainerapps.io/static/media/logo.024785155dae25af5d6a.png")
+        conector.fontsize("1")
+        conector.text(dataTicket.Registro)
+        conector.text(dataTicket.Nombre)
+        conector.text(dataTicket.Domicilio)
+        conector.text(`Sucursal: ${dataTicket.Sucursal}`)
+        conector.textaling("left")
+        conector.text("------------------------------------------")
+        conector.text(`Fecha: ${formattedDateDD2}    Folio: ${dataTicket.Folio}`)
+        conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas          # Usuario: ${dataTicket.Usuario}`)
+        conector.text("------------------------------------------")
+        conector.text(dataTicket["Operación"])
+        conector.text(`Divisa: ${DENOMINACIONESM[datos.Moneda]}           $ ${dataTicket["Operación"] === 'COMPRA' ? dataTicket["Total Recibido"] :dataTicket["Monto Entregado"]} ${dataTicket.Divisa} `)
+        conector.text("------------------------------------------")
+        conector.feed("1")
+        conector.text(`Cantidad recibida:      $ ${dataTicket["Total Recibido"]} ${dataTicket["Operación"] === 'COMPRA' ? dataTicket.Divisa:'MXN'}`)
+        conector.text(`Cantidad entregada:     $ ${dataTicket.Cambio} ${dataTicket["Operación"] !== 'COMPRA' ?'MXN': dataTicket.Divisa}`)
+        conector.feed("1")
+        conector.text("------------------------------------------")
+        conector.feed("1")
+        conector.text(`Total:                  $ ${dataTicket["Monto Entregado"]} ${dataTicket["Operación"] !== 'COMPRA' ? dataTicket.Divisa:'MXN'}`)
+        conector.text(`(${valor} 00/100)`)
+        conector.feed("2")
+        conector.text("------------------------------------------")
+        conector.text(`Atendido por: ${dataTicket.Atendido}`)
+        conector.text("------------------------------------------")
+        conector.feed("2")
+        conector.textaling("center")
+        conector.text(`______________________`)
+        conector.text(` Firma de conformidad `)
+        conector.text("------------------------------------------")
+        conector.feed("5")
+        conector.cut("0")
+    }
+
     const imprimeTicketNuevamente = (tipo) => imprimirDoc(tipo);
 
     const imprimirDoc = async (tipo) => {
@@ -124,8 +182,11 @@ export const usePrinter = (datos) => {
         if (tipo === 0) {
             ticket(0, conector)
             ticket(1, conector)
-        } else {
+        } else if (tipo === 2) {
             ticket(2, conector)
+        }else{
+            ticketCajaSucursal(3,conector)
+            ticketCajaSucursal(4,conector)
         }
 
         const resp = await conector.imprimir(nombreImpresora, api_key);

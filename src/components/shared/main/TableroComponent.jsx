@@ -4,6 +4,10 @@ import { Ventas } from "./tableros/Ventas";
 import { Compras } from "./tableros/Compras";
 import { Usuarios } from "./tableros/Usuarios";
 import { UltimosMovimientos } from "./tableros/UltimosMovimientos";
+import {TipoCambioComponent} from "../../operacion/compraVenta";
+import {dataG} from "../../../App";
+import {CompraVentaProvider} from "../../../context/compraVenta/CompraVentaProvider";
+import {TableroCoordinadorLogistico} from "./tableros/coordinadorLogistico/TableroCoordinadorLogistico";
 
 export const TableroComponent = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +31,7 @@ export const TableroComponent = () => {
                 </nav>
             </div>
 
-            {!isLoading && (
+            {(!isLoading && !dataG.perfil.includes('Coordinador')) && (
                 <section className="section dashboard">
                     <div className="row justify-content-center">
                         <Ventas data={estadistica[0]?.result_set?.[0] || {}} />
@@ -37,6 +41,9 @@ export const TableroComponent = () => {
                     </div>
                 </section>
             )}
+
+            {(!isLoading && dataG.perfil.includes('Coordinador'))&& (<TableroCoordinadorLogistico usuarios={estadistica[2]?.result_set?.[0] ||{} }/>)}
+
         </main>
     );
 };

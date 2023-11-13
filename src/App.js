@@ -19,6 +19,8 @@ import {TesoreriaProvider} from "./context/tesoreria/TesoreriaProvider";
 import {SucursalOperativa} from "./components/operacion/sucursalOperativa/SucursalOperativa";
 import {ToastContainer} from "react-toastify";
 import {PerfilComponent} from "./components/usuario/PerfilComponent";
+import {HealthComponent} from "./components/shared/HealthComponent";
+import {NotFound} from "./components/shared/NotFound";
 
 export let dataG = {
     sucursal:0,
@@ -37,6 +39,7 @@ const App = () => {
             <Router>
                 <Routes>
                     <Route exact path="/" element={<LoginComponent/>}/>
+                    <Route exact path="/health" element={<HealthComponent/>}/>
                     <Route path="/inicio" element={<MainLayout><MainComponent/></MainLayout>}/>
                     <Route path="/altaUsuarios" element={
                         <MainLayout><AltaClienteProvider><AltaClientesComponent/></AltaClienteProvider></MainLayout>}/>
@@ -52,6 +55,7 @@ const App = () => {
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>
                     <Route exact path="/catalogos" element={<MainLayout><Catalogo/></MainLayout>}/>
                     <Route exact path="/mi-perfil" element={<MainLayout><PerfilComponent/></MainLayout>}/>
+                    <Route path="/*" element={<NotFound/>}/>
                 </Routes>
             </Router>
             <ToastContainer/>
