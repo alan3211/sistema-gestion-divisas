@@ -24,7 +24,8 @@ export const EnvioOperaciones = () => {
             {columna:"Estatus",tool:"estatus"},
             {columna:"Cancelar",tool:"cancelar-envio-sucursal",refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:3}},
-        ]
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
     }
 
     const onSubmitRecepcion = handleSubmit(async (data) => {

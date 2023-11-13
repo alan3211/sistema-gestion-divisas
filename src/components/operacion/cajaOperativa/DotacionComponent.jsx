@@ -47,7 +47,8 @@ export const DotacionComponent = () => {
             {columna:"Acciones",tool:"acciones-caja", refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
 
-        ]
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
     }
 
     console.log(data);

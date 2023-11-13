@@ -12,7 +12,7 @@ export const FooterComponent = () =>{
                 <div className="copyright">
                     <h6>{dataG.sucursal || usuario.sucursal} - <strong>{dataG.nombre_sucursal || usuario.nombre_sucursal}</strong></h6>
                     <p>{dataG.direccion || usuario.direccion}</p>
-                    &copy; Copyright <strong><span>Sistema de Gestión de Divisas</span></strong>. Todos los derechos reservados.
+                    &copy; Copyright. Todos los derechos reservados.
                 </div>
                 <div className="credits">
                     Grocerys Centro Cambiario - {year}

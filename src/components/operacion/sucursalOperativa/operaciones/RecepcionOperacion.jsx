@@ -25,7 +25,8 @@ export const RecepcionOperacion = () => {
             {columna:"Estatus",tool:"estatus"},
             {columna:"Acciones",tool:"acciones-sucursales",refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
-        ]
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
     }
 
     const onSubmitRecepcion = handleSubmit(async (data) => {

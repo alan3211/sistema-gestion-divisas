@@ -167,7 +167,7 @@ export const DENOMINACIONES = {
 }
 
 export const DENOMINACIONESM = {
-    USD: "dólar",
+    USD: "dolar",
     EUR: "euro",
     GBR: "libra",
     MXP:'pesos mexicanos'
