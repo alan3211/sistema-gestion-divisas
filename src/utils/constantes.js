@@ -76,3 +76,4 @@ export const TOOLS_CANCELAR_OPERACION_URL = `${TOOLS_URL}cancelar/operacion`
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`
 export const ADMINISTRACION_USUARIO_ALTA_URL = `${ADMINISTRACION_URL}usuario/alta`
+export const ADMINISTRACION_USUARIO_CONSULTA_URL = `${ADMINISTRACION_URL}usuario/consulta`

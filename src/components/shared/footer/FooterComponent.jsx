@@ -4,7 +4,7 @@ import {onscroll,backtotop} from "../../../js/main";
 
 export const FooterComponent = () =>{
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("usuario_data"));
 
     return (
         <>
