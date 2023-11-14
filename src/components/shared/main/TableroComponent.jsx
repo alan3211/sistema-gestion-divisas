@@ -42,7 +42,7 @@ export const TableroComponent = () => {
                 </section>
             )}
 
-            {(!isLoading && dataG.perfil.includes('Coordinador'))&& (<TableroCoordinadorLogistico usuarios={estadistica[2]?.result_set?.[0] ||{} }/>)}
+            {(!isLoading && dataG.perfil.includes('Coordinador'))&& (<TableroCoordinadorLogistico/>)}
 
         </main>
     );
