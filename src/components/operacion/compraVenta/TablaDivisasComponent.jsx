@@ -8,10 +8,10 @@ import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContex
 export const TablaDivisasComponent = () => {
 
     const {setTipoDivisa} = useContext(CompraVentaContext);
-    const {valoresTipoCambio} = useFetchTipoCambio();
-    setTipoDivisa(valoresTipoCambio);
+    const {dataTipoCambio,headers} = useFetchTipoCambio();
+    setTipoDivisa(dataTipoCambio);
 
-    if(valoresTipoCambio.length === 0){
+    if(dataTipoCambio.length === 0){
         return (
             <MessageComponent estilos={mensajeSinElementos}>
                 No hay información del tipo de cambio
@@ -23,20 +23,21 @@ export const TablaDivisasComponent = () => {
             <table className="table table-hover text-center">
                 <thead>
                 <tr>
-                    <th scope="col">Divisa</th>
-                    <th scope="col">Compra</th>
-                    <th scope="col">Venta</th>
+                    {headers?.map(elemento => {
+                        return <th scope="col">{elemento}</th>
+                    })}
                 </tr>
                 </thead>
                 <tbody>
-                {valoresTipoCambio.map((ele, index) => (
+                {dataTipoCambio.map((ele, index) => (
                     <tr key={index}>
                         <td>
-                            <img src={ele.icon} width={30} height={30} className="m-2" alt={ele.nombre_divisa}/>
-                            {ele.nombre_divisa}
+                            <img src={ele.icon} width={30} height={30} className="m-2" alt={ele.Divisa}/>
+                            {ele.Divisa}
                         </td>
-                        <td>{ele.compra}</td>
-                        <td>{ele.venta}</td>
+                        <td>{ele.Compra}</td>
+                        <td>{ele.Venta}</td>
+                        <td> <i className="bi bi-sync text-success"></i> {ele["Hora Actualización"]}</td>
                     </tr>
                 ))}
                 </tbody>

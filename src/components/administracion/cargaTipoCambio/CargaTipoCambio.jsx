@@ -5,8 +5,9 @@ import {CargaTipoCambioOpera} from "./CargaTipoCambioOpera";
 export const CargaTipoCambio = () => {
 
     const moduleName= {
-        title: "Carga Tipo Cambio",
-        icon: "bi bi-currency-exchange me-2"
+        title: "Tipo Cambio",
+        icon: "bi bi-currency-exchange me-2",
+        module:'Carga'
     }
 
     const tabs = [

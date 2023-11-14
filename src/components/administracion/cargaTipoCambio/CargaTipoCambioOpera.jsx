@@ -3,13 +3,15 @@ import {CargaTipoCambioContext} from "../../../context/CargaTipoCambio/CargaTipo
 import {AltaDivisas} from "./AltaDivisas";
 import {useCatalogo} from "../../../hook";
 import {getCargaTipoCambio} from "../../../services/administracion-services";
-import {encryptRequest, formattedDate} from "../../../utils";
+import {encryptRequest, formattedDate, OPTIONS} from "../../../utils";
 import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 export const CargaTipoCambioOpera = ({id}) => {
 
     const {tipo, register,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
     const catalogo = useCatalogo([16, 17])
+    const navigate = useNavigate();
 
     const onSubmit = handleSubmit(async(data) => {
 
@@ -45,25 +47,11 @@ export const CargaTipoCambioOpera = ({id}) => {
         updatedData.opcion = tipo;
 
         if(updatedData.tipoCambio.length === 0){
-            toast.error('No se han ingresado tipos de cambio.',{
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.error('No se han ingresado tipos de cambio.',OPTIONS);
         }else{
             const respuesta = await getCargaTipoCambio(encryptRequest(updatedData));
-            console.log("Respuesta: ",respuesta)
-            toast.success(respuesta.mensaje,{
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(respuesta.mensaje,OPTIONS);
+            navigate("/inicio");
         }
     });
 
@@ -148,7 +136,11 @@ export const CargaTipoCambioOpera = ({id}) => {
                         </div>
                     )
                 }
-                <AltaDivisas/>
+                <div className="row mt-4">
+                    <div className="col-md-4 mx-auto">
+                        <AltaDivisas/>
+                    </div>
+                </div>
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-primary">
                         <i className="bi bi-save me-1"></i> GUARDAR
