@@ -21,6 +21,7 @@ import {ToastContainer} from "react-toastify";
 import {PerfilComponent} from "./components/usuario/PerfilComponent";
 import {HealthComponent} from "./components/shared/HealthComponent";
 import {NotFound} from "./components/shared/NotFound";
+import {Logistica} from "./components/operacion/logistica/Logistica";
 
 export let dataG = {
     sucursal:0,
@@ -50,6 +51,8 @@ const App = () => {
                            element={<MainLayout><SucursalOperativa/></MainLayout>}/>
                     <Route exact path="/tesoreria"
                            element={<MainLayout><TesoreriaProvider><Tesoreria/></TesoreriaProvider></MainLayout>}/>
+                    <Route exact path="/logistica"
+                           element={<MainLayout><Logistica/></MainLayout>}/>
                     <Route exact path="/cargaTipoCambio" element={
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>

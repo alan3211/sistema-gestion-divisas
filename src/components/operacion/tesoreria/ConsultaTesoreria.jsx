@@ -5,7 +5,7 @@ import {dataG} from "../../../App";
 import {getResumenSucursales} from "../../../services/operacion-tesoreria";
 import {TableComponent} from "../../commons/tables";
 
-export const ConsultaTesoreria = () => {
+export const ConsultaTesoreria = ({type}) => {
 
   const saldoGeneral = useSaldo();
   const [isLoading,setIsLoading] = useState(true);
@@ -60,14 +60,14 @@ export const ConsultaTesoreria = () => {
     }
 
     return(
-        <>
-            <div className="container d-flex justify-content-center align-items-center mt-3">
+        <div className="mt-3">
+            {type !== 'logistica' && (<div className="container d-flex justify-content-center align-items-center">
                 <h5 className="text-blue text-center">
                     <i className="bi bi-bank me-2"></i>
-                     <span>Cuenta Bancaria:</span>
-                    <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral),'USD')}</strong>
+                    <span>Cuenta Bancaria:</span>
+                    <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral), 'USD')}</strong>
                 </h5>
-            </div>
+            </div>)}
             {
                 !isLoading && <TableComponent data={dataResumen} options={options}/>
             }
@@ -82,6 +82,6 @@ export const ConsultaTesoreria = () => {
                     </div>
                 )
             }
-        </>
+        </div>
     );
 }
