@@ -1,6 +1,6 @@
 //const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-//const URL = 'http://192.168.101.45:9000/';
-const URL = 'http://localhost:9000/';
+const URL = 'http://192.168.101.45:9000/';
+//const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -71,6 +71,7 @@ export const TOOLS_CONSULTA_DETALLE_DENOMINACIOENS_URL = `${TOOLS_URL}consulta/d
 
 export const TOOLS_OBTIENE_DATOS_TICKET_URL = `${TOOLS_URL}consulta/datosTicket`
 export const TOOLS_OBTIENE_NOTIFICACIONES_URL = `${TOOLS_URL}obtiene/notificaciones`
+export const TOOLS_OBTIENE_ACTIVIDAD_RECIENTE_URL = `${TOOLS_URL}obtiene/actividad-reciente`
 export const TOOLS_CANCELAR_OPERACION_URL = `${TOOLS_URL}cancelar/operacion`
 
 /*Modulo de administracion*/
