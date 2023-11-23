@@ -36,19 +36,23 @@ export const TableroCoordinadorLogistico = () => {
         // Simula una notificación periódica
         const interval = setInterval(() => {
             getActividadReciente()
-        }, 1000);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, [datosActividad]);
+
+    useEffect(() => {
+        getActividadReciente();
+    }, []);
 
     return(
 
         <section className="section dashboard">
             <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-5">
                     <TableroActividad data={datosActividad} showDataActividad={showDataActividad}/>
                 </div>
-                <div className="col-md-8">
+                <div className="col-md-7">
                     <CompraVentaProvider><TipoCambioComponent/></CompraVentaProvider>
                 </div>
             </div>

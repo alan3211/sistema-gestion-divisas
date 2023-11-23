@@ -100,11 +100,11 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                 <option value="20">20</option>
                                 <option value="50">50</option>
                                 <option value="200">200</option>
-                            </select>{" "}
+                            </select>
                             por página
                         </label>
                     </div>)}
-                    {  (buscar && (filteredData.length >= 5)) && (<div className="datatable-search">
+                    {  (buscar) && (<div className="datatable-search">
                         <div className="search-input-container">
                             <input
                                 key="searchTable"

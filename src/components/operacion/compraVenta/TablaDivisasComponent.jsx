@@ -1,8 +1,15 @@
-import {formattedDateDD, mensajeSinElementos} from "../../../utils";
+import {encryptRequest, formattedDate, formattedDateDD, mensajeSinElementos, validarNumeros} from "../../../utils";
 import {useFetchTipoCambio} from "../../../hook";
 import {MessageComponent} from "../../commons";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+import {dataG} from "../../../App";
+import {toast} from "react-toastify";
+import {ModalGenericTool} from "../../commons/modals";
+import {Denominacion} from "../denominacion";
+import {ModalLoading} from "../../commons/modals/ModalLoading";
+import {TableComponent} from "../../commons/tables";
+import {consultaSucursalesTPCambio} from "../../../services";
 
 
 export const TablaDivisasComponent = () => {
@@ -10,6 +17,42 @@ export const TablaDivisasComponent = () => {
     const {setTipoDivisa} = useContext(CompraVentaContext);
     const {dataTipoCambio,headers} = useFetchTipoCambio();
     setTipoDivisa(dataTipoCambio);
+    const [showDetailSuc,setShowDetailSuc] = useState(false);
+    const [dataSucursales,setDataSucursales] = useState([]);
+
+    const consultaTipoCambioSucursales = async (divisa) => {
+        const values = {
+            divisa,
+            fecha:formattedDate
+        }
+        const encryptedData = encryptRequest(values);
+
+        const response =  await consultaSucursalesTPCambio(encryptedData);
+        setDataSucursales(response);
+        setShowDetailSuc(true);
+    }
+
+    const OPTIONS_SUCURSAL = {
+        showMostrar:true,
+        buscar: true,
+        paginacion: true,
+        filters:[
+            {columna:'Compra',filter:'currency'},
+            {columna:'Venta',filter:'currency'}
+        ]
+    }
+
+    const OPTIONS_TABLE_DIVISAS = {
+        size: 'xl',
+        showModal: () => setShowDetailSuc(true),
+        closeModal: () => {
+            setShowDetailSuc(false)
+        },
+        icon:'bi bi-currency-exchange me-2 text-success',
+        title:`Tipo de cambio en sucursales del ${formattedDateDD}`,
+        subtitle:''
+    }
+
 
     if(dataTipoCambio.length === 0){
         return (
@@ -20,6 +63,7 @@ export const TablaDivisasComponent = () => {
         );
     }else{
         return(
+            <>
             <table className="table table-hover text-center">
                 <thead>
                 <tr>
@@ -38,10 +82,32 @@ export const TablaDivisasComponent = () => {
                         <td>{ele.Compra}</td>
                         <td>{ele.Venta}</td>
                         <td> <i className="bi bi-sync text-success"></i> {ele["Hora Actualización"]}</td>
+                        {
+                            dataG.perfil === 'Coordinador Logística' &&
+                            (
+                                <td>
+                                    <button className="btn btn-orange" onClick={()=>consultaTipoCambioSucursales(ele.Divisa)}>
+                                        <i className="ri ri-store-3-fill"></i>
+                                    </button>
+                                </td>
+                            )
+                        }
                     </tr>
                 ))}
                 </tbody>
             </table>
+                {
+                    showDetailSuc && (
+                        <ModalGenericTool options={OPTIONS_TABLE_DIVISAS}>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <TableComponent data={dataSucursales} options={OPTIONS_SUCURSAL} />
+                                    </div>
+                                </div>
+                        </ModalGenericTool>
+                    )
+                }
+            </>
         );
     }
 }
