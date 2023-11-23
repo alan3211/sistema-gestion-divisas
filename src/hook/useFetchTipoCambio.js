@@ -41,6 +41,9 @@ export const useFetchTipoCambio = () => {
             return elemento;
         });
         setValorTipoCambio(valoresTipoCambio.result_set);
+        if(dataG.perfil === 'Coordinador Logística'){
+            valoresTipoCambio.headers.push('Detalle Sucursales')
+        }
         setValoresTipoCambio(valoresTipoCambio.headers);
         console.log(valorTipoCambio);
     }

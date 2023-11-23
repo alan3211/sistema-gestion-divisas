@@ -13,9 +13,9 @@ export const Logistica = () => {
     };
 
     const tabs = [
-        {id:'consulta',name:'Consulta',icon:'ri ri-search-line me-2', element: <ConsultaTesoreria type="logistica"/>},
-        {id:'asigna-fondos',name:'Asignación de Fondos',icon:'ri ri-store-2-line me-2',element:<OperacionTesoreria/>},
-        {id:'estatus-reportes',name:'Reportes',icon:'ri ri-dashboard-2-line me-2',element: <EstatusDotaciones/>},
+        {id:'consulta',name:'Análisis de Fondos',icon:'bi bi-bar-chart-fill me-2', element: <ConsultaTesoreria type="logistica"/>},
+        {id:'estatus-reportes',name:'Reportes',icon:'bi bi-file-earmark-text me-2',element: <EstatusDotaciones/>},
+        {id:'asigna-fondos',name:'Estatus Fondos Enviados a Sucursal',icon:'ri ri-store-2-line me-2',element:<OperacionTesoreria/>},
     ];
 
     return (
