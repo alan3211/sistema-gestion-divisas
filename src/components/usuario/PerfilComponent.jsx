@@ -15,7 +15,6 @@ export const PerfilComponent = () => {
 
     const tabs = [
         {id:'resumen',name:'Resumen',icon:'bi bi-file-earmark-text me-2', element: <ResumenUsuario/>},
-        {id:'editarPerfil',name:'Editar Perfil',icon:'bi bi-pencil me-2', element: <EditarUsuario/>},
         {id:'cambiarPass',name:'Cambiar Contraseña',icon:'bi bi-key me-2', element: <CambiarPassword/>},
     ]
 
@@ -24,11 +23,11 @@ export const PerfilComponent = () => {
             <Layout moduleName={optionModule}>
                 <section className="section profile">
                     <div className="row">
-                        <div className="col-xl-4">
+                        <div className="col-xl-5">
                            <UserCard/>
                         </div>
 
-                        <div className="col-xl-8">
+                        <div className="col-xl-7">
                             <div className="card">
                                 <div className="card-body pt-3">
                                     <TabsLayout tabs={tabs}/>

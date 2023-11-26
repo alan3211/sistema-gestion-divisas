@@ -23,7 +23,7 @@ export const MainComponent = () => {
         if(resultado){
             toast.error(resultado, {
                 position: "top-center",
-                autoClose: 10000,
+                autoClose: false,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -39,7 +39,7 @@ export const MainComponent = () => {
         if(resultado){
             toast.warn(resultado, {
                 position: "top-center",
-                autoClose: 10000,
+                autoClose: false,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,

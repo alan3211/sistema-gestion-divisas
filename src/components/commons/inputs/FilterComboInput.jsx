@@ -16,7 +16,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options }) => {
 
         console.log("OPTIONS:", options)
         const filteredOptions = options.filter((option) =>
-            option.descripcion.trim().toUpperCase().includes(inputValue.toUpperCase())
+            option.descripcion.trim().toUpperCase().startsWith(inputValue.toUpperCase())
         );
         console.log("FILTER:",filteredOptions)
         // Establecer el error en errors[name] si no hay opciones coincidentes
