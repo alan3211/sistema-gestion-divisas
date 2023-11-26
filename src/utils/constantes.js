@@ -13,6 +13,7 @@ export const CATALOGOSUSUARIOS_URL = `${URL}catalogos/usuarios/`;
 export const CATALOGOS_GUARDADO_URL = `${URL}catalogos/guarda/`;
 export const OPERACIONES_URL = `${URL}operaciones/`;
 export const TESORERIA_URL = `${URL}tesoreria/`;
+export const LOGISTICA_URL = `${URL}logistica/`;
 export const SUCURSAL_URL = `${URL}sucursal/`;
 export const CAJA_URL = `${URL}caja/`;
 export const PERFIL_URL = `${URL}perfil/`;
@@ -35,6 +36,9 @@ export const TESORERIA_DOTACION_SUCURSALES_URL = `${TESORERIA_URL}dotacion-sucur
 export const TESORERIA_ESTATUS_DOTACIONES_URL = `${TESORERIA_URL}dotacion-sucursal/estatus`
 export const TESORERIA_ENVIO_SUCURSAL_URL = `${TESORERIA_URL}dotacion-sucursal/consulta-envio`
 export const TESORERIA_RESUMEN_SUCURSAL_URL = `${TESORERIA_URL}consulta/resumen-sucursal`
+
+/*Logistica*/
+export const LOGISTICA_CONSULTA_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/boveda/consulta`
 
 /*OPERACION SUCURSAL*/
 export const SUCURSAL_ENVIO_VALORES_URL = `${SUCURSAL_URL}operativa/envio-valores`

@@ -5,7 +5,7 @@ import {formateaMoneda, FormatoMoneda} from "../../../../utils";
 import {useSaldo} from "../../../../hook";
 import {getConsultaSaldoCuenta} from "../../../../services/operacion-tesoreria";
 
-export const OperacionTesoreria = () => {
+export const OperacionTesoreria = ({perfil}) => {
 
     const [saldoGeneral, setSaldoGeneral] = useState(0); // Inicializa con un valor predeterminado
     const [selectedOption, setSelectedOption] = useState("dotacionSuc");
@@ -29,13 +29,13 @@ export const OperacionTesoreria = () => {
 
     return(
         <>
-        <div className="search-options d-flex justify-content-center align-items-center mt-4">
-            <h5 className="text-blue text-center">
-                <i className="bi bi-bank me-2"></i>
-                <span>Cuenta Bancaria:</span>
-                <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral),'MXP')}</strong>
-            </h5>
-        </div>
+            { perfil !== 'L' &&(<div className="search-options d-flex justify-content-center align-items-center mt-4">
+                <h5 className="text-blue text-center">
+                    <i className="bi bi-bank me-2"></i>
+                    <span>Cuenta Bancaria:</span>
+                    <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral), 'MXP')}</strong>
+                </h5>
+            </div>)}
         <div className="search-options d-flex justify-content-center align-items-center mt-3">
             <div className="radio-options m-2">
                 <div className="form-check custom-radio">
@@ -49,10 +49,10 @@ export const OperacionTesoreria = () => {
                         checked={selectedOption === "dotacionSuc"}
                     />
                     <label className="form-check-label" htmlFor="dotacionSuc">
-                        <strong>Dotación Sucursales</strong>
+                        <strong>Asignación de Fondos</strong>
                     </label>
                 </div>
-                <div className="form-check custom-radio">
+                { perfil !== 'L' &&(<div className="form-check custom-radio">
                     <input
                         className="form-check-input"
                         type="radio"
@@ -65,7 +65,7 @@ export const OperacionTesoreria = () => {
                     <label className="form-check-label" htmlFor="movBancario">
                         <strong>Movimiento Bancario</strong>
                     </label>
-                </div>
+                </div>)}
             </div>
         </div>
 

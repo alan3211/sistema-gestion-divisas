@@ -50,11 +50,6 @@ export const LoginComponent = () => {
 
     });
 
-    useEffect(() => {
-        setValue("usuario",localStorage.getItem('usuario') || '')
-        setValue("rememberMe",localStorage.getItem('rememberMe') || false)
-    }, []);
-
 
     return(
         <main>
@@ -125,22 +120,6 @@ export const LoginComponent = () => {
                                                 {
                                                     errors.password && <div className="invalid-feedback-custom">{errors.password.message}</div>
                                                 }
-                                            </div>
-
-                                            <div className="mb-3 d-flex align-items-center justify-content-between">
-                                                <div className="form-check">
-                                                    <input
-                                                        {...register("rememberMe")}
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        name="remember"
-                                                        id="rememberMe"
-                                                        onChange={()=> recordValues(watch())}
-                                                    />
-                                                    <label className="form-check-label" htmlFor="rememberMe">
-                                                        <strong>Recuérdame</strong>
-                                                    </label>
-                                                </div>
                                             </div>
 
                                             <button className="btn btn-primary w-100" type="submit">
