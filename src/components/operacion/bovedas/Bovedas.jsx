@@ -1,11 +1,8 @@
-import {useSaldo} from "../../../hook";
-import {useEffect, useState} from "react";
-import {getConsultaSaldoCuenta} from "../../../services/operacion-tesoreria";
-import {FormatoMoneda} from "../../../utils";
-import {DotacionSucursales} from "../tesoreria/operacion/DotacionSucursales";
-import {MovimientoBancario} from "../tesoreria/operacion/MovimientoBancario";
+import {useState} from "react";
+
 import {SolicitaDotacionBoveda} from "./SolicitaDotacionBoveda";
 import {ConsultaBovedas} from "./ConsultaBovedas";
+import {DotacionesProvider} from "../../../context/dotaciones/DotacionesProvider";
 
 export const Bovedas = ({perfil}) => {
 
@@ -52,7 +49,7 @@ export const Bovedas = ({perfil}) => {
 
             {
                 selectedOption === 'solBoveda'
-                    ? <SolicitaDotacionBoveda perfil={perfil}/>
+                    ?   <DotacionesProvider><SolicitaDotacionBoveda perfil={perfil}/></DotacionesProvider>
                     : <ConsultaBovedas perfil={perfil}/>
             }
         </>

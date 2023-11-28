@@ -38,7 +38,7 @@ export const OperacionTesoreria = ({perfil}) => {
             </div>)}
         <div className="search-options d-flex justify-content-center align-items-center mt-3">
             <div className="radio-options m-2">
-                <div className="form-check custom-radio">
+                {perfil !== 'T' && (<div className="form-check custom-radio">
                     <input
                         className="form-check-input"
                         type="radio"
@@ -51,8 +51,8 @@ export const OperacionTesoreria = ({perfil}) => {
                     <label className="form-check-label" htmlFor="dotacionSuc">
                         <strong>Asignación de Fondos</strong>
                     </label>
-                </div>
-                { perfil !== 'L' &&(<div className="form-check custom-radio">
+                </div>)}
+                { perfil === 'T' &&(<div className="form-check custom-radio">
                     <input
                         className="form-check-input"
                         type="radio"

@@ -83,7 +83,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     }
 
     return (<>
-            <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns"
+            <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns mx-auto"
                  style={{"fontSize": "12px"}}>
                 <div className="datatable-top">
                     {
