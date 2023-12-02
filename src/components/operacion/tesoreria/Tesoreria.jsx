@@ -19,7 +19,6 @@ export const Tesoreria = () => {
         {id:'consulta',name:'Consulta',icon:'ri ri-search-line me-2', element: <ConsultaTesoreria type="tesoreria"/>},
         {id:'dota-suc',name:'Operación Tesorería',icon:'ri ri-store-2-line me-2',element:<OperacionTesoreria perfil="T"/>},
         {id:'estatus-boveda',name:'Fondos Enviados a Boveda',icon:'bi bi-file-earmark-text me-2',element: <ConsultaBovedas perfil="T"/>},
-        {id:'estatus-dot',name:'Estatus Dotaciones',icon:'ri ri-dashboard-2-line me-2',element: <EstatusDotaciones/>},
         {id:'recep-valores',name:'Recepción de Valores',icon:'bi bi-receipt me-2',element: <RecepcionValores/>},
     ];
 

@@ -1,7 +1,10 @@
 import {useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
-import { FormatoMoneda } from "../../../utils";
+import {encryptRequest, FormatoMoneda, formattedDateWS, opciones, OPTIONS} from "../../../utils";
 import { ModalLoading } from "../../commons/modals/ModalLoading";
+import {dataG} from "../../../App";
+import {enviaDotacionSucursal} from "../../../services/operacion-logistica";
+import {toast} from "react-toastify";
 
 const denominacionesMXN = ["0.05", "0.10", "0.20", "0.50", "1", "2", "5", "10", "20", "50", "100", "200", "500", "1000"];
 const denominacionesOtras = ["1", "2", "5", "10", "20", "50", "100"];
@@ -25,6 +28,7 @@ const InputBilletes = ({register, denominacion,nombre, rowIndex, handleInputChan
 
 export const AsignaFondosSucursal = ({ data, moneda }) => {
     const [guarda, setGuarda] = useState(false);
+    const [dataSuc,setDataSuc] = useState([]);
     const { register, handleSubmit } = useForm();
     const getPropiedad = (denominacion,sucursal) => {
         let propiedad = "";
@@ -56,14 +60,13 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
                 initialValues[getPropiedad(denominacion, elemento.Sucursal)] = 0;
             });
         }
-
         return initialValues;
     }) || [];
 
     const [billetesFisicos, setBilletesFisicos] = useState(initialBilletesFisicos);
     const [totalBilletes, setTotalBilletes] = useState([]);
     const [totalMonto, setTotalMonto] = useState([]);
-    const [validaGuarda, setValidaGuarda] = useState(true); // Inicializado en true
+    const [validaGuarda, setValidaGuarda] = useState(true);
 
     const obtenerSumaPorFila = (billetesFisicos) => {
         return billetesFisicos.map((fila) => {
@@ -173,8 +176,69 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
         title: "Guardando...",
     };
 
+    const generarEstructura = (montos, sucursales, elementos) => {
+        const estructura = [];
+
+        for (let i = 0; i < sucursales.length; i++) {
+            const sucursal = sucursales[i];
+            const monto = montos[i];
+
+            if (monto !== 0) {
+                const denominacion = [];
+
+                for (const key in elementos) {
+                    if (elementos.hasOwnProperty(key)) {
+                        const [suc, tipo, valor] = key.split('_');
+                        if (tipo === 'denominacion' && suc === `v${sucursal}`) {
+                            const nombre = valor;
+                            const cantidad = elementos[key] === '' ? 0 : parseInt(elementos[key])
+                            if (cantidad !== 0) {
+                                denominacion.push({ nombre, cantidad });
+                            }
+                        }
+                    }
+                }
+
+                if (denominacion.length > 0) {
+                    const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
+                    const horaOperacion = horaDelDia.split(":").join("");
+                    const ticket = `DOTSUC${sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+
+                    const objetoSucursal = {
+                        ticket,
+                        sucursal: parseInt(sucursal),
+                        monto,
+                        denominacion,
+                    };
+
+                    estructura.push(objetoSucursal);
+                }
+            }
+        }
+
+        return estructura;
+    };
+
     const onSubmit = handleSubmit(async (datos) => {
-        console.log("Array de objetos:", datos);
+        const sucursales = data.result_set.map((elemento) => parseInt(elemento.Sucursal));
+        const resultado = generarEstructura(totalMonto, sucursales, datos);
+        const valores = {
+            opcion: "Dotación Sucursal",
+            usuario: dataG.usuario,
+            divisa:moneda,
+            denominaciones: resultado
+        }
+        console.log(valores);
+
+        const encryptedData =  encryptRequest(valores);
+
+        const response = await enviaDotacionSucursal(encryptedData);
+
+        if (response !== '') {
+            toast.success(response, OPTIONS);
+
+        }
+
     });
 
     return (
@@ -256,7 +320,7 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
                     </tbody>
                 </table>
                 <div className="col-md-12">
-                    <button type="submit" className="m-2 btn btn-primary" disabled={!validaGuarda}>
+                    <button type="submit" className="m-2 btn btn-primary">
                         <span className="me-2">
                             GUARDAR
                             <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
