@@ -13,6 +13,19 @@ export const formattedDateWS = `${year}${month}${day}`;
 export const formattedDateDD = `${day}-${month}-${year}`;
 export const formattedDateDD2 = `${day}/${month}/${year}`;
 
+let horas = currentDate.getHours();
+let minutos = currentDate.getMinutes();
+let segundos = currentDate.getSeconds();
+
+// Determinar si es AM o PM
+const amOpm = horas >= 12 ? 'PM' : 'AM';
+
+// Convertir las horas al formato de 12 horas
+horas = horas % 12;
+horas = horas ? horas : 12;
+
+export const formattedDateH = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")} ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`;
+
 export const formateaMoneda = (cantidad) =>{
     // Convierte la cadena en un número decimal con 2 decimales
     const numero = parseFloat(cantidad).toFixed(2);
@@ -167,7 +180,7 @@ export const DENOMINACIONES = {
 }
 
 export const DENOMINACIONESM = {
-    USD: "dólar",
+    USD: "dolar",
     EUR: "euro",
     GBR: "libra",
     MXP:'pesos mexicanos'
@@ -224,3 +237,5 @@ export const getTextDivisa = (divisa) => {
         throw new Error("Divisa no reconocida");
     }
 }
+
+export const perfiles = ['Super Usuario','Administrador','Tesorero','Coordinador Logística']

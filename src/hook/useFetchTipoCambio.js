@@ -14,6 +14,7 @@ export const useFetchTipoCambio = () => {
     }
 
     const [valorTipoCambio,setValorTipoCambio] =  useState([]);
+    const [valoresTipoCambio,setValoresTipoCambio] =  useState([]);
 
     const currencyMapping = {
         USD: { nombre_divisa: 'Dólar', icon: USASVG },
@@ -24,22 +25,27 @@ export const useFetchTipoCambio = () => {
     const obtieneTipoCambio = async () => {
 
         const encryptedData = encryptRequest(formValues);
-        const  valoresTipoCambio = await getTipoCambio(encryptedData);
+        const valoresTipoCambio = await getTipoCambio(encryptedData);
 
-        if(valoresTipoCambio === null){
+        if(valoresTipoCambio.total_rows === 0){
             setValorTipoCambio([]);
             return;
         }
 
-        valoresTipoCambio.map((elemento) => {
-            const mapping = currencyMapping[elemento.divisa];
+        valoresTipoCambio.result_set.map((elemento) => {
+            const mapping = currencyMapping[elemento.Divisa];
             if (mapping) {
                 elemento.nombre_divisa = mapping.nombre_divisa;
                 elemento.icon = mapping.icon;
             }
             return elemento;
         });
-        setValorTipoCambio(valoresTipoCambio);
+        setValorTipoCambio(valoresTipoCambio.result_set);
+        if(dataG.perfil === 'Coordinador Logística'){
+            valoresTipoCambio.headers.push('Detalle Sucursales')
+        }
+        setValoresTipoCambio(valoresTipoCambio.headers);
+        console.log(valorTipoCambio);
     }
 
     useEffect( () => {
@@ -47,6 +53,7 @@ export const useFetchTipoCambio = () => {
     },[]);
 
     return {
-        valoresTipoCambio: valorTipoCambio
+        dataTipoCambio: valorTipoCambio,
+        headers: valoresTipoCambio,
     }
 }

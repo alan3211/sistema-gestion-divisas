@@ -9,7 +9,7 @@ import {encryptRequest} from "../../../utils";
 
 export const MainComponent = () => {
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("usuario_data"));
 
     const formValue ={
         sucursal: dataG.sucursal || usuario.sucursal,
@@ -23,7 +23,7 @@ export const MainComponent = () => {
         if(resultado){
             toast.error(resultado, {
                 position: "top-center",
-                autoClose: 10000,
+                autoClose: false,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -39,7 +39,7 @@ export const MainComponent = () => {
         if(resultado){
             toast.warn(resultado, {
                 position: "top-center",
-                autoClose: 10000,
+                autoClose: false,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -55,7 +55,7 @@ export const MainComponent = () => {
 
     const validaTableros = () => {
         if (
-            (dataG.perfil && (dataG.perfil.includes('Administrador') || dataG.perfil.includes('Tesorero')))
+            (dataG.perfil && (dataG.perfil.includes('Super Usuario') || dataG.perfil.includes('Tesorero') || dataG.perfil.includes('Coordinador Logística')))
         ) {
             return true;
         }

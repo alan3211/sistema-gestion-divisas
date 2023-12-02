@@ -28,11 +28,11 @@ export const UserCard = () => {
                     </li>
                     <li className="list-group-item">
                         <i className="bi bi-collection me-1 text-primary"></i>
-                        Limite Diario  <strong>{FormatoMoneda(parseFloat(dataG.limite_diario))}</strong>
+                        Limite Diario en USD a la compra <strong>{FormatoMoneda(parseFloat(dataG.limite_diario))}</strong>
                     </li>
                     <li className="list-group-item">
                         <i className="bi bi-collection me-1 text-danger"></i>
-                        Limite Mensual <strong>{FormatoMoneda(parseFloat(dataG.limite_mensual))}</strong>
+                        Limite Mensual en USD a la compra <strong>{FormatoMoneda(parseFloat(dataG.limite_mensual))}</strong>
                     </li>
                 </ul>
             </div>

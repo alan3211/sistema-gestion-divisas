@@ -1,17 +1,61 @@
-import {formattedDateDD, mensajeSinElementos} from "../../../utils";
+import {encryptRequest, formattedDate, formattedDateDD, mensajeSinElementos, validarNumeros} from "../../../utils";
 import {useFetchTipoCambio} from "../../../hook";
 import {MessageComponent} from "../../commons";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+import {dataG} from "../../../App";
+import {ModalGenericTool} from "../../commons/modals";
+import {TableComponent} from "../../commons/tables";
+import {consultaSucursalesTPCambio} from "../../../services";
 
 
 export const TablaDivisasComponent = () => {
 
     const {setTipoDivisa} = useContext(CompraVentaContext);
-    const {valoresTipoCambio} = useFetchTipoCambio();
-    setTipoDivisa(valoresTipoCambio);
+    const {dataTipoCambio,headers} = useFetchTipoCambio();
+    setTipoDivisa(dataTipoCambio);
+    const [showDetailSuc,setShowDetailSuc] = useState(false);
+    const [dataSucursales,setDataSucursales] = useState([]);
 
-    if(valoresTipoCambio.length === 0){
+    const consultaTipoCambioSucursales = async (divisa) => {
+        const values = {
+            divisa,
+            fecha:formattedDate
+        }
+        const encryptedData = encryptRequest(values);
+
+        const response =  await consultaSucursalesTPCambio(encryptedData);
+        setDataSucursales(response);
+        setShowDetailSuc(true);
+    }
+
+    const OPTIONS_SUCURSAL = {
+        showMostrar:true,
+        buscar: true,
+        buscarFecha: true,
+        paginacion: true,
+        filters:[
+            {columna:'Compra',filter:'currency'},
+            {columna:'Venta',filter:'currency'}
+        ],
+        deps:{
+            consultaSucursalesTPCambio
+        }
+    }
+
+    const OPTIONS_TABLE_DIVISAS = {
+        size: 'xl',
+        showModal: () => setShowDetailSuc(true),
+        closeModal: () => {
+            setShowDetailSuc(false)
+        },
+        icon:'bi bi-currency-exchange me-2',
+        title:`Detalle Tipo de Cambio`,
+        subtitle:''
+    }
+
+
+    if(dataTipoCambio.length === 0){
         return (
             <MessageComponent estilos={mensajeSinElementos}>
                 No hay información del tipo de cambio
@@ -20,27 +64,51 @@ export const TablaDivisasComponent = () => {
         );
     }else{
         return(
+            <>
             <table className="table table-hover text-center">
                 <thead>
                 <tr>
-                    <th scope="col">Divisa</th>
-                    <th scope="col">Compra</th>
-                    <th scope="col">Venta</th>
+                    {headers?.map(elemento => {
+                        return <th scope="col">{elemento}</th>
+                    })}
                 </tr>
                 </thead>
                 <tbody>
-                {valoresTipoCambio.map((ele, index) => (
+                {dataTipoCambio.map((ele, index) => (
                     <tr key={index}>
                         <td>
-                            <img src={ele.icon} width={30} height={30} className="m-2" alt={ele.nombre_divisa}/>
-                            {ele.nombre_divisa}
+                            <img src={ele.icon} width={30} height={30} className="m-2" alt={ele.Divisa}/>
+                            {ele.Divisa}
                         </td>
-                        <td>{ele.compra}</td>
-                        <td>{ele.venta}</td>
+                        <td>{ele.Compra}</td>
+                        <td>{ele.Venta}</td>
+                        <td> <i className="bi bi-sync text-success"></i> {ele["Hora Actualización"]}</td>
+                        {
+                            dataG.perfil === 'Coordinador Logística' &&
+                            (
+                                <td>
+                                    <button className="btn btn-orange" onClick={()=>consultaTipoCambioSucursales(ele.Divisa)}>
+                                        <i className="ri ri-store-3-fill"></i>
+                                    </button>
+                                </td>
+                            )
+                        }
                     </tr>
                 ))}
                 </tbody>
             </table>
+                {
+                    showDetailSuc && (
+                        <ModalGenericTool options={OPTIONS_TABLE_DIVISAS}>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <TableComponent data={dataSucursales} options={OPTIONS_SUCURSAL} />
+                                    </div>
+                                </div>
+                        </ModalGenericTool>
+                    )
+                }
+            </>
         );
     }
 }

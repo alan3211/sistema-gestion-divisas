@@ -9,8 +9,10 @@ import {accionesCaja, getDenominaciones} from "../../../../../services/tools-ser
 import {toast} from "react-toastify";
 import {ModalAccionesTool} from "../../../modals";
 import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
+import {usePrinter} from "../../../../../hook";
 
 export const AccionesCaja = ({item, index, refresh}) => {
+    const {imprimir} = usePrinter(item);
     const [showModal, setShowModal] = useState(false);
     const {
         register,
@@ -74,6 +76,9 @@ export const AccionesCaja = ({item, index, refresh}) => {
             setShowModal(false);
             refresh();
             reset();
+            if(optionBtn === 1){
+                imprimir(3)
+            }
         }
     }
 

@@ -19,6 +19,9 @@ import {TesoreriaProvider} from "./context/tesoreria/TesoreriaProvider";
 import {SucursalOperativa} from "./components/operacion/sucursalOperativa/SucursalOperativa";
 import {ToastContainer} from "react-toastify";
 import {PerfilComponent} from "./components/usuario/PerfilComponent";
+import {HealthComponent} from "./components/shared/HealthComponent";
+import {NotFound} from "./components/shared/NotFound";
+import {Logistica} from "./components/operacion/logistica/Logistica";
 
 export let dataG = {
     sucursal:0,
@@ -37,6 +40,7 @@ const App = () => {
             <Router>
                 <Routes>
                     <Route exact path="/" element={<LoginComponent/>}/>
+                    <Route exact path="/health" element={<HealthComponent/>}/>
                     <Route path="/inicio" element={<MainLayout><MainComponent/></MainLayout>}/>
                     <Route path="/altaUsuarios" element={
                         <MainLayout><AltaClienteProvider><AltaClientesComponent/></AltaClienteProvider></MainLayout>}/>
@@ -47,11 +51,14 @@ const App = () => {
                            element={<MainLayout><SucursalOperativa/></MainLayout>}/>
                     <Route exact path="/tesoreria"
                            element={<MainLayout><TesoreriaProvider><Tesoreria/></TesoreriaProvider></MainLayout>}/>
+                    <Route exact path="/logistica"
+                           element={<MainLayout><Logistica/></MainLayout>}/>
                     <Route exact path="/cargaTipoCambio" element={
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>
                     <Route exact path="/catalogos" element={<MainLayout><Catalogo/></MainLayout>}/>
                     <Route exact path="/mi-perfil" element={<MainLayout><PerfilComponent/></MainLayout>}/>
+                    <Route path="/*" element={<NotFound/>}/>
                 </Routes>
             </Router>
             <ToastContainer/>

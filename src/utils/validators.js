@@ -1,8 +1,8 @@
 export const validaFechas = (fecha) => {
-// Verificar el formato de la fecha
+    // Verificar el formato de la fecha
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!fechaRegex.test(fecha)) {
-        return "El formato de fecha es inválido. Utiliza el formato DD-MM-YYYY.";
+        return "El formato de fecha es inválido. Utiliza el formato YYYY-MM-DD.";
     }
 
     // Obtener el año, mes y día de la fecha actual
@@ -19,36 +19,32 @@ export const validaFechas = (fecha) => {
     if (monthActual < monthNacimiento || (monthActual === monthNacimiento && dayActual < dayNacimiento)) {
         edad--;
     }
-    // Verificar si es mayor de edad
-    const esMayorDeEdad = edad >= 18;
 
-    if(!esMayorDeEdad){
-        return "El usuario es menor de edad";
+    // Verificar si es mayor de edad
+    if (edad < 18) {
+        return "El usuario es menor de edad.";
     }
 
     // Validar año bisiesto
     const esBisiesto = (year) => (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
 
     // Validar día, mes y año
-    if (yearNacimiento < 1900 || yearNacimiento >= yearActual - 18) {
-        return "El año de nacimiento debe estar entre 1900 y " + (yearActual - 19) + ".";
+    if (yearNacimiento < 1900 || yearNacimiento > yearActual - 18) {
+        return `El año de nacimiento debe estar entre 1900 y ${yearActual - 18}.`;
     }
+
     if (monthNacimiento < 1 || monthNacimiento > 12) {
         return "El mes debe estar entre 1 y 12.";
     }
 
-    if (
-        yearNacimiento < 1900 ||
-        yearNacimiento >= yearActual - 18 ||
-        monthNacimiento > 12 ||
-        dayNacimiento > 31 ||
-        ((monthNacimiento === 2 && ((!esBisiesto(yearNacimiento) && dayNacimiento > 28) || (esBisiesto(yearNacimiento) && dayNacimiento > 29))) ||
-            ((monthNacimiento === 4 || monthNacimiento === 6 || monthNacimiento === 9 || monthNacimiento === 11) && dayNacimiento > 30))
-    ) {
-        return "El día es inválido para el mes y año proporcionados.";
+    const diasEnMes = new Date(yearNacimiento, monthNacimiento, 0).getDate();
+
+    if (dayNacimiento < 1 || dayNacimiento > diasEnMes) {
+        return `El día debe estar entre 1 y ${diasEnMes} para el mes y año proporcionados.`;
     }
+
     return true;
-}
+};
 
 export const validarNombreApellido = (name,value) => {
     const nombreRegex = /^$|^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'"]+$/;

@@ -1,4 +1,4 @@
-import {TitleComponent} from "../../commons/TitleComponent";
+import {TitleComponent} from "../../commons";
 import {TablaDivisasComponent} from "./TablaDivisasComponent";
 
 export const TipoCambioComponent = () => {

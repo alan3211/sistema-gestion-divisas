@@ -1,38 +1,14 @@
 import {
-    OPERACIONES_ALTACLIENTE_URL,
-    TESORERIA_CONSULTA_SALDO_URL,
-    TESORERIA_DOTACION_SUCURSALES_URL, TESORERIA_ENVIO_SUCURSAL_URL,
-    TESORERIA_ESTATUS_DOTACIONES_URL, TESORERIA_RESUMEN_SUCURSAL_URL
+    LOGISTICA_ACCIONES_DOTACION_BOVEDA, LOGISTICA_ASIGNA_FONDOS_SUCURSAL,
+    LOGISTICA_CONSULTA_DOTACION_BOVEDA, LOGISTICA_ENVIA_FONDOS_SUCURSAL,
+    LOGISTICA_GENERA_DOTACION_BOVEDA,
+    LOGISTICA_REALIZA_DOTACION_BOVEDA
 } from "../utils";
 
 
-export const getConsultaSaldoCuenta =  async() => {
+export const solicitaDotacionBoveda = async (encryptedData) => {
     try {
-        const url = `${TESORERIA_CONSULTA_SALDO_URL}`;
-
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem("token")}`
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Error en la solicitud al backend');
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
-    }
-}
-
-export const dotaSucursales = async (encryptedData) => {
-    try {
-        const url = `${TESORERIA_DOTACION_SUCURSALES_URL}`;
+        const url = `${LOGISTICA_REALIZA_DOTACION_BOVEDA}`;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -55,9 +31,85 @@ export const dotaSucursales = async (encryptedData) => {
     }
 }
 
-export const estatusOperaciones = async (encryptedData) => {
+export const consultaDotacionBoveda = async (encryptedData) => {
     try {
-        const url = `${TESORERIA_ESTATUS_DOTACIONES_URL}`;
+        const url = `${LOGISTICA_CONSULTA_DOTACION_BOVEDA}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:encryptedData})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const generaSolicitudDotacionBoveda = async (encryptedData) => {
+    try {
+        const url = `${LOGISTICA_GENERA_DOTACION_BOVEDA}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:encryptedData})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const accionesSolicitudBoveda = async (encryptedData) => {
+    try {
+        const url = `${LOGISTICA_ACCIONES_DOTACION_BOVEDA}`;
+
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:encryptedData})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+
+export const consultaAsignacionBoveda = async (encryptedData) => {
+    try {
+        const url = `${LOGISTICA_ASIGNA_FONDOS_SUCURSAL}`;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -81,34 +133,9 @@ export const estatusOperaciones = async (encryptedData) => {
 }
 
 
-export const consultaEnvioSucursal = async (encryptedData) => {
+export const enviaDotacionSucursal = async (encryptedData) => {
     try {
-        const url = `${TESORERIA_ENVIO_SUCURSAL_URL}`;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify({encryptedData:encryptedData})
-        });
-
-        if (!response.ok) {
-            throw new Error('Error en la solicitud al backend');
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
-    }
-}
-
-export const getResumenSucursales = async (encryptedData) => {
-    try {
-        const url = `${TESORERIA_RESUMEN_SUCURSAL_URL}`;
+        const url = `${LOGISTICA_ENVIA_FONDOS_SUCURSAL}`;
 
         const response = await fetch(url, {
             method: 'POST',

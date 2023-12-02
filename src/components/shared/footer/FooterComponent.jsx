@@ -1,18 +1,22 @@
 import {dataG} from "../../../App";
-import {year} from "../../../utils";
+import {perfiles, year} from "../../../utils";
 import {onscroll,backtotop} from "../../../js/main";
 
 export const FooterComponent = () =>{
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("usuario_data"));
 
     return (
         <>
             <footer id="footer" className="footer">
                 <div className="copyright">
-                    <h6>{dataG.sucursal || usuario.sucursal} - <strong>{dataG.nombre_sucursal || usuario.nombre_sucursal}</strong></h6>
+                    {
+                        !perfiles.includes(dataG.perfil) ?
+                            (<h6>{dataG.sucursal || usuario.sucursal} - <strong>{dataG.nombre_sucursal || usuario.nombre_sucursal}</strong></h6>)
+                            : <h6><strong>Oficina Central</strong></h6>
+                    }
                     <p>{dataG.direccion || usuario.direccion}</p>
-                    &copy; Copyright <strong><span>Sistema de Gestión de Divisas</span></strong>. Todos los derechos reservados.
+                    &copy; Copyright. Todos los derechos reservados.
                 </div>
                 <div className="credits">
                     Grocerys Centro Cambiario - {year}

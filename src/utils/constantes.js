@@ -1,5 +1,5 @@
-const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-//const URL = 'http://192.168.101.45:9000/';
+//const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+const URL = 'http://192.168.101.45:9000/';
 //const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
@@ -13,6 +13,7 @@ export const CATALOGOSUSUARIOS_URL = `${URL}catalogos/usuarios/`;
 export const CATALOGOS_GUARDADO_URL = `${URL}catalogos/guarda/`;
 export const OPERACIONES_URL = `${URL}operaciones/`;
 export const TESORERIA_URL = `${URL}tesoreria/`;
+export const LOGISTICA_URL = `${URL}logistica/`;
 export const SUCURSAL_URL = `${URL}sucursal/`;
 export const CAJA_URL = `${URL}caja/`;
 export const PERFIL_URL = `${URL}perfil/`;
@@ -22,6 +23,7 @@ export const TOOLS_URL = `${URL}tools/`;
 export const OPERACIONES_ALTACLIENTE_URL = `${OPERACIONES_URL}altaClientes`
 export const OPERACIONES_VALIDACLIENTE_URL = `${OPERACIONES_URL}validaCliente`
 export const OPERACIONES_TIPOCAMBIO_URL = `${OPERACIONES_URL}tipoCambio`
+export const OPERACIONES_CONSULTA_TIPOCAMBIO_URL = `${OPERACIONES_URL}tipoCambio/consulta`
 export const OPERACIONES_CONVERSION_URL = `${OPERACIONES_URL}conversion`
 export const OPERACIONES_BUSCACLIENTE_URL = `${OPERACIONES_URL}buscaCliente`
 export const OPERACIONES_HACEROPERACION_URL = `${OPERACIONES_URL}realiza/preoperacion`
@@ -34,6 +36,14 @@ export const TESORERIA_DOTACION_SUCURSALES_URL = `${TESORERIA_URL}dotacion-sucur
 export const TESORERIA_ESTATUS_DOTACIONES_URL = `${TESORERIA_URL}dotacion-sucursal/estatus`
 export const TESORERIA_ENVIO_SUCURSAL_URL = `${TESORERIA_URL}dotacion-sucursal/consulta-envio`
 export const TESORERIA_RESUMEN_SUCURSAL_URL = `${TESORERIA_URL}consulta/resumen-sucursal`
+
+/*Logistica*/
+export const LOGISTICA_REALIZA_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/boveda/solicita`
+export const LOGISTICA_CONSULTA_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/boveda/consulta`
+export const LOGISTICA_GENERA_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/boveda/genera`
+export const LOGISTICA_ACCIONES_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/boveda/acciones`
+export const LOGISTICA_ASIGNA_FONDOS_SUCURSAL = `${LOGISTICA_URL}asigna/boveda/sucursal`
+export const LOGISTICA_ENVIA_FONDOS_SUCURSAL = `${LOGISTICA_URL}envia-dotacion/sucursal`
 
 /*OPERACION SUCURSAL*/
 export const SUCURSAL_ENVIO_VALORES_URL = `${SUCURSAL_URL}operativa/envio-valores`
@@ -71,8 +81,10 @@ export const TOOLS_CONSULTA_DETALLE_DENOMINACIOENS_URL = `${TOOLS_URL}consulta/d
 
 export const TOOLS_OBTIENE_DATOS_TICKET_URL = `${TOOLS_URL}consulta/datosTicket`
 export const TOOLS_OBTIENE_NOTIFICACIONES_URL = `${TOOLS_URL}obtiene/notificaciones`
+export const TOOLS_OBTIENE_ACTIVIDAD_RECIENTE_URL = `${TOOLS_URL}obtiene/actividad-reciente`
 export const TOOLS_CANCELAR_OPERACION_URL = `${TOOLS_URL}cancelar/operacion`
 
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`
 export const ADMINISTRACION_USUARIO_ALTA_URL = `${ADMINISTRACION_URL}usuario/alta`
+export const ADMINISTRACION_USUARIO_CONSULTA_URL = `${ADMINISTRACION_URL}usuario/consulta`

@@ -2,9 +2,8 @@ import './CombosComponent.css';
 import {useContext, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 
-export const FilterComboInput = ({ name, label, options }) => {
-
-    const {propForm} =  useContext(AltaClienteContext);
+export const FilterComboInput = ({ propFormulario,name, label, options }) => {
+    const {propForm} =  useContext(AltaClienteContext) || { propForm: propFormulario };
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
@@ -12,16 +11,19 @@ export const FilterComboInput = ({ name, label, options }) => {
     const handleInputChange = (e) => {
         const inputValue = e.target.value.toUpperCase();
         setInputValue(inputValue);
+        console.log("INPUT:", inputValue)
         if (inputValue === '') return;
-        const filteredOptions = options.filter((option) =>
-            option.descripcion.toUpperCase().startsWith(inputValue.toUpperCase())
-        );
 
+        console.log("OPTIONS:", options)
+        const filteredOptions = options.filter((option) =>
+            option.descripcion.trim().toUpperCase().startsWith(inputValue.toUpperCase())
+        );
+        console.log("FILTER:",filteredOptions)
         // Establecer el error en errors[name] si no hay opciones coincidentes
         if (filteredOptions.length === 0) {
             propForm.errors[name] = {
                 type: 'manual',
-                message: 'No se encontró un país con el filtro ingresado.'
+                message: `No se encontró ${name === 'sucursal' ? 'una':'un'} ${name} con el filtro ingresado.`
             };
             setInputValue('');
         } else {
@@ -38,17 +40,19 @@ export const FilterComboInput = ({ name, label, options }) => {
         propForm.setValue(name, option.id); // Establece el valor en el formulario
     };
 
+    console.log("FORM", propForm)
+
     return (
         <div className="form-floating mb-3">
             <input
                 type="text"
                 {...propForm.register(name, {
-                    required: 'Debes escribir un país válido.',
+                    required: `El campo ${name} es requerido.`,
                 })}
                 value={inputValue}
                 onChange={handleInputChange}
                 className={`form-control ${propForm.errors[name] ? 'is-invalid' : ''}`}
-                placeholder="Filtrar por país"
+                placeholder={`Filtrar por ${name}`}
             />
             {showDropdown && (
                 <div className="combo-dropdown">

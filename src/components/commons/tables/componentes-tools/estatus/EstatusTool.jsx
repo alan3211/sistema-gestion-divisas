@@ -2,8 +2,10 @@
 export const EstatusTool = ({item, index, columna}) => {
     const estatus = {
         Pendiente: {icono: 'ri ri-hourglass-line me-2', estilo: 'btn-warning'},
+        'Por Confirmar': {icono: 'ri ri-hourglass-line me-2', estilo: 'btn-warning'},
         EnTraslado: {icono: 'bi bi-truck me-2', estilo: 'btn-dark'},
         Recibido: {icono: 'ri ri-checkbox-circle-line me-2', estilo: 'btn-success'},
+        Confirmado: {icono: 'ri ri-checkbox-circle-line me-2', estilo: 'btn-success'},
         Aceptado: {icono: 'ri ri-checkbox-circle-line me-2', estilo: 'btn-success'},
         Cotizado: {icono: 'bi bi-calculator me-2', estilo: 'btn-cotizar'},
         "Operación Realizada": {icono: 'ri ri-checkbox-circle-line me-2', estilo: 'btn-success'},

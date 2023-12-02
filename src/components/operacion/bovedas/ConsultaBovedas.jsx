@@ -1,10 +1,10 @@
-import {TableComponent} from "../../commons/tables";
 import {useForm} from "react-hook-form";
 import {useState} from "react";
 import {encryptRequest} from "../../../utils";
-import {consultaEnvioSucursal} from "../../../services/operacion-tesoreria";
+import {TableComponent} from "../../commons/tables";
+import {consultaDotacionBoveda} from "../../../services/operacion-logistica";
 
-export const RecepcionValores = () => {
+export const ConsultaBovedas = ({perfil}) => {
 
     const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
     const [showTable,setShowTable] = useState(false);
@@ -12,29 +12,25 @@ export const RecepcionValores = () => {
     const [formData,setFormData] = useState('');
 
     const refreshQuery = async () =>{
-        const response = await consultaEnvioSucursal(formData);
-        response.headers = [...response.headers,'Acciones']
+        const response = await consultaDotacionBoveda(formData);
         setData(response);
     }
 
-
+    const toolPerfil = perfil === "L" ? "cancelar-envio-boveda":"acciones-boveda";
     const options = {
         showMostrar:true,
         buscar: true,
         paginacion: true,
         tools:[
             {columna:"Estatus",tool:"estatus"},
-            {columna:"Acciones",tool:"acciones-tesoreria",refresh:refreshQuery},
-            {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
+            {columna:"Acciones",tool:`${toolPerfil}`,refresh:refreshQuery},
         ],
-        filters:[{columna:'Monto',filter:'currency'}]
+        filters:[{columna:'Monto Solicitado',filter:'currency'}]
     }
-
     const onSubmitRecepcion = handleSubmit(async (data) => {
         const encryptedData = encryptRequest(data);
         setFormData(encryptedData);
-        const response = await consultaEnvioSucursal(encryptedData);
-        response.headers = [...response.headers,'Acciones']
+        const response = await consultaDotacionBoveda(encryptedData);
         setData(response);
         setShowTable(true)
     });
@@ -50,21 +46,21 @@ export const RecepcionValores = () => {
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
                         <input
-                            {...register("fecha_operacion",{
+                            {...register("fecha",{
                                 required:{
                                     value:true,
-                                    message:'El campo Fecha Operación no puede ser vacio.'
+                                    message:'El campo Fecha no puede ser vacio.'
                                 },
                             })}
                             type="date"
-                            className={`form-control ${!!errors?.fecha_operacion ? 'invalid-input':''}`}
-                            id="fecha_operacion"
-                            name="fecha_operacion"
-                            placeholder="Ingresa la fecha de operación"
+                            className={`form-control ${!!errors?.fecha ? 'invalid-input':''}`}
+                            id="fecha"
+                            name="fecha"
+                            placeholder="Ingresa la fecha de consulta"
                         />
-                        <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
+                        <label htmlFor="fecha">FECHA</label>
                         {
-                            errors?.fecha_operacion && <div className="invalid-feedback-custom">{errors?.fecha_operacion.message}</div>
+                            errors?.fecha && <div className="invalid-feedback-custom">{errors?.fecha.message}</div>
                         }
                     </div>
                 </div>
@@ -79,7 +75,9 @@ export const RecepcionValores = () => {
                 </div>
             </form>
             {
-                showTable && <TableComponent data={data} options={options}/>
+            showTable && (
+                 <TableComponent data={data} options={options}/>
+                )
             }
         </div>
     );
