@@ -115,7 +115,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }
-        if(item.Operacion !== 'Dotación Sucursal'){
+        if(item.Operacion === 'Dotación Sucursal'){
             getDenominacionesAsignadas();
         }
     }, []);
