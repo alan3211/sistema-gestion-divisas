@@ -4,10 +4,7 @@ import {MessageComponent} from "../../commons";
 import {useContext, useState} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {dataG} from "../../../App";
-import {toast} from "react-toastify";
 import {ModalGenericTool} from "../../commons/modals";
-import {Denominacion} from "../denominacion";
-import {ModalLoading} from "../../commons/modals/ModalLoading";
 import {TableComponent} from "../../commons/tables";
 import {consultaSucursalesTPCambio} from "../../../services";
 
@@ -35,11 +32,15 @@ export const TablaDivisasComponent = () => {
     const OPTIONS_SUCURSAL = {
         showMostrar:true,
         buscar: true,
+        buscarFecha: true,
         paginacion: true,
         filters:[
             {columna:'Compra',filter:'currency'},
             {columna:'Venta',filter:'currency'}
-        ]
+        ],
+        deps:{
+            consultaSucursalesTPCambio
+        }
     }
 
     const OPTIONS_TABLE_DIVISAS = {
@@ -48,8 +49,8 @@ export const TablaDivisasComponent = () => {
         closeModal: () => {
             setShowDetailSuc(false)
         },
-        icon:'bi bi-currency-exchange me-2 text-success',
-        title:`Tipo de cambio en sucursales del ${formattedDateDD}`,
+        icon:'bi bi-currency-exchange me-2',
+        title:`Detalle Tipo de Cambio`,
         subtitle:''
     }
 

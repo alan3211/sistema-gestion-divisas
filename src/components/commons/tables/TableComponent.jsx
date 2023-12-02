@@ -1,9 +1,10 @@
 import React, {useState} from "react";
 import {MessageComponent} from "../MessageComponent";
-import {FormatoMoneda, mensajeSinElementos} from "../../../utils";
+import {FormatoMoneda, mensajeSinElementos, validaFechas} from "../../../utils";
 
 import './table.css';
 import {getTools} from "./operaciones/operaciones-tools";
+import {useForm} from "react-hook-form";
 
 
 export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
@@ -16,10 +17,12 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     const {
         showMostrar = false,
         buscar = false,
+        buscarFecha = false,
         paginacion = false,
         tools = [],
         filters=[],
         disabledColumns=[],
+        deps = {},
     } = options || {};
 
 
@@ -82,6 +85,8 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         }
     }
 
+
+
     return (<>
             <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns mx-auto"
                  style={{"fontSize": "12px"}}>
@@ -103,6 +108,17 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                             </select>
                             por página
                         </label>
+                    </div>)}
+                    {  (buscarFecha) && (<div className="datatable-search">
+                        <div className="">
+                            <input
+                                key="searchTable"
+                                placeholder="Buscar en la tabla"
+                                className="datatable-input"
+                                value={searchTerm}
+                                onChange={handleSearch}
+                            />
+                        </div>
                     </div>)}
                     {  (buscar) && (<div className="datatable-search">
                         <div className="search-input-container">

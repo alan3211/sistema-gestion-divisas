@@ -1,4 +1,5 @@
 import {Modal} from "react-bootstrap";
+import {formattedDate} from "../../../utils";
 
 export const ModalDetalleTool = ({options,children}) => {
     return (
@@ -80,9 +81,9 @@ export const ModalGenericTool = ({options,children}) => {
         <Modal centered size={options.size} show={options.showModal}>
             <Modal.Header closeButton onClick={options.closeModal}>
                 <Modal.Title>
-                    <h5>
+                    <h5 className="card-title">
                         <i className={options.icon}></i>
-                        {options.title}
+                        {options.title} <span>|  {formattedDate}</span>
                     </h5>
                 </Modal.Title>
             </Modal.Header>
