@@ -1,15 +1,27 @@
 import {useForm} from "react-hook-form";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {encryptRequest} from "../../../utils";
 import {TableComponent} from "../../commons/tables";
 import {consultaDotacionBoveda} from "../../../services/operacion-logistica";
 
 export const ConsultaBovedas = ({perfil}) => {
 
-    const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
+    const { register, handleSubmit, formState: {errors},
+        reset,setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
+
+    const [currentDate, setCurrentDate] = useState('');
+
+    useEffect(() => {
+        // Obtener la fecha actual en el formato YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+        setCurrentDate(today);
+        setValue("fecha",today)
+        // Realizar la consulta automáticamente al cargar la página
+        onSubmitRecepcion({ fecha: today });
+    }, []);
 
     const refreshQuery = async () =>{
         const response = await consultaDotacionBoveda(formData);
@@ -57,6 +69,7 @@ export const ConsultaBovedas = ({perfil}) => {
                             id="fecha"
                             name="fecha"
                             placeholder="Ingresa la fecha de consulta"
+                            value={currentDate}
                         />
                         <label htmlFor="fecha">FECHA</label>
                         {

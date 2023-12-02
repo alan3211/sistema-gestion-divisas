@@ -113,7 +113,7 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
 
         // Validar las diferencias aquí
         const difParcialActualizado = montoTotalPorFila.map((monto, index) => {
-            const difValida = monto >= data.result_set[index].Minimo && monto <= data.result_set[index].Maximo;
+            const difValida = monto <= data.result_set[index].Maximo;
             return { [index]: difValida };
         });
 
@@ -220,6 +220,7 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
     };
 
     const onSubmit = handleSubmit(async (datos) => {
+        setGuarda(true);
         const sucursales = data.result_set.map((elemento) => parseInt(elemento.Sucursal));
         const resultado = generarEstructura(totalMonto, sucursales, datos);
         const valores = {
@@ -236,7 +237,7 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
 
         if (response !== '') {
             toast.success(response, OPTIONS);
-
+            setGuarda(false)
         }
 
     });
@@ -307,10 +308,10 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
                                         ))}
                                     <td>{totalBilletes[index]}</td>
                                     <td className={
-                                        (totalMonto[index] > elemento.Maximo || totalMonto[index] < elemento.Minimo)
+                                        ((totalMonto[index] === 0 || totalMonto[index] > elemento.Maximo)
                                         ? 'text-danger bold'
-                                        : 'text-success bold'
-                                    }><i className={(totalMonto[index] > elemento.Maximo || totalMonto[index] < elemento.Minimo)?
+                                        : 'text-success bold')
+                                    }><i className={(totalMonto[index] === 0 || totalMonto[index] > elemento.Maximo)?
                                         'bi bi-exclamation-circle-fill me-1 text-danger'
                                         :'bi bi-arrow-up-circle-fill me-1 text-success'}></i><strong>{totalMonto[index]}</strong></td>
                                 </tr>

@@ -2,7 +2,7 @@
 import {
     eliminarDenominacionesConCantidadCero,
     encryptRequest, FormatoMoneda,
-    getDenominacion, obtenerObjetoDenominaciones,
+    getDenominacion, obtenerObjetoDenominaciones, OPTIONS,
     validarAlfaNumerico,
 } from "../../../../../utils";
 import {ModalAccionTesoreriaTool} from "../../../modals";
@@ -84,14 +84,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         const response = await accionesSucursal(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             setShowModal(false);
             refresh();
             reset();
@@ -105,7 +98,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             setShowModal(false);
             setValue("motivo",'');
         },
-        title: (optionBtn === 1) ? 'ACEPTAR OPERACIÓN' : 'RECHAZAR OPERACIÓN',
+        title: (optionBtn === 1) ? 'Aceptar Operación' : 'Rechazar Operación',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas el movimiento.',
@@ -114,6 +107,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
     useEffect(() => {
         const getDenominacionesAsignadas =  async () => {
             const valores = {
+                divisa: item.Moneda,
                 ticket: item["No Movimiento"]
             }
             const encryptedData = encryptRequest(valores);
@@ -190,7 +184,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                         <div className="col-md-6">
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
-                                                (item.Operacion === 'Dotación Sucursal') ? (<Denominacion type="D" moneda={item.Moneda} options={optionsDenominacion}/>)
+                                                (item.Operacion !== 'Dotación Sucursal') ? (<Denominacion type="D" moneda={item.Moneda} options={optionsDenominacion}/>)
                                                 : (<DenominacionTable moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} />)
                                             }
                                         </div>

@@ -1,15 +1,26 @@
 import {useForm} from "react-hook-form";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {encryptRequest} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 import {dataG} from "../../../../App";
 import {consultaDotacionSucursal} from "../../../../services/operacion-sucursal";
 
 export const EnvioOperaciones = () => {
-    const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
+    const { register, handleSubmit, formState: {errors},
+        reset,setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
+    const [currentDate, setCurrentDate] = useState('');
+
+    useEffect(() => {
+        // Obtener la fecha actual en el formato YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+        setCurrentDate(today);
+        setValue("fecha_operacion",today)
+        // Realizar la consulta automáticamente al cargar la página
+        onSubmitRecepcion({ fecha: today });
+    }, []);
 
     const refreshQuery = async () =>{
         const response = await consultaDotacionSucursal(formData);
@@ -59,6 +70,7 @@ export const EnvioOperaciones = () => {
                             id="fecha_operacion"
                             name="fecha_operacion"
                             placeholder="Ingresa la fecha de operación"
+                            value={currentDate}
                         />
                         <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {

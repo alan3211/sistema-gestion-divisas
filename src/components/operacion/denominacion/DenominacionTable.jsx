@@ -7,16 +7,18 @@ export const DenominacionTable = ({data=[],monto,moneda}) => {
                 <thead className="table-dark">
                 <tr>
                     <th className="col-1">Denominación ({moneda})</th>
-                    <th className="col-1">Cantidad</th>
+                    <th className="col-1">Cantidad a Recibir</th>
+                    <th className="col-1">Recibido</th>
+                    <th className="col-1">Total</th>
                 </tr>
                 </thead>
                 <tbody>
                 {data?.map((elemento) => {
-                    let name = elemento.nombre;
+                    let name = elemento.Denominacion;
                     return (
                         <tr key={`denominacion_${name}`}>
-                            <td>{elemento.nombre}</td>
-                            <td>{parseInt(elemento.cantidad)}</td>
+                            <td>{name}</td>
+                            <td>{parseInt(elemento["Cantidad a Recibir"])}</td>
                         </tr>
                     )
                 })}
