@@ -7,7 +7,8 @@ export const TableroActividad = ({ data, showDataActividad }) => {
     return (
         <div className="card">
             <div className="card-body">
-                <h5 className="card-title">Actividad Reciente <span>| Hoy</span></h5>
+                <h5 className="card-title">
+                    <i className="ri ri-time-line me-2"></i>Actividad Reciente <span>| Hoy</span></h5>
                 <div className="activity custom-scrollbar" style={{ overflowY: data.length > maxElementsToShow ? 'auto' : 'visible', maxHeight: '300px' }}>
                     {showDataActividad ? (
                         <>

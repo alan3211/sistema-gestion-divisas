@@ -190,8 +190,8 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
                     if (elementos.hasOwnProperty(key)) {
                         const [suc, tipo, valor] = key.split('_');
                         if (tipo === 'denominacion' && suc === `v${sucursal}`) {
-                            const nombre = valor;
-                            const cantidad = elementos[key] === '' ? 0 : parseInt(elementos[key])
+                            const nombre = valor.startsWith('p') ? (parseFloat(valor.slice(1)) / 100).toString() : valor;
+                            const cantidad = elementos[key] === '' ? 0 : parseInt(elementos[key]);
                             if (cantidad !== 0) {
                                 denominacion.push({ nombre, cantidad });
                             }

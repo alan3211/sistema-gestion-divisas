@@ -7,7 +7,9 @@ export const Compras = ({ data }) => {
             <div className="mb-4">
                 <div className="card revenue-card border-0">
                     <div className="card-body text-center p-2">
-                        <h5 className="card-title fw-bolder">Compras <span>| {formattedDate}</span></h5>
+                        <h5 className="card-title fw-bolder">
+                        <i className="bi bi-currency-dollar me-2"></i>
+                        Compras <span>| {formattedDate}</span></h5>
 
                         <p className="text-blue small fw-bold">Total Compras {0}</p>
                         <div className="mt-2">
