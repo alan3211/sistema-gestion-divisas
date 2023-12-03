@@ -15,7 +15,8 @@ export const RecepcionOperacion = () => {
 
     useEffect(() => {
         // Obtener la fecha actual en el formato YYYY-MM-DD
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toISOString()
+        console.log(today);
         setCurrentDate(today);
         setValue("fecha_operacion",today)
         // Realizar la consulta automáticamente al cargar la página

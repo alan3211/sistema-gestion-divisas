@@ -1,24 +1,23 @@
-import {FormatoMoneda} from "../../../utils";
-import {useState} from "react";
-import {useForm} from "react-hook-form";
+import { FormatoMoneda } from "../../../utils";
+import { useState, useEffect } from "react"; // Añadí useEffect
+import { useForm } from "react-hook-form";
 
-export const DenominacionTable = ({data=[],monto,moneda}) => {
-
-    const getPropiedad = (property,elemento) => {
-        let propiedad='';
-        if(elemento.Denominacion === '0.05'){
+export const DenominacionTable = ({ data = [], monto, moneda }) => {
+    const getPropiedad = (property, elemento) => {
+        let propiedad = "";
+        if (elemento.Denominacion === "0.05") {
             propiedad = `${property}_p05`;
-        }else if(elemento.Denominacion === '0.10'){
+        } else if (elemento.Denominacion === "0.10") {
             propiedad = `${property}_p1`;
-        }else if(elemento.Denominacion === '0.20'){
+        } else if (elemento.Denominacion === "0.20") {
             propiedad = `${property}_p2`;
-        }else if(elemento.Denominacion === '0.50'){
+        } else if (elemento.Denominacion === "0.50") {
             propiedad = `${property}_p5`;
-        }else{
+        } else {
             propiedad = `${property}_${parseInt(elemento.Denominacion)}`;
         }
         return propiedad;
-    }
+    };
 
     const [billetesFisicos, setBilletesFisicos] = useState(
         data.map((elemento) => ({
@@ -26,10 +25,23 @@ export const DenominacionTable = ({data=[],monto,moneda}) => {
         }))
     );
 
+    const [totalGeneral, setTotalGeneral] = useState(0); // Nuevo estado para el total general
+
     const {
         register,
         formState: { errors },
     } = useForm();
+
+    useEffect(() => {
+        // Recalcula el total general cuando cambia el estado billetesFisicos
+        const total = billetesFisicos.reduce(
+            (acc, billete) =>
+                acc +
+                Object.values(billete).reduce((billeteAcc, value) => billeteAcc + value, 0),
+            0
+        );
+        setTotalGeneral(total);
+    }, [billetesFisicos]);
 
     return (
         <div className="table-responsive text-center mt-2">
@@ -46,8 +58,10 @@ export const DenominacionTable = ({data=[],monto,moneda}) => {
                 {data?.map((elemento, index) => {
                     let name = elemento.Denominacion;
 
-                    // Calcula el total actual sumando los valores de la fila
-                    const totalActual = Object.values(billetesFisicos[index]).reduce((acc, value) => acc + value, 0);
+                    const totalActual = Object.values(billetesFisicos[index]).reduce(
+                        (acc, value) => acc + value,
+                        0
+                    );
 
                     return (
                         <tr key={`denominacion_${name}`}>
@@ -63,7 +77,9 @@ export const DenominacionTable = ({data=[],monto,moneda}) => {
                                     type="text"
                                     name={`${getPropiedad("denominacion", elemento)}`}
                                     className={` text-center form-control ${
-                                        errors && errors[`${getPropiedad("denominacion", elemento)}`] ? "is-invalid" : ""
+                                        errors && errors[`${getPropiedad("denominacion", elemento)}`]
+                                            ? "is-invalid"
+                                            : ""
                                     }`}
                                     placeholder="$"
                                     onChange={(e) => {
@@ -84,7 +100,17 @@ export const DenominacionTable = ({data=[],monto,moneda}) => {
                     );
                 })}
                 </tbody>
+                <tfoot>
+                <tr>
+                    <td colSpan={3}>
+                        <strong>Total</strong>
+                    </td>
+                    <td className={totalGeneral === monto ? 'text-success':'text-danger'}>
+                        <strong>{FormatoMoneda(parseFloat(totalGeneral))}</strong>
+                    </td>
+                </tr>
+                </tfoot>
             </table>
         </div>
     );
-}
+};
