@@ -7,7 +7,7 @@ import {dataG} from "../../../../App";
 
 export const RecepcionOperacion = () => {
     const { register, handleSubmit, formState: {errors},
-        reset,setValue } = useForm();
+        watch,setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
@@ -15,7 +15,7 @@ export const RecepcionOperacion = () => {
 
     useEffect(() => {
         // Obtener la fecha actual en el formato YYYY-MM-DD
-        const today = new Date().toISOString()
+        const today = new Date().toISOString().split("T")[0];
         console.log(today);
         setCurrentDate(today);
         setValue("fecha_operacion",today)
@@ -74,6 +74,7 @@ export const RecepcionOperacion = () => {
                             name="fecha_operacion"
                             placeholder="Ingresa la fecha de operación"
                             value={currentDate}
+                            onChange={(e)=> setCurrentDate(e.target.value)}
                         />
                         <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {

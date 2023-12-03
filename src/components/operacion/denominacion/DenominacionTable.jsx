@@ -2,7 +2,7 @@ import { FormatoMoneda } from "../../../utils";
 import { useState, useEffect } from "react"; // Añadí useEffect
 import { useForm } from "react-hook-form";
 
-export const DenominacionTable = ({ data = [], monto, moneda }) => {
+export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto}) => {
     const getPropiedad = (property, elemento) => {
         let propiedad = "";
         if (elemento.Denominacion === "0.05") {
@@ -35,11 +35,16 @@ export const DenominacionTable = ({ data = [], monto, moneda }) => {
     useEffect(() => {
         // Recalcula el total general cuando cambia el estado billetesFisicos
         const total = billetesFisicos.reduce(
-            (acc, billete) =>
-                acc +
-                Object.values(billete).reduce((billeteAcc, value) => billeteAcc + value, 0),
+            (acc, billete, index) => {
+                const totalActual = Object.values(billete).reduce(
+                    (acc, value) => acc + value,
+                    0
+                );
+                return acc + totalActual * parseFloat(data[index]["Denominacion"]);
+            },
             0
         );
+        setTotalMonto(total);
         setTotalGeneral(total);
     }, [billetesFisicos]);
 
@@ -95,7 +100,7 @@ export const DenominacionTable = ({ data = [], monto, moneda }) => {
                                     value={billetesFisicos[index][getPropiedad("denominacion", elemento)]}
                                 />
                             </td>
-                            <td>{totalActual}</td>
+                            <td>{totalActual * elemento.Denominacion}</td>
                         </tr>
                     );
                 })}
@@ -105,7 +110,7 @@ export const DenominacionTable = ({ data = [], monto, moneda }) => {
                     <td colSpan={3}>
                         <strong>Total</strong>
                     </td>
-                    <td className={totalGeneral === monto ? 'text-success':'text-danger'}>
+                    <td className={parseFloat(totalGeneral) === parseFloat(monto) ? 'text-success':'text-danger'}>
                         <strong>{FormatoMoneda(parseFloat(totalGeneral))}</strong>
                     </td>
                 </tr>

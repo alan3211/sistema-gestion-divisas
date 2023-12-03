@@ -71,6 +71,7 @@ export const EnvioOperaciones = () => {
                             name="fecha_operacion"
                             placeholder="Ingresa la fecha de operación"
                             value={currentDate}
+                            onChange={(e)=> setCurrentDate(e.target.value)}
                         />
                         <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {

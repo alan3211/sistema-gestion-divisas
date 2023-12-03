@@ -185,7 +185,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
                                                 (item.Operacion !== 'Dotación Sucursal') ? (<Denominacion type="D" moneda={item.Moneda} options={optionsDenominacion}/>)
-                                                : (<DenominacionTable moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} />)
+                                                : (<DenominacionTable moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} setTotalMonto={setTotalMonto}/>)
                                             }
                                         </div>
                                     </div>
