@@ -32,6 +32,7 @@ export let dataG = {
     nombre_sucursal:"",
     limite_diario:'',
     limite_mensual:'',
+    estatus:0,
     menus:[],
 };
 const App = () => {

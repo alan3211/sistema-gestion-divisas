@@ -47,6 +47,23 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
         return propiedad;
     };
 
+    const getOriginalProperty = (denominacion) =>{
+        let propiedad = "";
+        if (denominacion === "p05") {
+            propiedad = `0.05`;
+        } else if (denominacion === "p1") {
+            propiedad = `0.10`;
+        } else if (denominacion === "p2") {
+            propiedad = `0.20`;
+        } else if (denominacion === "p5") {
+            propiedad = `0.50`;
+        } else {
+            propiedad = `${denominacion}`;
+        }
+
+        return propiedad;
+    }
+
     // Inicializa billetesFisicos con valores predeterminados
     const initialBilletesFisicos = data.result_set?.map((elemento) => {
         const initialValues = {};
@@ -190,7 +207,7 @@ export const AsignaFondosSucursal = ({ data, moneda }) => {
                     if (elementos.hasOwnProperty(key)) {
                         const [suc, tipo, valor] = key.split('_');
                         if (tipo === 'denominacion' && suc === `v${sucursal}`) {
-                            const nombre = valor.startsWith('p') ? (parseFloat(valor.slice(1)) / 100).toString() : valor;
+                            const nombre = getOriginalProperty(valor);
                             const cantidad = elementos[key] === '' ? 0 : parseInt(elementos[key]);
                             if (cantidad !== 0) {
                                 denominacion.push({ nombre, cantidad });

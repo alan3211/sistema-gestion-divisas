@@ -28,6 +28,8 @@ export const LoginComponent = () => {
             localStorage.setItem("token",datos.token); // Se guarda el token
             localStorage.setItem("refresh_token",datos.refresh_token); // Se guarda el refresh
             const decodedToken = jwt_decode(datos.token);
+            console.log("USUARIO")
+            console.log(decodedToken)
             if (decodedToken.usuario) {
                 dataG.sucursal = parseInt(decodedToken.sucursal);
                 dataG.username = decodedToken.nombre;
@@ -37,6 +39,7 @@ export const LoginComponent = () => {
                 dataG.nombre_sucursal = decodedToken.nombre_sucursal;
                 dataG.limite_diario = decodedToken.limite_diario;
                 dataG.limite_mensual = decodedToken.limite_mensual;
+                dataG.estatus = decodedToken.activo_sesion;
                 dataG.menus = decodedToken.menus;
                 localStorage.setItem("usuario_data",JSON.stringify(dataG));
                 navigator("/inicio");

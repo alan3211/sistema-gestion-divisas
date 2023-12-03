@@ -1,6 +1,7 @@
-import Avatar from "react-avatar";
+
 import {dataG} from "../../App";
 import {FormatoMoneda} from "../../utils";
+import {Avatar} from "flowbite-react";
 
 export const UserCard = () => {
 
@@ -8,11 +9,8 @@ export const UserCard = () => {
         <div className="card">
             <div className="card-body profile-card pt-4 d-flex flex-column align-items-center">
                 <Avatar
-                    name={dataG.username}
-                    size="100"
-                    round
-                    color={Avatar.getRandomColor('sitebase')}
-                    fgColor="#fff"
+                    size="xl"
+                    rounded
                 />
                 <h2>{dataG.username}</h2>
                 <h3>{dataG.perfil}</h3>
