@@ -1,26 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {dataG} from "../../../App";
+import { dataG } from "../../../App";
 
-
-function renderSubMenu({IdModulo,Nombre,subMenus}) {
+function renderSubMenu({ IdModulo, Nombre, subMenus }) {
     if (subMenus && subMenus.length > 0) {
         return (
-            <ul id={`${Nombre}-${IdModulo}-nav`} className="nav-content collapse" data-bs-parent="#sidebar-nav">
-                {subMenus.map((subMenuItem) => {
-                    return(
+            <ul id={`${Nombre}-${IdModulo}-nav`} className="nav-content">
+                {subMenus.map((subMenuItem) => (
                     <li key={subMenuItem.IdModulo}>
                         <Link to={subMenuItem.Mapeo}
-                              state={ subMenuItem.Mapeo === '/compraVenta' &&  {
-                                cliente: '',
-                                clienteActivo: false,
-                            }
-                        } >
+                              state={subMenuItem.Mapeo === '/compraVenta' && {
+                                  cliente: '',
+                                  clienteActivo: false,
+                              }}
+                        >
                             <i className={subMenuItem.Icono}></i><span>{subMenuItem.Nombre}</span>
                         </Link>
-                    </li>);
-                }
-                )}
+                    </li>
+                ))}
             </ul>
         );
     } else {
@@ -32,12 +29,9 @@ export const renderMenu = (menu) => {
     return (
         <li className="nav-item" key={menu.IdModulo}>
             <a
-                className="nav-link collapsed"
-                data-bs-target={`#${menu.Nombre}-${menu.IdModulo}-nav`}
-                data-bs-toggle="collapse"
-                href="#"
+                className={`nav-link`}
             >
-                <i className={menu.Icono}></i><span>{menu.Nombre}</span><i className="bi bi-chevron-down ms-auto"></i>
+                <i className={menu.Icono}></i><span>{menu.Nombre}</span>
             </a>
             {renderSubMenu(menu)}
         </li>
@@ -46,7 +40,7 @@ export const renderMenu = (menu) => {
 
 function MenuComponent() {
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("usuario_data"));
 
     const [modulos, setModulos] = useState(dataG.menus);
 
@@ -70,20 +64,20 @@ function MenuComponent() {
     }, []);
 
     return (
-            <ul className="sidebar-nav" id="sidebar-nav">
+        <ul className="sidebar-nav" id="sidebar-nav">
 
-                <li className="nav-item">
-                    <Link className="nav-link " to="/inicio">
-                        <i className="bi bi-grid"></i>
-                        <span>Inicio</span>
-                    </Link>
-                </li>
-                {
-                    modulos.length!== 0
+            <li className="nav-item">
+                <Link className="nav-link " to="/inicio">
+                    <i className="bi bi-grid"></i>
+                    <span>Inicio</span>
+                </Link>
+            </li>
+            {
+                modulos.length !== 0
                     ? modulos.map((menu) => renderMenu(menu))
                     : usuario.menus.map((menu) => renderMenu(menu))
-                }
-            </ul>
+            }
+        </ul>
     );
 }
 

@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
-import {encryptRequest} from "../../../../utils";
+import {encryptRequest, formattedDate} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 import {dataG} from "../../../../App";
 import {consultaDotacionSucursal} from "../../../../services/operacion-sucursal";
@@ -15,11 +15,9 @@ export const EnvioOperaciones = () => {
 
     useEffect(() => {
         // Obtener la fecha actual en el formato YYYY-MM-DD
-        const today = new Date().toISOString().split('T')[0];
-        setCurrentDate(today);
-        setValue("fecha_operacion",today)
+        setValue("fecha_operacion",formattedDate)
         // Realizar la consulta automáticamente al cargar la página
-        onSubmitRecepcion({ fecha: today });
+        onSubmitRecepcion({ fecha: formattedDate });
     }, []);
 
     const refreshQuery = async () =>{

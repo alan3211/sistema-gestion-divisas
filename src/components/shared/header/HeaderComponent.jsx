@@ -3,26 +3,15 @@ import {useNavigate} from "react-router-dom";
 import {dataG} from "../../../App";
 import {SearchModules} from "./SearchModules";
 import {Notifications} from "./Notifications";
-import {useState} from "react";
 import './HeaderComponent.css';
 import { Avatar } from 'flowbite-react';
 
+const toggle = () => document.body.classList.toggle('toggle-sidebar');
 
 export const HeaderComponent = () => {
 
     const navigate = useNavigate();
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    const [isSidebarActive, setSidebarActive] = useState(false);
-    const [isUserConnected, setIsUserConnected] = useState(true);
-
-    const toggle = () => {
-        document.body.classList.toggle('toggle-sidebar');
-        setSidebarActive(prevState => !prevState);
-    };
-
-    const handleConnectionToggle = () => {
-        setIsUserConnected(prevState => !prevState);
-    };
+    const usuario = JSON.parse(localStorage.getItem("usuario_data"));
 
     const cerrarSesion = () => {
         localStorage.clear();
@@ -53,12 +42,6 @@ export const HeaderComponent = () => {
                     <Notifications/>
 
                     <li className="nav-item dropdown pe-3">
-                        <div className="d-flex align-items-center justify-content-between">
-                            <div
-                                className={`connection-indicator ${isUserConnected ? 'connected' : 'disconnected'}`}
-                                onClick={handleConnectionToggle}
-                            ></div>
-                        </div>
                         <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                            data-bs-toggle="dropdown">
                             <Avatar
