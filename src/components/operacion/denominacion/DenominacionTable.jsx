@@ -2,16 +2,16 @@ import { FormatoMoneda } from "../../../utils";
 import { useState, useEffect } from "react"; // Añadí useEffect
 import { useForm } from "react-hook-form";
 
-export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto}) => {
+export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDenominacion}) => {
     const getPropiedad = (property, elemento) => {
         let propiedad = "";
-        if (elemento.Denominacion === "0.05") {
+        if (elemento.Denominacion === ".05") {
             propiedad = `${property}_p05`;
-        } else if (elemento.Denominacion === "0.10") {
+        } else if (elemento.Denominacion === ".10") {
             propiedad = `${property}_p1`;
-        } else if (elemento.Denominacion === "0.20") {
+        } else if (elemento.Denominacion === ".20") {
             propiedad = `${property}_p2`;
-        } else if (elemento.Denominacion === "0.50") {
+        } else if (elemento.Denominacion === ".50") {
             propiedad = `${property}_p5`;
         } else {
             propiedad = `${property}_${parseInt(elemento.Denominacion)}`;
@@ -20,6 +20,7 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto}) => 
     };
 
     const [billetesFisicos, setBilletesFisicos] = useState(
+
         data.map((elemento) => ({
             [getPropiedad("denominacion", elemento)]: parseInt(elemento["Recibido"]) || 0,
         }))
@@ -46,6 +47,9 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto}) => 
         );
         setTotalMonto(total);
         setTotalGeneral(total);
+        console.log("DENOMINACIONES TABLE---")
+        console.log(billetesFisicos)
+        setDenominacion(billetesFisicos)
     }, [billetesFisicos]);
 
     return (
@@ -76,7 +80,7 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto}) => 
                                 <input
                                     {...register(`${getPropiedad("denominacion", elemento)}`, {
                                         validate: {
-                                            validacionMN: (value) => /^[1-9]\d*$/.test(value) || value === 0,
+                                            validacionMN: (value) => /^[0-9]\d*$/.test(value) || value === 0,
                                         },
                                     })}
                                     type="text"

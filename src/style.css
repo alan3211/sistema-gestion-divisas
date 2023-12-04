@@ -1607,3 +1607,25 @@ td,th,pre {
 .datatable-container::-webkit-scrollbar-track:hover {
   background-color: #d4d4d4; /* Color de la pista del scroll al pasar el mouse sobre él */
 }
+
+.form-control-custom {
+  width: 50px; /* Ancho fijo para cada input */
+  margin: auto; /* Centra el contenido */
+  display: block;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--bs-body-color);
+  appearance: none;
+  background-color: var(--bs-body-bg);
+  background-clip: padding-box;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.table-overflow-x {
+  overflow-x: auto !important;
+  max-width: 100px !important;
+}

@@ -5,6 +5,8 @@ import {SearchModules} from "./SearchModules";
 import {Notifications} from "./Notifications";
 import './HeaderComponent.css';
 import { Avatar } from 'flowbite-react';
+import {encryptRequest} from "../../../utils";
+import {finSesion} from "../../../services";
 
 const toggle = () => document.body.classList.toggle('toggle-sidebar');
 
@@ -13,8 +15,14 @@ export const HeaderComponent = () => {
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem("usuario_data"));
 
-    const cerrarSesion = () => {
+    const cerrarSesion = async () => {
         localStorage.clear();
+
+        if(dataG.estatus){
+            const encryptedData = encryptRequest({usuario:dataG.usuario});
+            await finSesion(encryptedData);
+        }
+
         navigate('/');
     }
 

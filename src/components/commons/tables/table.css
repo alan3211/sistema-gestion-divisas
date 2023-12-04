@@ -27,6 +27,7 @@
     max-height: 400px;
 }
 
+
 /* Archivo de estilos o componente CSS */
 .custom-scrollbar::-webkit-scrollbar {
     width: 10px;

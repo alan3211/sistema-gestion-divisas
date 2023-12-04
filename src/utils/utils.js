@@ -98,6 +98,7 @@ export const obtenerArrayDifDenominaciones = (denominacionesObj) => {
 }
 
 export const getDenominacion = (divisa = 'MXP', replaceValues) => {
+
     const denominaciones = [
         'p05','p1','p2','p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
     ];
@@ -113,12 +114,15 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominacionObj = { divisa };
 
     for (const nombre of denominaciones) {
+        console.log(nombre)
         const valor = nombre.startsWith('p') ? `0.${nombre.substring(1)}` : nombre;
         denominacionObj[`denominacion_${nombre}`] = {
             nombre: valor,
             cantidad: getDenominacionCantidad(nombre)
         };
     }
+
+    console.log(denominacionObj);
     return denominacionObj;
 };
 

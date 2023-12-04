@@ -1,6 +1,6 @@
 //const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-//const URL = 'http://192.168.101.45:9000/';
-const URL = 'http://localhost:9000/';
+const URL = 'http://192.168.101.45:9000/';
+//const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -19,6 +19,9 @@ export const CAJA_URL = `${URL}caja/`;
 export const PERFIL_URL = `${URL}perfil/`;
 export const ADMINISTRACION_URL = `${URL}administracion/`;
 export const TOOLS_URL = `${URL}tools/`;
+export const LOGIN_FIN_SESION_URL = `${LOGIN_URL}finSesion`;
+
+
 
 export const OPERACIONES_ALTACLIENTE_URL = `${OPERACIONES_URL}altaClientes`
 export const OPERACIONES_VALIDACLIENTE_URL = `${OPERACIONES_URL}validaCliente`

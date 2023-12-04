@@ -44,7 +44,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0;
         const denominacionValue = parseFloat(elemento.Denominacion);
         if(elemento.hasOwnProperty("Billetes Disponibles")){
-            if(dataG.perfil === 'Oficina Sucursal'){
+            if(dataG.perfil === 'Supervisor'){
                 return redondearNumero(parseFloat(cantidad * denominacionValue));
             }else{
                 if(elemento["Billetes Disponibles"] >= cantidad){

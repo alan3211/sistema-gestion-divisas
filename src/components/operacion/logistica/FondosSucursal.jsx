@@ -11,9 +11,12 @@ export const FondosSucursal = () => {
     const {register,formState:{errors},handleSubmit,reset,watch } = useForm();
     const [data,setData] = useState([]);
     const [showData,setShowData] = useState(false);
+    const [moneda,setMoneda] = useState('');
 
     const handleForm = handleSubmit(async(data)=>{
         console.log(data);
+
+        setMoneda(data.moneda);
 
         const encryptedData = encryptRequest(data);
 
@@ -115,7 +118,7 @@ export const FondosSucursal = () => {
                 </div>
             </form>
             {
-                showData && <AsignaFondosSucursal data={data} moneda={watch("moneda")}/>
+                showData && <AsignaFondosSucursal data={data} moneda={moneda}/>
             }
         </>
     );
