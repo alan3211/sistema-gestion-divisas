@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
-import {encryptRequest} from "../../../utils";
+import {encryptRequest, formattedDate} from "../../../utils";
 import {TableComponent} from "../../commons/tables";
 import {consultaDotacionBoveda} from "../../../services/operacion-logistica";
 
@@ -15,12 +15,10 @@ export const ConsultaBovedas = ({perfil}) => {
     const [currentDate, setCurrentDate] = useState('');
 
     useEffect(() => {
-        // Obtener la fecha actual en el formato YYYY-MM-DD
-        const today = new Date().toISOString().split('T')[0];
-        setCurrentDate(today);
-        setValue("fecha",today)
+        setCurrentDate(formattedDate);
+        setValue("fecha",formattedDate)
         // Realizar la consulta automáticamente al cargar la página
-        onSubmitRecepcion({ fecha: today });
+        onSubmitRecepcion({ fecha: formattedDate });
     }, []);
 
     const refreshQuery = async () =>{
@@ -70,6 +68,7 @@ export const ConsultaBovedas = ({perfil}) => {
                             name="fecha"
                             placeholder="Ingresa la fecha de consulta"
                             value={currentDate}
+                            onChange={(e)=> setCurrentDate(e.target.value)}
                         />
                         <label htmlFor="fecha">FECHA</label>
                         {

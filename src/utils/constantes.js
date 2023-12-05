@@ -76,6 +76,7 @@ export const TOOLS_ACCIONES_DOTACION_URL = `${TOOLS_URL}acciones/dotacion`
 export const TOOLS_ACCIONES_SUCURSAL_URL = `${TOOLS_URL}acciones/dotacion-sucursal`
 export const TOOLS_CANCELAR_DOTACION_SUCURSAL_URL = `${TOOLS_URL}cancelar/dotacion-sucursal`
 export const TOOLS_OBTIENE_DENOMINACIONES_URL = `${TOOLS_URL}consulta/denominaciones`
+export const TOOLS_OBTIENE_DENOMINACIONES_CAJA_URL = `${TOOLS_URL}consulta/denominaciones/caja`
 
 export const TOOLS_ACCIONES_CAJA_URL = `${TOOLS_URL}acciones/dotacion-caja`
 export const TOOLS_MUESTRA_DENOMINACIONES_URL = `${TOOLS_URL}muestra/denominaciones`
