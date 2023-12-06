@@ -50,7 +50,7 @@ export const TablaDivisasComponent = () => {
             setShowDetailSuc(false)
         },
         icon:'bi bi-currency-exchange me-2',
-        title:`Detalle Tipo de Cambio`,
+        title:'Detalle Tipo de Cambio',
         subtitle:''
     }
 

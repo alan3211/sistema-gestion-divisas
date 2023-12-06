@@ -70,18 +70,19 @@ export const CalculadoraFormComponent = () => {
     const obtieneDivisa = (tipoDivisa, formValues) => {
 
         const divisaValor = tipoDivisa.filter(elemento => {
-            return elemento.divisa === formValues["moneda"];
+            return elemento.Divisa === formValues["moneda"];
         });
 
         let valor = null;
 
         if (divisaValor.length > 0) {
             if (formValues["tipo_operacion"] === "1") {
-                valor = divisaValor[0].compra;
+                valor = divisaValor[0].Compra;
             } else {
-                valor = divisaValor[0].venta;
+                valor = divisaValor[0].Venta;
             }
         }
+        console.log(valor);
         return valor;
     }
 

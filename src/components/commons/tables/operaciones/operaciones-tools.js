@@ -7,8 +7,9 @@ import {
     Detalle,
     EstatusTool,
     SeleccionarCliente, VerDenominaciones, ImpresionTicket, DetalleDenominaciones, VerSucursales, CancelarOperacion,
-    IndicadoresDivisas, AccionesBoveda,CancelarEnvioBoveda,MontoSolicitud
+    IndicadoresDivisas, AccionesBoveda,CancelarEnvioBoveda,MontoSolicitud,OperacionEstatus
 } from "../componentes-tools";
+import {UsuariosSistema} from "../componentes-tools/cliente/UsuariosSistema";
 
 const toolComponents = {
     estatus: EstatusTool,
@@ -28,6 +29,8 @@ const toolComponents = {
     'monto-solicitud': MontoSolicitud,
     'cancelar-envio-boveda': CancelarEnvioBoveda,
     'acciones-boveda': AccionesBoveda,
+    'operacion-estatus':OperacionEstatus,
+    'usuarios-sistema':UsuariosSistema,
 };
 
 export const getTools = (toolInfo, item, index) => {
