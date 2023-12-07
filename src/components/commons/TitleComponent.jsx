@@ -1,6 +1,6 @@
-import {formattedDate, formattedDateDD} from "../../utils";
+import {formattedDate} from "../../utils";
 
-export const TitleComponent = ({title,icon,fecha})=>{
+export const TitleComponent = ({title,icon})=>{
 
     return (
         <h5 className="card-title">

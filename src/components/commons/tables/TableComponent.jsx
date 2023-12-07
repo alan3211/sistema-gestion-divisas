@@ -13,6 +13,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     const [searchTerm, setSearchTerm] = useState("");
     const [sortColumn, setSortColumn] = useState("");
     const [sortDirection, setSortDirection] = useState("asc");
+    const {register,handleSubmit,formState:{errors}} = useForm();
 
     const {
         showMostrar = false,
@@ -23,6 +24,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         filters=[],
         disabledColumns=[],
         deps = {},
+        params = {},
     } = options || {};
 
 
@@ -85,6 +87,9 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         }
     }
 
+    const onHandleDateChange = handleSubmit(async(data)=>{
+       console.log(data);
+    });
 
 
     return (<>
@@ -109,29 +114,57 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                             por página
                         </label>
                     </div>)}
-                    {  (buscarFecha) && (<div className="datatable-search">
-                        <div className="">
-                            <input
-                                key="searchTable"
-                                placeholder="Buscar en la tabla"
-                                className="datatable-input"
-                                value={searchTerm}
-                                onChange={handleSearch}
-                            />
+                    {buscar && (
+                        <div className="datatable-search">
+                            <div className="row">
+                                <div className="col-1">
+                                    {buscarFecha && (
+                                        <div className="filter">
+                                            <div className="form-floating">
+                                                <input
+                                                    {...register("fecha", {
+                                                        required: {
+                                                            value: true,
+                                                            message: 'El campo Fecha Consulta no puede ser vacio.'
+                                                        },
+                                                    })}
+                                                    type="date"
+                                                    className={`form-control ${!!errors?.fecha ? 'invalid-input' : ''}`}
+                                                    id="fecha"
+                                                    name="fecha"
+                                                    placeholder="Ingresa la fecha de consulta"
+                                                    onChange={onHandleDateChange}
+                                                />
+                                                <label htmlFor="fecha">FECHA CONSULTA</label>
+                                                {
+                                                    errors?.fecha_nacimiento && <div
+                                                        className="invalid-feedback-custom">{errors?.fecha.message}</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="col-3">
+                                    <div className="search-input-container">
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <input
+                                                    key="searchTable"
+                                                    placeholder="Buscar en la tabla"
+                                                    className="datatable-input"
+                                                    value={searchTerm}
+                                                    onChange={handleSearch}
+                                                />
+                                            </div>
+                                            <div className="col-md-6">
+                                                <i className="bx bx-search p-2"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>)}
-                    {  (buscar) && (<div className="datatable-search">
-                        <div className="search-input-container">
-                            <input
-                                key="searchTable"
-                                placeholder="Buscar en la tabla"
-                                className="datatable-input"
-                                value={searchTerm}
-                                onChange={handleSearch}
-                            />
-                            <i className="bx bx-search p-2"></i>
-                        </div>
-                    </div>)}
+                    )}
                 </div>
                 <div className="datatable-container table-overflow">
                     <table className="table datatable-table table-responsive table-striped">

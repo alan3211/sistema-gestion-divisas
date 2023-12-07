@@ -50,3 +50,25 @@
 .custom-scrollbar::-webkit-scrollbar-track:hover {
     background-color: #d4d4d4;
 }
+
+/* Estilo para el contenedor del icono y el campo de entrada de fecha */
+.filter {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+
+/* Estilo para el icono nativo de calendario */
+.filter input[type="date"] {
+    padding-right: 30px; /* Ajusta el espaciado a la derecha del campo de entrada */
+    height: 24px; /* Ajusta la altura del campo de entrada según sea necesario */
+}
+
+/* Estilo para el icono personalizado de calendario */
+.filter i {
+    position: absolute;
+    top: 50%;
+    right: 5px; /* Ajusta la posición a la derecha del campo de entrada */
+    transform: translateY(-50%);
+    cursor: pointer;
+}

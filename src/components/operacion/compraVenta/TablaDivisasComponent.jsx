@@ -22,6 +22,7 @@ export const TablaDivisasComponent = () => {
             divisa,
             fecha:formattedDate
         }
+        OPTIONS_SUCURSAL.params = values;
         const encryptedData = encryptRequest(values);
 
         const response =  await consultaSucursalesTPCambio(encryptedData);
@@ -32,12 +33,13 @@ export const TablaDivisasComponent = () => {
     const OPTIONS_SUCURSAL = {
         showMostrar:true,
         buscar: true,
-        buscarFecha: true,
+        buscarFecha:true,
         paginacion: true,
         filters:[
             {columna:'Compra',filter:'currency'},
             {columna:'Venta',filter:'currency'}
         ],
+        params:{},
         deps:{
             consultaSucursalesTPCambio
         }
