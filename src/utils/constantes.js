@@ -46,6 +46,7 @@ export const LOGISTICA_CONSULTA_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/bove
 export const LOGISTICA_GENERA_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/boveda/genera`
 export const LOGISTICA_ACCIONES_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/boveda/acciones`
 export const LOGISTICA_ASIGNA_FONDOS_SUCURSAL = `${LOGISTICA_URL}asigna/boveda/sucursal`
+export const LOGISTICA_CONSULTA_CANTIDAD_SUCURSAL = `${LOGISTICA_URL}consulta/boveda/cantidad`
 export const LOGISTICA_ENVIA_FONDOS_SUCURSAL = `${LOGISTICA_URL}envia-dotacion/sucursal`
 
 /*OPERACION SUCURSAL*/

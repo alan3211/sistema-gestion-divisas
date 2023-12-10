@@ -1,8 +1,8 @@
 import {useCatalogo} from "../../../hook";
 import {useForm} from "react-hook-form";
-import {encryptRequest} from "../../../utils";
+import {encryptRequest, FormatoMoneda} from "../../../utils";
 import {useState} from "react";
-import {consultaAsignacionBoveda} from "../../../services/operacion-logistica";
+import {consultaAsignacionBoveda, consultaCantidadBoveda} from "../../../services/operacion-logistica";
 import {AsignaFondosSucursal} from "./AsignaFondosSucursal";
 
 export const FondosSucursal = () => {
@@ -12,22 +12,26 @@ export const FondosSucursal = () => {
     const [data,setData] = useState([]);
     const [showData,setShowData] = useState(false);
     const [moneda,setMoneda] = useState('');
+    const [showCantidad,setShowCantidad] =  useState(false);
+    const [cantidadDisponible,setCantidadDisponible] = useState(0);
 
     const handleForm = handleSubmit(async(data)=>{
-        console.log(data);
-
         setMoneda(data.moneda);
-
         const encryptedData = encryptRequest(data);
 
         const response = await consultaAsignacionBoveda(encryptedData);
+        const cantidadBoveda = await consultaCantidadBoveda(encryptedData);
+        console.log(cantidadBoveda);
 
         if(response.total_rows > 0){
             setShowData(true);
             setData(response);
+            setCantidadDisponible(cantidadBoveda)
+            setShowCantidad(true)
         }else{
             setData([]);
             setShowData(false);
+            setShowCantidad(false)
         }
     });
 
@@ -117,6 +121,11 @@ export const FondosSucursal = () => {
                         </div>
                 </div>
             </form>
+            {showCantidad && (<h5 className="text-blue text-center">
+                <i className="bi bi-bank me-2"></i>
+                <span>Disponible en Boveda:</span>
+                <strong className="ms-2">{FormatoMoneda(parseFloat(cantidadDisponible))}</strong>
+            </h5>)}
             {
                 showData && <AsignaFondosSucursal data={data} moneda={moneda}/>
             }
