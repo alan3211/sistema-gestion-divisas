@@ -78,7 +78,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
         let denominaciones=[];
 
-        if(item.Operacion === 'Dotación Sucursal'){
+        if(item.Operacion === 'Dotación Sucursal' && optionBtn === 1){
             console.log(myDenominacion);
             // Combina los objetos en uno solo
             const objetoCombinado = myDenominacion.reduce((resultado, objeto) => {

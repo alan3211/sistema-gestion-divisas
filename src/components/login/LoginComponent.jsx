@@ -1,12 +1,12 @@
 import logo from '../../assets/logo.png';
-import {encryptRequest, OPTIONS, recordValues, validarAlfaNumerico, year} from "../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, year} from "../../utils";
 import {useForm} from "react-hook-form";
 import {getUser} from "../../services";
-import {toast, ToastContainer} from "react-toastify";
+import {toast} from "react-toastify";
 import {dataG} from "../../App";
 import jwt_decode from 'jwt-decode';
 import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+
 
 export const LoginComponent = () => {
 
@@ -22,6 +22,7 @@ export const LoginComponent = () => {
     } = useForm();
 
     const handleLogin = handleSubmit(async(data) =>{
+
         const encryptedBase64 = encryptRequest(data);
         const datos = await getUser(encryptedBase64);
         if(!datos.hasOwnProperty('resultSize')){
@@ -44,11 +45,9 @@ export const LoginComponent = () => {
                 localStorage.setItem("usuario_data",JSON.stringify(dataG));
                 navigator("/inicio");
             }
-        }else {
-            if(datos.resultSize === 0){
-                reset()
-                toast.warn('El usuario ingresado no existe.', OPTIONS);
-            }
+        }else if(datos.hasOwnProperty('mensaje')){
+            reset()
+            toast.error(datos.mensaje, OPTIONS);
         }
 
     });

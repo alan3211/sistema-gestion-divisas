@@ -37,6 +37,18 @@ export const MontoSolicitud = ({ item, index, columna }) => {
         addMonto(montoObject);
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            // Busca el siguiente input y lo enfoca
+            const nextInput = document.querySelector(
+                `[name="${inputName}"] + td input`
+            );
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+    };
+
     return (
         <td key={index} className="text-center" style={{ width: "200px" }}>
             <input
@@ -53,6 +65,7 @@ export const MontoSolicitud = ({ item, index, columna }) => {
                 }`}
                 placeholder="$"
                 onChange={handleChange}
+                onKeyDown={handleKeyDown}
             />
         </td>
     );

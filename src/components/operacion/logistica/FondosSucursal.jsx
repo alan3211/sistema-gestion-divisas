@@ -1,7 +1,7 @@
 import {useCatalogo} from "../../../hook";
 import {useForm} from "react-hook-form";
 import {encryptRequest, FormatoMoneda} from "../../../utils";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {consultaAsignacionBoveda, consultaCantidadBoveda} from "../../../services/operacion-logistica";
 import {AsignaFondosSucursal} from "./AsignaFondosSucursal";
 
@@ -14,14 +14,14 @@ export const FondosSucursal = () => {
     const [moneda,setMoneda] = useState('');
     const [showCantidad,setShowCantidad] =  useState(false);
     const [cantidadDisponible,setCantidadDisponible] = useState(0);
+    const [encryptedData,setEncryptedData] = useState('');
 
     const handleForm = handleSubmit(async(data)=>{
         setMoneda(data.moneda);
-        const encryptedData = encryptRequest(data);
+        const encryptedDatos = encryptRequest(data);
+        const response = await consultaAsignacionBoveda(encryptedDatos);
+        const cantidadBoveda = await consultaCantidadBoveda(encryptedDatos);
 
-        const response = await consultaAsignacionBoveda(encryptedData);
-        const cantidadBoveda = await consultaCantidadBoveda(encryptedData);
-        console.log(cantidadBoveda);
 
         if(response.total_rows > 0){
             setShowData(true);
@@ -33,7 +33,21 @@ export const FondosSucursal = () => {
             setShowData(false);
             setShowCantidad(false)
         }
+        setEncryptedData(encryptedDatos);
     });
+
+    const refreshData = async() => {
+        const cantidadBoveda = await consultaCantidadBoveda(encryptedData);
+        setCantidadDisponible(cantidadBoveda)
+        setShowCantidad(false)
+        setShowData(false);
+        reset();
+    }
+
+    useEffect(() => {
+        setShowData(false);
+        setShowCantidad(false)
+    }, [watch("moneda")]);
 
 
     return(
@@ -127,7 +141,7 @@ export const FondosSucursal = () => {
                 <strong className="ms-2">{FormatoMoneda(parseFloat(cantidadDisponible))}</strong>
             </h5>)}
             {
-                showData && <AsignaFondosSucursal data={data} moneda={moneda}/>
+                showData && <AsignaFondosSucursal data={data} moneda={moneda} cantidadDisponible={cantidadDisponible} refreshData={refreshData} />
             }
         </>
     );

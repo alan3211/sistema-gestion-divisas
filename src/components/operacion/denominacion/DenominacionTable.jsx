@@ -101,7 +101,7 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
                                             return newBilletes;
                                         });
                                     }}
-                                    value={billetesFisicos[index][getPropiedad("denominacion", elemento)]}
+                                    //value={billetesFisicos[index][getPropiedad("denominacion", elemento)]}
                                 />
                             </td>
                             <td>{totalActual * elemento.Denominacion}</td>

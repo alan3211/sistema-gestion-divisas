@@ -1,46 +1,10 @@
-import {encryptRequest, formattedDate} from "../../../../utils";
-import {useEffect, useState} from "react";
-import {getSucursalUsuarios} from "../../../../services/inicio-services";
+import {formattedDate} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
+import {useGetUsuariosSistema} from "../../../../hook/useGetUsuariosSistema";
 
 export const TableroUsuariosSistema = () => {
 
-    const options = {
-        showMostrar:true,
-        paginacion: true,
-        buscar:true,
-        tools:[
-            {columna:"Usuarios",tool:"usuarios-sistema"},
-            {columna:"Operacion",tool:"operacion-estatus"},
-        ],
-        filters:[
-            {columna:"Monto",filter:'currency'},
-            {columna:"Monto Entregado",filter:'currency'},
-        ]
-    }
-
-    const [activo,setActivo] = useState(false);
-    const [dataSucUsu,setDataSucUsu] = useState([]);
-
-
-    useEffect(() => {
-
-        const valores = {
-            opcion: 1,
-            sucursal: '',
-        }
-
-        const encryptedData = encryptRequest(valores);
-
-        const getSucursales = async (data) => {
-            const response = await getSucursalUsuarios(data);
-            setActivo(true);
-            setDataSucUsu(response);
-        }
-
-        getSucursales(encryptedData);
-
-    }, []);
+   const { options,activo,dataSucUsu} = useGetUsuariosSistema({opcion: 1, sucursal: '',});
 
     return (
         <div className="row">

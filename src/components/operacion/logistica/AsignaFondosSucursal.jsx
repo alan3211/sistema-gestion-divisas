@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {encryptRequest, FormatoMoneda, formattedDateWS, opciones, OPTIONS} from "../../../utils";
+import {encryptRequest, FormatoMoneda, formattedDateWS, nextFocus, opciones, OPTIONS} from "../../../utils";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
 import {dataG} from "../../../App";
 import {enviaDotacionSucursal} from "../../../services/operacion-logistica";
@@ -8,28 +8,28 @@ import {toast} from "react-toastify";
 
 const denominacionesMXN = ["0.05", "0.10", "0.20", "0.50", "1", "2", "5", "10", "20", "50", "100", "200", "500", "1000"];
 const denominacionesOtras = ["1", "2", "5", "10", "20", "50", "100"];
-
-const InputBilletes = ({register, denominacion, nombre, rowIndex, handleInputChange, billetesFisicos}) => {
+const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputChange }) => {
     return (
         <td nowrap={true} className="">
             <input
                 {...register(nombre)}
                 type="text"
                 name={nombre}
+                id={nombre}
                 className="form-control-custom"
                 placeholder="$"
                 onChange={(e) => handleInputChange(e, rowIndex, nombre, denominacion)}
-                value={billetesFisicos[rowIndex][nombre] || ""}
+                //value={billetesFisicos[rowIndex][nombre] || ""}
             />
         </td>
     );
 };
 
 
-export const AsignaFondosSucursal = ({data, moneda}) => {
+export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshData}) => {
     const [guarda, setGuarda] = useState(false);
     const [dataSuc, setDataSuc] = useState([]);
-    const {register, handleSubmit,watch} = useForm();
+    const {register, handleSubmit,watch,reset} = useForm();
     const getPropiedad = (denominacion, sucursal) => {
         let propiedad = "";
         if (denominacion === "0.05") {
@@ -82,7 +82,7 @@ export const AsignaFondosSucursal = ({data, moneda}) => {
 
     const [billetesFisicos, setBilletesFisicos] = useState(initialBilletesFisicos);
     const [totalBilletes, setTotalBilletes] = useState([]);
-    const [totalMonto, setTotalMonto] = useState([]);
+    const [totalMonto, setTotalMonto] = useState([0]);
     const [validaGuarda, setValidaGuarda] = useState(true);
 
     const obtenerSumaPorFila = (billetesFisicos) => {
@@ -195,7 +195,7 @@ export const AsignaFondosSucursal = ({data, moneda}) => {
         const estructura = [];
 
         for (let i = 0; i < sucursales.length; i++) {
-            const sucursal = sucursales[i];
+            const sucursal = parseInt(sucursales[i]);
             const monto = montos[i];
 
             if (monto !== 0) {
@@ -253,9 +253,24 @@ export const AsignaFondosSucursal = ({data, moneda}) => {
         if (response !== '') {
             toast.success(response, OPTIONS);
             setGuarda(false)
+            reset();
+            refreshData();
         }
 
     });
+
+    const validaCantidad = () =>{
+
+        if(parseInt(cantidadDisponible) === 0 || totalMonto.reduce((acc, currentValue) => acc + currentValue,0) === 0){
+            return true
+        }else if(totalMonto.reduce((acc, currentValue) => acc + currentValue,0) > parseInt(cantidadDisponible)){
+            return true
+        }else{
+            return false;
+        }
+    }
+
+
 
     return (
         <>
@@ -330,17 +345,23 @@ export const AsignaFondosSucursal = ({data, moneda}) => {
                                         }><i
                                             className={(totalMonto[index] === 0 || totalMonto[index] > elemento.Maximo) ?
                                                 'bi bi-exclamation-circle-fill me-1 text-danger'
-                                                : 'bi bi-arrow-up-circle-fill me-1 text-success'}></i><strong>{totalMonto[index]}</strong>
+                                                : 'bi bi-arrow-up-circle-fill me-1 text-success'}></i><strong>{FormatoMoneda(totalMonto[index])}</strong>
                                         </td>
                                     </tr>
                                 </>
                             );
                         })}
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colSpan={moneda === "MXP" ? 20 : 13}>Total</th>
+                                <td><strong>{FormatoMoneda(totalMonto.reduce((acc, currentValue) => acc + currentValue,0))}</strong></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <div className="col-md-12">
-                    <button type="submit" className="m-2 btn btn-primary">
+                    <button type="submit" className="m-2 btn btn-primary" disabled={validaCantidad()}>
                         <span className="me-2">
                             GUARDAR
                             <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>

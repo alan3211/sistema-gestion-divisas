@@ -33,7 +33,7 @@ export const formateaMoneda = (cantidad) =>{
     const formatoMoneda = `$ ${numero}`;
     return formatoMoneda;
 }
-export const TIME_OUT = 1000 * 590;
+export const TIME_OUT = 1000 * 60; // 1 minuto
 
 export const hora = currentDate.toLocaleTimeString('es-ES', opciones);
 const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
@@ -220,11 +220,9 @@ export const redondearNumero =(numero) => {
 
 export const OPTIONS = {
     position: "top-center",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
     theme: "colored",
+    closeButton:true,
+    autoClose:false
 }
 
 export const getTextDivisa = (divisa) => {
