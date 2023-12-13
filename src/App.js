@@ -22,6 +22,7 @@ import {PerfilComponent} from "./components/usuario/PerfilComponent";
 import {HealthComponent} from "./components/shared/HealthComponent";
 import {NotFound} from "./components/shared/NotFound";
 import {Logistica} from "./components/operacion/logistica/Logistica";
+import {AltaClienteFinal} from "./components/operacion/altaClientes/AltaClienteFinal";
 
 export let dataG = {
     sucursal:0,
@@ -44,9 +45,9 @@ const App = () => {
                     <Route exact path="/health" element={<HealthComponent/>}/>
                     <Route path="/inicio" element={<MainLayout><MainComponent/></MainLayout>}/>
                     <Route path="/altaUsuarios" element={
-                        <MainLayout><AltaClienteProvider><AltaClientesComponent/></AltaClienteProvider></MainLayout>}/>
+                        <MainLayout><AltaClienteFinal/></MainLayout>}/>
                     <Route path="/compraVenta" element={
-                        <MainLayout><AltaClienteProvider><CompraVentaProvider><CompraVentaComponent/></CompraVentaProvider></AltaClienteProvider></MainLayout>}/>
+                        <MainLayout><CompraVentaProvider><CompraVentaComponent/></CompraVentaProvider></MainLayout>}/>
                     <Route exact path="/caja" element={<MainLayout><CajaComponent/></MainLayout>}/>
                     <Route exact path="/administracionSucursal"
                            element={<MainLayout><SucursalOperativa/></MainLayout>}/>

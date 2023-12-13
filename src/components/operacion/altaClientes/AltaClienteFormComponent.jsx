@@ -1,28 +1,48 @@
 import {ClienteCoincidenciaComponent} from "../busquedaClientes";
 import {CardLayout} from "../../commons";
-import {memo, useContext, useState} from "react";
+import {memo, useContext, useEffect, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 import {validaCliente} from "../../../services";
 import {
-    encryptRequest,
+    encryptRequest, OPTIONS,
     validaFechas,
     validarAlfaNumerico,
     validarCorreoElectronico,
-    validarNombreApellido
+    validarNombreApellido, year
 } from "../../../utils";
 import {useCatalogo} from "../../../hook/";
 import {toast} from "react-toastify";
 import {Overlay} from "../../commons/toast/Overlay";
+import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
 export const AltaClienteFormComponent = memo(() => {
 
     const {propForm} = useContext(AltaClienteContext);
+    const {datosEscaneo} = useContext(CompraVentaContext);
     const catalogo = useCatalogo([2]);
     const [showOverlay, setShowOverlay] = useState(false);
     const [controlName, setControlName] = useState({
         lastName:false,
         secondlastName:false,
     });
+
+    useEffect(() => {
+
+        if(Object.keys(datosEscaneo).length !== 0){
+            if(parseInt(datosEscaneo.vigencia)+1000 > year){
+                console.log(datosEscaneo)
+                propForm.setValue("nombre",datosEscaneo.nombre)
+                propForm.setValue("apellido_paterno",datosEscaneo.apellido_paterno)
+                propForm.setValue("apellido_materno",datosEscaneo.apellido_materno)
+                propForm.setValue("fecha_nacimiento",datosEscaneo.fecha_nacimiento)
+                propForm.setValue("numero_identificacion",datosEscaneo.numero_identificacion)
+                propForm.setValue("tipo_identificacion",1)
+            }else{
+                toast.error("La identificación mostrada no es vigente",OPTIONS);
+            }
+        }
+
+    }, []);
 
 
     const nuevoCliente = () => {

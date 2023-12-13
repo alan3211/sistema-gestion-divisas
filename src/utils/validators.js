@@ -90,9 +90,9 @@ export const validarCorreoElectronico = (correo) => {
 };
 
 export const validarNumeroTelefono = (name,value) => {
-    const phoneNumberRegex = /^\d{10}$/;
+    const phoneNumberRegex = /^\d{10,15}$/;
     if (!phoneNumberRegex.test(value)) {
-        return `El campo ${name} debe contener solo 10 números.`;
+        return `El campo ${name} debe contener solo 15 números.`;
     }
     return true;
 }

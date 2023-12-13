@@ -9,10 +9,14 @@ import {dataG} from "../../../App";
 import {getLocalidad, guardaCliente} from "../../../services";
 import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 import {toast} from "react-toastify";
+import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+
+
 
 export const AltaClienteComplementario = memo(() => {
 
     const {propForm} =  useContext(AltaClienteContext);
+    const {datosEscaneo} = useContext(CompraVentaContext);
     const {
         showModal,
         setShowModal,
@@ -20,11 +24,19 @@ export const AltaClienteComplementario = memo(() => {
         hacerOperacion,
         } = useAltaComplementario();
 
-    const catalogo = useCatalogo([1,3,3,6,12,13,14,10,11,18]);
+    useEffect(() => {
+        propForm.setValue("genero",datosEscaneo.genero);
+        propForm.setValue("calle",datosEscaneo.calle);
+        propForm.setValue("nacionalidad",datosEscaneo.estado.split(".")[1]);
+        propForm.setValue("pais_nacimiento",datosEscaneo.estado.split(".")[1]);
+    }, []);
+
+    const catalogo = useCatalogo([1,3,3,6,12,13,14,10,11,18,25]);
 
     const handleValidateFinalForm = propForm.handleSubmit(async(data) => {
         data.sucursal = dataG.sucursal.toString();
         data.usuario = dataG.usuario;
+        data.vigencia = `${parseInt(datosEscaneo.vigencia)+1000}-12-31`;
 
         if(data.origen_recursos !== '5'){
             data.esp_origen_recursos = '';
@@ -103,6 +115,19 @@ export const AltaClienteComplementario = memo(() => {
         if(propForm.watch("colonia") !== '0') getFetch();
     }, [propForm.watch("colonia")]);
 
+    const [controlName, setControlName] = useState(false);
+
+    const toggleCheck = (value) => {
+        setControlName((prevControlName) => {
+                if (prevControlName) {
+                    propForm.setValue("numero_exterior", "");
+                    return false;
+                } else {
+                    propForm.setValue("numero_exterior", "SIN NÚMERO EXTERIOR");
+                    return true;
+                }
+        });
+    };
 
 
     return (
@@ -179,6 +204,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="nacionalidad"
                                 label="NACIONALIDAD"
                                 options={catalogo[1] || []}
+                                input={propForm.watch("nacionalidad")}
                             />
                         </div>
                         <div className="col-md-3">
@@ -187,6 +213,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="pais_nacimiento"
                                 label="PAÍS NACIMIENTO"
                                 options={catalogo[1] || []}
+                                input={propForm.watch("pais_nacimiento")}
                             />
                         </div>
                     </div>
@@ -328,25 +355,57 @@ export const AltaClienteComplementario = memo(() => {
                     </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-3">
-                            <div className="form-floating">
+                        <div className="col-md-2">
+                                <div className="form-floating mb-3">
+
+                                            <select
+                                                {...propForm.register("codigo_telefono",{
+                                                    required:{
+                                                        value:true,
+                                                        message:'Debes de seleccionar al menos un codigo.'
+                                                    },
+                                                    validate: value => {
+                                                        return value !== "0" || 'Debes seleccionar un codigo válido.';
+                                                    }
+                                                })}
+                                                className={`form-select ${!!propForm.errors?.codigo_telefono ? 'invalid-input':''}`}
+                                                id="codigo_telefono"
+                                                name="codigo_telefono"
+                                                aria-label="Codigo Telefono"
+                                            >
+                                                {
+                                                    catalogo[10]?.map((ele) => (
+                                                        <option key={ele.id + '-' + ele.descripcion}
+                                                                value={ele.id}>
+                                                            {ele.descripcion.toUpperCase()}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                            <label htmlFor="codigo_telefono">PREFIJO</label>
+                                            {
+                                                propForm.errors?.codigo_telefono && <div className="invalid-feedback-custom">{propForm.errors?.codigo_telefono.message}</div>
+                                            }
+                                </div>
+                        </div>
+                        <div className="col-md-2">
+                            <div className="form-floating mb-3">
                                 <input
-                                    {...propForm.register("telefono",{
-                                        validate: (value) => validarNumeroTelefono("Telefono",value)
+                                    {...propForm.register("telefono", {
+                                        validate: (value) => validarNumeroTelefono("Telefono", value)
                                     })}
                                     type="text"
-                                    className={`form-control ${!!propForm.errors?.telefono ? 'invalid-input':''}`}
+                                    className={`form-control ${!!propForm.errors?.telefono ? 'is-invalid' : ''}`}
                                     id="telefono"
                                     name="telefono"
                                     placeholder="Ingresa el teléfono"
                                 />
                                 <label htmlFor="telefono">TELÉFONO</label>
-                                {
-                                    propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>
-                                }
+                                {propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>}
                             </div>
                         </div>
-                        <div className="col-md-3">
+
+                        <div className="col-md-5">
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("calle",{
@@ -398,8 +457,16 @@ export const AltaClienteComplementario = memo(() => {
                                 {
                                     propForm.errors?.numero_exterior && <div className="invalid-feedback-custom">{propForm.errors?.numero_exterior.message}</div>
                                 }
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="numero_exteriorC"
+                                           onClick={()=>toggleCheck('numero_exterior')} checked={controlName}
+                                    />
+                                    <label className="form-check-label" htmlFor="numero_exteriorc">SIN NÚMERO EXTERIOR</label>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div className="row">
                         <div className="col-md-3">
                             <div className="form-floating">
                                 <input
@@ -666,7 +733,7 @@ export const AltaClienteComplementario = memo(() => {
                                     role="status"
                                     aria-hidden="true">
                                     <span className="ms-2">
-                                        FINALIZAR
+                                        CONTINUAR OPERACIÓN
                                     </span>
                                 </span>
                             </button>

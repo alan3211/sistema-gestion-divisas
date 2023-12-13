@@ -8,12 +8,7 @@ function renderSubMenu({ IdModulo, Nombre, subMenus }) {
             <ul id={`${Nombre}-${IdModulo}-nav`} className="nav-content">
                 {subMenus.map((subMenuItem) => (
                     <li key={subMenuItem.IdModulo}>
-                        <Link to={subMenuItem.Mapeo}
-                              state={subMenuItem.Mapeo === '/compraVenta' && {
-                                  cliente: '',
-                                  clienteActivo: false,
-                              }}
-                        >
+                        <Link to={subMenuItem.Mapeo}>
                             <i className={subMenuItem.Icono}></i><span>{subMenuItem.Nombre}</span>
                         </Link>
                     </li>

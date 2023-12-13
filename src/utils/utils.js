@@ -240,4 +240,19 @@ export const getTextDivisa = (divisa) => {
     }
 }
 
+export const convertirFecha = (input) => {
+    // Dividir la cadena de entrada en día, mes y año
+    var partes = input.split('/');
+
+    // Crear un objeto Date con los componentes de la fecha
+    var fecha = new Date(partes[2], partes[1] - 1, partes[0]);
+
+    // Obtener los componentes de la fecha en formato ISO (yyyy-mm-dd)
+    var yyyy = fecha.getFullYear();
+    var mm = ('0' + (fecha.getMonth() + 1)).slice(-2);
+    var dd = ('0' + fecha.getDate()).slice(-2);
+
+    // Devolver la fecha en formato yyyy-mm-dd
+    return yyyy + '-' + mm + '-' + dd;
+}
 export const perfiles = ['Super Usuario','Administrador','Tesorero','Coordinador Logística']

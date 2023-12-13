@@ -1,10 +1,11 @@
 import {useContext, useState} from 'react';
 import {dataG} from "../../../App";
-import {enviaMensaje, hacerOperacion, realizaConversion} from "../../../services";
+import {consultaInformacionCarga, enviaMensaje, hacerOperacion, realizaConversion} from "../../../services";
 import {ModalConfirm, ModalGenericTool} from "../../commons/modals";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {useCatalogo} from "../../../hook";
 import {
+    convertirFecha,
     DENOMINACIONES,
     encryptRequest,
     FormatoMoneda,
@@ -36,6 +37,7 @@ export const CalculadoraFormComponent = () => {
         errors,
         reset,
         watch,
+        setDatosEscaneo,
         busquedaCliente: {setShowCliente},
         datos,setDatos,
     } = useContext(CompraVentaContext);
@@ -138,6 +140,7 @@ export const CalculadoraFormComponent = () => {
 
     const preguntaNuevoUsuario = () => {
         setNuevoUsuario(true);
+        setShowModal(false);
     }
 
 
@@ -156,7 +159,28 @@ export const CalculadoraFormComponent = () => {
         setNuevoUsuario(false);
     }
 
-    const validaInformacion = ()=>{
+    const capturaManual = () =>{
+        setShowModalAltaCliente(false);
+        setShowAltaCliente(true);
+    }
+
+    const validaInformacion = async()=> {
+        const response = await consultaInformacionCarga(encryptRequest({fecha:formattedDate,usuario:dataG.usuario,sucursal:dataG.sucursal}));
+        const informacion = {
+            colonia: response[0].City,
+            genero: response[0]["Job Title"].substring(4),
+            vigencia: response[0].Company,
+            fecha_nacimiento: convertirFecha(response[0].Department),
+            nombre: response[0]["First Name"],
+            apellido_paterno: response[0]["Last Name"].split(" ")[0],
+            apellido_materno: response[0]["Last Name"].split(" ")[1],
+            estado: response[0].State,
+            calle: response[0].Street,
+            cp: response[0]["ZIP Code"],
+            numero_identificacion: response[1]["First Name"]
+        }
+        console.log(informacion)
+        setDatosEscaneo(informacion);
         setShowModalAltaCliente(false);
         setShowAltaCliente(true);
     }
@@ -370,8 +394,8 @@ export const CalculadoraFormComponent = () => {
             }
             {
                nuevoUsuario && (<ModalConfirm title={`¿Se encuentra registrado este usuario en el sistema?`}
-                                                 showModal={showModal}
-                                                 closeModal={closeModal}
+                                                 showModal={nuevoUsuario}
+                                                 closeModal={()=> setNuevoUsuario(false)}
                                                  hacerOperacion={continuarOperacion}
                                                  closeModalAndReturn={muestraAltaCliente}
                                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"
@@ -382,7 +406,9 @@ export const CalculadoraFormComponent = () => {
 
                     <ModalGenericTool options={OPTIONS_MODAL}>
                         <div className="row">
+
                             <div className="col-md-12 text-center">
+                                <button className="btn btn-primary me-2" onClick={capturaManual}>CAPTURA MANUAL</button>
                                 <button className="btn btn-orange" onClick={validaInformacion}>VALIDAR INFORMACIÓN</button>
                             </div>
                         </div>

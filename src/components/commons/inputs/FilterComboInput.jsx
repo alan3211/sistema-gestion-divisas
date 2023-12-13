@@ -2,10 +2,10 @@ import './CombosComponent.css';
 import {useContext, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 
-export const FilterComboInput = ({ propFormulario,name, label, options }) => {
+export const FilterComboInput = ({ propFormulario,name, label, options,input}) => {
     const {propForm} =  useContext(AltaClienteContext) || { propForm: propFormulario };
     const [filteredOptions, setFilteredOptions] = useState([]);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState(input);
     const [showDropdown, setShowDropdown] = useState(false);
 
     const handleInputChange = (e) => {
