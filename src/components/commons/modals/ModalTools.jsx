@@ -83,7 +83,7 @@ export const ModalGenericTool = ({options,children}) => {
                 <Modal.Title>
                     <h5 className="card-title">
                         <i className={options.icon}></i>
-                        {options.title} <span>|  {formattedDate}</span>
+                        {options.title}
                     </h5>
                 </Modal.Title>
             </Modal.Header>

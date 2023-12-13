@@ -1,7 +1,7 @@
 import {useContext, useState} from 'react';
 import {dataG} from "../../../App";
 import {enviaMensaje, hacerOperacion, realizaConversion} from "../../../services";
-import {ModalConfirm} from "../../commons/modals";
+import {ModalConfirm, ModalGenericTool} from "../../commons/modals";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {useCatalogo} from "../../../hook";
 import {
@@ -15,6 +15,7 @@ import {
 } from "../../../utils";
 import {toast} from "react-toastify";
 
+
 export const CalculadoraFormComponent = () => {
 
     const {
@@ -27,6 +28,9 @@ export const CalculadoraFormComponent = () => {
         tipoDivisa,
         setOperacion,
         setContinuaOperacion,
+        nuevoUsuario, setNuevoUsuario,
+        setShowAltaCliente,
+        showModalAltaCliente, setShowModalAltaCliente,
         register,
         handleSubmit,
         errors,
@@ -43,6 +47,8 @@ export const CalculadoraFormComponent = () => {
         monto:0.0,
         moneda:''
     }]);
+
+
     /*Cierra el modal cuando se le da en la "x"*/
     const closeModal = () => {
         setShowModal(false);
@@ -127,15 +133,32 @@ export const CalculadoraFormComponent = () => {
         setCantidad(0);
         setContinuaOperacion(false); // oculta el modulo de busquedaclientes
         setShowCliente(false); // Oculta el modulo de datos clientes
+        setShowAltaCliente(false);
     }
 
-    /*Sirve para continuar la operacion*/
+    const preguntaNuevoUsuario = () => {
+        setNuevoUsuario(true);
+    }
+
+
+    /*Sirve para continuar la operacion si no es nuevo usuario*/
     const continuarOperacion = async() => {
         setContinuaOperacion(true);
         setShowModal(false);
         const response = await getOperacion();
         console.log("RESPONSE: ",response)
         setDatos(response);
+    }
+
+    const muestraAltaCliente = () =>{
+        setShowModalAltaCliente(true);
+        setShowModal(false);
+        setNuevoUsuario(false);
+    }
+
+    const validaInformacion = ()=>{
+        setShowModalAltaCliente(false);
+        setShowAltaCliente(true);
     }
 
     const enviarNotificacion = async() => {
@@ -196,6 +219,17 @@ export const CalculadoraFormComponent = () => {
         } else {
             setShowModal(true);
         }
+    }
+
+    const OPTIONS_MODAL = {
+        size: 'lg',
+        showModal: () => setShowModalAltaCliente(true),
+        closeModal: () => {
+            setShowModalAltaCliente(false)
+        },
+        icon:'bi bi-camera text-blue me-2',
+        title:'Escaneo de Documentos',
+        subtitle:'Por favor, solicite al usuario que presente una identificación oficial vigente. Luego, inicie el proceso de escaneo de documentos. Una vez completado, haga clic en el botón \'Validar Información\' para continuar con el registro del usuario.'
     }
 
     return (
@@ -329,10 +363,30 @@ export const CalculadoraFormComponent = () => {
                 cantidad !== 0 && (<ModalConfirm title={`La cotización fue de ${FormatoMoneda(parseFloat(cantidad),'')} ¿Desea realizar una operación con esta cotización?`}
                           showModal={showModal}
                           closeModal={closeModal}
-                          hacerOperacion={continuarOperacion}
+                          hacerOperacion={preguntaNuevoUsuario}
                           closeModalAndReturn={closeModalAndReturn}
                           icon="bi bi-exclamation-triangle-fill text-warning m-2"
                 />)
+            }
+            {
+               nuevoUsuario && (<ModalConfirm title={`¿Se encuentra registrado este usuario en el sistema?`}
+                                                 showModal={showModal}
+                                                 closeModal={closeModal}
+                                                 hacerOperacion={continuarOperacion}
+                                                 closeModalAndReturn={muestraAltaCliente}
+                                                 icon="bi bi-exclamation-triangle-fill text-warning m-2"
+                />)
+            }
+            {
+                showModalAltaCliente && (
+
+                    <ModalGenericTool options={OPTIONS_MODAL}>
+                        <div className="row">
+                            <div className="col-md-12 text-center">
+                                <button className="btn btn-orange" onClick={validaInformacion}>VALIDAR INFORMACIÓN</button>
+                            </div>
+                        </div>
+                    </ModalGenericTool>)
             }
             {
                 showModalDotacion.show && (

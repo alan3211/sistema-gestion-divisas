@@ -46,7 +46,7 @@ const App = () => {
                     <Route path="/altaUsuarios" element={
                         <MainLayout><AltaClienteProvider><AltaClientesComponent/></AltaClienteProvider></MainLayout>}/>
                     <Route path="/compraVenta" element={
-                        <MainLayout><CompraVentaProvider><CompraVentaComponent/></CompraVentaProvider></MainLayout>}/>
+                        <MainLayout><AltaClienteProvider><CompraVentaProvider><CompraVentaComponent/></CompraVentaProvider></AltaClienteProvider></MainLayout>}/>
                     <Route exact path="/caja" element={<MainLayout><CajaComponent/></MainLayout>}/>
                     <Route exact path="/administracionSucursal"
                            element={<MainLayout><SucursalOperativa/></MainLayout>}/>

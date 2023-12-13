@@ -5,10 +5,13 @@ import {BusquedaClientesComponent} from "../busquedaClientes";
 import { useLocation } from 'react-router-dom';
 import {Layout} from "../../commons";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+import {AltaClienteComplementario, AltaClienteFormComponent} from "../altaClientes";
+import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 
 export const CompraVentaComponent = () =>{
 
     const compraVentaProvider = useContext(CompraVentaContext);
+    const {propForm} = useContext(AltaClienteContext);
 
     const location = useLocation();
     const { cliente='',clienteActivo } = location.state;
@@ -36,6 +39,18 @@ export const CompraVentaComponent = () =>{
                     <TipoCambioComponent />
                 </div>
             </div>
+
+            {
+                compraVentaProvider.showAltaCliente && (<div className="row">
+                    <div className="col-md-12">
+                        <AltaClienteFormComponent />
+                        {
+                            propForm.complementarios && <AltaClienteComplementario/>
+                        }
+                    </div>
+                </div>)
+            }
+
             <div className="row">
                 <div className="col-md-12">
                     {
@@ -43,6 +58,7 @@ export const CompraVentaComponent = () =>{
                     }
                 </div>
             </div>
+
         </Layout>
     );
 }

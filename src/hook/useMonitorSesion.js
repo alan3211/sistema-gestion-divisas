@@ -96,7 +96,7 @@ export const useMonitorSesion = () => {
         };
 
         if (authenticated) {
-            const intervalId = setInterval(validateToken, 3000);
+            const intervalId = setInterval(validateToken, 60000);
             return () => clearInterval(intervalId);
         }
     }, [authenticated, navigate
