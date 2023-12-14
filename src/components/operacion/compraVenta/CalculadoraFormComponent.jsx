@@ -146,7 +146,9 @@ export const CalculadoraFormComponent = () => {
 
     /*Sirve para continuar la operacion si no es nuevo usuario*/
     const continuarOperacion = async() => {
+        toast.info("Solicita una identificación oficial vigente",OPTIONS);
         setContinuaOperacion(true);
+        setNuevoUsuario(false);
         setShowModal(false);
         const response = await getOperacion();
         console.log("RESPONSE: ",response)
@@ -253,7 +255,7 @@ export const CalculadoraFormComponent = () => {
         },
         icon:'bi bi-camera text-blue me-2',
         title:'Escaneo de Documentos',
-        subtitle:'Por favor, solicite al usuario que presente una identificación oficial vigente. Luego, inicie el proceso de escaneo de documentos. Una vez completado, haga clic en el botón \'Validar Información\' para continuar con el registro del usuario.'
+        subtitle:'Inicie el proceso de escaneo de documentos. Una vez completado, haga clic en el botón \'Validar Información\' para continuar con el registro del usuario.'
     }
 
     return (

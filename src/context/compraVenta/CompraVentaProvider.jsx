@@ -14,6 +14,7 @@ export const CompraVentaProvider = ({children}) => {
     const [tipoDivisa,setTipoDivisa] =  useState([]);
     const [nuevoUsuario, setNuevoUsuario] = useState(false);
     const [showModalAltaCliente, setShowModalAltaCliente] = useState(false);
+    const [showModalAltaUsuario, setShowModalAltaUsuario,] = useState(false);
     const [showAltaCliente, setShowAltaCliente] = useState(false);
     const [datosEscaneo,setDatosEscaneo] =  useState({});
     /*Provedor para la Busqueda del cliente*/
@@ -52,6 +53,7 @@ export const CompraVentaProvider = ({children}) => {
         nuevoUsuario, setNuevoUsuario,
         showAltaCliente, setShowAltaCliente,
         showModalAltaCliente, setShowModalAltaCliente,
+        showModalAltaUsuario, setShowModalAltaUsuario,
         operacion,
         setOperacion,
         tipoDivisa,
