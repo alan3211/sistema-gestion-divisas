@@ -169,7 +169,7 @@ export const EnvioValoresSucursal = () => {
                     <i className="bi bi-box-arrow-up-right"></i> NUEVO ENVÍO
                 </button>
                 <button type="button" className="btn btn-primary"
-                        onSubmit={terminarDotacion} disabled={finalizaOperacion}>
+                        onClick={terminarDotacion} disabled={finalizaOperacion}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                    FINALIZAR OPERACIÓN
                 </button>

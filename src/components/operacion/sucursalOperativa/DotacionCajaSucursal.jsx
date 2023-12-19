@@ -138,7 +138,8 @@ export const DotacionCajaSucursal = () => {
         obtieneUsuarios();
     },[]);
 
-    useEffect(() => {
+    const consultaDotaciones = () => {
+        setShowDenominacion(false);
         if(watch("moneda") === '0'){
             setShowDenominacion(false);
             setShowDisponible({
@@ -149,10 +150,10 @@ export const DotacionCajaSucursal = () => {
             obtieneDisponibilidad();
             setShowDenominacion(true);
         }
-    }, [watch("moneda")]);
+    }
 
-    return (
-        <div className="row m-1 g-3 justify-content-center">
+    return (<>
+        <div className="row m-1 g-3">
             <div className="col-md-3">
                 <div className="form-floating mb-3">
                     <select
@@ -245,6 +246,15 @@ export const DotacionCajaSucursal = () => {
                     }
                 </div>
             </div>
+            <div className="col-md-2 mx-auto mb-2">
+                <button type="button" className="btn btn-primary mt-2"
+                        onClick={consultaDotaciones}>
+                    <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
+                   GENERAR
+                </button>
+            </div>
+        </div>
+        <div className="row m-1 g-3">
             <div className="col-md-6 mx-auto">
                 {
                     showDisponible.isAvailable &&
@@ -276,5 +286,6 @@ export const DotacionCajaSucursal = () => {
                 )
             }
         </div>
+        </>
     );
 }
