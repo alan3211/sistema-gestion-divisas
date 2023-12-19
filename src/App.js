@@ -2,14 +2,12 @@ import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 import {MainComponent} from "./components/shared/main/MainComponent";
 
-import {AltaClientesComponent} from "./components/operacion/altaClientes";
 import {CompraVentaComponent} from "./components/operacion/compraVenta";
 import {LoginComponent} from "./components/login";
 import {CajaComponent} from "./components/operacion/cajaOperativa";
 import {Usuarios} from "./components/administracion/usuarios/Usuarios";
 import {Catalogo} from "./components/administracion/catalogos/Catalogo";
 
-import {AltaClienteProvider} from "./context/AltaCliente/AltaClienteProvider";
 import {CompraVentaProvider} from "./context/compraVenta/CompraVentaProvider";
 import {CargaTipoCambio} from "./components/administracion/cargaTipoCambio/CargaTipoCambio";
 import {CargaTipoCambioProvider} from "./context/CargaTipoCambio/CargaTipoCambioProvider";
@@ -41,7 +39,7 @@ const App = () => {
         <div className="app-root content">
             <Router>
                 <Routes>
-                    <Route exact path="/" element={<LoginComponent/>}/>
+                    <Route exact  path="/" element={<LoginComponent/>}/>
                     <Route exact path="/health" element={<HealthComponent/>}/>
                     <Route path="/inicio" element={<MainLayout><MainComponent/></MainLayout>}/>
                     <Route path="/altaUsuarios" element={

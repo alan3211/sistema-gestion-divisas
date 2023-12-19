@@ -67,7 +67,7 @@ export const CargaTipoCambioOpera = ({id}) => {
 
     return (
         <>
-            <form onSubmit={onSubmit}>
+            <div>
                 {
                     id === 'Region'
                     && (
@@ -152,11 +152,12 @@ export const CargaTipoCambioOpera = ({id}) => {
                     </div>
                 </div>
                 <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-primary">
+                    <button type="button" className="btn btn-primary"
+                            onClick={onSubmit}>
                         <i className="bi bi-save me-1"></i> GUARDAR
                     </button>
                 </div>
-            </form>
+            </div>
         </>
     )
 }

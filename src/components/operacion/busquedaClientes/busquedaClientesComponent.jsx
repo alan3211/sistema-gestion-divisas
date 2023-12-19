@@ -8,7 +8,8 @@ import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContex
 
 export const BusquedaClientesComponent = () => {
 
-    const {busquedaCliente:{showCliente,setShowCliente,data,setData},operacion} = useContext(CompraVentaContext);
+    const {setContinuaOperacion,setShowAltaCliente,
+        busquedaCliente:{showCliente,setShowCliente,data,setData},operacion} = useContext(CompraVentaContext);
     const [selectedOption, setSelectedOption] = useState("cliente");
 
     /*Funciona para seleccionar una opcion del radio button(No Cliente o Nombre Completo)*/
@@ -31,6 +32,7 @@ export const BusquedaClientesComponent = () => {
                                 value="cliente"
                                 onChange={handleRadioChange}
                                 checked={selectedOption === "cliente"}
+                                autoComplete="off"
                             />
                             <label className="form-check-label" htmlFor="cliente">
                                 Número de Usuario
@@ -45,6 +47,7 @@ export const BusquedaClientesComponent = () => {
                                 value="nombre"
                                 onChange={handleRadioChange}
                                 checked={selectedOption === "nombre"}
+                                autoComplete="off"
                             />
                             <label className="form-check-label" htmlFor="nombre">
                                 Nombre
@@ -61,6 +64,11 @@ export const BusquedaClientesComponent = () => {
                     dataClientes={data}
                     setDataClientes={setData}
                     setShowCliente={setShowCliente}
+                    showAddCliente
+                    addCliente={()=>{
+                        setContinuaOperacion(false);
+                        setShowAltaCliente(true);
+                    }}
                 />
             }
             {

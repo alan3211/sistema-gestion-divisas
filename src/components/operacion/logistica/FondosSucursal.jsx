@@ -52,7 +52,7 @@ export const FondosSucursal = () => {
 
     return(
         <>
-            <form className="g-3 mt-3" onSubmit={handleForm} noValidate>
+            <div className="g-3 mt-3">
                 <div className="row justify-content-center">
                     <div className="col-md-3">
                         <div className="form-floating mb-3">
@@ -123,7 +123,8 @@ export const FondosSucursal = () => {
 
                         <div className="col-md-3">
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={handleForm}
                                 className="btn btn-primary mt-2">
                                 CONSULTAR
                                 <span
@@ -134,7 +135,7 @@ export const FondosSucursal = () => {
                             </button>
                         </div>
                 </div>
-            </form>
+            </div>
             {showCantidad && (<h5 className="text-blue text-center">
                 <i className="bi bi-bank me-2"></i>
                 <span>Disponible en Boveda:</span>

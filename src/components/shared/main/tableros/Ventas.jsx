@@ -1,8 +1,8 @@
-import { formattedDate, mensajeSinOperaciones } from "../../../../utils";
-import { MessageComponent } from "../../../commons";
+import { formattedDate } from "../../../../utils";
 
 export const Ventas = ({ data }) => {
-    if (!!data) {
+
+    if (Object.keys(data).length === 0 || parseInt(data['No Operaciones']) === 0) {
         return (
             <div className="mb-4">
                 <div className="card sales-card border-0">
@@ -29,7 +29,7 @@ export const Ventas = ({ data }) => {
     const { 'No Operaciones': noOperaciones, Porcentaje, Sucursal, 'Nombre Sucursal': nombreSucursal, 'Total': totalVentas } = data;
 
     return (
-        <div className="col-md-3 mb-4">
+        <div className="mb-4">
             <div className="card sales-card border-0">
                 <div className="card-body text-center p-2">
                     <h5 className="card-title fw-bolder">Ventas <span>| {formattedDate}</span></h5>

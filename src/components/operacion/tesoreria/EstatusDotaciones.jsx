@@ -40,10 +40,8 @@ export const EstatusDotaciones = () => {
 
     return(
         <div className="container justify-content-center align-items-center mt-4">
-            <form
+            <div
                 className="text-center mb-4"
-                onSubmit={onSubmitEstatus}
-                noValidate
             >
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
@@ -133,6 +131,7 @@ export const EstatusDotaciones = () => {
                             id="fecha_operacion"
                             name="fecha_operacion"
                             placeholder="Ingresa la fecha de operación"
+                            autoComplete="off"
                         />
                         <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {
@@ -142,14 +141,15 @@ export const EstatusDotaciones = () => {
                 </div>
                 <div className="col-md-2 mx-auto">
                     <button
-                        type="submit"
+                        type="button"
                         className="m-2 btn btn-primary"
+                        onClick={onSubmitEstatus}
                     >
                         CONSULTAR
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>
-            </form>
+            </div>
             {
                 showTable && <TableComponent data={data} options={options}/>
             }

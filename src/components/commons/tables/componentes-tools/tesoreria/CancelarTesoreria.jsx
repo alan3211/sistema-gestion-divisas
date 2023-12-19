@@ -57,7 +57,7 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
             </button>
             {showModal && (
                 <ModalAccionCancelarTool options={options}>
-                    <form onSubmit={handleSubmit(handleCancelarEnvio)} noValidate>
+                    <div>
                         <div className="col-md-12">
                             <div className="form-floating">
                                     <textarea
@@ -89,12 +89,13 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
                             </div>
                         </div>
                         <div className="d-flex justify-content-end mt-2">
-                            <button type="submit" className="btn btn-danger">
+                            <button type="button" className="btn btn-danger"
+                                    onClick={handleSubmit(handleCancelarEnvio)}>
                                 <i className="bi bi-x-circle me-1"></i>
                                 CANCELAR ENVÍO
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </ModalAccionCancelarTool>
             )}
         </td>

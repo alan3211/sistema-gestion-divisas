@@ -33,7 +33,7 @@ export const CambiarPassword = () => {
     return (
         <>
 
-            <form className="text-center  mt-3" onSubmit={onSubmitChangePass} noValidate>
+            <div className="text-center  mt-3">
                 <div className="row mb-3">
                     <div className="col-md-6 mx-auto">
                         <div className="form-floating">
@@ -50,6 +50,7 @@ export const CambiarPassword = () => {
                                 id="contrasena_actual"
                                 name="contrasena_actual"
                                 placeholder="Ingresa la contraseña actual"
+                                autoComplete="off"
                             />
                             <label htmlFor="contrasena_actual">CONTRASEÑA ACTUAL</label>
                             {
@@ -79,6 +80,7 @@ export const CambiarPassword = () => {
                                 id="contrasena_nueva"
                                 name="contrasena_nueva"
                                 placeholder="Ingresa la contraseña actual"
+                                autoComplete="off"
                             />
                             <label htmlFor="contrasena_nueva">CONTRASEÑA NUEVA</label>
                             {
@@ -105,6 +107,7 @@ export const CambiarPassword = () => {
                                 id="contrasena_confirma"
                                 name="contrasena_confirma"
                                 placeholder="Confirma la contraseña nueva"
+                                autoComplete="off"
                             />
                             <label htmlFor="contrasena_confirma">CONFIRMA CONTRASEÑA NUEVA</label>
                             {
@@ -116,12 +119,13 @@ export const CambiarPassword = () => {
                 </div>
 
                 <div className="text-center">
-                    <button type="submit" className="btn btn-primary">
+                    <button type="button" className="btn btn-primary"
+                            onClick={onSubmitChangePass}>
                         <i className="bi bi-lock-fill me-2"></i>
                         CAMBIAR CONTRASEÑA
                     </button>
                 </div>
-            </form>
+            </div>
         </>
     );
 }

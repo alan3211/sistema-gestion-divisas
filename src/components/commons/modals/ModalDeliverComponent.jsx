@@ -114,6 +114,9 @@ export const ModalDeliverComponent = ({configuration}) =>{
             ]
         }
 
+        console.log("FINALIZA OPERACION --- values");
+        console.log(values);
+
         const encryptedData = encryptRequest(values);
         const resultadoPromise = await realizarOperacion(encryptedData);
         let cambioFinal = denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto);
@@ -337,6 +340,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     name="monto"
                                     className={`form-control mb-1`}
                                     value={operacion.monto} readOnly
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="monto" className="form-label">IMPORTE <i>({muestraDivisa()})</i></label>
                             </div>
@@ -350,6 +354,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     className={`form-control mb-1`}
                                     placeholder="Ingresa la cantidad a cotizar por el usuario"
                                     value={calculaValorMonto} readOnly
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="monto" className="form-label">CANTIDAD A COTIZAR <i>({muestraDivisa()})</i></label>
                             </div>
@@ -361,6 +366,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                        id="floatingCE"
                                        value={operacion.cantidad_entregar}
                                        readOnly
+                                       autoComplete="off"
                                 />
                                 <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>({operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})</i></label>
                             </div>
@@ -456,7 +462,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 showCambioDeno && (
                     <ModalGenericTool options={OPTIONS_SOL_DENOMINACION}>
 
-                        <form className="row justify-content-center" onSubmit={handleDotacionDenominacionForm} noValidate>
+                        <div className="row justify-content-center">
                                 <div className="row">
                                     <div className="col-md-4 mx-auto">
                                         <div className="form-floating mb-3">
@@ -510,6 +516,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                                 id="cantidad"
                                                 name="cantidad"
                                                 placeholder="Ingresa la cantidad a cambiar"
+                                                autoComplete="off"
                                             />
                                             <label htmlFor="cantidad" className="form-label">CANTIDAD</label>
                                             {
@@ -525,6 +532,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                                 name="total_cambiar"
                                                 className={`form-control mb-1`}
                                                 value={parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad") || 0) } readOnly
+                                                autoComplete="off"
                                             />
                                             <label htmlFor="monto" className="form-label">TOTAL A CAMBIAR ({operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda})</label>
                                         </div>
@@ -542,7 +550,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                           </span>
                                     </button>
 
-                                    <button type="submit" className="m-2 btn btn-primary"
+                                    <button type="button" className="m-2 btn btn-primary"
+                                            onClick={handleDotacionDenominacionForm}
                                             disabled={!parseInt(solicitaDotacionFormulario.watch("cantidad")) > 0
                                         || (parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio").split("-")[0]) *  parseFloat(solicitaDotacionFormulario.watch("cantidad"))) !== denominacionD.calculateGrandTotal()}
                                     >
@@ -553,7 +562,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     </button>
                                 </div>
                             </div>)}
-                        </form>
+                        </div>
                         {
                             guarda && <ModalLoading options={optionsLoad} />
                         }

@@ -222,7 +222,8 @@ export const OPTIONS = {
     position: "top-center",
     theme: "colored",
     closeButton:true,
-    autoClose:false
+    autoClose:15000,
+    hideProgressBar:true
 }
 
 export const getTextDivisa = (divisa) => {

@@ -1,10 +1,12 @@
 import {FormatoMoneda, validarMoneda} from "../../../utils";
 import {useDenominacion} from "../../../hook";
 import {dataG} from "../../../App";
+import {useEffect} from "react";
 
 export const Denominacion = ({type,moneda,options}) => {
 
     const valores = {type,moneda,options}
+    console.log(valores);
 
     const {
         title,data,denominacionMappings,register,trigger,errors,setValue,calculateTotal,
@@ -54,8 +56,9 @@ export const Denominacion = ({type,moneda,options}) => {
                                                 onBlur={() => trigger(`denominacion_${name}`)}
                                                 name={`denominacion_${name}`}
                                                 className={`form-control ${errors && errors[`denominacion_${name}`] ? 'is-invalid' : ''}`}
-                                                placeholder="0"
+                                                placeholder=" - "
                                                 disabled={dataG.perfil === 'Cajero' && options.tipo !== 'R' && elemento['Billetes Disponibles'] <=0}
+                                                autoComplete="off"
                                             />
                                         </td>
                                         <td>{calculateTotal(elemento)}</td>

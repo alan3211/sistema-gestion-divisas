@@ -111,6 +111,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                        id="floatingCE"
                                        value={redondearNumero(cambio)}
                                        readOnly
+                                       autoComplete="off"
                                 />
                                 <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>(MXP)</i></label>
                             </div>

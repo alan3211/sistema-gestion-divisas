@@ -28,6 +28,7 @@ export const TipoConsultas = () => {
                             value="dotacion"
                             onChange={handleRadioChange}
                             checked={selectedOption === "dotacion"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="dotacion">
                             <strong>Dotación</strong>
@@ -42,6 +43,7 @@ export const TipoConsultas = () => {
                             value="consulta_caja"
                             onChange={handleRadioChange}
                             checked={selectedOption === "consulta_caja"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="consulta_caja">
                             <strong>Consulta</strong>

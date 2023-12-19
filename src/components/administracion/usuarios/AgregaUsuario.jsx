@@ -34,10 +34,8 @@ export const AgregaUsuario = () => {
 
     return (
         <div className="container justify-content-center align-items-center mt-4">
-            <form
+            <div
                 className="text-center mb-4"
-                onSubmit={altaDelUsuario}
-                noValidate
             >
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
@@ -62,6 +60,7 @@ export const AgregaUsuario = () => {
                             id="usuario"
                             name="usuario"
                             placeholder="Ingresa el usuario"
+                            autoComplete="off"
                         />
                         <label htmlFor="usuario">USUARIO DE SISTEMA</label>
                         {
@@ -92,6 +91,7 @@ export const AgregaUsuario = () => {
                             id="nombre_usuario"
                             name="nombre_usuario"
                             placeholder="Ingresa el nombre completo del usuario"
+                            autoComplete="off"
                         />
                         <label htmlFor="nombre_usuario">NOMBRE DE USUARIO</label>
                         {
@@ -118,6 +118,7 @@ export const AgregaUsuario = () => {
                             id="password"
                             name="password"
                             placeholder="Ingresa la contraseña"
+                            autoComplete="off"
                         />
                         <label htmlFor="password">CONTRASEÑA</label>
                         {
@@ -187,14 +188,15 @@ export const AgregaUsuario = () => {
                 </div>
                 <div className="col-md-4 mx-auto">
                     <button
-                        type="submit"
+                        type="button"
                         className="m-2 btn btn-primary"
+                        onClick={altaDelUsuario}
                     >
                         <i className="bi bi-person-add me-2"></i>
                       REGISTRAR USUARIO DE SISTEMA
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }

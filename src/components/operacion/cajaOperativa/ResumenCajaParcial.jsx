@@ -236,7 +236,7 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
 
     return (
         <>
-         <form onSubmit={onSubmit} className="text-center mt-2" style={{fontSize: "12px"}}>
+         <div className="text-center mt-2" style={{fontSize: "12px"}}>
 
             <h5 className="p-2 ">Denominación <strong>{DENOMINACIONES[moneda] || ''}</strong></h5>
             <table className="table table-bordered table-hover table-responsive">
@@ -365,6 +365,7 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
                                         }
                                     }}
                                     value={billetesFisicos[index][getPropiedad('denominacion', elemento)]}
+                                    autoComplete="off"
                                 />
 
                             </td>
@@ -407,14 +408,15 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
                 </tfoot>
             </table>
             <div className="col-md-12">
-                <button type="submit" className="m-2 btn btn-primary" disabled={(totales[1] < totalBilletesFisicos) || !validaDiferencia}>
+                <button type="button" className="m-2 btn btn-primary" disabled={(totales[1] < totalBilletesFisicos) || !validaDiferencia}
+                        onClick={onSubmit}>
                               <span className="me-2">
                                 GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
                               </span>
                 </button>
             </div>
-        </form>
+        </div>
         {
             guarda && <ModalLoading options={optionsLoad} />
         }

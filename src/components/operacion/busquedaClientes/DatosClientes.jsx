@@ -40,6 +40,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 className="form-control"
                                 id="cliente"
                                 value={cliente.Cliente}
+                                autoComplete="off"
                                 readOnly
                             />
                             <label htmlFor="cliente">NÚMERO USUARIO</label>
@@ -53,6 +54,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 id="nombre"
                                 value={cliente.Nombre}
                                 readOnly
+                                autoComplete="off"
                             />
                             <label htmlFor="nombre">NOMBRE(S)</label>
                         </div>
@@ -65,6 +67,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 id="apellidoPaterno"
                                 value={cliente.ApellidoPaterno}
                                 readOnly
+                                autoComplete="off"
                             />
                             <label htmlFor="apellidoPaterno">APELLIDO PATERNO</label>
                         </div>
@@ -77,6 +80,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 id="apellidoMaterno"
                                 value={cliente.ApellidoMaterno}
                                 readOnly
+                                autoComplete="off"
                             />
                             <label htmlFor="apellidoMaterno">APELLIDO MATERNO</label>
                         </div>
@@ -91,6 +95,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 id="fechaNacimiento"
                                 value={cliente.FechaNacimiento}
                                 readOnly
+                                autoComplete="off"
                             />
                             <label htmlFor="fechaNacimiento">FECHA NACIMIENTO</label>
                         </div>

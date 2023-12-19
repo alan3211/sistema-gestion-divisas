@@ -133,6 +133,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                                     name="fecha"
                                                     placeholder="Ingresa la fecha de consulta"
                                                     onChange={onHandleDateChange}
+                                                    autoComplete="off"
                                                 />
                                                 <label htmlFor="fecha">FECHA CONSULTA</label>
                                                 {
@@ -151,6 +152,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                                 className="form-control"
                                                 value={searchTerm}
                                                 onChange={handleSearch}
+                                                autoComplete="off"
                                             />
                                             <label htmlFor="fecha">
                                                 BUSCAR EN LA TABLA

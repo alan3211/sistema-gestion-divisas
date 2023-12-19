@@ -66,6 +66,7 @@ export const MontoSolicitud = ({ item, index, columna }) => {
                 placeholder="$"
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
+                autoComplete="off"
             />
         </td>
     );

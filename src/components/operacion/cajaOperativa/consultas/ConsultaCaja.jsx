@@ -117,7 +117,7 @@ export const ConsultaCaja = () => {
             </div>
             <div className="row">
                 <TitleComponent title="Movimientos Históricos" icon="bi bi-calendar3 ms-3 me-2"/>
-                <form className="row justify-content-center mb-3" onSubmit={handleConsultaMovimientosHistoricos} noValidate>
+                <div className="row justify-content-center mb-3">
                     <div className="col-md-3">
                         <div className="form-floating">
                             <input
@@ -132,6 +132,7 @@ export const ConsultaCaja = () => {
                                 id="fecha"
                                 name="fecha"
                                 placeholder="Ingresa la fecha de consulta"
+                                autoComplete="off"
                             />
                             <label htmlFor="fecha">FECHA CONSULTA</label>
                             {
@@ -143,8 +144,9 @@ export const ConsultaCaja = () => {
                     <div className="col-md-3">
                         <div className="d-flex">
                             <button
-                                type="submit"
+                                type="button"
                                 className="m-2 btn btn-primary d-grid gap-2"
+                                onClick={handleConsultaMovimientosHistoricos}
                             >
                                   <span className="me-2">
                                       <strong>CONSULTAR</strong>
@@ -157,7 +159,7 @@ export const ConsultaCaja = () => {
                             </button>
                         </div>
                     </div>
-                </form>
+                </div>
                 {
                     isLoadingHist &&
                     <>

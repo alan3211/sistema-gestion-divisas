@@ -47,7 +47,7 @@ export const validaFechas = (fecha) => {
 };
 
 export const validarNombreApellido = (name,value) => {
-    const nombreRegex = /^$|^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'"]+$/;
+    const nombreRegex = /^$|^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'" ]+$/;
     if (!nombreRegex.test(value)) {
         return `El campo ${name} debe contener solo letras, acentos y la letra 'ñ'.`;
     }
@@ -90,9 +90,9 @@ export const validarCorreoElectronico = (correo) => {
 };
 
 export const validarNumeroTelefono = (name,value) => {
-    const phoneNumberRegex = /^\d{10,15}$/;
+    const phoneNumberRegex = /^\d{10}$/;
     if (!phoneNumberRegex.test(value)) {
-        return `El campo ${name} debe contener solo 15 números.`;
+        return `El campo ${name} debe contener solo 10 números.`;
     }
     return true;
 }

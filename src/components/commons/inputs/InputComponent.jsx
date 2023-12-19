@@ -47,6 +47,7 @@ export const InputComponent = (
                            id={name}
                            name={name}
                            placeholder={texto}
+                            autoComplete="off"
                     />
                     <label htmlFor={name}>{nombre}</label>
                 </div>
@@ -60,6 +61,7 @@ export const InputComponent = (
                    className={estilo}
                    id={name}
                    placeholder={nombre}
+                   autoComplete="off"
             />
         );
     }
@@ -74,6 +76,7 @@ export const InputComponent = (
                            className="form-control input-group has-validation"
                            id={name}
                            name={name}
+                           autoComplete="off"
                     />
                     <label htmlFor={name}>{nombre}</label>
                 </div>
@@ -118,6 +121,7 @@ export const InputComponent = (
                     name={name}
                     id={name}
                     checked={seleccionado.showControl.busquedaCliente === name}
+                    autoComplete="off"
                 />
                 <label className="form-check-label" htmlFor={name}>
                     {nombre}

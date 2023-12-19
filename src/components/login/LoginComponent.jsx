@@ -70,7 +70,7 @@ export const LoginComponent = () => {
                                     <div className="card-body p-4">
                                         <h5 className="text-blue text-center mb-4"><strong>¡Bienvenido!</strong></h5>
 
-                                        <form onSubmit={handleLogin}>
+                                        <div>
                                             <div className="input-group mb-3">
                                                 <span className="input-group-text text-blue"><i className="bi bi-person-fill"></i></span>
                                                 <input
@@ -94,6 +94,7 @@ export const LoginComponent = () => {
                                                     id="usuario"
                                                     name="usuario"
                                                     placeholder="Usuario"
+                                                    autoComplete="off"
                                                 />
                                                 {
                                                     errors.usuario && <div className="invalid-feedback-custom">{errors.usuario.message}</div>
@@ -118,16 +119,18 @@ export const LoginComponent = () => {
                                                     id="password"
                                                     name="password"
                                                     placeholder="Contraseña"
+                                                    autoComplete="off"
                                                 />
                                                 {
                                                     errors.password && <div className="invalid-feedback-custom">{errors.password.message}</div>
                                                 }
                                             </div>
 
-                                            <button className="btn btn-primary w-100" type="submit">
+                                            <button className="btn btn-primary w-100" type="button"
+                                                    onClick={handleLogin}>
                                                 <i className="bi bi-box-arrow-in-right"></i> <strong>INICIAR SESIÓN</strong>
                                             </button>
-                                        </form>
+                                        </div>
                                     </div>
                                 </div>
 

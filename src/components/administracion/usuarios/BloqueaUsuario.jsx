@@ -20,6 +20,7 @@ export const BloqueaUsuario = () => {
     const [activo, setActivo] = useState(0);
 
     const asignarUsuario = handleSubmit(async (data) => {
+        setActivo(0);
         data.tipo_operacion = 3;
         data.usuario_alta = dataG.usuario;
         data.sucursal = data.sucursal_origen;
@@ -68,10 +69,8 @@ export const BloqueaUsuario = () => {
 
     return (
         <div className="container justify-content-center align-items-center mt-4">
-            <form
+            <div
                 className="text-center mb-4"
-                onSubmit={asignarUsuario}
-                noValidate
             >
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
@@ -152,16 +151,16 @@ export const BloqueaUsuario = () => {
                         DESBLOQUEAR USUARIO
                     </button>
                     <button
-                        type="submit"
+                        type="button"
                         className="m-2 btn btn-danger"
-                        onClick={()=>setActivo(0)}
+                        onClick={asignarUsuario}
                         disabled={ watch("sucursal_origen") === '0' && usuarios.length === 0}
                     >
                         <i className="bi bi-lock-fill me-2"></i>
                        BLOQUEAR USUARIO
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }

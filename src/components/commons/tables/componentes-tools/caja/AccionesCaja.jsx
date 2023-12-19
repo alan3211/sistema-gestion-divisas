@@ -114,7 +114,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                 showModal
                 && (
                     <ModalAccionesTool options={options}>
-                        <form onSubmit={handleSubmit(onEnvioValores)} noValidate>
+                        <div>
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
@@ -188,13 +188,14 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                 </div>)
                             }
                             <div className="d-flex justify-content-end mt-2">
-                                <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                        onClick={handleSubmit(onEnvioValores)}
                                         disabled={watch("motivo") === ''}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </ModalAccionesTool>
                 )}
         </td>);

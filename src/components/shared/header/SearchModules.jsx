@@ -5,13 +5,14 @@ export const SearchModules = () =>{
 
     return (
         <div className="search-bar">
-            <form className="search-form d-flex align-items-center">
+            <div className="search-form d-flex align-items-center">
                 <input
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
                     className="form-control"
                     placeholder="Búsqueda de modulos..."
+                    autoComplete="off"
                 />
                 {showDropdown && (
                     <div className="combo-dropdown-search">
@@ -26,7 +27,7 @@ export const SearchModules = () =>{
                         ))}
                     </div>
                 )}
-            </form>
+            </div>
         </div>
     );
 

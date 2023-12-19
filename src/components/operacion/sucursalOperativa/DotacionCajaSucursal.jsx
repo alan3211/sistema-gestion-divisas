@@ -7,7 +7,7 @@ import {
     formattedDateWS,
     getDenominacion,
     obtenerObjetoDenominaciones,
-    opciones, validarMoneda
+    opciones, OPTIONS, validarMoneda
 } from "../../../utils";
 import {dataG} from "../../../App";
 import {getCantidadDisponible, realizarOperacionSucursalDotacion} from "../../../services/operacion-sucursal";
@@ -18,7 +18,7 @@ import {getUsuariosSistema} from "../../../services";
 export const DotacionCajaSucursal = () => {
     const [usuariosCombo,setUsuariosCombo] = useState([]);
     const {register,handleSubmit
-        ,formState:{errors},reset
+        ,formState:{errors},reset,setValue
         ,watch} = useForm()
     const catalogo = useCatalogo([15]);
     const [showDenominacion,setShowDenominacion] =  useState(false);
@@ -28,7 +28,7 @@ export const DotacionCajaSucursal = () => {
     });
     const [showDisponible,setShowDisponible] = useState({
         isAvailable:false,
-        title: ''
+        cantidad: 0
     })
 
     const [finalizaOperacion,setFinalizaOperacion] = useState(true);
@@ -37,10 +37,10 @@ export const DotacionCajaSucursal = () => {
 
     const options = {
         title: '',
-        importe: parseInt(watch('monto')),
+        importe: parseFloat(watch('monto')),
         habilita,
         setHabilita,
-        setFinalizaOperacion
+        setFinalizaOperacion,
     }
 
     const terminarDotacion = handleSubmit(async(data)=>{
@@ -69,29 +69,27 @@ export const DotacionCajaSucursal = () => {
 
         const resultado = await realizarOperacionSucursalDotacion(encryptedData);
 
-        console.log(resultado);
         if(resultado){
-            toast.success(`Se ha enviado los valores correctamente de ${data.moneda}`,{
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(`Se ha enviado los valores correctamente de ${data.moneda}`,OPTIONS);
             reset();
             setShowDenominacion(false);
             denominacionD.reset();
         }
     });
 
-    const nuevoEnvio = () => {
+    const nuevoEnvio = () =>  {
+        setShowDisponible({
+            isAvailable:false,
+            cantidad: 0
+        })
         setShowDenominacion(false);
-        reset();
         denominacionD.reset();
+        setValue("monto",'');
+        setValue("moneda",'0');
+        setValue("cajero",'0');
     }
 
-    const obtieneUsuarios = async () =>{
+    const obtieneUsuarios = async () => {
         const valores = {
             sucursal:dataG.sucursal,
             usuario: dataG.usuario,
@@ -101,20 +99,40 @@ export const DotacionCajaSucursal = () => {
         setUsuariosCombo(data_usuarios);
     }
 
-    const obtieneDisponibilidad = async () =>{
+    const obtieneDisponibilidad = async () => {
         const valores = {
-            sucursal:dataG.sucursal,
+            sucursal: dataG.sucursal,
             divisa: watch("moneda")
-        }
-        const encryptedData = encryptRequest(valores)
+        };
+        const encryptedData = encryptRequest(valores);
         const disponibilidad = await getCantidadDisponible(encryptedData);
-        console.log("DISPONIBLE: ",disponibilidad);
-        setShowDisponible({
-            isAvailable: true,
-            cantidad: disponibilidad.result_set[0].Disponible ? disponibilidad.result_set[0].Disponible:0
-        });
+
+        const montoIngresado = parseFloat(watch("monto")) || 0;
+        const disponible = parseFloat(disponibilidad.result_set[0].Disponible) || 0;
+
+        if (montoIngresado === 0) {
+            toast.info('El monto ingresado no puede ser cero.', OPTIONS);
+            setShowDisponible({
+                isAvailable: false,
+                cantidad: 0
+            });
+            setShowDenominacion(false);
+        } else if (disponible > 0.0 && montoIngresado <= disponible) {
+            setShowDisponible({
+                isAvailable: true,
+                cantidad: disponible
+            });
+            setShowDenominacion(true);
+        } else {
+            toast.info('La cantidad ingresada supera el monto disponible para esta divisa.', OPTIONS);
+            setShowDisponible({
+                isAvailable: false,
+                cantidad: 0
+            });
+            setShowDenominacion(false);
+        }
         console.log(showDisponible);
-    }
+    };
 
     useEffect(()=>{
         obtieneUsuarios();
@@ -125,16 +143,16 @@ export const DotacionCajaSucursal = () => {
             setShowDenominacion(false);
             setShowDisponible({
                 isAvailable: false,
-                cantidad: '0'
+                cantidad: 0
             });
         }else{
-            setShowDenominacion(true);
             obtieneDisponibilidad();
+            setShowDenominacion(true);
         }
     }, [watch("moneda")]);
 
     return (
-        <form className="row m-1 g-3 justify-content-center" onSubmit={terminarDotacion} noValidate>
+        <div className="row m-1 g-3 justify-content-center">
             <div className="col-md-3">
                 <div className="form-floating mb-3">
                     <select
@@ -186,6 +204,7 @@ export const DotacionCajaSucursal = () => {
                         id="monto"
                         name="monto"
                         placeholder="Ingresa el monto"
+                        autoComplete="off"
                     />
                     <label htmlFor="monto">MONTO</label>
                     {
@@ -236,20 +255,26 @@ export const DotacionCajaSucursal = () => {
                     </h5>)
                 }
             </div>
-            <div className="d-flex justify-content-center">
-                {
-                    showDenominacion && <Denominacion type="D" moneda={watch('moneda')} options={options}/>
-                }
-            </div>
-            <div className="col-md-12 d-flex justify-content-center">
-                <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
-                    <i className="bi bi-plus"></i> NUEVA DOTACIÓN
-                </button>
-                <button type="submit" className="btn btn-primary" disabled={finalizaOperacion || parseFloat(showDisponible.cantidad) === 0}>
-                    <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
-                    FINALIZAR OPERACIÓN
-                </button>
-            </div>
-        </form>
+            {
+                showDisponible.cantidad > 0.0 && (
+                    <>
+                        <div className="d-flex justify-content-center">
+                            {
+                                showDenominacion && <Denominacion type="D" moneda={watch('moneda')} options={options}/>
+                            }
+                        </div>
+                        <div className="col-md-12 d-flex justify-content-center">
+                            <button type="button" className="btn btn-secondary me-3" onClick={nuevoEnvio}>
+                                <i className="bi bi-plus"></i> NUEVA DOTACIÓN
+                            </button>
+                            <button type="button" className="btn btn-primary"  onClick={terminarDotacion} disabled={finalizaOperacion || parseFloat(showDisponible.cantidad) === 0}>
+                                <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
+                                FINALIZAR OPERACIÓN
+                            </button>
+                        </div>
+                    </>
+                )
+            }
+        </div>
     );
 }

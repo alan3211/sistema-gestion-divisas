@@ -67,10 +67,8 @@ export const AsignaUsuario = () => {
 
     return (
         <div className="container justify-content-center align-items-center mt-4">
-            <form
+            <div
                 className="text-center mb-4"
-                onSubmit={asignarUsuario}
-                noValidate
             >
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
@@ -176,15 +174,16 @@ export const AsignaUsuario = () => {
                 </div>
                 <div className="col-md-4 mx-auto">
                     <button
-                        type="submit"
+                        type="button"
                         className="m-2 btn btn-primary"
+                        onClick={asignarUsuario}
                         disabled={ watch("sucursal_origen") === '0' && usuarios.length === 0}
                     >
                         <i className="bi bi-person-check-fill me-2"></i>
                        REASIGNAR USUARIO DE SISTEMA
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }

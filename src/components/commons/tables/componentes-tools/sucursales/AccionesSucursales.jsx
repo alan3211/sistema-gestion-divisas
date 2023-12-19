@@ -176,7 +176,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                 showModal
                 && (
                     <ModalAccionTesoreriaTool options={options}>
-                        <form onSubmit={handleSubmit(onEnvioValores)} noValidate>
+                        <div>
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
@@ -214,7 +214,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                         <div className="col-md-6">
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
-                                                (item.Operacion !== 'Dotación Sucursal') ? (<Denominacion type="D" moneda={item.Moneda} options={optionsDenominacion}/>)
+                                                (item.Operacion !== 'Dotación Sucursal') ? (<Denominacion type={item.Operacion === 'Dotación Sucursal' ? 'D':'C'} moneda={item.Moneda} options={optionsDenominacion}/>)
                                                 : (<DenominacionTable setDenominacion={setDenominacion} moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} setTotalMonto={setTotalMonto}/>)
                                             }
                                         </div>
@@ -254,13 +254,14 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                 </div>)
                             }
                             <div className="d-flex justify-content-end mt-2">
-                                <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
-                                        disabled={validaBtn()}>
+                                <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                        disabled={validaBtn()}
+                                        onClick={handleSubmit(onEnvioValores)}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </ModalAccionTesoreriaTool>
                 )}
             {guarda && <ModalLoading options={optionsLoad}/>}

@@ -27,7 +27,6 @@ export const ConsultaTesoreria = ({type}) => {
             setDataResumen(response)
             setIsLoading(false);
         }
-
         getResumen();
     }, []);
 

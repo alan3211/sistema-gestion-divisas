@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {
     convertirFecha,
@@ -13,6 +13,7 @@ import {buscaCliente, consultaInformacionCarga} from "../../../services";
 import {dataG} from "../../../App";
 import {toast} from "react-toastify";
 import {ModalConfirm, ModalGenericTool} from "../../commons/modals";
+import {useNavigate} from "react-router-dom";
 
 export const FormCliente = ({tipo}) => {
 
@@ -25,7 +26,6 @@ export const FormCliente = ({tipo}) => {
         cliente,
         setCliente, showModalAltaUsuario, setShowModalAltaUsuario,
          setShowAltaCliente,
-         setShowModalAltaCliente,
         busquedaCliente: {
             setShowCliente,
             formBuscarCliente,
@@ -33,6 +33,13 @@ export const FormCliente = ({tipo}) => {
         }
     } = useContext(CompraVentaContext);
 
+    useEffect(() => {
+        formBuscarCliente.setValue("cliente",cliente)
+        const data = {
+            cliente
+        }
+        handleValidateForm(data);
+    }, [cliente]);
 
     const handleValidateForm = formBuscarCliente.handleSubmit(async (data) => {
         console.log(data)
@@ -58,7 +65,7 @@ export const FormCliente = ({tipo}) => {
         const encryptedData = encryptRequest(data);
         const dataClientes = await buscaCliente(encryptedData);
         dataClientes.headers = ['Selecciona', ...dataClientes.headers]
-
+        console.log(dataClientes)
         if (dataClientes.total_rows > 0) {
             if (dataClientes.total_rows === 1) {
                 console.log("UN REGISTRO", dataClientes);
@@ -83,11 +90,10 @@ export const FormCliente = ({tipo}) => {
                 const mensaje = 'A continuación, se muestran los siguientes clientes con coincidencias.';
                 toast.info(mensaje, OPTIONS);
             }
+            setData(dataClientes);
         } else {
             setShowModalAltaUsuario(true); // Me muestra un mensaje de alerta indicandome que el usuario que busque no existe y me pregunta si deseo registrarlo
-            setContinuaOperacion(false);
         }
-            setData(dataClientes);
     });
 
     const clearBuscaCliente = () => {
@@ -97,7 +103,7 @@ export const FormCliente = ({tipo}) => {
     }
 
     return (<>
-            <form className="row g-3" onSubmit={handleValidateForm} noValidate>
+            <div className="row g-3">
                 {
                     tipo === 'cliente'
                         ? (
@@ -129,6 +135,7 @@ export const FormCliente = ({tipo}) => {
                                             e.target.value = upperCaseValue;
                                             formBuscarCliente.setValue("cliente", upperCaseValue);
                                         }}
+                                        autoComplete="off"
                                     />
                                     <label htmlFor="cliente">NÚMERO DE USUARIO</label>
                                     {
@@ -168,6 +175,7 @@ export const FormCliente = ({tipo}) => {
                                                 e.target.value = upperCaseValue;
                                                 formBuscarCliente.setValue("nombre", upperCaseValue);
                                             }}
+                                            autoComplete="off"
                                         />
                                         <label htmlFor="nombre">NOMBRE(S)</label>
                                         {
@@ -204,6 +212,7 @@ export const FormCliente = ({tipo}) => {
                                                 e.target.value = upperCaseValue;
                                                 formBuscarCliente.setValue("apellido_paterno", upperCaseValue);
                                             }}
+                                            autoComplete="off"
                                         />
                                         <label htmlFor="apellido_paterno">APELLIDO PATERNO</label>
                                         {
@@ -240,6 +249,7 @@ export const FormCliente = ({tipo}) => {
                                                 e.target.value = upperCaseValue;
                                                 formBuscarCliente.setValue("apellido_materno", upperCaseValue);
                                             }}
+                                            autoComplete="off"
                                         />
                                         <label htmlFor="apellido_materno">APELLIDO MATERNO</label>
                                         {
@@ -263,6 +273,7 @@ export const FormCliente = ({tipo}) => {
                                             id="fecha_nacimiento"
                                             name="fecha_nacimiento"
                                             placeholder="Ingresa la fecha de nacimiento"
+                                            autoComplete="off"
                                         />
                                         <label htmlFor="fecha_nacimiento">FECHA NACIMIENTO</label>
                                         {
@@ -284,24 +295,34 @@ export const FormCliente = ({tipo}) => {
                         <i className="bi bi-trash-fill ms-2"></i>
                     </button>
                     <button
-                        type="submit"
+                        type="button"
+                        onClick={handleValidateForm}
                         className="m-2 btn btn-primary gap-2 p-2">
                         <strong>BUSCAR</strong>
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>
-            </form>
+            </div>
             {
                 showModalAltaUsuario && (
-
-                    <ModalConfirm title={`El usuario que se busco no existe registrado en el sistema. ¿Desea realizar un alta de usuario?`}
+                    <ModalConfirm title={`El usuario no existe registrado en el sistema. ¿Desea realizar un alta de usuario?`}
                                   showModal={showModalAltaUsuario}
                                   closeModal={()=> setShowModalAltaUsuario(false)}
                                   hacerOperacion={()=>{
+                                      setContinuaOperacion(false);
                                       setShowAltaCliente(true);
-                                      setShowModalAltaUsuario(false);
+                                      setShowModalAltaUsuario(false)
                                   }}
-                                  closeModalAndReturn={()=> setShowModalAltaUsuario(false)}
+                                  closeModalAndReturn={()=> {
+                                      setShowModalAltaUsuario(false);
+                                      formBuscarCliente.setValue("nombre","");
+                                      formBuscarCliente.setValue("apellido_paterno","");
+                                      formBuscarCliente.setValue("apellido_materno","");
+                                      formBuscarCliente.setValue("fecha_nacimiento","");
+                                      formBuscarCliente.setValue("cliente","");
+                                      setContinuaOperacion(false)
+
+                                  }}
                                   icon="bi bi-exclamation-triangle-fill text-warning m-2"
                     />)
             }

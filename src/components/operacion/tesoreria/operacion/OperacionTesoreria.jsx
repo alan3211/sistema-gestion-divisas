@@ -8,7 +8,7 @@ import {getConsultaSaldoCuenta} from "../../../../services/operacion-tesoreria";
 export const OperacionTesoreria = ({perfil}) => {
 
     const [saldoGeneral, setSaldoGeneral] = useState(0); // Inicializa con un valor predeterminado
-    const [selectedOption, setSelectedOption] = useState("dotacionSuc");
+    const [selectedOption, setSelectedOption] = useState(perfil === 'T' ?"movBancario": "dotacionSuc");
 
     // Usa useSaldo para obtener el saldo actual
     const saldoActual = useSaldo();
@@ -47,6 +47,7 @@ export const OperacionTesoreria = ({perfil}) => {
                         value="dotacionSuc"
                         onChange={handleRadioChange}
                         checked={selectedOption === "dotacionSuc"}
+                        autoComplete="off"
                     />
                     <label className="form-check-label" htmlFor="dotacionSuc">
                         <strong>Asignación de Fondos</strong>
@@ -61,6 +62,7 @@ export const OperacionTesoreria = ({perfil}) => {
                         value="movBancario"
                         onChange={handleRadioChange}
                         checked={selectedOption === "movBancario"}
+                        autoComplete="off"
                     />
                     <label className="form-check-label" htmlFor="movBancario">
                         <strong>Movimiento Bancario</strong>

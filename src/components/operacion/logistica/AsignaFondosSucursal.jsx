@@ -19,6 +19,7 @@ const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputCh
                 className="form-control-custom"
                 placeholder="$"
                 onChange={(e) => handleInputChange(e, rowIndex, nombre, denominacion)}
+                autoComplete="off"
                 //value={billetesFisicos[rowIndex][nombre] || ""}
             />
         </td>
@@ -274,7 +275,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     return (
         <>
-            <form onSubmit={onSubmit} className="text-center mt-2" style={{fontSize: "12px"}}>
+            <div className="text-center mt-2" style={{fontSize: "12px"}}>
                 <div className="custom-scrollbar" style={{maxWidth: '100%', overflowX: 'auto'}}>
                     <table className="table table-bordered table-hover custom-scrollbar">
                         <thead className="table-blue">
@@ -361,14 +362,14 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                     </table>
                 </div>
                 <div className="col-md-12">
-                    <button type="submit" className="m-2 btn btn-primary" disabled={validaCantidad()}>
+                    <button type="button" className="m-2 btn btn-primary" onClick={onSubmit} disabled={validaCantidad()}>
                         <span className="me-2">
                             GUARDAR
                             <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
                         </span>
                     </button>
                 </div>
-            </form>
+            </div>
             {guarda && <ModalLoading options={optionsLoad}/>}
         </>
     );

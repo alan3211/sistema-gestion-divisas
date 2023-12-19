@@ -101,6 +101,7 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
                                             return newBilletes;
                                         });
                                     }}
+                                    autoComplete="off"
                                     //value={billetesFisicos[index][getPropiedad("denominacion", elemento)]}
                                 />
                             </td>

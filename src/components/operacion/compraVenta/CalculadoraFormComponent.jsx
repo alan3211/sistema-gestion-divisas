@@ -113,12 +113,16 @@ export const CalculadoraFormComponent = () => {
         if (result.result_set[0].hasOwnProperty('Mensaje')) {
             setCantidad(0);
             setShowCantidadEntregada(false);
-            setShowModalDotacion({
-                show:true,
-                mensaje: result.result_set[0].Mensaje,
-                monto:result.result_set[0].Monto,
-                moneda:result.result_set[0].Moneda,
-            });
+            if (result.result_set[0].Mensaje.includes('Indica')){
+                toast.info(result.result_set[0].Mensaje,OPTIONS);
+            }else{
+                setShowModalDotacion({
+                    show:true,
+                    mensaje: result.result_set[0].Mensaje,
+                    monto:result.result_set[0].Monto,
+                    moneda:result.result_set[0].Moneda,
+                });
+            }
             clearForm();
         }else{
             setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
@@ -216,7 +220,7 @@ export const CalculadoraFormComponent = () => {
             sucursal: dataG.sucursal || 0,
             nombre_operador: dataG.usuario,
             fecha_operacion: formattedDate,
-            hora_operacion: hora,
+            hora_operacion: new Date().getHours().toString(),
             monto: parseInt(datos.monto),
             divisa: datos.moneda,
             tipo_cambio: datos.tipo_cambio,
@@ -260,7 +264,7 @@ export const CalculadoraFormComponent = () => {
 
     return (
         <>
-            <form className="row g-3" onSubmit={handleSubmitCotizacion} noValidate>
+            <div className="row g-3">
                 <div className="row">
                     <div className="col-md-6">
                         <div className="form-floating mb-3">
@@ -350,6 +354,7 @@ export const CalculadoraFormComponent = () => {
                                 id="monto"
                                 name="monto"
                                 placeholder="Ingresa la cantidad a cotizar por el usuario"
+                                autoComplete="off"
                             />
                             <label htmlFor="monto" className="form-label">CANTIDAD A COTIZAR <i>({muestraDivisa(1)})</i></label>
                             {
@@ -365,6 +370,7 @@ export const CalculadoraFormComponent = () => {
                                                id="floatingCE"
                                                value={cantidad}
                                                readOnly
+                                               autoComplete="off"
                                         />
                                         <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>({muestraDivisa(2)})</i></label>
                             </div>
@@ -376,14 +382,15 @@ export const CalculadoraFormComponent = () => {
                         <i className="bi bi-file-earmark-plus"></i> <strong>NUEVA COTIZACIÓN</strong>
                     </button>
                     <button
-                        type="submit"
+                        type="button"
                         className="btn btn-success d-flex p-3"
+                        onClick={handleSubmitCotizacion}
                     >
                         <i className="bi bi-cash-coin me-2"></i>
                         <strong>COTIZAR</strong>
                     </button>
                 </div>
-            </form>
+            </div>
 
             {
                 cantidad !== 0 && (<ModalConfirm title={`La cotización fue de ${FormatoMoneda(parseFloat(cantidad),'')} ¿Desea realizar una operación con esta cotización?`}

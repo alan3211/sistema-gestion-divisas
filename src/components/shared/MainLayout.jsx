@@ -6,6 +6,7 @@ import {useMonitorSesion} from "../../hook/";
 import {encryptRequest, formatTime} from "../../utils";
 import {dataG} from "../../App";
 import {finSesion} from "../../services";
+import {NotAuthenticated} from "./NotAuthenticated";
 
 export const MainLayout = ({children}) => {
 
@@ -21,7 +22,7 @@ export const MainLayout = ({children}) => {
 
     return (
         <>
-            {authenticated && (
+            {authenticated ? (
                 <>
                     <HeaderComponent />
                     <AsideComponent />
@@ -58,7 +59,8 @@ export const MainLayout = ({children}) => {
                         </Modal.Footer>
                     </Modal>
                 </>
-            )}
+            ):
+            (<NotAuthenticated/>)}
         </>
     );
 }

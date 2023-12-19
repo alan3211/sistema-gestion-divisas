@@ -78,7 +78,7 @@ export const AccionesBoveda = ({item, index, refresh}) => {
                 showModal
                 && (
                     <ModalAccionTesoreriaTool options={options}>
-                        <form onSubmit={handleSubmit(onEnvioValores)} noValidate>
+                        <div>
                             {optionBtn !== 1 &&(<div className="col-md-12">
                                 <div className="form-floating">
                                     <textarea
@@ -118,12 +118,13 @@ export const AccionesBoveda = ({item, index, refresh}) => {
                                         </button>
                                     )
                                 }
-                                <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}>
+                                <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                        onClick={handleSubmit(onEnvioValores)}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle me-2' : 'bi bi-x-circle me-2'}></i>
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </ModalAccionTesoreriaTool>
                 )}
         </td>

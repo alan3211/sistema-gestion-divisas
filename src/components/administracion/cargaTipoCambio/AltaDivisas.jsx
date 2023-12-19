@@ -45,6 +45,7 @@ export const AltaDivisas = () => {
                                             className={`form-control ${errors && errors[compraName] ? "is-invalid" : ""}`}
                                             name={compraName}
                                             placeholder="$"
+                                            autoComplete="off"
                                             {...register(compraName, {
                                                 validate: {
                                                     moneda: (value) => validarMoneda(`Compra ${currency.divisa}`, value),
@@ -65,6 +66,7 @@ export const AltaDivisas = () => {
                                             className={`form-control ${errors && errors[ventaName] ? "is-invalid" : ""}`}
                                             name={ventaName}
                                             placeholder="$"
+                                            autoComplete="off"
                                             {...register(ventaName, {
                                                 validate: {
                                                     moneda: (value) => validarMoneda(`Venta ${currency.divisa}`, value),

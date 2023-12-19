@@ -81,7 +81,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
                 showModal
                 && (
                     <ModalAccionTesoreriaTool options={options}>
-                        <form onSubmit={handleSubmit(onEnvioValores)} noValidate>
+                        <div>
                             {
                                 optionBtn === 1 && (
                                     <div className="col-md-12 mb-3">
@@ -95,6 +95,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
                                                 id="monto_equivalente"
                                                 name="monto_equivalente"
                                                 placeholder="Ingresa el Monto Equivalente"
+                                                autoComplete="off"
                                             />
                                             <label htmlFor="monto_equivalente">MONTO EQUIVALENTE DE {item.Moneda} EN MXP</label>
                                             {
@@ -136,12 +137,13 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
                                 </div>
                             </div>
                             <div className="d-flex justify-content-end mt-2">
-                                <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}>
+                                <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                        onClick={handleSubmit(onEnvioValores)}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </ModalAccionTesoreriaTool>
                 )}
         </td>

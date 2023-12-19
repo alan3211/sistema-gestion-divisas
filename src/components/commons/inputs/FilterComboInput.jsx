@@ -16,7 +16,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input}) =
 
         console.log("OPTIONS:", options)
         const filteredOptions = options.filter((option) =>
-            option.descripcion.trim().toUpperCase().startsWith(inputValue.toUpperCase())
+            option.descripcion.trim().toUpperCase().includes(inputValue.toUpperCase())
         );
         console.log("FILTER:",filteredOptions)
         // Establecer el error en errors[name] si no hay opciones coincidentes
@@ -53,6 +53,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input}) =
                 onChange={handleInputChange}
                 className={`form-control ${propForm.errors[name] ? 'is-invalid' : ''}`}
                 placeholder={`Filtrar por ${name}`}
+                autoComplete="off"
             />
             {showDropdown && (
                 <div className="combo-dropdown">

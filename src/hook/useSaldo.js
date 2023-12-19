@@ -8,10 +8,16 @@ export const useSaldo =  () => {
     useEffect(() => {
         const getConsultaTesoreria = async ()=> {
             const {saldo_cuenta} = await getConsultaSaldoCuenta();
-            setSaldoGeneral(saldo_cuenta);
+            if (saldo_cuenta){
+                setSaldoGeneral(saldo_cuenta);
+            }else{
+                setSaldoGeneral(0);
+            }
         }
         getConsultaTesoreria();
     }, []);
 
+    console.log("saldoGeneral");
+    console.log(saldoGeneral);
     return saldoGeneral;
 }

@@ -49,10 +49,8 @@ export const EnvioOperaciones = () => {
 
     return (
         <div className="container justify-content-center align-items-center mt-4">
-            <form
+            <div
                 className="text-center mb-4"
-                onSubmit={onSubmitRecepcion}
-                noValidate
             >
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
@@ -70,6 +68,7 @@ export const EnvioOperaciones = () => {
                             placeholder="Ingresa la fecha de operación"
                             value={currentDate}
                             onChange={(e)=> setCurrentDate(e.target.value)}
+                            autoComplete="off"
                         />
                         <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {
@@ -79,14 +78,15 @@ export const EnvioOperaciones = () => {
                 </div>
                 <div className="col-md-2 mx-auto">
                     <button
-                        type="submit"
+                        type="button"
+                        onClick={onSubmitRecepcion}
                         className="m-2 btn btn-primary"
                     >
                         CONSULTAR
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>
-            </form>
+            </div>
             {
                 showTable && <TableComponent data={data} options={options}/>
             }
