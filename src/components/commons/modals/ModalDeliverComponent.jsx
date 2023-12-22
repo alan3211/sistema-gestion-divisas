@@ -246,14 +246,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         const resultado = await realizarSolicitudCambio(encryptedData);
 
         if(resultado){
-            toast.success(`Se ha realizado la solicitud del cambio exitosamente.`,{
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "colored",
-            });
+            toast.success(`Se ha realizado la solicitud del cambio exitosamente.`,OPTIONS);
             OPTIONS_SOL_DENOMINACION.closeModal();
             setGuarda(false);
             solicitaDotacionFormulario.reset();
@@ -292,22 +285,19 @@ export const ModalDeliverComponent = ({configuration}) =>{
             denominaciones,
         ]
 
+        console.log("DATA FORM")
+        console.log(dataFormulario)
         const encryptedData = encryptRequest(dataFormulario);
 
         const resultado = await realizarOperacionSucursal(encryptedData);
 
         if(resultado){
-            toast.success(`Se ha realizado la solicitud rápida exitosamente.`,{
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "colored",
-            });
+            toast.success(`Se ha realizado la dotación rápida exitosamente.`,OPTIONS);
             OPTIONS_DOTACION_RAPIDA.closeModal();
             setGuarda(false);
             denominacionD.reset();
+        }else{
+            toast.error(`Hubo un problema al realizar la solicitud rápida.`,OPTIONS);
         }
 
     }
@@ -330,7 +320,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                     </Modal.Title>
                 </Modal.Header>
 
-                <Modal.Body>
+                <Modal.Body style={{ maxHeight: "550px", overflowY: "auto" }}>
                     <div className="row justify-content-center">
                         <div className="col-md-4 mb-3 d-flex">
                             <div className="form-floating flex-grow-1">

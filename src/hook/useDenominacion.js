@@ -91,6 +91,7 @@ export const useDenominacion = ({type,moneda,options}) => {
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             const denominacionValue = parseFloat(data[key].Denominacion);
+            // || type === 'SD'
             if ((type === 'E' || type === 'C' || type === 'SD') && denominacionValue > parseFloat(importe)) {
                 delete data[key];
             }
@@ -191,10 +192,10 @@ export const useDenominacion = ({type,moneda,options}) => {
         fetchData();
     },[moneda,type])
 
-    if(options.reRender){
+    useEffect(() => {
         console.log("RERENDER")
         fetchData();
-    }
+    }, [options.reRender]);
 
     return {
         title,data,denominacionMappings,register,trigger,errors,setValue,reset,calculateTotal,

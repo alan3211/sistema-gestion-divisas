@@ -62,7 +62,7 @@ export const eliminarDenominacionesConCantidadCero = (denominacionesObj) => {
     for (const key in denominacionesObj) {
         if (denominacionesObj.hasOwnProperty(key)) {
             if (denominacionesObj[key].hasOwnProperty("cantidad")){
-                if (denominacionesObj[key].cantidad === 0) {
+                if (denominacionesObj[key].cantidad === 0 || isNaN(denominacionesObj[key].cantidad)) {
                     delete denominacionesObj[key];
                 }
             }

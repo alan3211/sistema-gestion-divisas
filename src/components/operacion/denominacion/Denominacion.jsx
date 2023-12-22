@@ -17,11 +17,11 @@ export const Denominacion = ({type,moneda,options}) => {
             <div className="text-center mt-2">
                 <h5 className="p-2 "><strong>{title}</strong></h5>
                 <div className="card-body">
-                    <div className="table-responsive">
+                    <div className="table-responsive" style={{ maxHeight: "400px", overflowY: "auto" }}>
                         <table className="table table-bordered table-hover">
-                            <thead className="table-dark">
+                            <thead className="table-dark sticky top-0">
                             <tr>
-                                {(type !== "R" && type !== "SD") && <th className="col-1">Billetes Disponibles</th>}
+                                {(type !== "R") && <th className="col-1">Billetes Disponibles</th>}
                                 <th className="col-1">Denominación</th>
                                 <th className="col-1">Cantidad</th>
                                 <th className="col-1">Total</th>
@@ -32,7 +32,7 @@ export const Denominacion = ({type,moneda,options}) => {
                                     let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
                                     return (
                                     <tr key={`denominacion_${name}`}>
-                                        { (type !== "R" && type !== "SD")  && <td>{elemento['Billetes Disponibles']}</td>}
+                                        { (type !== "R")  && <td>{elemento['Billetes Disponibles']}</td>}
                                         <td>{elemento.Denominacion}</td>
                                         <td>
                                             <input
@@ -66,9 +66,9 @@ export const Denominacion = ({type,moneda,options}) => {
                                 )
                                 })}
                             </tbody>
-                            <tfoot>
+                            <tfoot className="sticky bottom-0">
                             <tr>
-                                <th colSpan={(type !== "R" && type !== "SD")?3:2}>Total</th>
+                                <th colSpan={(type !== "R")?3:2}>Total</th>
                                 <th className={validacionColor()}>{FormatoMoneda(parseFloat(calculateGrandTotal()))}</th>
                             </tr>
                             </tfoot>

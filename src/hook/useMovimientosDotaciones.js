@@ -8,11 +8,13 @@ export const useMovimientosDotaciones = ({solicitaDotacionFormulario,solicitaDot
     // Solicitud de Denominacion
     const solicitaCambio = () => {
         setCambioDeno(true);
+        setEstadoDotacion(true);
     }
 
     // Solicitud de dotación rápida
     const solicitudDotacionRapida = () => {
         setShowDotacionRapida(true);
+        setEstadoDotacion(true);
     }
 
     const OPTIONS_DOTACION_RAPIDA = {

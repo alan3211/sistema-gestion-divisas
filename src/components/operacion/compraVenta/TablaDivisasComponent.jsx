@@ -20,7 +20,7 @@ export const TablaDivisasComponent = () => {
     const OPTIONS_SUCURSAL = {
         showMostrar:true,
         buscar: true,
-        buscarFecha:true,
+        //buscarFecha:true,
         paginacion: true,
         filters:[
             {columna:'Compra',filter:'currency'},

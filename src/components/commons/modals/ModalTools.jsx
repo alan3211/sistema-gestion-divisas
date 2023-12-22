@@ -21,7 +21,7 @@ export const ModalDetalleTool = ({options,children}) => {
 
 export const ModalAccionTesoreriaTool = ({options,children}) => {
     return (
-        <Modal centered size="xl" show={options.showModal} onHide={options.closeCustomModal}>
+        <Modal centered size={options.size || 'xl'} show={options.showModal} onHide={options.closeCustomModal}>
             <Modal.Header closeButton>
                 <Modal.Title>
                     <h5>

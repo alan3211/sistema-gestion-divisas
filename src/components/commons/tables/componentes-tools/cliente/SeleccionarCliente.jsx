@@ -1,11 +1,14 @@
 
 /*Herramienta para seleccionar al cliente y enviar a la operacion*/
+import {useEffect} from "react";
+
 export const SeleccionarCliente = ({item, index, deps}) => {
 
-    const {setDataClientes = undefined, setShowCliente = undefined} = deps
+    const {setDataClientes = undefined, setShowCliente = undefined,setMessageActive=undefined} = deps
 
     const hacerOperacion = (item) => {
         if (setDataClientes !== undefined && setShowCliente !== undefined) {
+            setMessageActive(false);
             setDataClientes({
                 headers: [],
                 result_set: [item],

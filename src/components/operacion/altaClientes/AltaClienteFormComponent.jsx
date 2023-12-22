@@ -1,4 +1,4 @@
-import {ClienteCoincidenciaComponent} from "../busquedaClientes";
+import {ClienteCoincidenciaComponent, DatosClientes} from "../busquedaClientes";
 import {CardLayout} from "../../commons";
 import {memo, useContext, useEffect, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
@@ -18,7 +18,7 @@ import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContex
 export const AltaClienteFormComponent = memo(() => {
 
     const {propForm} = useContext(AltaClienteContext);
-    const {datosEscaneo} = useContext(CompraVentaContext);
+    const {datosEscaneo, busquedaCliente:{showCliente,setShowCliente,data},operacion} = useContext(CompraVentaContext);
     const catalogo = useCatalogo([2]);
     const [showOverlay, setShowOverlay] = useState(false);
     const [controlName, setControlName] = useState({
@@ -390,6 +390,7 @@ export const AltaClienteFormComponent = memo(() => {
                                             propForm.setShowEdit(!propForm.showEdit);
                                             propForm.setComplementarios(false);
                                             propForm.setMessageActive(false);
+                                            setShowCliente(false)
                                         }}
                                         disabled={!propForm.showEdit}
                                     >
@@ -414,11 +415,14 @@ export const AltaClienteFormComponent = memo(() => {
                     dataClientes={propForm.dataClientes}
                     setDataClientes={propForm.setDataClientes}
                     addCliente={nuevoCliente}
+                    setMessageActive={propForm.setMessageActive}
+                    setShowCliente={setShowCliente}
                 />
             }
-
+            {
+                showCliente && <DatosClientes operacion={operacion} cliente={propForm.dataClientes.result_set[0] || {}}/>
+            }
             <Overlay showOverlay={showOverlay}/>
-
         </>
     );
 });

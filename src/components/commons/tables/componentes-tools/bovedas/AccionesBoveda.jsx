@@ -55,6 +55,7 @@ export const AccionesBoveda = ({item, index, refresh}) => {
     }
 
     const options = {
+        size:'lg',
         showModal,
         closeCustomModal: () => setShowModal(false),
         title: (optionBtn === 1) ? 'Confirmar Dotación a Bóveda' : 'Rechazar Dotación de Bóveda',

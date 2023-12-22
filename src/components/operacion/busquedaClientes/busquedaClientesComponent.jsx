@@ -69,6 +69,7 @@ export const BusquedaClientesComponent = () => {
                         setContinuaOperacion(false);
                         setShowAltaCliente(true);
                     }}
+                    setMessageActive={()=> {return false}}
                 />
             }
             {

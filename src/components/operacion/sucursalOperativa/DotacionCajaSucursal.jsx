@@ -30,6 +30,7 @@ export const DotacionCajaSucursal = () => {
         isAvailable:false,
         cantidad: 0
     })
+    const [moneda, setMoneda] = useState('0')
 
     const [finalizaOperacion,setFinalizaOperacion] = useState(true);
 
@@ -138,8 +139,15 @@ export const DotacionCajaSucursal = () => {
         obtieneUsuarios();
     },[]);
 
-    const consultaDotaciones = () => {
+    useEffect(() => {
         setShowDenominacion(false);
+        setShowDisponible({
+            isAvailable: false,
+            cantidad: 0
+        });
+    }, [watch("moneda")]);
+
+    const consultaDotaciones = () => {
         if(watch("moneda") === '0'){
             setShowDenominacion(false);
             setShowDisponible({
@@ -150,6 +158,7 @@ export const DotacionCajaSucursal = () => {
             obtieneDisponibilidad();
             setShowDenominacion(true);
         }
+        setMoneda(watch("moneda"));
     }
 
     return (<>
@@ -270,7 +279,7 @@ export const DotacionCajaSucursal = () => {
                     <>
                         <div className="d-flex justify-content-center">
                             {
-                                showDenominacion && <Denominacion type="D" moneda={watch('moneda')} options={options}/>
+                                showDenominacion && <Denominacion type="D" moneda={moneda} options={options}/>
                             }
                         </div>
                         <div className="col-md-12 d-flex justify-content-center">

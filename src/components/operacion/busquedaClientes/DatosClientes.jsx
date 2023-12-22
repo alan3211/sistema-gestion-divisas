@@ -39,7 +39,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="cliente"
-                                value={cliente.Cliente}
+                                value={cliente.Cliente || cliente.Usuario}
                                 autoComplete="off"
                                 readOnly
                             />
@@ -65,7 +65,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="apellidoPaterno"
-                                value={cliente.ApellidoPaterno}
+                                value={cliente.ApellidoPaterno || cliente['Apellido Paterno']}
                                 readOnly
                                 autoComplete="off"
                             />
@@ -78,7 +78,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="apellidoMaterno"
-                                value={cliente.ApellidoMaterno}
+                                value={cliente.ApellidoMaterno || cliente['Apellido Materno']}
                                 readOnly
                                 autoComplete="off"
                             />
@@ -93,7 +93,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="fechaNacimiento"
-                                value={cliente.FechaNacimiento}
+                                value={cliente.FechaNacimiento || cliente['Fecha Nacimiento']}
                                 readOnly
                                 autoComplete="off"
                             />
