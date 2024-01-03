@@ -1,54 +1,53 @@
+import {encryptRequest, formattedDate, validaFechas} from "../../../utils";
 import {useForm} from "react-hook-form";
+import {useCatalogo} from "../../../hook";
+import {consultaEnvioSucursal, estatusOperaciones} from "../../../services/operacion-tesoreria";
+import {TableComponent} from "../../commons/tables";
 import {useEffect, useState} from "react";
-import {encryptRequest, formattedDate} from "../../../../utils";
-import {TableComponent} from "../../../commons/tables";
-import {dataG} from "../../../../App";
-import {consultaDotacionSucursal} from "../../../../services/operacion-sucursal";
 
-export const EnvioOperaciones = () => {
-    const { register, handleSubmit, formState: {errors},
-        reset,setValue } = useForm();
+export const CierreSucursal = () => {
+
+    const { register, handleSubmit
+        , formState: {errors}, setValue} = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
     const [currentDate, setCurrentDate] = useState('');
-
-    useEffect(() => {
-        // Obtener la fecha actual en el formato YYYY-MM-DD
-        setValue("fecha_operacion",formattedDate)
-        // Realizar la consulta automáticamente al cargar la página
-        onSubmitRecepcion({ fecha: formattedDate });
-    }, []);
-
-    const refreshQuery = async () =>{
-        const response = await consultaDotacionSucursal(formData);
+    const refreshQuery = async () => {
+        const response = await estatusOperaciones(formData);
         setData(response);
     }
 
     const options = {
         showMostrar:true,
-        excel:true,
         buscar: true,
         paginacion: true,
-        tools:[
-            {columna:"Estatus",tool:"estatus"},
-            {columna:"Cancelar",tool:"cancelar-envio-sucursal",refresh:refreshQuery},
-            {columna:"Detalle",tool:"detalle",  params:{opcion:3}},
+        excel:true,
+        tools: [
+            {columna:"Estatus",tool:'estatus'},
+            {columna:"Detalle",tool:'detalle',params:{opcion:2}},
+            {columna:"Cancelar",tool:'cancelar-tesoreria',refresh:refreshQuery}
         ],
         filters:[{columna:'Monto',filter:'currency'}]
     }
 
-    const onSubmitRecepcion = handleSubmit(async (data) => {
-        data.sucursal = dataG.sucursal;
+    const onSubmitCierraOperacion = handleSubmit(async (data) => {
+        data.tipo_operacion = "Dotacion Sucursal";
+        console.log("Data: ",data)
         const encryptedData = encryptRequest(data);
         setFormData(encryptedData);
-        const response = await consultaDotacionSucursal(encryptedData);
+        const response = await estatusOperaciones(encryptedData);
         setData(response);
         setShowTable(true)
     });
 
+    useEffect(() => {
+        // Obtener la fecha actual en el formato YYYY-MM-DD
+        setValue("fecha_operacion",formattedDate);
+        setCurrentDate(formattedDate);
+    }, []);
 
-    return (
+    return(
         <div className="container justify-content-center align-items-center mt-4">
             <div
                 className="text-center mb-4"
@@ -77,14 +76,14 @@ export const EnvioOperaciones = () => {
                         }
                     </div>
                 </div>
-                <div className="col-md-2 mx-auto">
+                <div className="col-md-3 mx-auto">
                     <button
                         type="button"
-                        onClick={onSubmitRecepcion}
-                        className="m-2 btn btn-primary"
+                        className="m-2 btn btn-danger"
+                        onClick={onSubmitCierraOperacion}
                     >
-                        CONSULTAR
-                        <i className="bi bi-search ms-2"></i>
+                        <i className="bi bi-x-circle me-2"></i>
+                        CERRAR OPERACIÓN
                     </button>
                 </div>
             </div>

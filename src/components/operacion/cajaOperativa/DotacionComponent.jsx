@@ -40,6 +40,7 @@ export const DotacionComponent = () => {
 
     const options = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools:[

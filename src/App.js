@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {BrowserRouter as Router, Route, Routes, useNavigate} from "react-router-dom";
 
 import {MainComponent} from "./components/shared/main/MainComponent";
 
@@ -21,6 +21,10 @@ import {HealthComponent} from "./components/shared/HealthComponent";
 import {NotFound} from "./components/shared/NotFound";
 import {Logistica} from "./components/operacion/logistica/Logistica";
 import {AltaClienteFinal} from "./components/operacion/altaClientes/AltaClienteFinal";
+import {useEffect} from "react";
+import {encryptRequest} from "./utils";
+import {finSesion} from "./services";
+import {validaToken} from "./services/inicio-services";
 
 export let dataG = {
     sucursal:0,

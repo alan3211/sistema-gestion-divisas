@@ -6,6 +6,7 @@ export const useGetUsuariosSistema = (valores) => {
 
     const options = {
         showMostrar:true,
+        excel:true,
         paginacion: true,
         buscar:true,
         tools:[

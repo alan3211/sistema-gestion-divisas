@@ -34,6 +34,7 @@ export const ConsultaUsuarios = () => {
     const options = {
         showMostrar:true,
         buscar: true,
+        excel:true,
         paginacion: true,
     }
 

@@ -36,7 +36,18 @@ export const validaToken = async (token) => {
             },
         });
 
-        const data = await response.json();
+        // Verificar si la respuesta está vacía
+        const text = await response.text();
+        if (text.trim() === "") {
+            throw new Error("La respuesta del servidor está vacía.");
+        }
+
+        const data = JSON.parse(text);
+
+        if (data.hasOwnProperty("error")) {
+            console.log("El token es inválido:", data.error);
+            return data;
+        }
         return data;
     } catch (error) {
         console.error('Error:', error);

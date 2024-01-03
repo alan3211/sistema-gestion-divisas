@@ -5,6 +5,11 @@ import {encryptRequest, FormatoMoneda, mensajeSinElementos, validaFechas} from "
 import './table.css';
 import {getTools} from "./operaciones/operaciones-tools";
 import {useForm} from "react-hook-form";
+import {writeFile} from "xlsx";
+import * as XLSX from "xlsx";
+import jsPDF from 'jspdf';
+
+
 
 
 export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
@@ -18,6 +23,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
 
     const {
         showMostrar = false,
+        excel=false,
         buscar = false,
         buscarFecha = false,
         paginacion = false,
@@ -94,75 +100,124 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
        setResultSet(deps.funcion(encryptedData));
     });
 
+    const handleDownloadExcel = () => {
+        const ws = XLSX.utils.json_to_sheet(filteredData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Consulta");
 
+        // Guarda el archivo
+        const fileName = "datos_tabla.xlsx";
+        writeFile(wb, fileName);
+    };
+
+    const handleDownloadPDF = () => {
+        // Crear instancia de jsPDF
+        const pdfDoc = new jsPDF();
+
+        // Convertir el objeto JSON a cadena
+        const jsonString = JSON.stringify(result_set, null, 2);
+
+        // Agregar la cadena al documento PDF
+        pdfDoc.text(jsonString, 10, 10);
+
+        // Guardar el archivo PDF
+        pdfDoc.save("tabla.pdf");
+    };
 
 
     return (<>
             <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns mx-auto"
                  style={{"fontSize": "12px"}}>
                 <div className="datatable-top">
-                    {
-                        (showMostrar && (filteredData.length >= 5)) && (<div className="datatable-dropdown">
-                        <label>
-                            Mostrar
-                            <select
-                                className="datatable-selector m-2"
-                                value={perPage}
-                                onChange={handlePerPageChange}
-                            >
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                                <option value="200">200</option>
-                            </select>
-                            por página
-                        </label>
-                    </div>)}
-                        <div className="datatable-search">
-                            <div className="row">
-                                <div className="col-5">
-                                    {buscarFecha && (
-                                            <div className="form-floating">
-                                                <input
-                                                    {...register("fecha", {
-                                                    })}
-                                                    type="date"
-                                                    className={`form-control ${!!errors?.fecha ? 'invalid-input' : ''}`}
-                                                    id="fecha"
-                                                    name="fecha"
-                                                    placeholder="Ingresa la fecha de consulta"
-                                                    onChange={onHandleDateChange}
-                                                    autoComplete="off"
-                                                />
-                                                <label htmlFor="fecha">FECHA CONSULTA</label>
-                                                {
-                                                    errors?.fecha && <div
-                                                        className="invalid-feedback-custom">{errors?.fecha.message}</div>
-                                                }
-                                            </div>
-                                    )}
-                                </div>
-
-                                { buscar && (<div className="col-9">
-                                        <div className="row form-floating">
-                                            <input
-                                                key="searchTable"
-                                                placeholder="Buscar en la tabla"
-                                                className="form-control"
-                                                value={searchTerm}
-                                                onChange={handleSearch}
-                                                autoComplete="off"
-                                            />
-                                            <label htmlFor="fecha">
-                                                BUSCAR EN LA TABLA
-                                                <i className="bx bx-search ms-2"></i>
-                                            </label>
-                                        </div>
-                                </div>)}
-                            </div>
+                    {showMostrar && filteredData.length >= 5 && (
+                        <div className="row datatable-dropdown col-12 col-md-4 justify-content-start">
+                            <label>
+                                Mostrar
+                                <select
+                                    className="datatable-selector m-2"
+                                    value={perPage}
+                                    onChange={handlePerPageChange}
+                                >
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="200">200</option>
+                                </select>
+                                por página
+                            </label>
                         </div>
+                    )}
+
+                    <div className="datatable-search col-12 col-md-6">
+                        <div className="row justify-content-end">
+                            <div className={buscarFecha ? "col-12 col-md-4" : "d-none d-md-block"}>
+                                {buscarFecha && (
+                                    <div className="form-floating">
+                                        <input
+                                            {...register("fecha", {})}
+                                            type="date"
+                                            className={`form-control ${!!errors?.fecha ? 'invalid-input' : ''}`}
+                                            id="fecha"
+                                            name="fecha"
+                                            placeholder="Ingresa la fecha de consulta"
+                                            onChange={onHandleDateChange}
+                                            autoComplete="off"
+                                        />
+                                        <label htmlFor="fecha">FECHA CONSULTA</label>
+                                        {errors?.fecha && (
+                                            <div className="invalid-feedback-custom">{errors?.fecha.message}</div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className={buscar ? "col-12 col-md-4" : "col-12"}>
+                                {buscar && (
+                                    <div className="row form-floating">
+                                        <input
+                                            key="searchTable"
+                                            placeholder="Buscar en la tabla"
+                                            className="form-control"
+                                            value={searchTerm}
+                                            onChange={handleSearch}
+                                            autoComplete="off"
+                                        />
+                                        <label htmlFor="fecha">
+                                            BUSCAR EN LA TABLA
+                                            <i className="bx bx-search ms-2"></i>
+                                        </label>
+                                    </div>
+                                )}
+                            </div>
+
+                            {excel && (
+                                <div className="justify-content-center align-content-start col-12 col-md-3 mt-2">
+                                    <button
+                                        className="btn btn-success me-2"
+                                        onClick={handleDownloadExcel}
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Descargar Excel"
+                                    >
+                                        <i className="ri ri-file-excel-2-fill"></i>
+                                    </button>
+                                    <button
+                                        className="btn btn-danger"
+                                        onClick={handleDownloadPDF}
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Descargar PDF"
+                                    >
+                                        <i className="ri ri-file-pdf-fill"></i>
+                                    </button>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
                 </div>
+
                 {
                     currentData.length !== 0 ? (
                         <>

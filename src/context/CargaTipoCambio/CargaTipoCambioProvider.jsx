@@ -30,8 +30,8 @@ export const CargaTipoCambioProvider = ({children}) => {
 
     const currencies = [
         {divisa: "USD"},
-        {divisa: "EUR"},
-        {divisa: "GBR"},
+        //{divisa: "EUR"},
+        //{divisa: "GBR"},
     ];
 
     const changePestania = (pestania) => {

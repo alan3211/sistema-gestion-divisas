@@ -33,6 +33,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     const solicitaDotacionRapidaFormulario =  useForm();
     const [dataMoneda,setDataMoneda] = useState([]);
     const [estadoDotacion,setEstadoDotacion] = useState(false);
+    const [showModalFactura,setShowModalFactura] = useState(false)
     const {solicitaCambio,solicitudDotacionRapida, showDotacionRapida, showCambioDeno,
         OPTIONS_DOTACION_RAPIDA,
         OPTIONS_SOL_DENOMINACION} =  useMovimientosDotaciones(
@@ -246,8 +247,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
         // Validar si tenemos que darle cambio
         if(resultado){
-            imprimir(0);
-            setShowModal(true)
+            setShowModalFactura(true);
         }
     }
 
@@ -313,18 +313,28 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                   showModal={showModal}
                                   closeModalAndReturn={imprimeTicket}
                                   hacerOperacion={()=> {
-                                      toast.success('Se ha entregado el cambio correspondiente.', {
-                                          position: "top-center",
-                                          autoClose: 5000,
-                                          hideProgressBar: false,
-                                          closeOnClick: true,
-                                          pauseOnHover: true,
-                                          theme: "colored",
-                                      });
+                                      toast.success('Se ha entregado el cambio correspondiente.', OPTIONS);
                                       setShowModal(false)
                                       navigator('/inicio')
                                   }}
                                   icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
+            {
+                showModalFactura && (
+                    <ModalTicket title="¿El usuario requiere factura?"
+                                 showModal={showModalFactura}
+                                 closeModalAndReturn={()=>{
+                                     imprimir(0);
+                                     setShowModal(true)
+                                 }}
+                                 hacerOperacion={()=> {
+                                     toast.info('Se guarda la factura.', OPTIONS);
+                                     imprimir(0);
+                                     setShowModal(true)
+                                     setShowModalFactura(false)
+                                 }}
+                                 icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
                 )
             }
             {

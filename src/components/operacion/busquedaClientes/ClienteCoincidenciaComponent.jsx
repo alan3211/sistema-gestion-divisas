@@ -5,6 +5,7 @@ export const ClienteCoincidenciaComponent = ({dataClientes,showAddCliente,addCli
 
     const options = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools: [

@@ -32,6 +32,7 @@ export const ConsultaTesoreria = ({type}) => {
 
     const options = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools:[
@@ -48,6 +49,7 @@ export const ConsultaTesoreria = ({type}) => {
 
     const optionsSuc = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         filters:[

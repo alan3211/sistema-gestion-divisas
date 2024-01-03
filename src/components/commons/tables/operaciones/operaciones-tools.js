@@ -7,7 +7,7 @@ import {
     Detalle,
     EstatusTool,
     SeleccionarCliente, VerDenominaciones, ImpresionTicket, DetalleDenominaciones, VerSucursales, CancelarOperacion,
-    IndicadoresDivisas, AccionesBoveda,CancelarEnvioBoveda,MontoSolicitud,OperacionEstatus
+    IndicadoresDivisas, AccionesBoveda,CancelarEnvioBoveda,MontoSolicitud,OperacionEstatus,PDFTool,ExcelTool
 } from "../componentes-tools";
 import {UsuariosSistema} from "../componentes-tools/cliente/UsuariosSistema";
 

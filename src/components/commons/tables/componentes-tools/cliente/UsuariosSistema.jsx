@@ -1,8 +1,8 @@
 import { Avatar, Dropdown } from "flowbite-react";
-import {useGetUsuariosSistema} from "../../../../../hook/useGetUsuariosSistema";
+import { useGetUsuariosSistema } from "../../../../../hook/useGetUsuariosSistema";
 
 export const UsuariosSistema = ({ item, index }) => {
-    const {dataSucUsu} = useGetUsuariosSistema({opcion: 2, sucursal:  item.Sucursal});
+    const { dataSucUsu } = useGetUsuariosSistema({ opcion: 2, sucursal: item.Sucursal });
 
     return (
         <td key={index} className="text-center">
@@ -11,7 +11,7 @@ export const UsuariosSistema = ({ item, index }) => {
                     <Avatar.Group>
                         {dataSucUsu?.result_set?.map((ele) => (
                             <Dropdown
-                                key={ele.Usuario} // Agrega una clave única para evitar advertencias
+                                key={ele.Usuario}
                                 label={
                                     <Avatar
                                         alt={ele.Usuario}
@@ -25,9 +25,9 @@ export const UsuariosSistema = ({ item, index }) => {
                                 inline
                             >
                                 <Dropdown.Header>
-                  <span className="block text-sm">
-                    <strong>{ele.Nombre}</strong>
-                  </span>
+                                    <span className="block text-sm">
+                                        <strong>{ele.Nombre}</strong>
+                                    </span>
                                 </Dropdown.Header>
                                 <Dropdown.Item>{ele.Perfil}</Dropdown.Item>
                                 <Dropdown.Divider />

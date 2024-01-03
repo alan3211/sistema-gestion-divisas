@@ -29,6 +29,7 @@ export const ConsultaBovedas = ({perfil}) => {
     const toolPerfil = perfil === "L" ? "cancelar-envio-boveda":"acciones-boveda";
     const options = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools:[

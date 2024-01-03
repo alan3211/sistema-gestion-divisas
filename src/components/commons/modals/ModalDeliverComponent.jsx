@@ -36,6 +36,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
     const {imprimir,imprimeTicketNuevamente} = usePrinter({"No Usuario": datos.Cliente,
         "No Ticket": datos.ticket});
     const [showModal,setShowModal] = useState(false)
+    const [showModalFactura,setShowModalFactura] = useState(false)
 
     const solicitaDotacionFormulario =  useForm();
     const solicitaDotacionRapidaFormulario =  useForm();
@@ -123,8 +124,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         if (redondearNumero(cambioFinal) > 0) {
             setShowCambio(true);
         } else {
-            imprimir(0);
-            setShowModal(true)
+            setShowModalFactura(true);
         }
     }
 
@@ -254,7 +254,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
         }
 
     });
-
 
     // Sección de dotación Rapida
     const handleDotacionRapida = async()=>{
@@ -417,6 +416,23 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                      toast.success('La operación fue exitosa.', OPTIONS);
                                      setShowModal(false)
                                      navigator('/inicio')
+                                 }}
+                                 icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
+            {
+                showModalFactura && (
+                    <ModalTicket title="¿El usuario requiere factura?"
+                                 showModal={showModalFactura}
+                                 closeModalAndReturn={()=>{
+                                     imprimir(0);
+                                     setShowModal(true)
+                                 }}
+                                 hacerOperacion={()=> {
+                                     toast.info('Se guarda la factura.', OPTIONS);
+                                     imprimir(0);
+                                     setShowModal(true)
+                                     setShowModalFactura(false)
                                  }}
                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
                 )

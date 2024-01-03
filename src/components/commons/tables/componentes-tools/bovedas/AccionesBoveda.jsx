@@ -3,7 +3,7 @@ import {
     eliminarDenominacionesConCantidadCero,
     encryptRequest, FormatoMoneda,
     getDenominacion, obtenerObjetoDenominaciones, OPTIONS,
-    validarAlfaNumerico, validarMoneda,
+    validarAlfaNumerico, validarMoneda, validarNombreApellido,
 } from "../../../../../utils";
 import {ModalAccionTesoreriaTool} from "../../../modals";
 import {toast} from "react-toastify";
@@ -23,7 +23,8 @@ export const AccionesBoveda = ({item, index, refresh}) => {
         register,
         handleSubmit,
         formState: {errors}, reset
-        , watch
+        , watch,
+        setValue
     } = useForm();
     const [optionBtn, setOptionBtn] = useState(1);
 
@@ -32,13 +33,20 @@ export const AccionesBoveda = ({item, index, refresh}) => {
         setOptionBtn(option);
         setShowModal(true);
     }
-    const onEnvioValores = async () => {
+    const onEnvioValores = async (data) => {
+
+        console.log(data)
+
         const values = {
             id_operacion: item.ID,
             accion: (optionBtn === 1) ? 'Confirmado' : 'Rechazado',
             motivo: watch("motivo"),
             usuario: dataG.usuario,
+            tipo_cambio: parseFloat(data.tipo_cambio),
+            tipo_banco: data.tipo_banco,
         }
+
+        console.log(values);
 
         const encryptedData = encryptRequest(values);
 
@@ -50,7 +58,6 @@ export const AccionesBoveda = ({item, index, refresh}) => {
             refresh();
             reset();
         }
-
 
     }
 
@@ -110,6 +117,63 @@ export const AccionesBoveda = ({item, index, refresh}) => {
                                     }
                                 </div>
                             </div>)}
+                            {
+                                (item.Divisa === 'USD' && optionBtn === 1) && (
+                                    <div className="d-flex justify-content-center">
+                                        <div className="col-md-3 form-floating mb-3">
+                                            <input
+                                                {...register("tipo_cambio", {
+                                                    required: {
+                                                        value: true,
+                                                        message: 'Debes de ingresar un tipo de cambio.'
+                                                    },
+                                                    validate: {
+                                                        moneda: (value) => validarMoneda(`Tipo de Cambio`, value),
+                                                    },
+                                                })}
+                                                type="text"
+                                                className={`form-control ${errors && errors.tipo_cambio ? "is-invalid" : ""}`}
+                                                name='tipo_cambio'
+                                                placeholder="$"
+                                                autoComplete="off"
+                                            />
+                                            <label htmlFor="tipo_cambio">TIPO DE CAMBIO</label>
+                                            {errors && errors.tipo_cambio && (
+                                                <div className="invalid-feedback">
+                                                    {errors.tipo_cambio.message}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="col-md-4 form-floating mb-3 ms-4">
+                                            <input
+                                                {...register("tipo_banco", {
+                                                    required: {
+                                                        value: true,
+                                                        message: 'Debes de ingresar un banco o casa de cambio.'
+                                                    },
+                                                    validate: (value) => validarAlfaNumerico("Banco/Casa de Cambio", value)
+                                                })}
+                                                type="text"
+                                                className={`form-control ${errors && errors.tipo_banco ? "is-invalid" : ""}`}
+                                                name='tipo_banco'
+                                                placeholder="Ingresa un banco o casa de cambio"
+                                                onChange={(e) => {
+                                                    const upperCaseValue = e.target.value.toUpperCase();
+                                                    e.target.value = upperCaseValue;
+                                                    setValue("tipo_banco", upperCaseValue);
+                                                }}
+                                                autoComplete="off"
+                                            />
+                                            <label htmlFor="tipo_banco">BANCO/CASA DE CAMBIO</label>
+                                            {errors && errors.tipo_banco && (
+                                                <div className="invalid-feedback">
+                                                    {errors.tipo_banco.message}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )
+                            }
                             <div className="d-flex justify-content-center mt-2">
                                 {
                                     optionBtn === 1 && (

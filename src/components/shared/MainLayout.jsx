@@ -7,6 +7,7 @@ import {encryptRequest, formatTime} from "../../utils";
 import {dataG} from "../../App";
 import {finSesion} from "../../services";
 import {NotAuthenticated} from "./NotAuthenticated";
+import {useEffect} from "react";
 
 export const MainLayout = ({children}) => {
 
@@ -14,11 +15,20 @@ export const MainLayout = ({children}) => {
         authenticated,
         modalVisible,
         mensaje,
-        countdown,
+        seconds,
+        setSeconds,
+        tiempoRestante,
         navigate,
         renuevaSesion,
         handleSessionExpiration,
     } = useMonitorSesion();
+
+    useEffect(() => {
+        if (modalVisible) {
+            setSeconds(tiempoRestante);
+        }
+    }, [modalVisible, tiempoRestante]);
+
 
     return (
         <>
@@ -38,7 +48,7 @@ export const MainLayout = ({children}) => {
                         </Modal.Header>
                         <Modal.Body>
                             {mensaje.mensaje}
-                            <strong className="text-danger-emphasis">{formatTime(countdown)}</strong>
+                            <strong className="text-danger-emphasis">{formatTime(seconds)}</strong>
                             <p className="mt-2">¿Deseas mantenerla activa?</p>
                         </Modal.Body>
                         <Modal.Footer>
