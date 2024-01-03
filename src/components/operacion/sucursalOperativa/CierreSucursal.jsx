@@ -1,44 +1,28 @@
-import {encryptRequest, formattedDate, validaFechas} from "../../../utils";
+import {encryptRequest, formattedDate, OPTIONS, validaFechas} from "../../../utils";
 import {useForm} from "react-hook-form";
 import {useCatalogo} from "../../../hook";
 import {consultaEnvioSucursal, estatusOperaciones} from "../../../services/operacion-tesoreria";
 import {TableComponent} from "../../commons/tables";
 import {useEffect, useState} from "react";
+import {dataG} from "../../../App";
+import {cierreSucursalServ} from "../../../services/operacion-sucursal";
+import {ModalTicket} from "../../commons/modals/ModalTicket";
+import {toast} from "react-toastify";
 
 export const CierreSucursal = () => {
 
     const { register, handleSubmit
         , formState: {errors}, setValue} = useForm();
-    const [showTable,setShowTable] = useState(false);
-    const [data,setData] = useState(false);
-    const [formData,setFormData] = useState('');
+    const [showModal,setShowModal] = useState(false);
     const [currentDate, setCurrentDate] = useState('');
-    const refreshQuery = async () => {
-        const response = await estatusOperaciones(formData);
-        setData(response);
-    }
-
-    const options = {
-        showMostrar:true,
-        buscar: true,
-        paginacion: true,
-        excel:true,
-        tools: [
-            {columna:"Estatus",tool:'estatus'},
-            {columna:"Detalle",tool:'detalle',params:{opcion:2}},
-            {columna:"Cancelar",tool:'cancelar-tesoreria',refresh:refreshQuery}
-        ],
-        filters:[{columna:'Monto',filter:'currency'}]
-    }
 
     const onSubmitCierraOperacion = handleSubmit(async (data) => {
-        data.tipo_operacion = "Dotacion Sucursal";
-        console.log("Data: ",data)
+        setShowModal(false);
+        data.sucursal = dataG.sucursal;
+        data.usuario = dataG.usuario;
         const encryptedData = encryptRequest(data);
-        setFormData(encryptedData);
-        const response = await estatusOperaciones(encryptedData);
-        setData(response);
-        setShowTable(true)
+        const mensaje = await cierreSucursalServ(encryptedData);
+        toast.warn(mensaje,OPTIONS);
     });
 
     useEffect(() => {
@@ -80,7 +64,7 @@ export const CierreSucursal = () => {
                     <button
                         type="button"
                         className="m-2 btn btn-danger"
-                        onClick={onSubmitCierraOperacion}
+                        onClick={()=> setShowModal(true)}
                     >
                         <i className="bi bi-x-circle me-2"></i>
                         CERRAR OPERACIÓN
@@ -88,7 +72,15 @@ export const CierreSucursal = () => {
                 </div>
             </div>
             {
-                showTable && <TableComponent data={data} options={options}/>
+                showModal && (
+                    <ModalTicket title="¿Está seguro de confirmar el cierre de las operaciones correspondientes al día de hoy?"
+                                 showModal={showModal}
+                                 closeModalAndReturn={()=>{
+                                     setShowModal(false)
+                                 }}
+                                 hacerOperacion={onSubmitCierraOperacion}
+                                 icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
             }
         </div>
     );

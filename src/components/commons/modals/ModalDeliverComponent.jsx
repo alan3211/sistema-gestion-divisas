@@ -1,7 +1,7 @@
 import {Button, Modal} from "react-bootstrap";
 import {useContext, useEffect, useMemo, useState} from "react";
 import {dataG} from "../../../App";
-import {obtieneDenominaciones, realizarOperacion} from "../../../services";
+import {guardaConfirmacionFactura, obtieneDenominaciones, realizarOperacion} from "../../../services";
 import {ModalCambio} from "./ModalCambio";
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateWS,
@@ -307,6 +307,27 @@ export const ModalDeliverComponent = ({configuration}) =>{
         title:'Guardando...'
     }
 
+    const guardaFactura = async ()=> {
+
+        const values = {
+            ticket: datos.ticket,
+            resguardo: 'SI'
+        }
+
+        const encryptedData =  encryptRequest(values);
+
+        const response = await guardaConfirmacionFactura(encryptedData)
+
+        if(response.total_rows === 0){
+            toast.error('Hubo un problema al resguardar la factura',OPTIONS);
+        }else{
+            imprimir(0);
+            setShowModalFactura(false)
+            setShowModal(true)
+        }
+
+    }
+
     return(
         <>
             <Modal centered size="xl" show={showCustomModal} onHide={closeCustomModal}>
@@ -428,12 +449,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                      imprimir(0);
                                      setShowModal(true)
                                  }}
-                                 hacerOperacion={()=> {
-                                     toast.info('Se guarda la factura.', OPTIONS);
-                                     imprimir(0);
-                                     setShowModal(true)
-                                     setShowModalFactura(false)
-                                 }}
+                                 hacerOperacion={guardaFactura}
                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
                 )
             }
