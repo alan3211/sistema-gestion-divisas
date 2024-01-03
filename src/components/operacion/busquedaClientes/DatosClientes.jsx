@@ -39,7 +39,8 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="cliente"
-                                value={cliente.Cliente}
+                                value={cliente.Cliente || cliente.Usuario}
+                                autoComplete="off"
                                 readOnly
                             />
                             <label htmlFor="cliente">NÚMERO USUARIO</label>
@@ -53,6 +54,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 id="nombre"
                                 value={cliente.Nombre}
                                 readOnly
+                                autoComplete="off"
                             />
                             <label htmlFor="nombre">NOMBRE(S)</label>
                         </div>
@@ -63,8 +65,9 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="apellidoPaterno"
-                                value={cliente.ApellidoPaterno}
+                                value={cliente.ApellidoPaterno || cliente['Apellido Paterno']}
                                 readOnly
+                                autoComplete="off"
                             />
                             <label htmlFor="apellidoPaterno">APELLIDO PATERNO</label>
                         </div>
@@ -75,8 +78,9 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="apellidoMaterno"
-                                value={cliente.ApellidoMaterno}
+                                value={cliente.ApellidoMaterno || cliente['Apellido Materno']}
                                 readOnly
+                                autoComplete="off"
                             />
                             <label htmlFor="apellidoMaterno">APELLIDO MATERNO</label>
                         </div>
@@ -89,8 +93,9 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="fechaNacimiento"
-                                value={cliente.FechaNacimiento}
+                                value={cliente.FechaNacimiento || cliente['Fecha Nacimiento']}
                                 readOnly
+                                autoComplete="off"
                             />
                             <label htmlFor="fechaNacimiento">FECHA NACIMIENTO</label>
                         </div>

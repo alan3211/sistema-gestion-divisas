@@ -34,13 +34,14 @@ export const ConsultaUsuarios = () => {
     const options = {
         showMostrar:true,
         buscar: true,
+        excel:true,
         paginacion: true,
     }
 
     return(
         <>
-            <form className="row g-3 mt-3" onSubmit={consultarUsuarios} noValidate>
-                <div className="col-md-3 mx-auto">
+            <div className="row g-3 mt-3">
+                <div className="col-md-5 mx-auto">
                     <FilterComboInput
                         propFormulario={form}
                         name="sucursal"
@@ -51,8 +52,9 @@ export const ConsultaUsuarios = () => {
                 <div className="row">
                     <div className="col-md-12 d-flex justify-content-center">
                         <button
-                            type="submit"
-                            className="m-2 btn btn-primary d-grid gap-2">
+                            type="button"
+                            className="m-2 btn btn-primary d-grid gap-2"
+                            onClick={consultarUsuarios}>
                                 <span
                                     className="bi bi-search me-2"
                                     role="status"
@@ -64,7 +66,7 @@ export const ConsultaUsuarios = () => {
                         </button>
                     </div>
                 </div>
-            </form>
+            </div>
             {
                 showUsuarios && (
                     <TableComponent data={usuariosData} options={options}/>

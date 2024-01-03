@@ -7,7 +7,7 @@ export const ResumenUsuario = () => {
             {dataG.direccion}
         </p>
 
-        <h5 className="card-title">Detales del perfil</h5>
+        <h5 className="card-title">Detalles del perfil</h5>
 
         <ul className="list-group">
             <li className="list-group-item">Nombre Completo: <strong>{dataG.username}</strong></li>

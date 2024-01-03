@@ -38,7 +38,7 @@ export const Zonas = () => {
     return (
         <>
             <hr />
-            <form className="row" onSubmit={onSubmitCatalogo} noValidate>
+            <div className="row">
                 <div className="col-md-6 mx-auto">
                     <div className="row">
                         <div className="col-md-6">
@@ -64,6 +64,7 @@ export const Zonas = () => {
                                     id="descripcion"
                                     name="descripcion"
                                     placeholder="Ingresa la nueva zona"
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="descripcion">ZONA</label>
                                 {
@@ -73,7 +74,8 @@ export const Zonas = () => {
                             </div>
                         </div>
                         <div className="col-md-6">
-                            <button type="submit" className="m-2 btn btn-primary">
+                            <button type="button" className="m-2 btn btn-primary"
+                                    onClick={onSubmitCatalogo}>
                               <span className="me-2">
                                 GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
@@ -82,7 +84,7 @@ export const Zonas = () => {
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </>
     );
 }

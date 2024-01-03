@@ -25,6 +25,7 @@ export const Bovedas = ({perfil}) => {
                             value="solBoveda"
                             onChange={handleRadioChange}
                             checked={selectedOption === "solBoveda"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="solBoveda">
                             <strong>Solicitud Dotación a Bóvedas</strong>
@@ -39,6 +40,7 @@ export const Bovedas = ({perfil}) => {
                             value="consultaBovedas"
                             onChange={handleRadioChange}
                             checked={selectedOption === "consultaBovedas"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="consultaBovedas">
                             <strong>Consulta Dotación a Bóvedas</strong>

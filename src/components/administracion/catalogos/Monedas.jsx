@@ -37,7 +37,7 @@ export const Monedas = () => {
     return (
         <>
             <hr />
-            <form className="row" onSubmit={onSubmitCatalogo} noValidate>
+            <div className="row">
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating">
                         <input
@@ -61,6 +61,7 @@ export const Monedas = () => {
                             id="id_moneda"
                             name="id_moneda"
                             placeholder="Ingresa el ID de la moneda"
+                            autoComplete="off"
                         />
                         <label htmlFor="id_moneda">ID MONEDA</label>
                         {
@@ -92,6 +93,7 @@ export const Monedas = () => {
                             id="descripcion"
                             name="descripcion"
                             placeholder="Ingresa la descripcion"
+                            autoComplete="off"
                         />
                         <label htmlFor="descripcion">DESCRIPCIÓN</label>
                         {
@@ -101,14 +103,15 @@ export const Monedas = () => {
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <button type="submit" className="m-2 btn btn-primary">
+                    <button type="button" className="m-2 btn btn-primary"
+                            onClick={onSubmitCatalogo}>
                               <span className="me-2">
                                 GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
                               </span>
                     </button>
                 </div>
-            </form>
+            </div>
         </>
     );
 }

@@ -5,14 +5,13 @@ import {
     obtenerObjetoDenominaciones,
     validarAlfaNumerico
 } from "../../../../../utils";
-import {accionesCaja, getDenominaciones} from "../../../../../services/tools-services";
+import {accionesCaja, getDenominaciones, getDenominacionesCaja} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
 import {ModalAccionesTool} from "../../../modals";
-import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
-import {usePrinter} from "../../../../../hook";
+import {DenominacionTableCaja} from "../../../../operacion/denominacion";
 
 export const AccionesCaja = ({item, index, refresh}) => {
-    const {imprimir} = usePrinter(item);
+
     const [showModal, setShowModal] = useState(false);
     const {
         register,
@@ -76,9 +75,6 @@ export const AccionesCaja = ({item, index, refresh}) => {
             setShowModal(false);
             refresh();
             reset();
-            if(optionBtn === 1){
-                imprimir(3)
-            }
         }
     }
 
@@ -97,7 +93,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                 ticket: item["No Movimiento"]
             }
             const encryptedData = encryptRequest(valores);
-            const data_denominacion = await getDenominaciones(encryptedData)
+            const data_denominacion = await getDenominacionesCaja(encryptedData)
             console.log(data_denominacion)
             setData(data_denominacion);
         }
@@ -118,7 +114,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                 showModal
                 && (
                     <ModalAccionesTool options={options}>
-                        <form onSubmit={handleSubmit(onEnvioValores)} noValidate>
+                        <div>
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
@@ -154,7 +150,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
 
                                         </div>
                                         <div className="col-md-6">
-                                            <DenominacionTable data={data.result_set} monto={item.Monto} moneda={item.Moneda}/>
+                                            <DenominacionTableCaja data={data.result_set} monto={item.Monto} moneda={item.Moneda}/>
                                         </div>
                                     </div>
                                 )
@@ -192,13 +188,14 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                 </div>)
                             }
                             <div className="d-flex justify-content-end mt-2">
-                                <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                        onClick={handleSubmit(onEnvioValores)}
                                         disabled={watch("motivo") === ''}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </ModalAccionesTool>
                 )}
         </td>);

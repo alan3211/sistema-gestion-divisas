@@ -8,7 +8,7 @@ export const TipoCambioComponent = () => {
     return (
         <div className="card shadow">
             <div className="card-body">
-                <TitleComponent title={title} icon="bi bi-currency-exchange p-2" fecha/>
+                <TitleComponent title={title} icon="bi bi-currency-exchange p-2"/>
                 <TablaDivisasComponent/>
             </div>
         </div>

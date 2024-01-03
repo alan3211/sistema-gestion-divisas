@@ -34,10 +34,8 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
 
     return(
         <>
-        <form
+        <div
             className="text-center"
-            onSubmit={onSubmitMovimientoBancario}
-            noValidate
         >
             <div className="col-md-4 mx-auto">
                 <div className="form-floating mb-3">
@@ -99,6 +97,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                         id="monto"
                         name="monto"
                         placeholder="Ingresa el monto"
+                        autoComplete="off"
                     />
                     <label htmlFor="monto" className="form-label">
                         MONTO
@@ -110,14 +109,15 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
             </div>
             <div className="col-md-2 mx-auto">
                 <button
-                    type="submit"
+                    type="button"
                     className="m-2 btn btn-primary"
+                    onClick={onSubmitMovimientoBancario}
                 >
                     <i className="bi bi-save me-2"></i>
                     GUARDAR
                 </button>
             </div>
-            </form>
+            </div>
         </>
     );
 }

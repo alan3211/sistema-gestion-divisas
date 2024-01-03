@@ -47,7 +47,7 @@ export const validaFechas = (fecha) => {
 };
 
 export const validarNombreApellido = (name,value) => {
-    const nombreRegex = /^$|^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'"]+$/;
+    const nombreRegex = /^$|^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'" ]+$/;
     if (!nombreRegex.test(value)) {
         return `El campo ${name} debe contener solo letras, acentos y la letra 'ñ'.`;
     }

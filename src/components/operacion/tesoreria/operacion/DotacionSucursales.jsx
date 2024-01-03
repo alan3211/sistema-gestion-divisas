@@ -35,10 +35,8 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
 
     return (
         <>
-            <form
+            <div
                 className="text-center"
-                onSubmit={onSubmitDotacionSucursales}
-                noValidate
             >
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
@@ -139,6 +137,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                             id="monto"
                             name="monto"
                             placeholder="Ingresa el monto"
+                            autoComplete="off"
                         />
                         <label htmlFor="monto" className="form-label">
                             MONTO
@@ -171,6 +170,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                             id="monto_equivalente"
                             name="monto_equivalente"
                             placeholder="Ingresa el equivalente en pesos"
+                            autoComplete="off"
                         />
                         <label htmlFor="monto_equivalente" className="form-label">
                             EQUIVALENTE EN MXP
@@ -184,14 +184,15 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
                 </div>
                 <div className="col-md-2 mx-auto">
                     <button
-                        type="submit"
+                        type="button"
                         className="m-2 btn btn-primary"
+                        onClick={onSubmitDotacionSucursales}
                     >
                       <i className="bi bi-save me-2"></i>
                       GUARDAR
                     </button>
                 </div>
-            </form>
+            </div>
         </>
     );
 };

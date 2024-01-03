@@ -12,7 +12,11 @@ export const CompraVentaProvider = ({children}) => {
     const [continuaOperacion,setContinuaOperacion] = useState(false);
     const [operacion,setOperacion] = useState({});
     const [tipoDivisa,setTipoDivisa] =  useState([]);
-
+    const [nuevoUsuario, setNuevoUsuario] = useState(false);
+    const [showModalAltaCliente, setShowModalAltaCliente] = useState(false);
+    const [showModalAltaUsuario, setShowModalAltaUsuario,] = useState(false);
+    const [showAltaCliente, setShowAltaCliente] = useState(false);
+    const [datosEscaneo,setDatosEscaneo] =  useState({});
     /*Provedor para la Busqueda del cliente*/
     const [selectedOption, setSelectedOption] = useState("cliente");
 
@@ -46,6 +50,10 @@ export const CompraVentaProvider = ({children}) => {
         setShowModal,
         continuaOperacion,
         setContinuaOperacion,
+        nuevoUsuario, setNuevoUsuario,
+        showAltaCliente, setShowAltaCliente,
+        showModalAltaCliente, setShowModalAltaCliente,
+        showModalAltaUsuario, setShowModalAltaUsuario,
         operacion,
         setOperacion,
         tipoDivisa,
@@ -60,6 +68,7 @@ export const CompraVentaProvider = ({children}) => {
         setCliente,
         datos,
         setDatos,
+        datosEscaneo,setDatosEscaneo
     }
 
     return(

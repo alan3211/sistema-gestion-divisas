@@ -3,17 +3,26 @@ import {useNavigate} from "react-router-dom";
 import {dataG} from "../../../App";
 import {SearchModules} from "./SearchModules";
 import {Notifications} from "./Notifications";
-import Avatar from "react-avatar";
+import './HeaderComponent.css';
+import { Avatar } from 'flowbite-react';
+import {encryptRequest} from "../../../utils";
+import {finSesion} from "../../../services";
 
 const toggle = () => document.body.classList.toggle('toggle-sidebar');
 
 export const HeaderComponent = () => {
 
     const navigate = useNavigate();
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("usuario_data"));
 
-    const cerrarSesion = () => {
+    const cerrarSesion = async () => {
         localStorage.clear();
+
+        if(dataG.estatus){
+            const encryptedData = encryptRequest({usuario:dataG.usuario});
+            await finSesion(encryptedData);
+        }
+
         navigate('/');
     }
 
@@ -44,11 +53,9 @@ export const HeaderComponent = () => {
                         <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                            data-bs-toggle="dropdown">
                             <Avatar
-                                name={dataG.username}
-                                size="45"
-                                round
-                                color={Avatar.getRandomColor('sitebase')}
-                                fgColor="#fff"
+                                size="md"
+                                rounded
+                                status={dataG.estatus ? 'online':'busy'}
                             />
                             <span
                                 className="d-none d-md-block dropdown-toggle ps-2">{dataG.username || usuario.username}</span>

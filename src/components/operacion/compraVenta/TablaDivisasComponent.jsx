@@ -17,11 +17,29 @@ export const TablaDivisasComponent = () => {
     const [showDetailSuc,setShowDetailSuc] = useState(false);
     const [dataSucursales,setDataSucursales] = useState([]);
 
+    const OPTIONS_SUCURSAL = {
+        excel:true,
+        buscar: true,
+        //buscarFecha:true,
+        paginacion: true,
+        filters:[
+            {columna:'Compra',filter:'currency'},
+            {columna:'Venta',filter:'currency'}
+        ],
+        params:{divisa:'',fecha:''},
+        deps:{
+            funcion:consultaSucursalesTPCambio
+        }
+    }
     const consultaTipoCambioSucursales = async (divisa) => {
         const values = {
             divisa,
             fecha:formattedDate
         }
+        setOptionsSucursal((prevOptions) => ({
+            ...prevOptions,
+            params: values
+        }));
         const encryptedData = encryptRequest(values);
 
         const response =  await consultaSucursalesTPCambio(encryptedData);
@@ -29,19 +47,6 @@ export const TablaDivisasComponent = () => {
         setShowDetailSuc(true);
     }
 
-    const OPTIONS_SUCURSAL = {
-        showMostrar:true,
-        buscar: true,
-        buscarFecha: true,
-        paginacion: true,
-        filters:[
-            {columna:'Compra',filter:'currency'},
-            {columna:'Venta',filter:'currency'}
-        ],
-        deps:{
-            consultaSucursalesTPCambio
-        }
-    }
 
     const OPTIONS_TABLE_DIVISAS = {
         size: 'xl',
@@ -50,9 +55,11 @@ export const TablaDivisasComponent = () => {
             setShowDetailSuc(false)
         },
         icon:'bi bi-currency-exchange me-2',
-        title:`Detalle Tipo de Cambio`,
+        title:'Detalle Tipo de Cambio',
         subtitle:''
     }
+
+    const [optionsSucursal, setOptionsSucursal] = useState(OPTIONS_SUCURSAL);
 
 
     if(dataTipoCambio.length === 0){
@@ -102,7 +109,7 @@ export const TablaDivisasComponent = () => {
                         <ModalGenericTool options={OPTIONS_TABLE_DIVISAS}>
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <TableComponent data={dataSucursales} options={OPTIONS_SUCURSAL} />
+                                        <TableComponent data={dataSucursales} options={optionsSucursal} />
                                     </div>
                                 </div>
                         </ModalGenericTool>

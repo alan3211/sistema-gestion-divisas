@@ -22,6 +22,7 @@ export const EstatusOperacionesSucursal = () => {
                             value="recepcionOp"
                             onChange={handleRadioChange}
                             checked={selectedOption === "recepcionOp"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="recepcionOp">
                             <strong>Recepción de Operaciones</strong>
@@ -36,6 +37,7 @@ export const EstatusOperacionesSucursal = () => {
                             value="envioOp"
                             onChange={handleRadioChange}
                             checked={selectedOption === "envioOp"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="envioOp">
                             <strong>Envío Operaciones</strong>

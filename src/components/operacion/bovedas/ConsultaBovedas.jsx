@@ -1,15 +1,25 @@
 import {useForm} from "react-hook-form";
-import {useState} from "react";
-import {encryptRequest} from "../../../utils";
+import {useEffect, useState} from "react";
+import {encryptRequest, formattedDate} from "../../../utils";
 import {TableComponent} from "../../commons/tables";
 import {consultaDotacionBoveda} from "../../../services/operacion-logistica";
 
 export const ConsultaBovedas = ({perfil}) => {
 
-    const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
+    const { register, handleSubmit, formState: {errors},
+        reset,setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
+
+    const [currentDate, setCurrentDate] = useState('');
+
+    useEffect(() => {
+        setCurrentDate(formattedDate);
+        setValue("fecha",formattedDate)
+        // Realizar la consulta automáticamente al cargar la página
+        onSubmitRecepcion({ fecha: formattedDate });
+    }, []);
 
     const refreshQuery = async () =>{
         const response = await consultaDotacionBoveda(formData);
@@ -19,6 +29,7 @@ export const ConsultaBovedas = ({perfil}) => {
     const toolPerfil = perfil === "L" ? "cancelar-envio-boveda":"acciones-boveda";
     const options = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools:[
@@ -38,10 +49,8 @@ export const ConsultaBovedas = ({perfil}) => {
 
     return (
         <div className="container justify-content-center align-items-center mt-4">
-            <form
+            <div
                 className="text-center mb-4"
-                onSubmit={onSubmitRecepcion}
-                noValidate
             >
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
@@ -57,6 +66,9 @@ export const ConsultaBovedas = ({perfil}) => {
                             id="fecha"
                             name="fecha"
                             placeholder="Ingresa la fecha de consulta"
+                            value={currentDate}
+                            onChange={(e)=> setCurrentDate(e.target.value)}
+                            autoComplete="off"
                         />
                         <label htmlFor="fecha">FECHA</label>
                         {
@@ -66,14 +78,15 @@ export const ConsultaBovedas = ({perfil}) => {
                 </div>
                 <div className="col-md-2 mx-auto">
                     <button
-                        type="submit"
+                        type="button"
                         className="m-2 btn btn-primary"
+                        onClick={onSubmitRecepcion}
                     >
                         CONSULTAR
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>
-            </form>
+            </div>
             {
             showTable && (
                  <TableComponent data={data} options={options}/>

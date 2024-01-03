@@ -1,15 +1,12 @@
 import Quill from "quill/quill";
 import tinymce from "tinymce";
-
 import echarts from "echarts/dist/echarts.min";
 import * as simpleDatatables from "simple-datatables";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
-
 import './plugin_impresora_termica';
-import {connetor_plugin} from "./plugin_impresora_termica";
 
-  /**
+/**
    * Easy selector helper function
    */
   export const select = (el, all = false) => {

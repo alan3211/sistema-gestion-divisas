@@ -2,17 +2,21 @@ import {memo, useContext, useEffect, useState} from "react";
 import {ModalConfirm} from "../../commons/modals";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
+import {encryptRequest, OPTIONS, validaFechas, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
 import {useCatalogo} from "../../../hook";
 import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
 import {getLocalidad, guardaCliente} from "../../../services";
 import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 import {toast} from "react-toastify";
+import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+
+
 
 export const AltaClienteComplementario = memo(() => {
 
     const {propForm} =  useContext(AltaClienteContext);
+    const {datosEscaneo,setShowAltaCliente,setContinuaOperacion,setCliente} = useContext(CompraVentaContext);
     const {
         showModal,
         setShowModal,
@@ -20,11 +24,30 @@ export const AltaClienteComplementario = memo(() => {
         hacerOperacion,
         } = useAltaComplementario();
 
-    const catalogo = useCatalogo([1,3,3,6,12,13,14,10,11,18]);
+    useEffect(() => {
+
+        if(Object.keys(datosEscaneo).length !== 0) {
+            propForm.setValue("genero",datosEscaneo.genero);
+            propForm.setValue("calle",datosEscaneo.calle);
+            propForm.setValue("nacionalidad",datosEscaneo.estado.split(".")[1]);
+            propForm.setValue("pais_nacimiento",datosEscaneo.estado.split(".")[1]);
+        }
+
+    }, []);
+
+    const catalogo = useCatalogo([1,3,3,6,12,13,14,10,11,18,25]);
 
     const handleValidateFinalForm = propForm.handleSubmit(async(data) => {
         data.sucursal = dataG.sucursal.toString();
         data.usuario = dataG.usuario;
+
+        if(data.numero_exterior.includes("SIN NÚMERO EXTERIOR")){
+            data.numero_exterior="";
+        }
+
+        if(Object.keys(datosEscaneo).length !== 0) {
+            data.vigencia = `${parseInt(datosEscaneo.vigencia)+1000}-12-31`;
+        }
 
         if(data.origen_recursos !== '5'){
             data.esp_origen_recursos = '';
@@ -41,8 +64,11 @@ export const AltaClienteComplementario = memo(() => {
             toast.warn(dataClientes.result_set[0].Mensaje,OPTIONS);
             closeModalAndReturn();
         }else{
-            propForm.setDataClientes(dataClientes.result_set[0]);
-            setShowModal(true);
+            toast.success(`El registro se ha completado satisfactoriamente con el número de usuario ${ dataClientes.result_set[0].Cliente}.`,OPTIONS)
+            setCliente(dataClientes.result_set[0].Cliente);
+            setShowAltaCliente(false);
+            setContinuaOperacion(true);
+
         }
     });
 
@@ -103,11 +129,24 @@ export const AltaClienteComplementario = memo(() => {
         if(propForm.watch("colonia") !== '0') getFetch();
     }, [propForm.watch("colonia")]);
 
+    const [controlName, setControlName] = useState(false);
+
+    const toggleCheck = (value) => {
+        setControlName((prevControlName) => {
+                if (prevControlName) {
+                    propForm.setValue("numero_exterior", "");
+                    return false;
+                } else {
+                    propForm.setValue("numero_exterior", "SIN NÚMERO EXTERIOR");
+                    return true;
+                }
+        });
+    };
 
 
     return (
         <>
-            <form className="row g-3" onSubmit={handleValidateFinalForm} noValidate>
+            <div className="row g-3">
                 <CardLayout title="Datos Complementarios" icon="ri-file-list-2-fill p-2">
                     <div className="row">
                         <div className="col-md-3">
@@ -179,6 +218,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="nacionalidad"
                                 label="NACIONALIDAD"
                                 options={catalogo[1] || []}
+                                input={propForm.watch("nacionalidad")}
                             />
                         </div>
                         <div className="col-md-3">
@@ -187,6 +227,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="pais_nacimiento"
                                 label="PAÍS NACIMIENTO"
                                 options={catalogo[1] || []}
+                                input={propForm.watch("pais_nacimiento")}
                             />
                         </div>
                     </div>
@@ -328,25 +369,58 @@ export const AltaClienteComplementario = memo(() => {
                     </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-3">
-                            <div className="form-floating">
+                        <div className="col-md-2">
+                                <div className="form-floating mb-3">
+
+                                            <select
+                                                {...propForm.register("codigo_telefono",{
+                                                    required:{
+                                                        value:true,
+                                                        message:'Debes de seleccionar al menos un codigo.'
+                                                    },
+                                                    validate: value => {
+                                                        return value !== "0" || 'Debes seleccionar un codigo válido.';
+                                                    }
+                                                })}
+                                                className={`form-select ${!!propForm.errors?.codigo_telefono ? 'invalid-input':''}`}
+                                                id="codigo_telefono"
+                                                name="codigo_telefono"
+                                                aria-label="Codigo Telefono"
+                                            >
+                                                {
+                                                    catalogo[10]?.map((ele) => (
+                                                        <option key={ele.id + '-' + ele.descripcion}
+                                                                value={ele.id}>
+                                                            {ele.descripcion.toUpperCase()}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                            <label htmlFor="codigo_telefono">PREFIJO</label>
+                                            {
+                                                propForm.errors?.codigo_telefono && <div className="invalid-feedback-custom">{propForm.errors?.codigo_telefono.message}</div>
+                                            }
+                                </div>
+                        </div>
+                        <div className="col-md-2">
+                            <div className="form-floating mb-3">
                                 <input
-                                    {...propForm.register("telefono",{
-                                        validate: (value) => validarNumeroTelefono("Telefono",value)
+                                    {...propForm.register("telefono", {
+                                        validate: (value) => validarNumeroTelefono("Telefono", value)
                                     })}
                                     type="text"
-                                    className={`form-control ${!!propForm.errors?.telefono ? 'invalid-input':''}`}
+                                    className={`form-control ${!!propForm.errors?.telefono ? 'is-invalid' : ''}`}
                                     id="telefono"
                                     name="telefono"
                                     placeholder="Ingresa el teléfono"
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="telefono">TELÉFONO</label>
-                                {
-                                    propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>
-                                }
+                                {propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>}
                             </div>
                         </div>
-                        <div className="col-md-3">
+
+                        <div className="col-md-5">
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("calle",{
@@ -366,6 +440,7 @@ export const AltaClienteComplementario = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("calle", upperCaseValue);
                                     }}
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="calle">CALLE, AVENIDA, BOULEVARD,CERRADA</label>
                                 {
@@ -393,13 +468,24 @@ export const AltaClienteComplementario = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("numero_exterior", upperCaseValue);
                                     }}
+                                    autoComplete="off"
+                                    disabled={controlName}
                                 />
                                 <label htmlFor="numero_exterior">NÚMERO EXTERIOR</label>
                                 {
                                     propForm.errors?.numero_exterior && <div className="invalid-feedback-custom">{propForm.errors?.numero_exterior.message}</div>
                                 }
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="numero_exteriorC"
+                                           onClick={()=>toggleCheck('numero_exterior')} checked={controlName}
+                                           autoComplete="off"
+                                    />
+                                    <label className="form-check-label" htmlFor="numero_exteriorc">SIN NÚMERO EXTERIOR</label>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div className="row">
                         <div className="col-md-3">
                             <div className="form-floating">
                                 <input
@@ -416,10 +502,29 @@ export const AltaClienteComplementario = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("numero_interior", upperCaseValue);
                                     }}
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="numero_interior">NÚMERO INTERIOR</label>
                                 {
                                     propForm.errors?.numero_interior && <div className="invalid-feedback-custom">{propForm.errors?.numero_interior.message}</div>
+                                }
+                            </div>
+                        </div>
+                        <div className="col-md-3">
+                            <div className="form-floating">
+                                <input
+                                    {...propForm.register("vigencia")}
+                                    type="date"
+                                    className={`form-control ${!!propForm.errors?.vigencia ? 'invalid-input' : ''}`}
+                                    id="vigencia"
+                                    name="vigencia"
+                                    placeholder="Ingresa la vigencia de la identificación"
+                                    autoComplete="off"
+                                />
+                                <label htmlFor="vigencia">VIGENCIA IDENTIFICACIÓN</label>
+                                {
+                                    propForm.errors?.vigencia && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.vigencia.message}</div>
                                 }
                             </div>
                         </div>
@@ -584,6 +689,7 @@ export const AltaClienteComplementario = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("esp_origen_recursos", upperCaseValue);
                                     }}
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="esp_origen_recursos">ESPECIFIQUE ORIGEN RECURSOS</label>
                                 {
@@ -647,6 +753,7 @@ export const AltaClienteComplementario = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("esp_destino_recursos", upperCaseValue);
                                     }}
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="esp_destino_recursos">ESPECIFIQUE DESTINO RECURSOS</label>
                                 {
@@ -659,32 +766,22 @@ export const AltaClienteComplementario = memo(() => {
                     <div className="row">
                         <div className="col-md-12 d-flex justify-content-center">
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={handleValidateFinalForm}
                                 className="m-2 btn btn-primary d-grid gap-2">
                                 <span
                                     className="bi bi-check-circle-fill me-2"
                                     role="status"
                                     aria-hidden="true">
                                     <span className="ms-2">
-                                        FINALIZAR
+                                        CONTINUAR OPERACIÓN
                                     </span>
                                 </span>
                             </button>
                         </div>
                     </div>
                 </CardLayout>
-            </form>
-
-            <ModalConfirm
-                showModal={showModal}
-                closeModal={closeModal}
-                selectedItem={propForm.dataClientes}
-                icon="bi bi-check-circle-fill text-success m-2"
-                hacerOperacion={hacerOperacion}
-                title={`El registro se ha completado satisfactoriamente con el número de usuario ${ propForm.dataClientes.Cliente}. ¿Desea realizar una operación con este usuario?`}
-                closeModalAndReturn={closeModalAndReturn}
-            />
-
+            </div>
         </>
     );
 })

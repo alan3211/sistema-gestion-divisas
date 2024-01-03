@@ -1,12 +1,12 @@
 import logo from '../../assets/logo.png';
-import {encryptRequest, OPTIONS, recordValues, validarAlfaNumerico, year} from "../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, year} from "../../utils";
 import {useForm} from "react-hook-form";
 import {getUser} from "../../services";
-import {toast, ToastContainer} from "react-toastify";
+import {toast} from "react-toastify";
 import {dataG} from "../../App";
 import jwt_decode from 'jwt-decode';
 import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+
 
 export const LoginComponent = () => {
 
@@ -22,12 +22,15 @@ export const LoginComponent = () => {
     } = useForm();
 
     const handleLogin = handleSubmit(async(data) =>{
+
         const encryptedBase64 = encryptRequest(data);
         const datos = await getUser(encryptedBase64);
         if(!datos.hasOwnProperty('resultSize')){
             localStorage.setItem("token",datos.token); // Se guarda el token
             localStorage.setItem("refresh_token",datos.refresh_token); // Se guarda el refresh
             const decodedToken = jwt_decode(datos.token);
+            console.log("USUARIO")
+            console.log(decodedToken)
             if (decodedToken.usuario) {
                 dataG.sucursal = parseInt(decodedToken.sucursal);
                 dataG.username = decodedToken.nombre;
@@ -37,15 +40,14 @@ export const LoginComponent = () => {
                 dataG.nombre_sucursal = decodedToken.nombre_sucursal;
                 dataG.limite_diario = decodedToken.limite_diario;
                 dataG.limite_mensual = decodedToken.limite_mensual;
+                dataG.estatus = decodedToken.activo_sesion;
                 dataG.menus = decodedToken.menus;
                 localStorage.setItem("usuario_data",JSON.stringify(dataG));
                 navigator("/inicio");
             }
-        }else {
-            if(datos.resultSize === 0){
-                reset()
-                toast.warn('El usuario ingresado no existe.', OPTIONS);
-            }
+        }else if(datos.hasOwnProperty('mensaje')){
+            reset()
+            toast.error(datos.mensaje, OPTIONS);
         }
 
     });
@@ -68,7 +70,7 @@ export const LoginComponent = () => {
                                     <div className="card-body p-4">
                                         <h5 className="text-blue text-center mb-4"><strong>¡Bienvenido!</strong></h5>
 
-                                        <form onSubmit={handleLogin}>
+                                        <div>
                                             <div className="input-group mb-3">
                                                 <span className="input-group-text text-blue"><i className="bi bi-person-fill"></i></span>
                                                 <input
@@ -92,6 +94,7 @@ export const LoginComponent = () => {
                                                     id="usuario"
                                                     name="usuario"
                                                     placeholder="Usuario"
+                                                    autoComplete="off"
                                                 />
                                                 {
                                                     errors.usuario && <div className="invalid-feedback-custom">{errors.usuario.message}</div>
@@ -116,16 +119,18 @@ export const LoginComponent = () => {
                                                     id="password"
                                                     name="password"
                                                     placeholder="Contraseña"
+                                                    autoComplete="off"
                                                 />
                                                 {
                                                     errors.password && <div className="invalid-feedback-custom">{errors.password.message}</div>
                                                 }
                                             </div>
 
-                                            <button className="btn btn-primary w-100" type="submit">
+                                            <button className="btn btn-primary w-100" type="button"
+                                                    onClick={handleLogin}>
                                                 <i className="bi bi-box-arrow-in-right"></i> <strong>INICIAR SESIÓN</strong>
                                             </button>
-                                        </form>
+                                        </div>
                                     </div>
                                 </div>
 

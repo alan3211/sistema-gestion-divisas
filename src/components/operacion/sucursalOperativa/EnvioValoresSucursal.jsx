@@ -99,7 +99,7 @@ export const EnvioValoresSucursal = () => {
     }, [watch("moneda")]);
 
     return (
-        <form className="row m-1 g-3 justify-content-center" onSubmit={terminarDotacion} noValidate>
+        <div className="row m-1 g-3 justify-content-center">
             <div className="col-md-3">
                 <div className="form-floating">
                     <input
@@ -118,6 +118,7 @@ export const EnvioValoresSucursal = () => {
                         id="monto"
                         name="monto"
                         placeholder="Ingresa el monto"
+                        autoComplete="off"
                     />
                     <label htmlFor="monto">MONTO</label>
                     {
@@ -167,12 +168,13 @@ export const EnvioValoresSucursal = () => {
                 <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
                     <i className="bi bi-box-arrow-up-right"></i> NUEVO ENVÍO
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={finalizaOperacion}>
+                <button type="button" className="btn btn-primary"
+                        onClick={terminarDotacion} disabled={finalizaOperacion}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                    FINALIZAR OPERACIÓN
                 </button>
             </div>
 
-        </form>
+        </div>
     );
 }

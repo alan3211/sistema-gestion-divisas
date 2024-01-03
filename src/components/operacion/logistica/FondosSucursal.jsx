@@ -1,8 +1,8 @@
 import {useCatalogo} from "../../../hook";
 import {useForm} from "react-hook-form";
-import {encryptRequest} from "../../../utils";
-import {useState} from "react";
-import {consultaAsignacionBoveda} from "../../../services/operacion-logistica";
+import {encryptRequest, FormatoMoneda} from "../../../utils";
+import {useEffect, useState} from "react";
+import {consultaAsignacionBoveda, consultaCantidadBoveda} from "../../../services/operacion-logistica";
 import {AsignaFondosSucursal} from "./AsignaFondosSucursal";
 
 export const FondosSucursal = () => {
@@ -11,27 +11,48 @@ export const FondosSucursal = () => {
     const {register,formState:{errors},handleSubmit,reset,watch } = useForm();
     const [data,setData] = useState([]);
     const [showData,setShowData] = useState(false);
+    const [moneda,setMoneda] = useState('');
+    const [showCantidad,setShowCantidad] =  useState(false);
+    const [cantidadDisponible,setCantidadDisponible] = useState(0);
+    const [encryptedData,setEncryptedData] = useState('');
 
     const handleForm = handleSubmit(async(data)=>{
-        console.log(data);
+        setMoneda(data.moneda);
+        const encryptedDatos = encryptRequest(data);
+        const response = await consultaAsignacionBoveda(encryptedDatos);
+        const cantidadBoveda = await consultaCantidadBoveda(encryptedDatos);
 
-        const encryptedData = encryptRequest(data);
-
-        const response = await consultaAsignacionBoveda(encryptedData);
 
         if(response.total_rows > 0){
             setShowData(true);
             setData(response);
+            setCantidadDisponible(cantidadBoveda)
+            setShowCantidad(true)
         }else{
             setData([]);
             setShowData(false);
+            setShowCantidad(false)
         }
+        setEncryptedData(encryptedDatos);
     });
+
+    const refreshData = async() => {
+        const cantidadBoveda = await consultaCantidadBoveda(encryptedData);
+        setCantidadDisponible(cantidadBoveda)
+        setShowCantidad(false)
+        setShowData(false);
+        reset();
+    }
+
+    useEffect(() => {
+        setShowData(false);
+        setShowCantidad(false)
+    }, [watch("moneda")]);
 
 
     return(
         <>
-            <form className="g-3 mt-3" onSubmit={handleForm} noValidate>
+            <div className="g-3 mt-3">
                 <div className="row justify-content-center">
                     <div className="col-md-3">
                         <div className="form-floating mb-3">
@@ -102,7 +123,8 @@ export const FondosSucursal = () => {
 
                         <div className="col-md-3">
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={handleForm}
                                 className="btn btn-primary mt-2">
                                 CONSULTAR
                                 <span
@@ -113,9 +135,14 @@ export const FondosSucursal = () => {
                             </button>
                         </div>
                 </div>
-            </form>
+            </div>
+            {showCantidad && (<h5 className="text-blue text-center">
+                <i className="bi bi-bank me-2"></i>
+                <span>Disponible en Boveda:</span>
+                <strong className="ms-2">{FormatoMoneda(parseFloat(cantidadDisponible))}</strong>
+            </h5>)}
             {
-                showData && <AsignaFondosSucursal data={data} moneda={watch("moneda")}/>
+                showData && <AsignaFondosSucursal data={data} moneda={moneda} cantidadDisponible={cantidadDisponible} refreshData={refreshData} />
             }
         </>
     );

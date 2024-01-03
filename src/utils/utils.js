@@ -33,7 +33,7 @@ export const formateaMoneda = (cantidad) =>{
     const formatoMoneda = `$ ${numero}`;
     return formatoMoneda;
 }
-export const TIME_OUT = 1000 * 590;
+export const TIME_OUT = 1000 * 60; // 1 minuto
 
 export const hora = currentDate.toLocaleTimeString('es-ES', opciones);
 const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
@@ -62,7 +62,7 @@ export const eliminarDenominacionesConCantidadCero = (denominacionesObj) => {
     for (const key in denominacionesObj) {
         if (denominacionesObj.hasOwnProperty(key)) {
             if (denominacionesObj[key].hasOwnProperty("cantidad")){
-                if (denominacionesObj[key].cantidad === 0) {
+                if (denominacionesObj[key].cantidad === 0 || isNaN(denominacionesObj[key].cantidad)) {
                     delete denominacionesObj[key];
                 }
             }
@@ -98,6 +98,7 @@ export const obtenerArrayDifDenominaciones = (denominacionesObj) => {
 }
 
 export const getDenominacion = (divisa = 'MXP', replaceValues) => {
+
     const denominaciones = [
         'p05','p1','p2','p5', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
     ];
@@ -113,12 +114,15 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominacionObj = { divisa };
 
     for (const nombre of denominaciones) {
+        console.log(nombre)
         const valor = nombre.startsWith('p') ? `0.${nombre.substring(1)}` : nombre;
         denominacionObj[`denominacion_${nombre}`] = {
             nombre: valor,
             cantidad: getDenominacionCantidad(nombre)
         };
     }
+
+    console.log(denominacionObj);
     return denominacionObj;
 };
 
@@ -216,11 +220,10 @@ export const redondearNumero =(numero) => {
 
 export const OPTIONS = {
     position: "top-center",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
     theme: "colored",
+    closeButton:true,
+    autoClose:15000,
+    hideProgressBar:true
 }
 
 export const getTextDivisa = (divisa) => {
@@ -238,4 +241,19 @@ export const getTextDivisa = (divisa) => {
     }
 }
 
+export const convertirFecha = (input) => {
+    // Dividir la cadena de entrada en día, mes y año
+    var partes = input.split('/');
+
+    // Crear un objeto Date con los componentes de la fecha
+    var fecha = new Date(partes[2], partes[1] - 1, partes[0]);
+
+    // Obtener los componentes de la fecha en formato ISO (yyyy-mm-dd)
+    var yyyy = fecha.getFullYear();
+    var mm = ('0' + (fecha.getMonth() + 1)).slice(-2);
+    var dd = ('0' + fecha.getDate()).slice(-2);
+
+    // Devolver la fecha en formato yyyy-mm-dd
+    return yyyy + '-' + mm + '-' + dd;
+}
 export const perfiles = ['Super Usuario','Administrador','Tesorero','Coordinador Logística']

@@ -123,7 +123,7 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
             {showTable && (
                 <>
                     <div className="row">
-                        <div className="col-md-4 mx-auto">
+                        <div className="col-md-8 mx-auto">
                             <TableComponent data={data} options={options}/>
                         </div>
                     </div>

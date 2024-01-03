@@ -10,7 +10,7 @@ import {
     mensajeSinElementos,
     obtenerArrayDifDenominaciones,
     obtenerObjetoDenominaciones,
-    opciones,
+    opciones, OPTIONS,
 } from "../../../utils";
 import { dataG } from "../../../App";
 import { toast } from "react-toastify";
@@ -225,14 +225,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
             if (response !== '') {
                 setGuarda(false)
-                toast.success(response, {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    theme: "light",
-                });
+                toast.success(response, OPTIONS);
                 reset();
                 setShowDetalle(false);
                 refresh();
@@ -244,14 +237,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
             if (response !== '') {
                 setGuarda(false)
-                toast.success(response, {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    theme: "light",
-                });
+                toast.success(response, OPTIONS);
                 reset();
                 setShowDetalle(false);
                 refresh();
@@ -267,14 +253,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         const response = await entregaCaja(encryptedData);
         if (response !== '') {
             setGuarda(false)
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             reset();
             options.closeCustomModal();
             setShowDetalle(false);
@@ -327,7 +306,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     });
 
     return (<>
-        <form onSubmit={onSubmit} className="text-center mt-2" style={{ fontSize: "12px" }}>
+        <div className="text-center mt-2" style={{ fontSize: "12px" }}>
             {
                 (tipo === 'traspaso' && !showMessage) && (
                     <div className="col-md-4 mx-auto">
@@ -488,7 +467,8 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                                 setValue(`diferenciaMonto_${elemento.Denominacion}`, diferenciaMonto);
 
                                             }}
-                                            value={billetesFisicos[index][getPropiedad('denominacion',elemento)]}
+                                            //value={billetesFisicos[index][getPropiedad('denominacion',elemento)]}
+                                            autoComplete="off"
                                         />
 
                                     </td>
@@ -531,7 +511,8 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                         </tfoot>
                     </table>
                     <div className="col-md-12">
-                        <button type="submit" className="m-2 btn btn-primary" disabled={totalBilletesFisicos === 0 || !validaDiferencia}>
+                        <button type="button" className="m-2 btn btn-primary" disabled={totalBilletesFisicos === 0 || !validaDiferencia}
+                                onClick={onSubmit}>
                               <span className="me-2">
                                 GUARDAR
                                 <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
@@ -540,7 +521,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                     </div>
                 </>)
             }
-        </form>
+        </div>
             {
                 guarda && <ModalLoading options={optionsLoad} />
             }

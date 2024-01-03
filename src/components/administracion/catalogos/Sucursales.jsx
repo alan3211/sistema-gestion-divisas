@@ -58,7 +58,7 @@ export const Sucursales = () => {
     return (
             <>
                 <hr/>
-                <form className="row g-3 mb-3" onSubmit={onSubmitCatalogo} noValidate>
+                <div className="row g-3 mb-3">
                     <div className="row">
                         <div className="col-md-3 mt-3">
                             <div className="form-floating">
@@ -75,6 +75,7 @@ export const Sucursales = () => {
                                     id="numero_sucursal"
                                     name="numero_sucursal"
                                     placeholder="Ingresa el número de la sucursal"
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="numero_sucursal">NÚMERO DE SUCURSAL</label>
                                 {
@@ -97,6 +98,7 @@ export const Sucursales = () => {
                                     id="nombre_sucursal"
                                     name="nombre_sucursal"
                                     placeholder="Ingresa el nombre de sucursal"
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="nombre_sucursal">NOMBRE SUCURSAL</label>
                                 {
@@ -119,6 +121,7 @@ export const Sucursales = () => {
                                     id="direccion"
                                     name="direccion"
                                     placeholder="Ingresa la direccion de la sucursal"
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="direccion">DIRECCIÓN</label>
                                 {
@@ -141,6 +144,7 @@ export const Sucursales = () => {
                                     id="telefono"
                                     name="telefono"
                                     placeholder="Ingresa el teléfono"
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="telefono">TELÉFONO</label>
                                 {
@@ -300,6 +304,7 @@ export const Sucursales = () => {
                                     id="fecha_apertura"
                                     name="fecha_apertura"
                                     placeholder="Ingresa la fecha de apertura"
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="fecha_apertura">FECHA APERTURA</label>
                                 {
@@ -323,6 +328,7 @@ export const Sucursales = () => {
                                         id="limite_diario"
                                         name="limite_diario"
                                         placeholder="Ingresa el limite diario"
+                                        autoComplete="off"
                                     />
                                     <label htmlFor="limite_diario">LÍMITE DIARIO</label>
                                     {
@@ -345,6 +351,7 @@ export const Sucursales = () => {
                                     id="limite_mensual"
                                     name="limite_mensual"
                                     placeholder="Ingresa el limite mensual"
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="limite_mensual">LÍMITE MENSUAL</label>
                                 {
@@ -355,8 +362,9 @@ export const Sucursales = () => {
                         <div className="col-md-3 mt-3">
                             <div className="col-md-12 d-flex justify-content-center">
                                 <button
-                                    type="submit"
-                                    className="m-2 btn btn-primary d-grid gap-2">
+                                    type="button"
+                                    className="m-2 btn btn-primary d-grid gap-2"
+                                    onClick={onSubmitCatalogo}>
                                     <span
                                         className="bi bi-save me-2"
                                         role="status"
@@ -369,7 +377,7 @@ export const Sucursales = () => {
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </>
     );
 }

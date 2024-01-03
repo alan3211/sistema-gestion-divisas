@@ -1,14 +1,15 @@
 import {TableComponent} from "../../commons/tables";
 import {CardLayout} from "../../commons";
 
-export const ClienteCoincidenciaComponent = ({dataClientes,showAddCliente,addCliente,setDataClientes,setShowCliente}) =>{
+export const ClienteCoincidenciaComponent = ({dataClientes,showAddCliente,addCliente,setDataClientes,setShowCliente,setMessageActive}) =>{
 
     const options = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools: [
-            {columna:"Selecciona",tool:'selecciona-cliente',deps:{setDataClientes,setShowCliente}},
+            {columna:"Selecciona",tool:'selecciona-cliente',deps:{setDataClientes,setShowCliente,setMessageActive}},
         ]
     }
 

@@ -38,14 +38,14 @@ export const Notifications = () => {
 
     }
 
-    useEffect(() => {
+   /* useEffect(() => {
         // Simula una notificación periódica
         const interval = setInterval(() => {
             getNotificaciones()
         }, 30000);
 
         return () => clearInterval(interval);
-    }, [notifications]);
+    }, [notifications]);*/
 
     return (
         <li className="nav-item dropdown">

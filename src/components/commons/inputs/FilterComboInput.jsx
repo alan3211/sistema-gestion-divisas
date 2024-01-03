@@ -2,10 +2,10 @@ import './CombosComponent.css';
 import {useContext, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 
-export const FilterComboInput = ({ propFormulario,name, label, options }) => {
+export const FilterComboInput = ({ propFormulario,name, label, options,input}) => {
     const {propForm} =  useContext(AltaClienteContext) || { propForm: propFormulario };
     const [filteredOptions, setFilteredOptions] = useState([]);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState(input);
     const [showDropdown, setShowDropdown] = useState(false);
 
     const handleInputChange = (e) => {
@@ -16,7 +16,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options }) => {
 
         console.log("OPTIONS:", options)
         const filteredOptions = options.filter((option) =>
-            option.descripcion.trim().toUpperCase().startsWith(inputValue.toUpperCase())
+            option.descripcion.trim().toUpperCase().includes(inputValue.toUpperCase())
         );
         console.log("FILTER:",filteredOptions)
         // Establecer el error en errors[name] si no hay opciones coincidentes
@@ -53,6 +53,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options }) => {
                 onChange={handleInputChange}
                 className={`form-control ${propForm.errors[name] ? 'is-invalid' : ''}`}
                 placeholder={`Filtrar por ${name}`}
+                autoComplete="off"
             />
             {showDropdown && (
                 <div className="combo-dropdown">

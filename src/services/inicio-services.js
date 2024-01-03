@@ -36,7 +36,18 @@ export const validaToken = async (token) => {
             },
         });
 
-        const data = await response.json();
+        // Verificar si la respuesta está vacía
+        const text = await response.text();
+        if (text.trim() === "") {
+            throw new Error("La respuesta del servidor está vacía.");
+        }
+
+        const data = JSON.parse(text);
+
+        if (data.hasOwnProperty("error")) {
+            console.log("El token es inválido:", data.error);
+            return data;
+        }
         return data;
     } catch (error) {
         console.error('Error:', error);
@@ -73,6 +84,31 @@ export const getEstadistica = async (idCatalogo) => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
             }
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+};
+
+export const getSucursalUsuarios = async (formValues) => {
+    try {
+        const url = `${CATALOGOS_URL}estadistica/usuariosSistema`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues}),
         });
 
         if (!response.ok) {

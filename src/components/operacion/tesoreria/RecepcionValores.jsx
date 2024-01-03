@@ -1,15 +1,17 @@
 import {TableComponent} from "../../commons/tables";
 import {useForm} from "react-hook-form";
-import {useState} from "react";
-import {encryptRequest} from "../../../utils";
+import {useEffect, useState} from "react";
+import {encryptRequest, formattedDate} from "../../../utils";
 import {consultaEnvioSucursal} from "../../../services/operacion-tesoreria";
 
 export const RecepcionValores = () => {
 
-    const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
+    const { register, handleSubmit,
+        formState: {errors}, setValue,watch } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
+    const [currentDate, setCurrentDate] = useState('');
 
     const refreshQuery = async () =>{
         const response = await consultaEnvioSucursal(formData);
@@ -20,6 +22,7 @@ export const RecepcionValores = () => {
 
     const options = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools:[
@@ -39,13 +42,23 @@ export const RecepcionValores = () => {
         setShowTable(true)
     });
 
+    useEffect(() => {
+        // Obtener la fecha actual en el formato YYYY-MM-DD
+        setValue("fecha_operacion",formattedDate);
+        setCurrentDate(formattedDate);
+
+        let parametros = {
+            fecha_operacion: formattedDate,
+        }
+        // Realizar la consulta automáticamente al cargar la página
+        onSubmitRecepcion(parametros);
+    }, []);
+
 
     return (
         <div className="container justify-content-center align-items-center mt-4">
-            <form
+            <div
                 className="text-center mb-4"
-                onSubmit={onSubmitRecepcion}
-                noValidate
             >
                 <div className="col-md-4 mx-auto">
                     <div className="form-floating mb-3">
@@ -61,6 +74,9 @@ export const RecepcionValores = () => {
                             id="fecha_operacion"
                             name="fecha_operacion"
                             placeholder="Ingresa la fecha de operación"
+                            value={currentDate}
+                            onChange={(e)=> setCurrentDate(e.target.value)}
+                            autoComplete="off"
                         />
                         <label htmlFor="fecha_operacion">FECHA OPERACIÓN</label>
                         {
@@ -70,14 +86,15 @@ export const RecepcionValores = () => {
                 </div>
                 <div className="col-md-2 mx-auto">
                     <button
-                        type="submit"
+                        type="button"
                         className="m-2 btn btn-primary"
+                        onClick={onSubmitRecepcion}
                     >
                         CONSULTAR
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>
-            </form>
+            </div>
             {
                 showTable && <TableComponent data={data} options={options}/>
             }

@@ -12,7 +12,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionD,
     } = useContext(DenominacionContext);
 
-    const {title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion} =  options;
+    const {title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,ticket} =  options;
     let denominacion = {};
 
     if(type === 'R'){
@@ -37,14 +37,13 @@ export const useDenominacion = ({type,moneda,options}) => {
         '.50': 'p5'
     };
 
-
     // Función para calcular el total de una denominación parcial
     const calculateTotal = (elemento) => {
         let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
         const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0;
         const denominacionValue = parseFloat(elemento.Denominacion);
         if(elemento.hasOwnProperty("Billetes Disponibles")){
-            if(dataG.perfil === 'Oficina Sucursal'){
+            if(dataG.perfil === 'Supervisor'){
                 return redondearNumero(parseFloat(cantidad * denominacionValue));
             }else{
                 if(elemento["Billetes Disponibles"] >= cantidad){
@@ -92,6 +91,7 @@ export const useDenominacion = ({type,moneda,options}) => {
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             const denominacionValue = parseFloat(data[key].Denominacion);
+            // || type === 'SD'
             if ((type === 'E' || type === 'C' || type === 'SD') && denominacionValue > parseFloat(importe)) {
                 delete data[key];
             }
@@ -123,7 +123,7 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else {
-            if (grandTotal === importe) {
+            if (grandTotal === parseFloat(importe)) {
                 return 'text-success';
             } else {
                 return 'text-danger';
@@ -162,6 +162,9 @@ export const useDenominacion = ({type,moneda,options}) => {
             tipo_movimiento: type
         }
 
+        console.log("DATA")
+        console.log(valores);
+
         const encryptedData = encryptRequest(valores);
 
         if(moneda !== '0'){
@@ -187,14 +190,14 @@ export const useDenominacion = ({type,moneda,options}) => {
     // Sirve para cargar la denominacion de la moneda que se envia
     useEffect(() => {
         fetchData();
-    },[moneda])
+    },[moneda,type])
 
-    if(options.reRender){
+    useEffect(() => {
         console.log("RERENDER")
         fetchData();
-    }
+    }, [options.reRender]);
 
     return {
-        title,data,denominacionMappings,register,trigger,errors,setValue,calculateTotal,
+        title,data,denominacionMappings,register,trigger,errors,setValue,reset,calculateTotal,
         validacionColor,calculateGrandTotal};
 }

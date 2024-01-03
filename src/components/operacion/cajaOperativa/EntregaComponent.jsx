@@ -7,7 +7,7 @@ import {CierreParcialComponent} from "./CierreParcialComponent";
 
 export const EntregaComponent = () => {
 
-    const [selectedOption, setSelectedOption] = useState("cierre_parcial");
+    const [selectedOption, setSelectedOption] = useState("cierre");
 
     const handleRadioChange = ({target:{value}}) => {
         setSelectedOption(value);
@@ -25,7 +25,7 @@ export const EntregaComponent = () => {
 
             <div className="search-options d-flex justify-content-center align-items-center mt-3">
                 <div className="radio-options m-2">
-                    <div className="form-check custom-radio">
+                    {/*<div className="form-check custom-radio">
                         <input
                             className="form-check-input"
                             type="radio"
@@ -34,11 +34,12 @@ export const EntregaComponent = () => {
                             value="cierre_parcial"
                             onChange={handleRadioChange}
                             checked={selectedOption === "cierre_parcial"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="cierre_parcial">
                             <strong>Cierre Parcial</strong>
                         </label>
-                    </div>
+                    </div>*/}
                     <div className="form-check custom-radio">
                         <input
                             className="form-check-input"
@@ -48,12 +49,13 @@ export const EntregaComponent = () => {
                             value="cierre"
                             onChange={handleRadioChange}
                             checked={selectedOption === "cierre"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="cierre">
                             <strong>Cierre</strong>
                         </label>
                     </div>
-                    <div className="form-check custom-radio">
+                    { /*<div className="form-check custom-radio">
                         <input
                             className="form-check-input"
                             type="radio"
@@ -62,11 +64,12 @@ export const EntregaComponent = () => {
                             value="traspaso"
                             onChange={handleRadioChange}
                             checked={selectedOption === "traspaso"}
+                            autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="traspaso">
                             <strong>Traspaso</strong>
                         </label>
-                    </div>
+                    </div>*/}
                 </div>
             </div>
 

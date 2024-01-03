@@ -1,28 +1,43 @@
-import {ClienteCoincidenciaComponent} from "../busquedaClientes";
+import {ClienteCoincidenciaComponent, DatosClientes} from "../busquedaClientes";
 import {CardLayout} from "../../commons";
-import {memo, useContext, useState} from "react";
+import {memo, useContext, useEffect, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 import {validaCliente} from "../../../services";
 import {
-    encryptRequest,
+    encryptRequest, OPTIONS,
     validaFechas,
     validarAlfaNumerico,
     validarCorreoElectronico,
-    validarNombreApellido
+    validarNombreApellido, year
 } from "../../../utils";
 import {useCatalogo} from "../../../hook/";
 import {toast} from "react-toastify";
 import {Overlay} from "../../commons/toast/Overlay";
+import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
 export const AltaClienteFormComponent = memo(() => {
 
     const {propForm} = useContext(AltaClienteContext);
+    const {datosEscaneo, busquedaCliente:{showCliente,setShowCliente,data},operacion} = useContext(CompraVentaContext);
     const catalogo = useCatalogo([2]);
     const [showOverlay, setShowOverlay] = useState(false);
     const [controlName, setControlName] = useState({
         lastName:false,
         secondlastName:false,
     });
+
+    useEffect(() => {
+
+        if(Object.keys(datosEscaneo).length !== 0){
+                propForm.setValue("nombre",datosEscaneo.nombre)
+                propForm.setValue("apellido_paterno",datosEscaneo.apellido_paterno)
+                propForm.setValue("apellido_materno",datosEscaneo.apellido_materno)
+                propForm.setValue("fecha_nacimiento",datosEscaneo.fecha_nacimiento)
+                propForm.setValue("numero_identificacion",datosEscaneo.numero_identificacion)
+                propForm.setValue("tipo_identificacion",1)
+        }
+
+    }, []);
 
 
     const nuevoCliente = () => {
@@ -101,7 +116,7 @@ export const AltaClienteFormComponent = memo(() => {
     return (
         <>
             <CardLayout title="Alta de Usuarios" icon="bx bxs-user-plus p-1">
-                <form className="g-3" onSubmit={onSubmitValidaCliente} noValidate>
+                <div className="g-3">
                     <div className="row mb-3">
                         <div className="col-md-3">
                             <div className="form-floating">
@@ -132,6 +147,7 @@ export const AltaClienteFormComponent = memo(() => {
                                         propForm.setValue("nombre", upperCaseValue);
                                     }}
                                     disabled={propForm.showEdit}
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="nombre">NOMBRES(S)</label>
                                 {
@@ -153,8 +169,8 @@ export const AltaClienteFormComponent = memo(() => {
                                             message: 'El campo Apellido Paterno como mínimo debe de tener al menos 2 caracteres.'
                                         },
                                         maxLength: {
-                                            value: 30,
-                                            message: 'El campo Apellido Paterno como máximo debe de tener no mas de 30 caracteres.'
+                                            value: 25,
+                                            message: 'El campo Apellido Paterno como máximo debe de tener no mas de 25 caracteres.'
                                         },
                                         validate: (value) => validarNombreApellido("Apellido Paterno", value)
                                     })}
@@ -168,7 +184,8 @@ export const AltaClienteFormComponent = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("apellido_paterno", upperCaseValue);
                                     }}
-                                    disabled={propForm.showEdit}
+                                    disabled={propForm.showEdit || controlName.lastName }
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="apellido_paterno">APELLIDO PATERNO</label>
                                 {
@@ -188,6 +205,10 @@ export const AltaClienteFormComponent = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("apellido_materno", {
+                                        maxLength: {
+                                            value: 25,
+                                            message: 'El campo Apellido Materno como máximo debe de tener no mas de 25 caracteres.'
+                                        },
                                         validate: (value) => validarNombreApellido("Apellido Materno", value)
                                     })}
                                     type="text"
@@ -200,7 +221,8 @@ export const AltaClienteFormComponent = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("apellido_materno", upperCaseValue);
                                     }}
-                                    disabled={propForm.showEdit}
+                                    disabled={propForm.showEdit || controlName.secondlastName }
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="apellido_materno">APELLIDO MATERNO</label>
                                 {
@@ -211,6 +233,7 @@ export const AltaClienteFormComponent = memo(() => {
                                     <input className="form-check-input" type="checkbox" id="secondLastNameCheck"
                                            onClick={()=>toggleName('apellido_materno')} checked={controlName.secondlastName}
                                         disabled={controlName.lastName}
+                                           autoComplete="off"
                                     />
                                     <label className="form-check-label" htmlFor="secondLastNameCheck">SIN APELLIDO MATERNO</label>
                                 </div>
@@ -232,6 +255,7 @@ export const AltaClienteFormComponent = memo(() => {
                                     name="fecha_nacimiento"
                                     placeholder="Ingresa la fecha de nacimiento"
                                     disabled={propForm.showEdit}
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="fecha_nacimiento">FECHA NACIMIENTO</label>
                                 {
@@ -285,6 +309,10 @@ export const AltaClienteFormComponent = memo(() => {
                                             value: true,
                                             message: 'El campo Número Identificación no puede ser vacio.'
                                         },
+                                        maxLength: {
+                                            value: 25,
+                                            message: 'El campo Número Identificación como máximo debe de tener no mas de 25 caracteres.'
+                                        },
                                         validate: (value) => validarAlfaNumerico("Número de Identificación", value)
                                     })}
                                     type="text"
@@ -298,6 +326,7 @@ export const AltaClienteFormComponent = memo(() => {
                                         propForm.setValue("numero_identificacion", upperCaseValue);
                                     }}
                                     disabled={propForm.showEdit}
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="numero_identificacion">NÚMERO IDENTIFICACIÓN</label>
                                 {
@@ -327,6 +356,7 @@ export const AltaClienteFormComponent = memo(() => {
                                         propForm.setValue("correo_electronico", upperCaseValue);
                                     }}
                                     disabled={propForm.showEdit}
+                                    autoComplete="off"
                                 />
                                 <label htmlFor="correo_electronico">CORREO ELECTRÓNICO</label>
                                 {
@@ -338,8 +368,9 @@ export const AltaClienteFormComponent = memo(() => {
                         <div className="col-md-4">
                             <div className="d-flex">
                                 <button
-                                    type="submit"
+                                    type="button"
                                     className="m-2 btn btn-primary d-grid gap-2"
+                                    onClick={onSubmitValidaCliente}
                                     disabled={propForm.showEdit}
                                 >
                                   <span className="me-2">
@@ -359,6 +390,7 @@ export const AltaClienteFormComponent = memo(() => {
                                             propForm.setShowEdit(!propForm.showEdit);
                                             propForm.setComplementarios(false);
                                             propForm.setMessageActive(false);
+                                            setShowCliente(false)
                                         }}
                                         disabled={!propForm.showEdit}
                                     >
@@ -373,7 +405,7 @@ export const AltaClienteFormComponent = memo(() => {
                         </div>
 
                     </div>
-                </form>
+                </div>
             </CardLayout>
 
             {
@@ -383,11 +415,14 @@ export const AltaClienteFormComponent = memo(() => {
                     dataClientes={propForm.dataClientes}
                     setDataClientes={propForm.setDataClientes}
                     addCliente={nuevoCliente}
+                    setMessageActive={propForm.setMessageActive}
+                    setShowCliente={setShowCliente}
                 />
             }
-
+            {
+                showCliente && <DatosClientes operacion={operacion} cliente={propForm.dataClientes.result_set[0] || {}}/>
+            }
             <Overlay showOverlay={showOverlay}/>
-
         </>
     );
 });

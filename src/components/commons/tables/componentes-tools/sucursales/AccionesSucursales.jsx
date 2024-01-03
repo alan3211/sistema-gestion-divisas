@@ -2,7 +2,7 @@
 import {
     eliminarDenominacionesConCantidadCero,
     encryptRequest, FormatoMoneda,
-    getDenominacion, obtenerObjetoDenominaciones,
+    getDenominacion, obtenerObjetoDenominaciones, OPTIONS,
     validarAlfaNumerico,
 } from "../../../../../utils";
 import {ModalAccionTesoreriaTool} from "../../../modals";
@@ -13,9 +13,11 @@ import {useForm} from "react-hook-form";
 import {Denominacion} from "../../../../operacion/denominacion";
 import {DenominacionContext} from "../../../../../context/denominacion/DenominacionContext";
 import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
+import {DenominacionProvider} from "../../../../../context/denominacion/DenominacionProvider";
+import {ModalLoading} from "../../../modals/ModalLoading";
 
 export const AccionesSucursales = ({item, index, refresh}) => {
-
+    const [guarda, setGuarda] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [totalMonto, setTotalMonto] = useState(0);
     const {
@@ -31,6 +33,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         entrega: true,
     });
     const [datosDenominacion,setDatosDenominacion] = useState([]);
+    const [myDenominacion,setDenominacion] = useState({});
 
     const {denominacionD} = useContext(DenominacionContext);
 
@@ -42,6 +45,12 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         setTotalMonto,
     }
 
+    const optionsLoad = {
+        showModal: guarda,
+        closeCustomModal: () => setGuarda(false),
+        title: "Guardando...",
+    };
+
     /*Aqui se diferencia entre un boton de aceptar y otro de rechazar*/
     const onHandleOptions = (option) => {
         setOptionBtn(option);
@@ -50,6 +59,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
     const onEnvioValores = async (data) => {
 
         console.log("DATA:",data);
+        setGuarda(true);
 
         const values = {
             id_operacion: item.ID,
@@ -66,16 +76,35 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         values.noCliente='0';
         values.traspaso='';
 
-        let denominacionesDotacion = denominacionD.getValues();
-        const formValuesD = getDenominacion(values.moneda,denominacionesDotacion)
-        eliminarDenominacionesConCantidadCero(formValuesD);
-        const denominaciones = obtenerObjetoDenominaciones(formValuesD);
+        let denominaciones=[];
+
+        if(item.Operacion === 'Dotación Sucursal' && optionBtn === 1){
+            console.log(myDenominacion);
+            // Combina los objetos en uno solo
+            const objetoCombinado = myDenominacion.reduce((resultado, objeto) => {
+                for (const key in objeto) {
+                    resultado[key] = objeto[key];
+                }
+                return resultado;
+            }, {});
+
+            const formValuesD = getDenominacion(values.moneda,objetoCombinado)
+            eliminarDenominacionesConCantidadCero(formValuesD);
+            denominaciones = obtenerObjetoDenominaciones(formValuesD);
+        }else{
+            let denominacionesDotacion = denominacionD.getValues();
+            const formValuesD = getDenominacion(values.moneda,denominacionesDotacion)
+            eliminarDenominacionesConCantidadCero(formValuesD);
+            denominaciones = obtenerObjetoDenominaciones(formValuesD);
+        }
         denominaciones.divisa = values.moneda;
         denominaciones.tipoOperacion = '0';
         denominaciones.movimiento = 'DOTACION SUCURSAL';
+
         values.denominacion = [
             denominaciones,
         ]
+
 
         console.log("VALUES:",values);
 
@@ -84,14 +113,8 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         const response = await accionesSucursal(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            setGuarda(false);
+            toast.success(response, OPTIONS);
             setShowModal(false);
             refresh();
             reset();
@@ -105,7 +128,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             setShowModal(false);
             setValue("motivo",'');
         },
-        title: (optionBtn === 1) ? 'ACEPTAR OPERACIÓN' : 'RECHAZAR OPERACIÓN',
+        title: (optionBtn === 1) ? 'Aceptar Operación' : 'Rechazar Operación',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas el movimiento.',
@@ -114,6 +137,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
     useEffect(() => {
         const getDenominacionesAsignadas =  async () => {
             const valores = {
+                divisa: item.Moneda,
                 ticket: item["No Movimiento"]
             }
             const encryptedData = encryptRequest(valores);
@@ -121,7 +145,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }
-        if(item.Operacion !== 'Dotación Sucursal'){
+        if(item.Operacion === 'Dotación Sucursal'){
             getDenominacionesAsignadas();
         }
     }, []);
@@ -152,7 +176,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                 showModal
                 && (
                     <ModalAccionTesoreriaTool options={options}>
-                        <form onSubmit={handleSubmit(onEnvioValores)} noValidate>
+                        <div>
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
@@ -190,8 +214,8 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                         <div className="col-md-6">
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
-                                                (item.Operacion === 'Dotación Sucursal') ? (<Denominacion type="D" moneda={item.Moneda} options={optionsDenominacion}/>)
-                                                : (<DenominacionTable moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} />)
+                                                (item.Operacion !== 'Dotación Sucursal') ? (<Denominacion type={item.Operacion === 'Dotación Sucursal' ? 'D':'C'} moneda={item.Moneda} options={optionsDenominacion}/>)
+                                                : (<DenominacionTable setDenominacion={setDenominacion} moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} setTotalMonto={setTotalMonto}/>)
                                             }
                                         </div>
                                     </div>
@@ -230,15 +254,17 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                 </div>)
                             }
                             <div className="d-flex justify-content-end mt-2">
-                                <button type="submit" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
-                                        disabled={validaBtn()}>
+                                <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                        disabled={validaBtn()}
+                                        onClick={handleSubmit(onEnvioValores)}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </ModalAccionTesoreriaTool>
                 )}
+            {guarda && <ModalLoading options={optionsLoad}/>}
         </td>
     );
 }

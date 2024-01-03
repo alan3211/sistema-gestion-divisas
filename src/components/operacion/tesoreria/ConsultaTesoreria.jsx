@@ -27,12 +27,12 @@ export const ConsultaTesoreria = ({type}) => {
             setDataResumen(response)
             setIsLoading(false);
         }
-
         getResumen();
     }, []);
 
     const options = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools:[
@@ -49,6 +49,7 @@ export const ConsultaTesoreria = ({type}) => {
 
     const optionsSuc = {
         showMostrar:true,
+        excel:true,
         buscar: true,
         paginacion: true,
         filters:[

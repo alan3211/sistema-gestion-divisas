@@ -27,7 +27,7 @@ export const EditarUsuario = () => {
 
     return (
         <>
-            <form className="text-center mt-3" onSubmit={onSubmitEdit} noValidate>
+            <div className="text-center mt-3">
                 <div className="row mb-3">
                     <div className="col-md-6 mx-auto">
                         <div className="form-floating">
@@ -48,6 +48,7 @@ export const EditarUsuario = () => {
                                 id="nombre_completo"
                                 name="nombre_completo"
                                 placeholder="Ingresa el nombre completo"
+                                autoComplete="off"
                             />
                             <label htmlFor="nombre_completo">NOMBRE COMPLETO</label>
                             {
@@ -59,12 +60,13 @@ export const EditarUsuario = () => {
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="button" className="btn btn-primary"
+                            onClick={onSubmitEdit}>
                         <i className="bi bi-save me-2"></i>
                         GUARDAR CAMBIOS
                     </button>
                 </div>
-            </form>
+            </div>
         </>
     );
 }
