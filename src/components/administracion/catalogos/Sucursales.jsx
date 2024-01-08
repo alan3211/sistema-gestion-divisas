@@ -1,5 +1,5 @@
 import {useForm} from "react-hook-form";
-import {encryptRequest, validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
 import {getLocalidad, guardaCatalogo} from "../../../services";
 import {toast} from "react-toastify";
 import {useCatalogo} from "../../../hook/useCatalogo";
@@ -26,14 +26,7 @@ export const Sucursales = () => {
         const response = await guardaCatalogo(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             reset();
         }
     });

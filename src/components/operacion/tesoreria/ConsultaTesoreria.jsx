@@ -33,6 +33,7 @@ export const ConsultaTesoreria = ({type}) => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Analisis de Fondos',
         buscar: true,
         paginacion: true,
         tools:[
@@ -50,6 +51,7 @@ export const ConsultaTesoreria = ({type}) => {
     const optionsSuc = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Analisis de Fondos por Sucursal',
         buscar: true,
         paginacion: true,
         filters:[

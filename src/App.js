@@ -25,11 +25,13 @@ import {useEffect} from "react";
 import {encryptRequest} from "./utils";
 import {finSesion} from "./services";
 import {validaToken} from "./services/inicio-services";
+import {Reportes} from "./components/reportes/Reportes";
 
 export let dataG = {
     sucursal:0,
     username:"",
     perfil:"",
+    id_perfil:0,
     usuario:"",
     direccion:"",
     nombre_sucursal:"",
@@ -57,6 +59,8 @@ const App = () => {
                            element={<MainLayout><TesoreriaProvider><Tesoreria/></TesoreriaProvider></MainLayout>}/>
                     <Route exact path="/logistica"
                            element={<MainLayout><Logistica/></MainLayout>}/>
+                    <Route exact path="/reportesEstadisticos"
+                           element={<MainLayout><Reportes/></MainLayout>}/>
                     <Route exact path="/cargaTipoCambio" element={
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>

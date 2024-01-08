@@ -41,6 +41,7 @@ export const DotacionComponent = () => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Dotaciones',
         buscar: true,
         paginacion: true,
         tools:[

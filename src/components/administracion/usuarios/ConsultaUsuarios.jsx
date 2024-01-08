@@ -35,6 +35,7 @@ export const ConsultaUsuarios = () => {
         showMostrar:true,
         buscar: true,
         excel:true,
+        tableName:'Consulta Usuarios',
         paginacion: true,
     }
 

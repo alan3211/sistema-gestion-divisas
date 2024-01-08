@@ -44,6 +44,7 @@ export const AccionesBoveda = ({item, index, refresh}) => {
             usuario: dataG.usuario,
             tipo_cambio: parseFloat(data.tipo_cambio),
             tipo_banco: data.tipo_banco,
+            factura: data.factura,
         }
 
         console.log(values);
@@ -168,6 +169,30 @@ export const AccionesBoveda = ({item, index, refresh}) => {
                                             {errors && errors.tipo_banco && (
                                                 <div className="invalid-feedback">
                                                     {errors.tipo_banco.message}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="col-md-3 form-floating mb-3 ms-4">
+                                            <input
+                                                {...register("factura", {
+                                                    required: {
+                                                        value: true,
+                                                        message: 'Debes de ingresar un número de factura valido.'
+                                                    },
+                                                    validate: {
+                                                        moneda: (value) => validarAlfaNumerico(`Numero de Factura`, value),
+                                                    },
+                                                })}
+                                                type="text"
+                                                className={`form-control ${errors && errors.factura ? "is-invalid" : ""}`}
+                                                name='factura'
+                                                placeholder="Ingresa el numero de factura"
+                                                autoComplete="off"
+                                            />
+                                            <label htmlFor="factura">NÚMERO DE FACTURA</label>
+                                            {errors && errors.factura && (
+                                                <div className="invalid-feedback">
+                                                    {errors.factura.message}
                                                 </div>
                                             )}
                                         </div>

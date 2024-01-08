@@ -3,7 +3,7 @@ import {useState} from "react";
 import {toast} from "react-toastify";
 import {ModalAccionTesoreriaTool} from "../../../modals";
 import {useForm} from "react-hook-form";
-import {encryptRequest, validarAlfaNumerico, validarMoneda} from "../../../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, validarMoneda} from "../../../../../utils";
 import {accionesTesoreria} from "../../../../../services/tools-services";
 import {dataG} from "../../../../../App";
 
@@ -31,6 +31,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
             motivo: watch("motivo"),
             usuario: dataG.usuario,
             sucursal: item['Sucursal Envia'],
+            usuario_envia: item['Usuario Envia'],
             monto_equivalente: (optionBtn === 1) ? watch("monto_equivalente") : item.Monto,
             monto: item.Monto,
             moneda: item.Moneda
@@ -41,14 +42,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
         const response = await accionesTesoreria(encryptedData);
 
         if (response.result_set[0].Mensaje !== '') {
-            toast.success(response.result_set[0].Mensaje, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response.result_set[0].Mensaje, OPTIONS);
             setShowModal(false);
             refresh();
             reset();

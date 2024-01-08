@@ -28,6 +28,7 @@ export const EnvioOperaciones = () => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Envio de Operaciones Sucursal',
         buscar: true,
         paginacion: true,
         tools:[

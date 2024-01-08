@@ -7,7 +7,7 @@ import {
     obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarNumeros
 } from "../../../utils";
 import {dataG} from "../../../App";
-import {obtieneDenominaciones, realizarOperacion} from "../../../services";
+import {guardaConfirmacionFactura, obtieneDenominaciones, realizarOperacion} from "../../../services";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import {Denominacion} from "../../operacion/denominacion";
@@ -255,6 +255,27 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         imprimeTicketNuevamente(0)
     }
 
+    const guardaFactura = async ()=> {
+
+        const values = {
+            ticket: data.ticket,
+            resguardo: 'SI'
+        }
+
+        const encryptedData =  encryptRequest(values);
+
+        const response = await guardaConfirmacionFactura(encryptedData)
+
+        if(response.total_rows === 0){
+            toast.error('Hubo un problema al resguardar la factura',OPTIONS);
+        }else{
+            imprimir(0);
+            setShowModalFactura(false)
+            setShowModal(true)
+        }
+
+    }
+
     return(
         <>
             <Modal centered size="lg" show={showModalCambio}>
@@ -328,12 +349,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                      imprimir(0);
                                      setShowModal(true)
                                  }}
-                                 hacerOperacion={()=> {
-                                     toast.info('Se guarda la factura.', OPTIONS);
-                                     imprimir(0);
-                                     setShowModal(true)
-                                     setShowModalFactura(false)
-                                 }}
+                                 hacerOperacion={guardaFactura}
                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
                 )
             }

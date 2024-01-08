@@ -23,6 +23,7 @@ export const RecepcionValores = () => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Recepción de Valores desde Sucursal',
         buscar: true,
         paginacion: true,
         tools:[

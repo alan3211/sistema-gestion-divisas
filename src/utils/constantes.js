@@ -1,5 +1,5 @@
-const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-//const URL = 'http://192.168.101.45:9000/';
+//const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+const URL = 'http://192.168.101.45:9000/';
 //const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
@@ -17,6 +17,7 @@ export const LOGISTICA_URL = `${URL}logistica/`;
 export const SUCURSAL_URL = `${URL}sucursal/`;
 export const CAJA_URL = `${URL}caja/`;
 export const PERFIL_URL = `${URL}perfil/`;
+export const REPORTES_URL = `${URL}reportes/`;
 export const ADMINISTRACION_URL = `${URL}administracion/`;
 export const TOOLS_URL = `${URL}tools/`;
 export const LOGIN_FIN_SESION_URL = `${LOGIN_URL}finSesion`;
@@ -70,6 +71,11 @@ export const CAJA_ENTREGA_URL = `${CAJA_URL}entrega`
 export const CAJA_CONSULTA_DIVISAS_URL = `${CAJA_URL}consulta/divisas`
 export const CAJA_CONSULTA_MOVIMIENTOS_URL = `${CAJA_URL}consulta/movimientos`
 
+/* CONSULTA DE REPORTES CONTABLES */
+export const REPORTES_CONSULTA_URL = `${REPORTES_URL}consulta`
+export const REPORTES_CONSULTA_REPORTES_URL = `${REPORTES_URL}consulta/reporte`
+export const REPORTES_CONSULTA_TITULO_URL = `${REPORTES_URL}consulta/titulo`
+
 /* USUARIO PERFIL*/
 export const PERFIL_EDITA_URL = `${PERFIL_URL}actualiza`
 export const PERFIL_CAMBIA_PASS_URL = `${PERFIL_URL}cambia/password`
@@ -90,6 +96,7 @@ export const TOOLS_CONSULTA_DETALLE_DENOMINACIOENS_URL = `${TOOLS_URL}consulta/d
 
 export const TOOLS_OBTIENE_DATOS_TICKET_URL = `${TOOLS_URL}consulta/datosTicket`
 export const TOOLS_OBTIENE_NOTIFICACIONES_URL = `${TOOLS_URL}obtiene/notificaciones`
+export const TOOLS_ACTUALIZA_NOTIFICACIONES_URL = `${TOOLS_URL}actualiza/notificaciones`
 export const TOOLS_OBTIENE_ACTIVIDAD_RECIENTE_URL = `${TOOLS_URL}obtiene/actividad-reciente`
 export const TOOLS_CANCELAR_OPERACION_URL = `${TOOLS_URL}cancelar/operacion`
 

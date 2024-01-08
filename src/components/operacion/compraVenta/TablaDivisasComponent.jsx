@@ -18,9 +18,11 @@ export const TablaDivisasComponent = () => {
     const [dataSucursales,setDataSucursales] = useState([]);
 
     const OPTIONS_SUCURSAL = {
+        showMostrar:true,
         excel:true,
         buscar: true,
         //buscarFecha:true,
+        tableName:'Consulta Tipo de Cambio',
         paginacion: true,
         filters:[
             {columna:'Compra',filter:'currency'},

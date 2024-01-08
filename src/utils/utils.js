@@ -256,4 +256,59 @@ export const convertirFecha = (input) => {
     // Devolver la fecha en formato yyyy-mm-dd
     return yyyy + '-' + mm + '-' + dd;
 }
+
+export const obtenDia = (mes) => {
+    // Verificar si el mes tiene 30 o 31 días
+    if (mes === 4 || mes === 6 || mes === 9 || mes === 11) {
+        return 30;
+    } else if (mes === 2) {
+        // Verificar si el año es bisiesto para febrero
+        // Un año bisiesto es divisible por 4, pero no por 100, a menos que sea divisible por 400.
+        const esBisiesto = (anio) => (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
+
+        // Devolver 29 días si es bisiesto, de lo contrario, 28 días
+        return esBisiesto(new Date().getFullYear()) ? 29 : 28;
+    } else {
+        // El resto de los meses tiene 31 días
+        return 31;
+    }
+}
+
+export const obtenerNombreMes = (mes) => {
+    const nombresMeses = [
+        "Enero", "Febrero", "Marzo", "Abril",
+        "Mayo", "Junio", "Julio", "Agosto",
+        "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    // Verificar si el número del mes está en el rango válido
+    if (mes >= 1 && mes <= 12) {
+        // Restar 1 al mes, ya que los arrays en JavaScript son de base 0
+        return nombresMeses[mes - 1];
+    } else {
+        // Devolver un mensaje de error si el número del mes no es válido
+        return "Mes no válido";
+    }
+}
+
+export const formatRelativeTime = (hourString) => {
+    const now = new Date();
+    const notificationTime = new Date();
+    const [hour, minute, second] = hourString.split(':');
+    notificationTime.setHours(hour, minute, second);
+
+    const timeDifference = now - notificationTime;
+    const seconds = Math.floor(timeDifference / 1000);
+
+    if (seconds < 60) {
+        return 'Hace un momento';
+    } else if (seconds < 3600) {
+        const minutes = Math.floor(seconds / 60);
+        return `Hace ${minutes} ${minutes > 1 ? 'minutos' : 'minuto'}`;
+    } else {
+        const hours = Math.floor(seconds / 3600);
+        return `Hace ${hours} ${hours > 1 ? 'horas' : 'hora'}`;
+    }
+}
+
 export const perfiles = ['Super Usuario','Administrador','Tesorero','Coordinador Logística']

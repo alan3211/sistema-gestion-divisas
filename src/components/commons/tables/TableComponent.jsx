@@ -1,16 +1,21 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {MessageComponent} from "../MessageComponent";
-import {encryptRequest, FormatoMoneda, mensajeSinElementos, validaFechas} from "../../../utils";
+import {
+    encryptRequest,
+    FormatoMoneda, formattedDate,
+    mensajeSinElementos,
+    OPTIONS,
+} from "../../../utils";
 
 import './table.css';
-import {getTools} from "./operaciones/operaciones-tools";
 import {useForm} from "react-hook-form";
-import {writeFile} from "xlsx";
-import * as XLSX from "xlsx";
-import jsPDF from 'jspdf';
-
-
-
+import {obtenTitulo} from "../../../services/reportes-services";
+import * as ExcelJS from "exceljs";
+import { saveAs } from 'file-saver';
+import {toast} from "react-toastify";
+import {Tabla} from "./Tabla";
+import jsPDF from "jspdf";
+import LOGO from '../../../assets/logoF.png';
 
 export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
     const [resultSet, setResultSet] = useState([]);
@@ -27,19 +32,13 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         buscar = false,
         buscarFecha = false,
         paginacion = false,
+        tableName = 'Consulta',
         tools = [],
         filters=[],
         disabledColumns=[],
         deps = {},
         params = {},
     } = options || {};
-
-
-    if (total_rows === 0) {
-        return (<MessageComponent estilos={mensajeSinElementos}>
-                No se encontraron datos con los parametros especificados.
-            </MessageComponent>);
-    }
 
     const handlePerPageChange = (event) => {
         setPerPage(parseInt(event.target.value));
@@ -69,7 +68,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     };
 
     // Filtrar los datos según el término de búsqueda
-    const filteredData = result_set.filter((item) => Object.values(item).some((value) => String(value).toLowerCase().includes(searchTerm.toLowerCase())));
+    const filteredData = result_set ? result_set?.filter((item) => Object.values(item).some((value) => String(value).toLowerCase().includes(searchTerm.toLowerCase()))) : [];
 
     // Calcular el número total de páginas
     const totalPages = Math.ceil(filteredData.length / perPage);
@@ -93,37 +92,145 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
             return FormatoMoneda(valor);
         }
     }
-
     const onHandleDateChange = handleSubmit(async(data)=>{
        params.fecha = data.fecha;
        const encryptedData =  encryptRequest(params);
        setResultSet(deps.funcion(encryptedData));
     });
 
-    const handleDownloadExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(filteredData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Consulta");
-
-        // Guarda el archivo
-        const fileName = "datos_tabla.xlsx";
-        writeFile(wb, fileName);
+    const opciones = {
+        headers,disabledColumns,sortColumn,sortDirection,handleSort,
+        currentData,tools,filters,applyFilter
     };
 
-    const handleDownloadPDF = () => {
-        // Crear instancia de jsPDF
-        const pdfDoc = new jsPDF();
+    const handleDownloadExcel = async() => {
+        if (total_rows > 0) {
+            const datosOrdenados = result_set.map((fila) => {
+                const filaOrdenada = {};
+                headers.forEach((columna) => {
+                    filaOrdenada[columna] = fila[columna];
+                });
+                return filaOrdenada;
+            });
 
-        // Convertir el objeto JSON a cadena
-        const jsonString = JSON.stringify(result_set, null, 2);
+            // Crear un nuevo libro de Excel
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(tableName);
 
-        // Agregar la cadena al documento PDF
-        pdfDoc.text(jsonString, 10, 10);
 
-        // Guardar el archivo PDF
-        pdfDoc.save("tabla.pdf");
+            const titulo = await obtenTitulo();
+            // Añadir título a la fila 1
+            worksheet.addRow([titulo]);
+            // Obtener el número de columnas en tus encabezados
+            const numColumnas = headers.length;
+            // Obtener la letra de la última columna (por ejemplo, 'N' si tienes 14 columnas)
+            const ultimaLetraColumna = String.fromCharCode('A'.charCodeAt(0) + numColumnas - 1);
+            // Establecer el estilo para cada celda de la fila de encabezados
+            const headerFirstRow = worksheet.getRow(1);
+            headerFirstRow.eachCell((cell) => {
+                cell.font = { bold: true }; // Color de la letra blanco y negrita
+                cell.alignment = { horizontal: 'center' }; // Alineación central
+            });
+            // Combinar celdas desde A1 hasta la última columna (por ejemplo, N1)
+            worksheet.mergeCells(`A1:${ultimaLetraColumna}1`);
+
+            worksheet.addRow([tableName]);
+            const headerSecondRow = worksheet.getRow(2);
+            headerSecondRow.eachCell((cell) => {
+                cell.font = { bold: true }; // Color de la letra blanco y negrita
+                cell.alignment = { horizontal: 'center' }; // Alineación central
+            });
+            // Combinar celdas desde A2 hasta la última columna (por ejemplo, N2)
+            worksheet.mergeCells(`A2:${ultimaLetraColumna}2`);
+
+            // Agregar encabezado
+            worksheet.addRow(headers); // Reemplaza con tus encabezados
+            // Estilo para los encabezados
+            const headerRow = worksheet.getRow(3); // Fila de encabezados
+
+            // Establecer el estilo para cada celda de la fila de encabezados
+            headerRow.eachCell((cell) => {
+                cell.font = { color: { argb: 'FFFFFF' }, bold: true }; // Color de la letra blanco y negrita
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '012970' } }; // Color de fondo azul oscuro
+                cell.alignment = { horizontal: 'center' }; // Alineación central
+            });
+
+            // Agregar los datos ordenados a la hoja de cálculo
+            datosOrdenados.forEach((fila,index) => {
+                const rowData = headers.map(header => fila[header]);
+                worksheet.addRow(rowData);
+            });
+
+            // Construir el blob y descargar el archivo
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const fileName = `Consulta-${formattedDate}-${tableName}.xlsx`;
+
+            // Descargar el archivo
+            saveAs(blob, fileName);
+        } else {
+            toast.warn(`Hubo un problema para generar el excel con la tabla. Valide si existe información`, OPTIONS);
+        }
     };
 
+    const handleDownloadPDF = async() => {
+        const titulo = await obtenTitulo();
+        // Crear un nuevo objeto jsPDF
+        const pdf = new jsPDF({
+            orientation: 'l',
+            unit: 'mm',
+            format: 'a4',
+            putOnlyUsedFonts: true
+        });
+
+        // Agregar títulos al PDF
+        pdf.text(titulo, 150, 10, { align: "center" });
+        pdf.text(tableName, 150, 20, { align: "center" });
+
+        // Crear una tabla
+        const datosOrdenados = result_set.map((fila) => {
+            const filaOrdenada = {};
+            headers.forEach((columna) => {
+                filaOrdenada[columna] = fila[columna];
+            });
+            return filaOrdenada;
+        });
+
+        // Agregar los datos ordenados a la hoja de cálculo
+        const rows = datosOrdenados.map(fila => headers.map(header => fila[header]));
+
+        pdf.autoTable({
+            head: [headers],  // Encabezados de la tabla
+            body: rows,  // Datos de la tabla
+            startY: 40,
+            theme: 'grid',  // Estilo de la tabla (puedes cambiarlo según tus preferencias)
+            styles: {
+                fontSize: 8,
+                cellPadding: 1,
+                valign: 'middle',
+                halign: 'center',
+                overflow: 'linebreak',
+                lineWidth: 0.1,
+            },
+            headStyles: {
+                fillColor: [1, 41, 112],  // Color de fondo del encabezado (#012970)
+                textColor: [255, 255, 255]  // Color del texto del encabezado (blanco)
+            },
+            columnStyles: {
+                0: { cellWidth: 20 },  // Ancho de la primera columna
+                // Ajusta los anchos de las columnas según tus necesidades
+            },
+        });
+
+        // Descargar el PDF
+        pdf.save(`${tableName}.pdf`);
+    }
+
+    if (total_rows === 0) {
+        return (<MessageComponent estilos={mensajeSinElementos}>
+            No se encontraron datos con los parametros especificados.
+        </MessageComponent>);
+    }
 
     return (<>
             <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns mx-auto"
@@ -202,6 +309,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                     >
                                         <i className="ri ri-file-excel-2-fill"></i>
                                     </button>
+
                                     <button
                                         className="btn btn-danger"
                                         onClick={handleDownloadPDF}
@@ -213,7 +321,6 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                     </button>
                                 </div>
                             )}
-
                         </div>
                     </div>
                 </div>
@@ -222,63 +329,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                     currentData.length !== 0 ? (
                         <>
                             <div className="datatable-container table-overflow">
-                                <table className="table datatable-table table-responsive table-striped">
-                                    <thead className="table-blue">
-                                    <tr>
-                                        {headers.map((key, index) => {
-                                                if(disabledColumns.includes(key)){
-                                                    return;
-                                                }
-                                                return (<th
-                                                    key={index}
-                                                    data-sortable="true"
-                                                    className={sortColumn === key ? `sorted ${sortDirection} text-center` : "text-center"}
-                                                    onClick={() => handleSort(key)}
-                                                >
-                                                    <a className="datatable-sorter">
-                                                        {key}
-                                                    </a>
-                                                </th>)
-                                            }
-                                        )}
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {currentData.map((item, index) => {
-                                            return (<tr key={index} data-index={index}>
-                                                {headers.map((key, index) => {
-                                                    if(disabledColumns.includes(key)){
-                                                        return;
-                                                    }else{
-                                                        // Busca el objeto tool correspondiente a la columna actual
-                                                        const toolInfo = tools.find(tool => tool.columna === key);
-                                                        // Si se encuentra un objeto tool, renderiza el componente correspondiente
-                                                        if (toolInfo) {
-                                                            return getTools(toolInfo,item,index)
-                                                        } else {
-                                                            const filterElement = filters.find(element => element.columna === key);
-
-                                                            if (filterElement) {
-                                                                return (
-                                                                    <td key={index} className="text-center">
-                                                                        {applyFilter(filterElement.filter, parseFloat(item[key]))}
-                                                                    </td>
-                                                                );
-                                                            } else {
-                                                                return (
-                                                                    <td key={index} className="text-center">
-                                                                        {item[key]}
-                                                                    </td>
-                                                                );
-                                                            }
-                                                        }
-                                                    }
-                                                })}
-                                            </tr>)
-                                        }
-                                    )}
-                                    </tbody>
-                                </table>
+                                <Tabla options={opciones}/>
                             </div>
                             {paginacion && (<div className="datatable-bottom">
                                 <div className="datatable-info">

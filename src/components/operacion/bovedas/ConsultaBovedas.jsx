@@ -30,6 +30,7 @@ export const ConsultaBovedas = ({perfil}) => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Bovedas',
         buscar: true,
         paginacion: true,
         tools:[

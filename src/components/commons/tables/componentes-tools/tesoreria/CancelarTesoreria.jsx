@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../../../App";
-import {encryptRequest, validarAlfaNumerico} from "../../../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico} from "../../../../../utils";
 import {cancelarEnvioSucursal} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
 import {ModalAccionCancelarTool} from "../../../modals";
@@ -22,14 +22,7 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
         const response = await cancelarEnvioSucursal(encryptedData);
 
         if (response.result_set[0].Mensaje !== '') {
-            toast.success(response.result_set[0].Mensaje, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response.result_set[0].Mensaje, OPTIONS);
             setShowModal(false);
             refresh();
             reset();

@@ -1,7 +1,7 @@
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateWS,
     getDenominacion,
-    obtenerObjetoDenominaciones, opciones,
+    obtenerObjetoDenominaciones, opciones, OPTIONS,
     validarMoneda
 } from "../../../utils";
 import {Denominacion} from "../denominacion";
@@ -70,14 +70,7 @@ export const EnvioValoresSucursal = () => {
 
         console.log(resultado);
         if(resultado){
-            toast.success(`Se ha enviado los valores correctamente de ${data.moneda}`,{
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "colored",
-            });
+            toast.success(`Se ha enviado los valores correctamente de ${data.moneda}`,OPTIONS);
             reset();
             setShowDenominacion(false);
             denominacionD.reset();

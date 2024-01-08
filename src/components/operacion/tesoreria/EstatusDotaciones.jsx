@@ -26,6 +26,7 @@ export const EstatusDotaciones = () => {
         buscar: true,
         paginacion: true,
         excel:true,
+        tableName:'Estatus Dotaciones',
         tools: [
             {columna:"Estatus",tool:'estatus'},
             {columna:"Detalle",tool:'detalle',params:{opcion:2}},

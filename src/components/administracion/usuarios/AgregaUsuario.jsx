@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../App";
-import {encryptRequest, validarAlfaNumerico, validarNombreApellido} from "../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNombreApellido} from "../../../utils";
 import {useCatalogo} from "../../../hook/useCatalogo";
 import {toast} from "react-toastify";
 import {accionesUsuario} from "../../../services/administracion-services";
@@ -18,14 +18,7 @@ export const AgregaUsuario = () => {
         const response = await accionesUsuario(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             reset();
         }
 

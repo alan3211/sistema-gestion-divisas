@@ -15,6 +15,7 @@ import {DenominacionContext} from "../../../../../context/denominacion/Denominac
 import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
 import {DenominacionProvider} from "../../../../../context/denominacion/DenominacionProvider";
 import {ModalLoading} from "../../../modals/ModalLoading";
+import {dataG} from "../../../../../App";
 
 export const AccionesSucursales = ({item, index, refresh}) => {
     const [guarda, setGuarda] = useState(false);
@@ -68,6 +69,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             estatus: (optionBtn === 1) ? 'Aceptado' : 'Rechazado',
             motivo: watch("motivo"),
             usuario: item.Usuario,
+            usuario_envia: dataG.usuario,
             sucursal: item.Sucursal,
             monto: item.Monto,
             moneda: item.Moneda,

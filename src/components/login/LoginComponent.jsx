@@ -35,6 +35,7 @@ export const LoginComponent = () => {
                 dataG.sucursal = parseInt(decodedToken.sucursal);
                 dataG.username = decodedToken.nombre;
                 dataG.perfil = decodedToken.perfil;
+                dataG.id_perfil = decodedToken.id_perfil;
                 dataG.usuario = decodedToken.usuario;
                 dataG.direccion = decodedToken.direccion;
                 dataG.nombre_sucursal = decodedToken.nombre_sucursal;

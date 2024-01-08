@@ -29,6 +29,7 @@ export const RecepcionOperacion = () => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Recepcion de Operaciones Sucursal',
         buscar: true,
         paginacion: true,
         tools:[

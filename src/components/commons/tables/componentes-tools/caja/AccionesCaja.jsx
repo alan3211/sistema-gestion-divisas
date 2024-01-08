@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {
     encryptRequest,
-    obtenerObjetoDenominaciones,
+    obtenerObjetoDenominaciones, OPTIONS,
     validarAlfaNumerico
 } from "../../../../../utils";
 import {accionesCaja, getDenominaciones, getDenominacionesCaja} from "../../../../../services/tools-services";
@@ -38,6 +38,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
             estatus: (optionBtn === 1) ? 'Aceptado' : 'Rechazado',
             motivo: watch("motivo"),
             usuario: item.Caja,
+            usuario_envia: item['Usuario Envia'],
             sucursal: item["Sucursal Envia"],
             noCliente:'',
             diferencia:0,
@@ -64,14 +65,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
        const response = await accionesCaja(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             setShowModal(false);
             refresh();
             reset();

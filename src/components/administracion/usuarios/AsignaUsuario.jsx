@@ -1,7 +1,7 @@
 import {useCatalogo} from "../../../hook/useCatalogo";
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../App";
-import {encryptRequest} from "../../../utils";
+import {encryptRequest, OPTIONS} from "../../../utils";
 import {accionesUsuario} from "../../../services/administracion-services";
 import {toast} from "react-toastify";
 import {useEffect, useState} from "react";
@@ -31,14 +31,7 @@ export const AsignaUsuario = () => {
         const response = await accionesUsuario(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             reset();
             setValue("sucursal_origen", "0");
             setUsuarios([])

@@ -1,5 +1,5 @@
 import {useForm} from "react-hook-form";
-import {encryptRequest, validarAlfaNumerico} from "../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico} from "../../../utils";
 import {guardaCatalogo} from "../../../services";
 import {toast} from "react-toastify";
 
@@ -19,14 +19,7 @@ export const Zonas = () => {
         const response =  await guardaCatalogo(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             reset();
         }
 

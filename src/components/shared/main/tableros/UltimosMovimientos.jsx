@@ -6,6 +6,7 @@ export const UltimosMovimientos = ({data}) => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Ultimos Movimientos de Compra/Venta',
         paginacion: true,
         tools:[
             {columna:"Estatus",tool:"estatus"},

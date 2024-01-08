@@ -4,7 +4,7 @@ import {toast} from "react-toastify";
 import {useEffect} from "react";
 import {TableroComponent} from "./TableroComponent";
 import {LogoGrocerys} from "./LogoGrocerys";
-import {encryptRequest} from "../../../utils";
+import {encryptRequest, OPTIONS} from "../../../utils";
 
 
 export const MainComponent = () => {
@@ -21,14 +21,7 @@ export const MainComponent = () => {
         const encryptedData = encryptRequest(formValue);
         const {resultado} = await getValidaTipoCambioDia(encryptedData);
         if(resultado){
-            toast.error(resultado, {
-                position: "top-center",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.error(resultado, OPTIONS);
         }
     }
 
@@ -37,14 +30,7 @@ export const MainComponent = () => {
         const encryptedData = encryptRequest(formValue);
         const {resultado} = await getValidaTipoCambioDia(encryptedData);
         if(resultado){
-            toast.warn(resultado, {
-                position: "top-center",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.warn(resultado, OPTIONS);
         }
 
     }
