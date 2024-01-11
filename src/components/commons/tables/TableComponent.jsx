@@ -15,7 +15,6 @@ import { saveAs } from 'file-saver';
 import {toast} from "react-toastify";
 import {Tabla} from "./Tabla";
 import jsPDF from "jspdf";
-import LOGO from '../../../assets/logoF.png';
 
 export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
     const [resultSet, setResultSet] = useState([]);
@@ -24,13 +23,11 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     const [searchTerm, setSearchTerm] = useState("");
     const [sortColumn, setSortColumn] = useState("");
     const [sortDirection, setSortDirection] = useState("asc");
-    const {register,handleSubmit,formState:{errors}} = useForm();
 
     const {
         showMostrar = false,
         excel=false,
         buscar = false,
-        buscarFecha = false,
         paginacion = false,
         tableName = 'Consulta',
         tools = [],
@@ -92,11 +89,6 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
             return FormatoMoneda(valor);
         }
     }
-    const onHandleDateChange = handleSubmit(async(data)=>{
-       params.fecha = data.fecha;
-       const encryptedData =  encryptRequest(params);
-       setResultSet(deps.funcion(encryptedData));
-    });
 
     const opciones = {
         headers,disabledColumns,sortColumn,sortDirection,handleSort,
@@ -227,21 +219,22 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     }
 
     if (total_rows === 0) {
-        return (<MessageComponent estilos={mensajeSinElementos}>
-            No se encontraron datos con los parametros especificados.
-        </MessageComponent>);
+        return (
+                <MessageComponent estilos={mensajeSinElementos}>
+                    No se encontraron datos con los parametros especificados.
+                </MessageComponent>
+        );
     }
-
     return (<>
             <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns mx-auto"
                  style={{"fontSize": "12px"}}>
-                <div className="datatable-top">
+                <div className="datatable-top row">
                     {showMostrar && filteredData.length >= 5 && (
-                        <div className="row datatable-dropdown col-12 col-md-4 justify-content-start">
-                            <label>
-                                Mostrar
+                        <div className="col-3 col-sm-4">
+                            <label className="d-flex align-items-center me-2">
+                                <span>Mostrar</span>
                                 <select
-                                    className="datatable-selector m-2"
+                                    className="datatable-selector ms-2"
                                     value={perPage}
                                     onChange={handlePerPageChange}
                                 >
@@ -251,36 +244,14 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                     <option value="50">50</option>
                                     <option value="200">200</option>
                                 </select>
-                                por página
+                                <span className="ms-2">por página</span>
                             </label>
                         </div>
                     )}
-
-                    <div className="datatable-search col-12 col-md-6">
+                    <div className="col-9 col-sm-8">
                         <div className="row justify-content-end">
-                            <div className={buscarFecha ? "col-12 col-md-4" : "d-none d-md-block"}>
-                                {buscarFecha && (
-                                    <div className="form-floating">
-                                        <input
-                                            {...register("fecha", {})}
-                                            type="date"
-                                            className={`form-control ${!!errors?.fecha ? 'invalid-input' : ''}`}
-                                            id="fecha"
-                                            name="fecha"
-                                            placeholder="Ingresa la fecha de consulta"
-                                            onChange={onHandleDateChange}
-                                            autoComplete="off"
-                                        />
-                                        <label htmlFor="fecha">FECHA CONSULTA</label>
-                                        {errors?.fecha && (
-                                            <div className="invalid-feedback-custom">{errors?.fecha.message}</div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className={buscar ? "col-12 col-md-4" : "col-12"}>
-                                {buscar && (
+                            {buscar && result_set && (
+                                <div className="col-12 col-md-5 mb-2">
                                     <div className="row form-floating">
                                         <input
                                             key="searchTable"
@@ -290,16 +261,16 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                             onChange={handleSearch}
                                             autoComplete="off"
                                         />
-                                        <label htmlFor="fecha">
+                                        <label htmlFor="fecha" className="mt-1">
                                             BUSCAR EN LA TABLA
                                             <i className="bx bx-search ms-2"></i>
                                         </label>
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
 
-                            {excel && (
-                                <div className="justify-content-center align-content-start col-12 col-md-3 mt-2">
+                            {excel && result_set && (
+                                <div className="col-12 col-md-3 mt-2">
                                     <button
                                         className="btn btn-success me-2"
                                         onClick={handleDownloadExcel}

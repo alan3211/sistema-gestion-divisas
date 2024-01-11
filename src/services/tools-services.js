@@ -1,15 +1,25 @@
 import {
     INICIO_URL,
+    OPERACIONES_RESGUARDA_FACTURA_URL,
     TOOLS_ACCIONES_CAJA_URL,
     TOOLS_ACCIONES_DOTACION_URL,
-    TOOLS_ACCIONES_SUCURSAL_URL, TOOLS_ACTUALIZA_NOTIFICACIONES_URL,
+    TOOLS_ACCIONES_SUCURSAL_URL,
+    TOOLS_ACTUALIZA_NOTIFICACIONES_URL,
     TOOLS_CANCELAR_DOTACION_SUCURSAL_URL,
-    TOOLS_CANCELAR_DOTACION_URL, TOOLS_CANCELAR_OPERACION_URL,
+    TOOLS_CANCELAR_DOTACION_URL,
+    TOOLS_CANCELAR_OPERACION_URL,
+    TOOLS_CONSULTA_ACT_RECIENTE_URL,
+    TOOLS_CONSULTA_COMPRAS_FECHA_URL,
     TOOLS_CONSULTA_DETALLE_DENOMINACIOENS_URL,
     TOOLS_CONSULTA_DETALLE_URL,
-    TOOLS_MUESTRA_DENOMINACIONES_URL, TOOLS_OBTIENE_ACTIVIDAD_RECIENTE_URL,
-    TOOLS_OBTIENE_DATOS_TICKET_URL, TOOLS_OBTIENE_DENOMINACIONES_CAJA_URL,
-    TOOLS_OBTIENE_DENOMINACIONES_URL, TOOLS_OBTIENE_NOTIFICACIONES_URL
+    TOOLS_CONSULTA_ULTIMOS_MOVIMIENTOS_URL,
+    TOOLS_CONSULTA_VENTAS_FECHA_URL,
+    TOOLS_MUESTRA_DENOMINACIONES_URL,
+    TOOLS_OBTIENE_ACTIVIDAD_RECIENTE_URL,
+    TOOLS_OBTIENE_DATOS_TICKET_URL,
+    TOOLS_OBTIENE_DENOMINACIONES_CAJA_URL,
+    TOOLS_OBTIENE_DENOMINACIONES_URL,
+    TOOLS_OBTIENE_NOTIFICACIONES_URL
 } from "../utils";
 
 export const consultaDetalle = async (encryptedData) => {
@@ -387,3 +397,106 @@ export const obtieneActividadReciente = async (formValues) => {
         throw error;
     }
 };
+
+
+
+export const consultaUltimosMovimientos =  async(formValues) => {
+    try {
+        const url = `${TOOLS_CONSULTA_ULTIMOS_MOVIMIENTOS_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const consultaActividadReciente =  async(formValues) => {
+    try {
+        const url = `${TOOLS_CONSULTA_ACT_RECIENTE_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const consultaVentasTablero =  async(formValues) => {
+    try {
+        const url = `${TOOLS_CONSULTA_VENTAS_FECHA_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const consultaComprasTablero =  async(formValues) => {
+    try {
+        const url = `${TOOLS_CONSULTA_COMPRAS_FECHA_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+

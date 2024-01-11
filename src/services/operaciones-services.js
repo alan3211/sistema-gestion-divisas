@@ -285,9 +285,6 @@ export const consultaInformacionCarga =  async(formValues) => {
         throw error;
     }
 }
-
-
-
 export const guardaConfirmacionFactura =  async(formValues) => {
     try {
         const url = `${OPERACIONES_RESGUARDA_FACTURA_URL}`;

@@ -28,10 +28,6 @@ export const TablaDivisasComponent = () => {
             {columna:'Compra',filter:'currency'},
             {columna:'Venta',filter:'currency'}
         ],
-        params:{divisa:'',fecha:''},
-        deps:{
-            funcion:consultaSucursalesTPCambio
-        }
     }
     const consultaTipoCambioSucursales = async (divisa) => {
         const values = {

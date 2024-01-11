@@ -110,7 +110,7 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else if (type === 'C') {
-            if (grandTotal === parseFloat(importe)) {
+            if (parseFloat(redondearNumero(grandTotal)) === parseFloat(importe)) {
                 denominacionC.calculateGrandTotal = grandTotal;
                 return 'text-success';
             } else {

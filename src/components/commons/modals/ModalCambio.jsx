@@ -139,7 +139,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     });
 
-
     // Sección de dotación Rapida
     const handleDotacionRapida = async()=>{
         setGuarda(true);
@@ -212,7 +211,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
         let denominacionesCambio = denominacionC.getValues();
 
-        const formValuesC = getDenominacion("MXP",denominacionesCambio);
+        const formValuesC = getDenominacion(operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda,denominacionesCambio);
 
         if(operacion.tipo_operacion === '1') {
             formValuesC.tipoOperacion = 'COMPRA';
@@ -220,7 +219,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             formValuesC.tipoOperacion = 'VENTA';
         }
 
-        formValuesC.divisa = 'MXP';
+        formValuesC.divisa = operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda;
         formValuesC.movimiento = 'CAMBIO AL USUARIO';
 
         eliminarDenominacionesConCantidadCero(formValuesC);
@@ -232,7 +231,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             ticket: data.ticket,
             cantidad_entregar: parseInt(cambio),
             monto: '0.0',
-            divisa:'MXP',
+            divisa:operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda,
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
             traspaso: '',
@@ -283,7 +282,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                     <Modal.Title>
                         <h5 className="text-blue">
                             <i className="bx bx-money m-2"></i>
-                            Entrega de Cambio (MXP)
+                            Entrega de Cambio ({operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})
                         </h5>
                     </Modal.Title>
                 </Modal.Header>
@@ -299,14 +298,14 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                        readOnly
                                        autoComplete="off"
                                 />
-                                <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>(MXP)</i></label>
+                                <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>({operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})</i></label>
                             </div>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-12">
                             <div className="form-group">
-                                <Denominacion type="C" moneda="MXP" options={options}/>
+                                <Denominacion type="C" moneda={operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda} options={options}/>
                             </div>
                         </div>
                     </div>
@@ -321,13 +320,12 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                         <i className="bi bi-cash me-2"></i>
                         SOLICITAR DENOMINACIÓN
                     </Button>
-                    <Button variant="primary" disabled={denominacionC.calculateGrandTotal != redondearNumero(cambio)} onClick={guardarCambio}>
+                    <Button variant="primary" disabled={redondearNumero(denominacionC.calculateGrandTotal) != redondearNumero(cambio)} onClick={guardarCambio}>
                         <i className="bi bi-arrow-left-right me-2"></i>
                         ENTREGAR CAMBIO
                     </Button>
                 </Modal.Footer>
             </Modal>
-
             {
                 showModal && (
                     <ModalTicket title="¿Se imprimió el ticket correctamente?"

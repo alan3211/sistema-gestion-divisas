@@ -275,7 +275,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     return (
         <>
-            <div className="text-center mt-2" style={{fontSize: "12px"}}>
+            <form className="text-center mt-2" style={{fontSize: "12px"}}>
                 <div className="custom-scrollbar" style={{maxWidth: '100%', overflowX: 'auto'}}>
                     <table className="table table-bordered table-hover custom-scrollbar">
                         <thead className="table-blue">
@@ -369,7 +369,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                         </span>
                     </button>
                 </div>
-            </div>
+            </form>
             {guarda && <ModalLoading options={optionsLoad}/>}
         </>
     );
