@@ -229,8 +229,8 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         const values = {
             cliente: data.cliente,
             ticket: data.ticket,
-            cantidad_entregar: parseInt(cambio),
-            monto: '0.0',
+            cantidad_entregar: parseFloat(cambio),
+            monto: 0.0,
             divisa:operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda,
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,

@@ -145,8 +145,8 @@ export const useDenominacion = ({type,moneda,options}) => {
         if (type === 'R') {
             isValid = calculateGrandTotal() >= calculaValorMonto;
             newHabilita.recibe = !isValid;
-        } else {
-            isValid = calculateGrandTotal() === importe;
+        } else if (type === 'E') {
+            isValid = calculateGrandTotal() === parseFloat(importe);
             newHabilita.entrega = !isValid;
         }
         setHabilita(newHabilita);

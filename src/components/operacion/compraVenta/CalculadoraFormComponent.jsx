@@ -224,7 +224,7 @@ export const CalculadoraFormComponent = () => {
             monto: parseInt(datos.monto),
             divisa: datos.moneda,
             tipo_cambio: datos.tipo_cambio,
-            cantidad_entregar: datos.cantidad_entregar
+            cantidad_entregar: parseFloat(datos.cantidad_entregar)
         }
 
         console.log(operacionEnvia);

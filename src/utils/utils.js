@@ -311,4 +311,19 @@ export const formatRelativeTime = (hourString) => {
     }
 }
 
+export const obtenerFechaDiaAnterior = () => {
+    // Obtén la fecha actual
+    const fechaActual = new Date();
+
+    // Resta un día a la fecha actual
+    fechaActual.setDate(fechaActual.getDate() - 1);
+
+    // Formatea la fecha en YYYY-MM-DD
+    const anio = fechaActual.getFullYear();
+    const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+    const dia = String(fechaActual.getDate()).padStart(2, '0');
+
+    return `${anio}-${mes}-${dia}`;
+}
+
 export const perfiles = ['Super Usuario','Administrador','Tesorero','Coordinador Logística']

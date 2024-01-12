@@ -98,9 +98,9 @@ export const ModalDeliverComponent = ({configuration}) =>{
         const values = {
             cliente: datos.Cliente,
             ticket: datos.ticket,
-            divisa: operacion.moneda,
-            cantidad_entregar: operacion.cantidad_entregar,
-            monto: operacion.monto,
+            divisa: muestraDivisa(),
+            cantidad_entregar: parseFloat(operacion.cantidad_entregar),
+            monto: parseFloat(operacion.monto),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
             traspaso: '',
@@ -128,7 +128,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     const options = {
         title: `Recibido del usuario (${muestraDivisa()})`,
-        importe: parseFloat(parseInt(operacion.cantidad_entregar)),
+        importe: operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto,
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
@@ -137,7 +137,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     const optionsE = {
         title: `Entregado al usuario (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
-        importe:operacion.monto,
+        importe:operacion.tipo_operacion === "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto,
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
@@ -364,7 +364,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     name="monto"
                                     className={`form-control mb-1`}
                                     placeholder="Ingresa la cantidad a por el usuario"
-                                    value={redondearNumero(operacion.cantidad_entregar)} readOnly
+                                    value={operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto} readOnly
                                     autoComplete="off"
                                 />
                                 <label htmlFor="monto" className="form-label">CANTIDAD A {datos.tipo_operacion === '1' ? 'COTIZAR':'RECIBIR'} <i>({datos.tipo_operacion === '1' ? muestraDivisa():'MXP'})</i></label>
@@ -375,7 +375,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                 <input type="text"
                                        className={`form-control mb-1`}
                                        id="floatingCE"
-                                       value={operacion.monto}
+                                       value={operacion.tipo_operacion === "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto}
                                        readOnly
                                        autoComplete="off"
                                 />

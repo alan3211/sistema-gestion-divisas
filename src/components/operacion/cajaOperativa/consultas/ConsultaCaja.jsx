@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { dataG } from "../../../../App";
-import {encryptRequest, formattedDate} from "../../../../utils";
+import {encryptRequest, formattedDate, obtenerFechaDiaAnterior} from "../../../../utils";
 import {consultaCantidadDivisas, consultaMovimientos, getDotaciones} from "../../../../services/operacion-caja";
 import { ConsultaTotalesCaja } from "./ConsultaTotalesCaja";
 import { TableComponent } from "../../../commons/tables";
@@ -14,8 +14,9 @@ export const ConsultaCaja = () => {
     const [isLoadingHist, setIsLoadingHist] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const {register,reset,
-        handleSubmit,formState:{errors}} = useForm();
+        handleSubmit,formState:{errors},setValue} = useForm();
     const [formData,setFormData] = useState('');
+    const [currentDate, setCurrentDate] = useState('');
 
     const refreshQuery = async () =>{
         const result = await consultaMovimientos(formData);
@@ -97,6 +98,20 @@ export const ConsultaCaja = () => {
         setIsLoadingHist(true);
         reset();
     });
+
+    useEffect(() => {
+        // Obtener la fecha actual en el formato YYYY-MM-DD
+        setValue("fecha",obtenerFechaDiaAnterior());
+        setCurrentDate(obtenerFechaDiaAnterior());
+
+        let parametros = {
+                usuario: dataG.usuario,
+                sucursal: dataG.sucursal,
+                fecha: obtenerFechaDiaAnterior(),
+        }
+        // Realizar la consulta automáticamente al cargar la página
+        handleConsultaMovimientosHistoricos(parametros);
+    }, []);
 
     return (
         <>
