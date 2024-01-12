@@ -3,7 +3,7 @@ import {CircleLoader} from "react-spinners";
 
 export const ModalLoading = ({options}) =>{
         return (
-            <Modal centered size="sm" show={options.showModal} onHide={options.closeCustomModal}>
+            <Modal centered size="sm" show={options.showModal}>
                 <Modal.Body>
                     <p className="text-center"><strong>{options.title}</strong></p>
                     <div className="row">

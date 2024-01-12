@@ -16,6 +16,7 @@ import {DenominacionTable} from "../../../../operacion/denominacion/Denominacion
 import {DenominacionProvider} from "../../../../../context/denominacion/DenominacionProvider";
 import {ModalLoading} from "../../../modals/ModalLoading";
 import {dataG} from "../../../../../App";
+import {Overlay} from "../../../toast/Overlay";
 
 export const AccionesSucursales = ({item, index, refresh}) => {
     const [guarda, setGuarda] = useState(false);
@@ -58,7 +59,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         setShowModal(true);
     }
     const onEnvioValores = async (data) => {
-
         console.log("DATA:",data);
         setGuarda(true);
 
