@@ -367,7 +367,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     value={operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto} readOnly
                                     autoComplete="off"
                                 />
-                                <label htmlFor="monto" className="form-label">CANTIDAD A {datos.tipo_operacion === '1' ? 'COTIZAR':'RECIBIR'} <i>({datos.tipo_operacion === '1' ? muestraDivisa():'MXP'})</i></label>
+                                <label htmlFor="monto" className="form-label">CANTIDAD A {datos.tipo_operacion === '1' ? 'COTIZAR':'RECIBIR'} <i>({datos.tipo_operacion === '1' ? operacion.moneda:'MXP'})</i></label>
                             </div>
                         </div>
                         <div className="col-md-4 mb-3 d-flex">

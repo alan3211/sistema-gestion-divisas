@@ -12,14 +12,8 @@ export const TableroActividad = ({ data, showDataActividad }) => {
 
     const {register,handleSubmit,watch ,setValue,formState:{errors}} = useForm();
 
-    useEffect(() => {
-        // Este efecto se ejecutará cada vez que cambie la fechaConsulta
-        console.log("Fecha actualizada en useEffect:", fechaConsulta);
-    }, [fechaConsulta]);
 
     const onHandleDateChange = handleSubmit(async (formData) => {
-        console.log("FECHA CONSULTA: ");
-        console.log(formData.fecha);
         const encryptedData = encryptRequest(formData);
         const response = await consultaActividadReciente(encryptedData);
         if (response.result_set) {
