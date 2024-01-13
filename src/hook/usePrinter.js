@@ -1,6 +1,6 @@
 import {connetor_plugin} from "../js/plugin_impresora_termica";
 import {
-    DENOMINACIONES, DENOMINACIONESM,
+    DENOMINACIONESM,
     encryptRequest,
     formattedDateDD2,
     getTextDivisa,
@@ -67,7 +67,7 @@ export const usePrinter = (datos) => {
         conector.fontsize("1")
         conector.textaling("center")
         conector.text(`${opcion === 0 ? '-- ORIGINAL --' : opcion === 1 ? '-- COPIA USUARIO --' : ' -- REIMPRESION --'}`)
-        conector.img_url("https://grocerys-front--k83k6h5.wittysmoke-209c31ac.eastus.azurecontainerapps.io/static/media/logo.024785155dae25af5d6a.png")
+        conector.img_url("https://grocerys-front.wittysmoke-209c31ac.eastus.azurecontainerapps.io/static/media/logo.024785155dae25af5d6a.png")
         conector.fontsize("1")
         conector.text(dataTicket.Registro)
         conector.text(dataTicket.Nombre)
@@ -135,7 +135,7 @@ export const usePrinter = (datos) => {
         conector.fontsize("1")
         conector.textaling("center")
         conector.text(`${opcion === 3 ? '-- CAJERO --' : ' -- OFICINA ADMINISTRATIVA --'}`)
-        conector.img_url("https://grocerys-front--k83k6h5.wittysmoke-209c31ac.eastus.azurecontainerapps.io/static/media/logo.024785155dae25af5d6a.png")
+        conector.img_url("https://grocerys-front.wittysmoke-209c31ac.eastus.azurecontainerapps.io/static/media/logo.024785155dae25af5d6a.png")
         conector.fontsize("1")
         conector.text(dataTicket.Registro)
         conector.text(dataTicket.Nombre)
@@ -176,7 +176,6 @@ export const usePrinter = (datos) => {
         let nombreImpresora = "EPSON TM-T88VI Receipt";
         let api_key = "a3c8f13a-8722-4387-f0bf-0ac2e9dd74f7"
 
-
         const conector = new connetor_plugin()
 
         if (tipo === 0) {
@@ -191,6 +190,7 @@ export const usePrinter = (datos) => {
 
         const resp = await conector.imprimir(nombreImpresora, api_key);
         if (resp === true) {
+            mostrar_impresoras();
             console.log("imprimir: " + resp)
         } else {
             console.log("Problema al imprimir: " + resp)
