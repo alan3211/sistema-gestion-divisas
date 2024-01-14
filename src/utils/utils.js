@@ -106,7 +106,7 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const getDenominacionCantidad = (nombre) => {
         if (replaceValues && replaceValues.hasOwnProperty(`denominacion_${nombre}`)) {
             const cantidad = replaceValues[`denominacion_${nombre}`];
-            return cantidad == '' ? 0 : parseInt(cantidad);
+            return cantidad === '' ? 0 : parseInt(cantidad);
         }
         return 0; // Si no existe la propiedad, asignar 0 por defecto
     };

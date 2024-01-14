@@ -126,12 +126,12 @@ export const FondosSucursal = () => {
                                 type="button"
                                 onClick={handleForm}
                                 className="btn btn-primary mt-2">
-                                CONSULTAR
                                 <span
-                                    className="bi bi-search ms-2"
+                                    className="bi bi-check-circle me-2"
                                     role="status"
                                     aria-hidden="true">
                                 </span>
+                                GENERAR
                             </button>
                         </div>
                 </div>

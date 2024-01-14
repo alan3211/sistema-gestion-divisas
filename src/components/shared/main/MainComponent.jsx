@@ -41,7 +41,7 @@ export const MainComponent = () => {
 
     const validaTableros = () => {
         if (
-            (dataG.perfil && (dataG.perfil.includes('Super Usuario') || dataG.perfil.includes('Tesorero') || dataG.perfil.includes('Coordinador Logística')))
+            [0,6].includes(dataG.id_perfil)
         ) {
             return true;
         }

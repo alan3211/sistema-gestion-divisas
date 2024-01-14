@@ -164,6 +164,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         }
     }
 
+
     return (
         <td key={index} className="text-center">
             <button className="btn btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTAR"
@@ -264,9 +265,10 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                 </button>
                             </div>
                         </div>
+                        {guarda && <ModalLoading options={optionsLoad}/>}
                     </ModalAccionTesoreriaTool>
-                )}
-            {guarda && <ModalLoading options={optionsLoad}/>}
+                )
+            }
         </td>
     );
 }

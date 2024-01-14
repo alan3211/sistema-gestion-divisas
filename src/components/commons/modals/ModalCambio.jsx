@@ -12,7 +12,7 @@ import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
-import {usePrinter} from "../../../hook/usePrinter";
+import {usePrinter} from "../../../hook";
 import {ModalTicket} from "./ModalTicket";
 import {ModalGenericTool} from "./ModalTools";
 import {ModalLoading} from "./ModalLoading";

@@ -8,7 +8,7 @@ export const Tabla = ({options}) => {
     } = options;
 
     return (<table className="table datatable-table table-responsive table-striped">
-        <thead className="table-blue">
+        <thead className="table-blue sticky top-0">
         <tr>
             {headers.map((key, index) => {
                     if(disabledColumns.includes(key)){

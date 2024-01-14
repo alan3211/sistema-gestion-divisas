@@ -230,7 +230,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                  style={{"fontSize": "12px"}}>
                 <div className="datatable-top row">
                     {showMostrar && filteredData.length >= 5 && (
-                        <div className="col-3 col-sm-4">
+                        <div className="col-3 col-sm-4 col-md-4 col-lg-2 mt-3">
                             <label className="d-flex align-items-center me-2">
                                 <span>Mostrar</span>
                                 <select
@@ -248,10 +248,10 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                             </label>
                         </div>
                     )}
-                    <div className="col-9 col-sm-8">
+                    <div className="col-9 col-sm-8 col-md-9 col-lg-10">
                         <div className="row justify-content-end">
                             {buscar && result_set && (
-                                <div className="col-12 col-md-5 mb-2">
+                                <div className="col-12 col-md-3 col-lg-3 mb-2">
                                     <div className="row form-floating">
                                         <input
                                             key="searchTable"
@@ -270,7 +270,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                             )}
 
                             {excel && result_set && (
-                                <div className="col-12 col-md-3 mt-2">
+                                <div className="col-12 col-md-3 col-lg-2 mt-2">
                                     <button
                                         className="btn btn-success me-2"
                                         onClick={handleDownloadExcel}

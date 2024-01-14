@@ -78,14 +78,15 @@ export const ModalAccionesTool = ({options,children}) => {
 
 export const ModalGenericTool = ({options,children}) => {
     return (
-        <Modal centered size={options.size} show={options.showModal}>
-            <Modal.Header closeButton onClick={options.closeModal}>
+        <Modal centered size={options.size} show={options.showModal} backdrop="static" keyboard={false}>
+            <Modal.Header>
                 <Modal.Title>
                     <h5 className="card-title">
                         <i className={options.icon}></i>
                         {options.title}
                     </h5>
                 </Modal.Title>
+                <button type="button" className="btn-close" onClick={options.closeModal} aria-label="Close"></button>
             </Modal.Header>
             <Modal.Body>
                 <p>{options.subtitle}</p>

@@ -31,7 +31,7 @@ export const TableroComponent = () => {
                 </nav>
             </div>
 
-            {(!isLoading && !dataG.perfil.includes('Coordinador')) && (
+            {/*     {(!isLoading && [0,6].includes(dataG.id_perfil)) && (
                 <section className="section dashboard">
                     <div className="row justify-content-center">
                         <Ventas data={estadistica[0]?.result_set?.[0] || {}} />
@@ -40,9 +40,9 @@ export const TableroComponent = () => {
                         <UltimosMovimientos data={estadistica[3] || []} />
                     </div>
                 </section>
-            )}
+            )}*/}
 
-            {(!isLoading && dataG.perfil.includes('Coordinador'))&& (<TableroCoordinadorLogistico/>)}
+            {(!isLoading && [0,6].includes(dataG.id_perfil))&& (<TableroCoordinadorLogistico/>)}
 
         </main>
     );

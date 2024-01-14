@@ -89,6 +89,8 @@ export const TOOLS_CANCELAR_DOTACION_SUCURSAL_URL = `${TOOLS_URL}cancelar/dotaci
 export const TOOLS_OBTIENE_DENOMINACIONES_URL = `${TOOLS_URL}consulta/denominaciones`
 export const TOOLS_OBTIENE_DENOMINACIONES_CAJA_URL = `${TOOLS_URL}consulta/denominaciones/caja`
 
+export const TOOLS_OBTIENE_DENOMINACIONES_BOVEDA_URL = `${TOOLS_URL}consulta/denominaciones/boveda`
+
 export const TOOLS_ACCIONES_CAJA_URL = `${TOOLS_URL}acciones/dotacion-caja`
 export const TOOLS_MUESTRA_DENOMINACIONES_URL = `${TOOLS_URL}muestra/denominaciones`
 
