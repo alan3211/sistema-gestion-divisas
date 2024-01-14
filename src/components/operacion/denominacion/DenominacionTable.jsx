@@ -1,5 +1,5 @@
 import { FormatoMoneda } from "../../../utils";
-import { useState, useEffect } from "react"; // Añadí useEffect
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDenominacion,resetea,boveda}) => {

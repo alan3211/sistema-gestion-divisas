@@ -1,7 +1,7 @@
 /*Herramienta para mostrar las acciones del tesorero (Aceptar o rechazar)*/
 import {
     eliminarDenominacionesConCantidadCero,
-    encryptRequest, getDenominacion, obtenerObjetoDenominaciones, OPTIONS,
+    encryptRequest, FormatoMoneda, getDenominacion, obtenerObjetoDenominaciones, OPTIONS,
     validarAlfaNumerico, validarMoneda,
 } from "../../../../../utils";
 import { ModalGenericTool} from "../../../modals";
@@ -95,8 +95,8 @@ export const AccionesBoveda = ({item, index,refresh}) => {
         title: (optionBtn === 1) ? 'Confirmar Dotación a Bóveda' : 'Rechazar Dotación de Bóveda',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn !== 1) ? 'Ingresa el motivo por el cual rechazas la dotación a la bóveda.':
-            `${item.Divisa !== 'MXP' ? `Ingresa los siguientes datos para confirmar la dotación en ${item.Divisa}.`
-                :'Ingresa los siguientes datos para confirmar la dotación en MXP.'}`,
+            `${item.Divisa !== 'MXP' ? `Ingresa los siguientes datos para confirmar la dotación por la cantidad de ${FormatoMoneda(parseFloat(item["Monto Solicitado"]))} en ${item.Divisa}.`
+                :`Ingresa los siguientes datos para confirmar la dotación por la cantidad de ${FormatoMoneda(parseFloat(item["Monto Solicitado"]))} en MXP.`}`,
     };
 
     useEffect(() => {
@@ -181,7 +181,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
 
                                         <div className="row ">
                                             {
-                                                item.Divisa === 'USD' ?
+                                                item.Divisa !== 'MXP' ?
                                                 (<div className="col-4">
                                                     <div className="container justify-content-center align-items-center mt-4">
                                                         <div className="col-md-12 form-floating mb-3">
@@ -261,9 +261,65 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                ):null
+                                                ): (
+                                                    <div className="col-4">
+                                                        <div className="container justify-content-center align-items-center mt-4">
+                                                            <div className="col-md-12 form-floating mb-3">
+                                                                <input
+                                                                    {...register("tipo_banco", {
+                                                                        required: {
+                                                                            value: true,
+                                                                            message: 'Debes de ingresar un banco o casa de cambio.'
+                                                                        },
+                                                                        validate: (value) => validarAlfaNumerico("Banco/Casa de Cambio", value)
+                                                                    })}
+                                                                    type="text"
+                                                                    className={`form-control ${errors && errors.tipo_banco ? "is-invalid" : ""}`}
+                                                                    name='tipo_banco'
+                                                                    placeholder="Ingresa un banco o casa de cambio"
+                                                                    onChange={(e) => {
+                                                                        const upperCaseValue = e.target.value.toUpperCase();
+                                                                        e.target.value = upperCaseValue;
+                                                                        setValue("tipo_banco", upperCaseValue);
+                                                                    }}
+                                                                    autoComplete="off"
+                                                                />
+                                                                <label htmlFor="tipo_banco">BANCO/CASA DE CAMBIO</label>
+                                                                {errors && errors.tipo_banco && (
+                                                                    <div className="invalid-feedback">
+                                                                        {errors.tipo_banco.message}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="col-md-12 form-floating mb-3">
+                                                                <input
+                                                                    {...register("factura", {
+                                                                        required: {
+                                                                            value: true,
+                                                                            message: 'Debes de ingresar un número de referencia valido.'
+                                                                        },
+                                                                        validate: {
+                                                                            moneda: (value) => validarAlfaNumerico(`Numero de Referencia`, value),
+                                                                        },
+                                                                    })}
+                                                                    type="text"
+                                                                    className={`form-control ${errors && errors.factura ? "is-invalid" : ""}`}
+                                                                    name='factura'
+                                                                    placeholder="Ingresa el numero de referencia"
+                                                                    autoComplete="off"
+                                                                />
+                                                                <label htmlFor="factura">NÚMERO DE REFERENCIA</label>
+                                                                {errors && errors.factura && (
+                                                                    <div className="invalid-feedback">
+                                                                        {errors.factura.message}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
                                             }
-                                            <div className={item.Divisa === 'USD' ? 'col-md-8':'col-12 mx-auto'}>
+                                            <div className="col-md-8">
                                                 <DenominacionTable setDenominacion={setDenominacion}
                                                                    moneda={item.Divisa}
                                                                    data={datosDenominacion.result_set}
