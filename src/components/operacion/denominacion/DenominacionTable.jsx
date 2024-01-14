@@ -23,9 +23,10 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
     const [billetesFisicos, setBilletesFisicos] = useState(
 
         data.map((elemento) => ({
-            [getPropiedad("denominacion", elemento)]: parseInt(elemento["Recibido"]) || parseInt(elemento["Billetes Confirmados"]) || 0,
+            [getPropiedad("denominacion", elemento)]: (boveda ? parseInt(elemento["Billetes Confirmados"]) || 0 : parseInt(elemento["Recibido"])) || 0
         }))
     );
+
 
     const [totalGeneral, setTotalGeneral] = useState(0); // Nuevo estado para el total general
 
