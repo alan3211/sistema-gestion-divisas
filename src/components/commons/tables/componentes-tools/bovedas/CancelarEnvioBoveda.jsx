@@ -15,7 +15,7 @@ export const CancelarEnvioBoveda = ({item, index,refresh}) => {
     };
 
     const handleCancelarEnvio = async (data) => {
-        data.id_operacion = item.ID;
+        data.ID = item.ID;
         data.accion = "Cancelado";
         data.usuario = dataG.usuario;
 
