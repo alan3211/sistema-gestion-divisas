@@ -280,7 +280,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                             <div className="d-flex justify-content-center mt-2">
                                 {
                                     optionBtn === 1 && (
-                                        <button type="button" className={`btn btn-danger me-2`} onClick={options.closeCustomModal}>
+                                        <button type="button" className={`btn btn-danger me-2`} onClick={options.closeModal}>
                                             <i className='bi bi-x-circle me-2'></i>
                                             CANCELAR
                                         </button>
