@@ -40,7 +40,7 @@ export const EnvioOperaciones = () => {
     }
 
     const onSubmitRecepcion = handleSubmit(async (data) => {
-        data.sucursal = dataG.sucursal;
+        data.sucursal = dataG.id_perfil === 3 ? dataG.sucursal:'';
         const encryptedData = encryptRequest(data);
         setFormData(encryptedData);
         const response = await consultaDotacionSucursal(encryptedData);
@@ -50,7 +50,7 @@ export const EnvioOperaciones = () => {
 
 
     return (
-        <div className="container justify-content-center align-items-center mt-4">
+        <form className="container justify-content-center align-items-center mt-4">
             <div
                 className="text-center mb-4"
             >
@@ -92,6 +92,6 @@ export const EnvioOperaciones = () => {
             {
                 showTable && <TableComponent data={data} options={options}/>
             }
-        </div>
+        </form>
     );
 }

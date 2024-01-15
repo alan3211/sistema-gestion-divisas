@@ -14,15 +14,12 @@ import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
-
-
-
 export const EnvioValoresSucursal = () => {
 
     const {register,handleSubmit
         ,formState:{errors},reset
         ,watch} = useForm()
-    const catalogo = useCatalogo([15]);
+    const catalogo = useCatalogo([15,17]);
     const [showDenominacion,setShowDenominacion] =  useState(false);
     const [habilita,setHabilita] =  useState({
         recibe: true,
@@ -45,10 +42,9 @@ export const EnvioValoresSucursal = () => {
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
 
-        data.operacion = 'Envio Valores';
+        data.operacion = 'SOLICITA VALORES';
         data.usuario = dataG.usuario;
-        data.sucursal = dataG.sucursal;
-        data.ticket = `ENVVAL${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        data.ticket = `SOLVAL${data.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
         data.noCliente='0';
         data.traspaso='';
 
@@ -68,12 +64,11 @@ export const EnvioValoresSucursal = () => {
 
         const resultado = await realizarOperacionSucursal(encryptedData);
 
-        console.log(resultado);
         if(resultado){
-            toast.success(`Se ha enviado los valores correctamente de ${data.moneda}`,OPTIONS);
             reset();
             setShowDenominacion(false);
             denominacionD.reset();
+            toast.success(resultado,OPTIONS);
         }
     });
 
@@ -92,7 +87,44 @@ export const EnvioValoresSucursal = () => {
     }, [watch("moneda")]);
 
     return (
-        <div className="row m-1 g-3 justify-content-center">
+        <form className="row m-1 g-3 justify-content-center">
+            <div className="col-md-3">
+                <div className="form-floating mb-3">
+                    <select
+                        {...register("sucursal", {
+                            required: {
+                                value: true,
+                                message: "Debes de seleccionar al menos una sucursal.",
+                            },
+                            validate: (value) => {
+                                return (
+                                    value !== "0" || "Debes seleccionar una sucursal válida."
+                                );
+                            },
+                        })}
+                        className={`form-select ${!!errors?.sucursal ? "invalid-input" : ""}`}
+                        id="sucursal"
+                        name="sucursal"
+                        aria-label="Sucursal"
+                    >
+                        <option value="0">SELECCIONA UNA OPCIÓN</option>
+                        {catalogo[1]?.map((ele) => (
+                            <option
+                                key={ele.id + "-" + ele.descripcion}
+                                value={ele.id}
+                            >
+                                {ele.descripcion}
+                            </option>
+                        ))}
+                    </select>
+                    <label htmlFor="sucursal">SUCURSAL</label>
+                    {errors?.sucursal && (
+                        <div className="invalid-feedback-custom">
+                            {errors?.sucursal.message}
+                        </div>
+                    )}
+                </div>
+            </div>
             <div className="col-md-3">
                 <div className="form-floating">
                     <input
@@ -168,6 +200,6 @@ export const EnvioValoresSucursal = () => {
                 </button>
             </div>
 
-        </div>
+        </form>
     );
 }
