@@ -112,7 +112,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
 
             const titulo = await obtenTitulo();
             // Añadir título a la fila 1
-            worksheet.addRow([titulo]);
+            worksheet.addRow([titulo.result_set[0].Nombre]);
             // Obtener el número de columnas en tus encabezados
             const numColumnas = headers.length;
             // Obtener la letra de la última columna (por ejemplo, 'N' si tienes 14 columnas)
@@ -176,7 +176,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         });
 
         // Agregar títulos al PDF
-        pdf.text(titulo, 150, 10, { align: "center" });
+        pdf.text(titulo.result_set[0].Nombre, 150, 10, { align: "center" });
         pdf.text(tableName, 150, 20, { align: "center" });
 
         // Crear una tabla

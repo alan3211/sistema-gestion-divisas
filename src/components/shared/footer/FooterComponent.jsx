@@ -1,8 +1,25 @@
 import {dataG} from "../../../App";
 import {perfiles, year} from "../../../utils";
 import {onscroll,backtotop} from "../../../js/main";
+import {useEffect, useState} from "react";
+import {obtenTitulo} from "../../../services/reportes-services";
 
 export const FooterComponent = () =>{
+
+    const [dataEmpresa, setDataEmpresa] = useState({})
+
+    useEffect(() => {
+
+        const informacion = async ()=>{
+            const dataE = await obtenTitulo();
+            setDataEmpresa({
+                nombre: dataE.result_set[0].Nombre,
+                registro: dataE.result_set[0].Registro,
+            })
+
+        }
+        informacion();
+    }, []);
 
     const usuario = JSON.parse(localStorage.getItem("usuario_data"));
 
@@ -16,10 +33,14 @@ export const FooterComponent = () =>{
                             : <h6><strong>Oficina Central</strong></h6>
                     }
                     <p>{dataG.direccion || usuario.direccion}</p>
-                    &copy; Copyright. Todos los derechos reservados.
-                </div>
-                <div className="credits">
-                    Grocerys Centro Cambiario - {year}
+                    <div className="credits">
+                        <p>
+                            <strong>Reg. CNBV: {dataEmpresa.registro}</strong>
+                            <br/>
+                            {dataEmpresa.nombre}
+                        </p>
+                    </div>
+                    &copy; Copyright. Todos los derechos reservados 2023 - {year}
                 </div>
             </footer>
 

@@ -1,5 +1,4 @@
 import {useState} from "react";
-import {EnvioOperaciones} from "../sucursalOperativa/operaciones/EnvioOperaciones";
 import {EnvioValoresSucursal} from "./EnvioValoresSucursal";
 import {RecepcionValores} from "../tesoreria/RecepcionValores";
 

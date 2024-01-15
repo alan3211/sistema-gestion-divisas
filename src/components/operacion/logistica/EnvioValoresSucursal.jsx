@@ -14,6 +14,7 @@ import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
+import {ModalLoading} from "../../commons/modals/ModalLoading";
 export const EnvioValoresSucursal = () => {
 
     const {register,handleSubmit
@@ -27,6 +28,7 @@ export const EnvioValoresSucursal = () => {
     });
 
     const [finalizaOperacion,setFinalizaOperacion] = useState(true);
+    const [guarda, setGuarda] = useState(false);
 
     const {denominacionD} = useContext(DenominacionContext);
 
@@ -38,7 +40,14 @@ export const EnvioValoresSucursal = () => {
         setFinalizaOperacion
     }
 
+    const optionsLoad = {
+        showModal: guarda,
+        closeCustomModal: () => setGuarda(false),
+        title: "Enviando solicitud de valores...",
+    };
+
     const terminarDotacion = handleSubmit(async(data)=>{
+        setGuarda(true);
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
 
@@ -68,6 +77,7 @@ export const EnvioValoresSucursal = () => {
             reset();
             setShowDenominacion(false);
             denominacionD.reset();
+            setGuarda(false);
             toast.success(resultado,OPTIONS);
         }
     });
@@ -199,7 +209,7 @@ export const EnvioValoresSucursal = () => {
                    FINALIZAR OPERACIÓN
                 </button>
             </div>
-
+            {guarda && <ModalLoading options={optionsLoad}/>}
         </form>
     );
 }

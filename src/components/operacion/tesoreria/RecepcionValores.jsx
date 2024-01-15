@@ -28,7 +28,7 @@ export const RecepcionValores = () => {
         paginacion: true,
         tools:[
             {columna:"Estatus",tool:"estatus"},
-            {columna:"Acciones",tool:"recepcion-cancelar",refresh:refreshQuery},
+            {columna:"Acciones",tool:"acciones-recepcion-valores",refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
         ],
         filters:[{columna:'Monto',filter:'currency'}]

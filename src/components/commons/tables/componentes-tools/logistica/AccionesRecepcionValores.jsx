@@ -2,17 +2,15 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../../../App";
 import {
-    eliminarDenominacionesConCantidadCero,
     encryptRequest,
-    getDenominacion, obtenerObjetoDenominaciones,
     OPTIONS,
     validarAlfaNumerico
 } from "../../../../../utils";
-import {accionesSolicitudBoveda} from "../../../../../services/operacion-logistica";
 import {toast} from "react-toastify";
 import {ModalAccionCancelarTool} from "../../../modals";
+import {accionesSolicitudValores} from "../../../../../services/tools-services";
 
-export const RecepcionCancelar = ({item, index,refresh}) => {
+export const AccionesRecepcionValores = ({item, index,refresh}) => {
     const [showModal, setShowModal] = useState(false);
     const {register, handleSubmit, formState: {errors}, reset} = useForm();
     const showModalCancelar = () => {
@@ -20,12 +18,12 @@ export const RecepcionCancelar = ({item, index,refresh}) => {
     };
 
     const handleCancelarEnvio = async (data) => {
-        data.ID = item.ID;
+        data.ticket = item['No Movimiento'];
         data.accion = "Cancelado";
         data.usuario = dataG.usuario;
 
         const encryptedData = encryptRequest(data);
-        const response = await accionesSolicitudBoveda(encryptedData);
+        const response = await accionesSolicitudValores(encryptedData);
 
         if (response !== '') {
             toast.success(response, OPTIONS);
@@ -81,8 +79,8 @@ export const RecepcionCancelar = ({item, index,refresh}) => {
     const options = {
         showModal,
         closeCustomModal: () => setShowModal(false),
-        title: 'Cancelar Dotación a Bóveda',
-        subtitle: 'Ingrese el motivo por el cual desea cancelar el envío de dotación a la bóveda.',
+        title: 'Cancelar Envio de Solicitud de Valores a Sucursal',
+        subtitle: 'Ingrese el motivo por el cual desea cancelar la solicitud de valores a sucursal.',
     };
 
     return (
@@ -91,7 +89,7 @@ export const RecepcionCancelar = ({item, index,refresh}) => {
                      data-bs-toggle="tooltip"
                      data-bs-placement="top"
                      title="ACEPTAR"
-                     disabled={item.Estatus !== 'En Transito'}
+                     disabled={item.Estatus !== 'En transito'}
                      onClick={handleConfirmaValores}>
                 <i className="bi bi-check-circle"></i>
             </button>

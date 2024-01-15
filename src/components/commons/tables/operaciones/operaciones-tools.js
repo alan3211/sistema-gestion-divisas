@@ -7,8 +7,8 @@ import {
     Detalle,
     EstatusTool,
     SeleccionarCliente, VerDenominaciones, ImpresionTicket, DetalleDenominaciones, VerSucursales, CancelarOperacion,
-    IndicadoresDivisas, AccionesBoveda,CancelarEnvioBoveda,MontoSolicitud,OperacionEstatus,UsuariosSistema,
-    SolicitaDotacion,RecepcionCancelar
+    IndicadoresDivisas, AccionesBoveda, CancelarEnvioBoveda, MontoSolicitud, OperacionEstatus, UsuariosSistema,
+    SolicitaDotacion,AccionesRecepcionValores
 } from "../componentes-tools";
 
 const toolComponents = {
@@ -32,7 +32,7 @@ const toolComponents = {
     'operacion-estatus':OperacionEstatus,
     'usuarios-sistema':UsuariosSistema,
     'detalle-solicitud':SolicitaDotacion,
-    'recepcion-cancelar':RecepcionCancelar,
+    'acciones-recepcion-valores':AccionesRecepcionValores,
 
 };
 
