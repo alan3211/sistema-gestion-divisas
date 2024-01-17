@@ -36,7 +36,8 @@ export const CuentaCajaComponent = ({tipo}) => {
     const options = {
         tools: [
             {columna:"Denominaciones",tool:'ver-denominaciones', deps:{setShowDetalle,setDataDenominacion,setMoneda,resetForm:resetFunction}},
-        ]
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
     }
 
     if (data.total_rows === 0) {
