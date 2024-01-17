@@ -85,9 +85,14 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     };
 
     const applyFilter = (filtro, valor) => {
-        if(filtro === 'currency'){
-            return FormatoMoneda(valor);
+        if(valor){
+            if(filtro === 'currency'){
+                return FormatoMoneda(valor);
+            } else if (filtro === 'tooltip') {
+                return valor.slice(0, 12) + '...';
+            }
         }
+        return valor;
     }
 
     const opciones = {

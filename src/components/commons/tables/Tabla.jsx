@@ -45,9 +45,22 @@ export const Tabla = ({options}) => {
 
                                 if (filterElement) {
                                     return (
-                                        <td key={index} className="text-center">
-                                            {applyFilter(filterElement.filter, parseFloat(item[key]))}
-                                        </td>
+                                            filterElement.filter === 'tooltip' ?
+                                                (
+                                                    <td key={index} className="text-center">
+                                                        <p data-bs-toggle="tooltip"
+                                                           data-bs-placement="top"
+                                                           style={{cursor:"initial"}}
+                                                           title={item[key]}>
+                                                            {applyFilter(filterElement.filter,item[key])}
+                                                        </p>
+                                                    </td>
+                                                ) :
+                                                (
+                                                    <td key={index} className="text-center">
+                                                        {applyFilter(filterElement.filter, filterElement.filter === 'currency' ? parseFloat(item[key]):item[key])}
+                                                    </td>
+                                                )
                                     );
                                 } else {
                                     return (

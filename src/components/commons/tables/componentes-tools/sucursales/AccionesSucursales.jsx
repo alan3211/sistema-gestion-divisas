@@ -191,6 +191,10 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                             value: true,
                                                             message: 'El campo Motivo no puede ser vacío.'
                                                         },
+                                                        minLength: {
+                                                            value: 25,
+                                                            message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
+                                                        },
                                                         maxLength: {
                                                             value: 200,
                                                             message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
@@ -232,6 +236,10 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                 required: {
                                                     value: true,
                                                     message: 'El campo Motivo no puede ser vacío.'
+                                                },
+                                                minLength: {
+                                                    value: 25,
+                                                    message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
                                                 },
                                                 maxLength: {
                                                     value: 200,

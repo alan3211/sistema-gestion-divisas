@@ -49,7 +49,7 @@ export const EstatusOperacionesSucursal = () => {
             {
                 selectedOption === 'recepcionOp'
                     ? <RecepcionOperacion/>
-                    : <EnvioOperaciones/>
+                    : <EnvioOperaciones opcion={1}/>
             }
         </>);
 }

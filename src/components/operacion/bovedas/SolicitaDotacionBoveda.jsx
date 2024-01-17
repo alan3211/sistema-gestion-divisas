@@ -182,18 +182,16 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
                 </div>
             </div>
             {showTable && (
-                <>
-                    <div className="row">
-                        <div className="col-md-8 mx-auto">
-                            <TableComponent data={data} options={options}/>
-                        </div>
+                <div className="row">
+                    <div className="col-md-8 mx-auto">
+                        <TableComponent data={data} options={options}/>
                     </div>
-                </>
+                </div>
             )}
             {
                 showSolicitaDenominacion && (
                     <ModalGenericTool options={OPTIONS_SOLICITUD_DOTACION}>
-                        <form className="row m-1 g-3">
+                        <div className="row m-1 g-3">
                             <div className="col-md-4 mx-auto">
                                 <div className="form-floating">
                                     <input
@@ -220,7 +218,7 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
                                     }
                                 </div>
                             </div>
-                        </form>
+                        </div>
                         <div className="row m-1 g-3">
                                 <div className="d-flex justify-content-center">
                                     <Denominacion type="B" moneda={dataItem.Moneda} options={optionsSolDot}/>

@@ -3,9 +3,9 @@ import {useEffect, useState} from "react";
 import {encryptRequest, formattedDate} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 import {dataG} from "../../../../App";
-import {consultaDotacionSucursal} from "../../../../services/operacion-sucursal";
+import {consultaDotacionSucursal, consultaDotacionSucursalVal} from "../../../../services/operacion-sucursal";
 
-export const EnvioOperaciones = () => {
+export const EnvioOperaciones = ({opcion=1}) => {
     const { register, handleSubmit, formState: {errors},
         reset,setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
@@ -14,15 +14,20 @@ export const EnvioOperaciones = () => {
     const [currentDate, setCurrentDate] = useState('');
 
     useEffect(() => {
+        setCurrentDate(formattedDate);
         // Obtener la fecha actual en el formato YYYY-MM-DD
         setValue("fecha_operacion",formattedDate)
         // Realizar la consulta automáticamente al cargar la página
-        onSubmitRecepcion({ fecha: formattedDate });
+        onSubmitRecepcion({ fecha_operacion: formattedDate});
     }, []);
 
     const refreshQuery = async () =>{
-        const response = await consultaDotacionSucursal(formData);
-        setData(response);
+        if(opcion === 1){
+            setData(await consultaDotacionSucursal(formData));
+        }else{
+            setData(await consultaDotacionSucursalVal(formData));
+        }
+
     }
 
     const options = {
@@ -33,24 +38,28 @@ export const EnvioOperaciones = () => {
         paginacion: true,
         tools:[
             {columna:"Estatus",tool:"estatus"},
-            {columna:"Cancelar",tool:"cancelar-envio-sucursal",refresh:refreshQuery},
+            {columna:"Acciones",tool:"acciones-envio-valores",refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:3}},
         ],
         filters:[{columna:'Monto',filter:'currency'}]
     }
 
     const onSubmitRecepcion = handleSubmit(async (data) => {
-        data.sucursal = dataG.id_perfil === 3 ? dataG.sucursal:'';
+        data.sucursal = dataG.sucursal;
         const encryptedData = encryptRequest(data);
         setFormData(encryptedData);
-        const response = await consultaDotacionSucursal(encryptedData);
-        setData(response);
+        //Opera_ConsultaDotacionesSucursal
+        if(opcion === 1){
+            setData(await consultaDotacionSucursal(encryptedData));
+        }else{
+            setData(await consultaDotacionSucursalVal(encryptedData));
+        }
         setShowTable(true)
     });
 
 
     return (
-        <form className="container justify-content-center align-items-center mt-4">
+        <div className="container justify-content-center align-items-center mt-4">
             <div
                 className="text-center mb-4"
             >
@@ -92,6 +101,6 @@ export const EnvioOperaciones = () => {
             {
                 showTable && <TableComponent data={data} options={options}/>
             }
-        </form>
+        </div>
     );
 }

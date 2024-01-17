@@ -1,6 +1,6 @@
 //const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-const URL = 'http://192.168.101.45:9000/';
-//const URL = 'http://localhost:9000/';
+//const URL = 'http://192.168.101.45:9000/';
+const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -56,6 +56,7 @@ export const LOGISTICA_ENVIA_FONDOS_SUCURSAL = `${LOGISTICA_URL}envia-dotacion/s
 export const SUCURSAL_ENVIO_VALORES_URL = `${SUCURSAL_URL}operativa/envio-valores`
 export const SUCURSAL_DOTA_CAJA_URL = `${SUCURSAL_URL}operativa/dota-caja`
 export const SUCURSAL_CONSULTA_DOTACIONES_URL = `${SUCURSAL_URL}operativa/consulta-dotacion`
+export const SUCURSAL_ENVIA_VALORES_SUC_URL = `${SUCURSAL_URL}operativa/consulta-dotacion/sucursal/valores`
 export const SUCURSAL_MOVIMIENTOS_URL = `${SUCURSAL_URL}operativa/movimientos`
 export const SUCURSAL_DISPONIBLE_URL = `${SUCURSAL_URL}operativa/disponible`
 export const SUCURSAL_DISPONIBLE_DIVISAS_URL = `${SUCURSAL_URL}consulta/disponible`
@@ -107,6 +108,8 @@ export const TOOLS_CONSULTA_ACT_RECIENTE_URL = `${TOOLS_URL}consulta/actividad-r
 export const TOOLS_CONSULTA_VENTAS_FECHA_URL = `${TOOLS_URL}consulta/ventas-fecha`
 export const TOOLS_CONSULTA_COMPRAS_FECHA_URL = `${TOOLS_URL}consulta/compras-fecha`
 export const TOOLS_SOLICITUD_ENVIO_VALORES_URL = `${TOOLS_URL}solicitud/envio-valores`
+
+export const TOOLS_CONSULTA_DENOMINACIONES_SOL_URL = `${TOOLS_URL}consulta/denominaciones/solicitadas`
 
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`

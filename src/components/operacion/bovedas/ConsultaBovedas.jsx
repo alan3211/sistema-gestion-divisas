@@ -37,7 +37,9 @@ export const ConsultaBovedas = ({perfil}) => {
             {columna:"Estatus",tool:"estatus"},
             {columna:"Acciones",tool:`${toolPerfil}`,refresh:refreshQuery},
         ],
-        filters:[{columna:'Monto Solicitado',filter:'currency'}]
+        filters:[{columna:'Monto Solicitado',filter:'currency'},
+                 {columna:'Comentario',filter:'tooltip'}
+        ]
     }
     const onSubmitRecepcion = handleSubmit(async (data) => {
         const encryptedData = encryptRequest(data);

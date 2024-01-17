@@ -28,7 +28,7 @@ export const Denominacion = ({type, moneda, options}) => {
                             </tr>
                             </thead>
                             <tbody>
-                                {data?.map((elemento) => {
+                                {data?.map((elemento,index) => {
                                     let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
                                     return (
                                         <tr key={`denominacion_${name}`}>
@@ -37,7 +37,7 @@ export const Denominacion = ({type, moneda, options}) => {
                                             <td>
                                                 <input
                                                     {...register(`denominacion_${name}`, {
-                                                            validate: {
+                                                        validate: {
                                                                 validacionMN: (value) => {
                                                                     if ([3, 6].includes(dataG.id_perfil)) {
                                                                         return validarMoneda(`denominacion_${name}`, value);
@@ -53,8 +53,8 @@ export const Denominacion = ({type, moneda, options}) => {
                                                         }
                                                     )
                                                     }
+                                                    tabIndex={index + 1}
                                                     type="text"
-                                                    onBlur={() => trigger(`denominacion_${name}`)}
                                                     name={`denominacion_${name}`}
                                                     className={`form-control ${errors && errors[`denominacion_${name}`] ? 'is-invalid' : ''}`}
                                                     placeholder=" - "

@@ -17,12 +17,12 @@ export const CierreSucursal = () => {
     const [currentDate, setCurrentDate] = useState('');
 
     const onSubmitCierraOperacion = handleSubmit(async (data) => {
-        setShowModal(false);
         data.sucursal = dataG.sucursal;
         data.usuario = dataG.usuario;
         const encryptedData = encryptRequest(data);
         const mensaje = await cierreSucursalServ(encryptedData);
         toast.warn(mensaje,OPTIONS);
+        setShowModal(false);
     });
 
     useEffect(() => {
@@ -32,7 +32,7 @@ export const CierreSucursal = () => {
     }, []);
 
     return(
-        <div className="container justify-content-center align-items-center mt-4">
+        <form className="container justify-content-center align-items-center mt-4">
             <div
                 className="text-center mb-4"
             >
@@ -82,6 +82,6 @@ export const CierreSucursal = () => {
                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
                 )
             }
-        </div>
+        </form>
     );
 }

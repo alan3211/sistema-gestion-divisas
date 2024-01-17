@@ -4,24 +4,26 @@ import {dataG} from "../../../../../App";
 import {
     encryptRequest,
     OPTIONS,
-    validarAlfaNumerico
+    validarAlfaNumerico, validarMoneda
 } from "../../../../../utils";
 import {toast} from "react-toastify";
-import {ModalAccionCancelarTool} from "../../../modals";
+import {ModalAccionCancelarTool, ModalGenericTool} from "../../../modals";
 import {accionesSolicitudValores} from "../../../../../services/tools-services";
 
 export const AccionesRecepcionValores = ({item, index,refresh}) => {
     const [showModal, setShowModal] = useState(false);
     const {register, handleSubmit, formState: {errors}, reset} = useForm();
-    const showModalCancelar = () => {
+
+    const [optionBtn, setOptionBtn] = useState(1);
+
+    const onHandleOptions = (option) => {
+        setOptionBtn(option);
         setShowModal(true);
-    };
-
-    const handleCancelarEnvio = async (data) => {
+    }
+    const handleCancelarEnvio = handleSubmit(async (data) => {
         data.ticket = item['No Movimiento'];
-        data.accion = "Cancelado";
+        data.estatus = "Cancelado";
         data.usuario = dataG.usuario;
-
         const encryptedData = encryptRequest(data);
         const response = await accionesSolicitudValores(encryptedData);
 
@@ -31,56 +33,30 @@ export const AccionesRecepcionValores = ({item, index,refresh}) => {
             refresh();
             reset();
         }
-    };
+    });
 
-    const handleConfirmaValores = async (data) => {
+    const handleConfirmaValores = handleSubmit(async (data) => {
+        data.ticket = item['No Movimiento'];
+        data.estatus = "Aceptado";
+        data.usuario = dataG.usuario;
+        const encryptedData = encryptRequest(data);
+        const response = await accionesSolicitudValores(encryptedData);
 
-        /*
-        const values = {
-            ID: item.ID,
-            accion: (optionBtn === 1) ? 'Confirmado' : 'Rechazado',
-            moneda: item.Divisa,
-            motivo: watch("motivo"),
-            operacion: 'DOTACION BOVEDA',
-            ticket: item['No Movimiento'],
-            usuario: dataG.usuario,
-            tipo_cambio: parseFloat(data.tipo_cambio),
-            tipo_banco: data.tipo_banco,
-            factura: data.factura,
+        if (response !== '') {
+            toast.success(response, OPTIONS);
+            setShowModal(false);
+            refresh();
+            reset();
         }
-
-        const formValuesB = getDenominacion(item.Divisa,myDenominacion)
-        eliminarDenominacionesConCantidadCero(formValuesB);
-        const denominaciones = obtenerObjetoDenominaciones(formValuesB);
-        denominaciones.divisa = item.Divisa;
-        denominaciones.movimiento = 'CONFIRMA BOVEDA';
-
-        values.denominacion = [
-            denominaciones,
-        ]
-
-        console.log("CONFIRMA DOTACION A A BOVEDA")
-        console.log(values)
-        const encryptedData = encryptRequest(values);
-        const resultado = await accionesSolicitudBoveda(encryptedData);
-
-        if(resultado){
-            setGuarda(false);
-            toast.success(resultado,OPTIONS);
-            setShowModal(false)
-        }else {
-            toast.error('Hubo un problema con la solicitud, intentelo de nuevo o más tarde.',OPTIONS);
-        }
-        reset();
-        resetea();
-        refresh();*/
-    }
+    });
 
     const options = {
+        size:'md',
         showModal,
-        closeCustomModal: () => setShowModal(false),
-        title: 'Cancelar Envio de Solicitud de Valores a Sucursal',
-        subtitle: 'Ingrese el motivo por el cual desea cancelar la solicitud de valores a sucursal.',
+        closeModal: () => setShowModal(false),
+        title:  (optionBtn === 1) ? 'Confirmación de Valores' :'Cancelar Envio de Solicitud de Valores a Sucursal',
+        icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
+        subtitle: (optionBtn === 1) ? 'Ingrese comentarios para este envio de valores.':'Ingrese el motivo por el cual desea cancelar la solicitud de valores a sucursal.',
     };
 
     return (
@@ -90,7 +66,7 @@ export const AccionesRecepcionValores = ({item, index,refresh}) => {
                      data-bs-placement="top"
                      title="ACEPTAR"
                      disabled={item.Estatus !== 'En transito'}
-                     onClick={handleConfirmaValores}>
+                     onClick={() => onHandleOptions(1)}>
                 <i className="bi bi-check-circle"></i>
             </button>
             <button
@@ -99,13 +75,13 @@ export const AccionesRecepcionValores = ({item, index,refresh}) => {
                 data-bs-placement="top"
                 title="CANCELAR"
                 disabled={item.Estatus !== 'Pendiente' && item.Estatus !== 'En Transito' }
-                onClick={showModalCancelar}
+                onClick={() => onHandleOptions(2)}
             >
                 <i className="bi bi-x-circle"></i>
             </button>
             {showModal && (
-                <ModalAccionCancelarTool options={options}>
-                    <div>
+                <ModalGenericTool options={options}>
+                    <div className="row">
                         <div className="col-md-12">
                             <div className="form-floating">
                                     <textarea
@@ -113,6 +89,10 @@ export const AccionesRecepcionValores = ({item, index,refresh}) => {
                                             required: {
                                                 value: true,
                                                 message: 'El campo Motivo no puede ser vacío.'
+                                            },
+                                            minLength: {
+                                                value: 25,
+                                                message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
                                             },
                                             maxLength: {
                                                 value: 200,
@@ -123,7 +103,7 @@ export const AccionesRecepcionValores = ({item, index,refresh}) => {
                                         className={`form-control ${!!errors?.motivo ? 'is-invalid' : ''}`}
                                         id="motivo"
                                         name="motivo"
-                                        placeholder="Ingresa el motivo de cancelación"
+                                        placeholder="Ingresa el motivo"
                                         style={{
                                             height: '300px',
                                             resize: 'none'
@@ -136,14 +116,15 @@ export const AccionesRecepcionValores = ({item, index,refresh}) => {
                                 }
                             </div>
                         </div>
-                        <div className="d-flex justify-content-end mt-2">
-                            <button type="button" className="btn btn-danger" onClick={handleSubmit(handleCancelarEnvio)}>
-                                <i className="bi bi-x-circle me-1"></i>
-                                CANCELAR ENVÍO
+                        <div className="d-flex justify-content-end mt-3">
+                            <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                    onClick={optionBtn === 1 ? handleConfirmaValores:handleCancelarEnvio}>
+                                <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
+                                {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                             </button>
                         </div>
                     </div>
-                </ModalAccionCancelarTool>
+                </ModalGenericTool>
             )}
         </td>
     );

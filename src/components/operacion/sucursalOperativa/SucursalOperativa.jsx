@@ -5,7 +5,7 @@ import {EstatusOperacionesSucursal} from "./operaciones/EstatusOperacionesSucurs
 import {ConsultasSucursal} from "./ConsultasSucursal";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 import {CierreSucursal} from "./CierreSucursal";
-import {RecepcionValores} from "../tesoreria/RecepcionValores";
+import {EnvioOperaciones} from "./operaciones/EnvioOperaciones";
 
 export const SucursalOperativa = () => {
     const moduleName= {
@@ -15,7 +15,7 @@ export const SucursalOperativa = () => {
     };
 
     const tabs = [
-        {id:'envio-valores',name:'Envío de Valores',icon:'bi bi-truck me-2', element: <RecepcionValores/>},
+        {id:'envio-valores',name:'Envío de Valores',icon:'bi bi-truck me-2', element: <EnvioOperaciones opcion={2}/>},
         {id:'dota-caja',name:'Dotar Caja',icon:'ri ri-store-2-line me-2',element:<DotacionCajaSucursal/>},
         {id:'estatus-opera',name:'Estatus Operaciones',icon:'ri ri-dashboard-2-line me-2',element: <EstatusOperacionesSucursal/>},
         {id:'consultas',name:'Consultas',icon:'ri ri-search-line me-2',element: <ConsultasSucursal/>},
