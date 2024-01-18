@@ -36,6 +36,7 @@ export const Consulta = () => {
     } = useForm()
     const [currentDate, setCurrentDate] = useState('');
     const [guarda, setGuarda] = useState(false);
+    const reportesSuc = ["1","4","6","7","8","9","10","11"];
 
     const consultaReportes= async (encryptedData) => {
         const response =  await consultaReporteContable(encryptedData);
@@ -89,10 +90,33 @@ export const Consulta = () => {
 
         data.proceso = reporte.Proceso;
 
+        /*
+           Si la sucursal es la que esta generando el reporte entonces no le solicites la sucursal directamente,
+           solamente agrega el parametro manualmente.
+         */
+        if(dataG.id_perfil === 3) {
+            data.sucursal = dataG.sucursal.toString();
+        }
+
         const encryptedData = encryptRequest(data);
 
         const responseData = await consultaReporteFinal(encryptedData);
+        let descripcionCortada = reporte.Descripcion.split(' ')
+            .map(word => word.charAt(0)) // Obtiene la primera letra de cada palabra
+            .join(''); // Une las letras para formar la nueva cadena
+
+        const fileName = `Reporte-${currentDate}-${descripcionCortada}`;
+
         if (responseData.total_rows > 0) {
+            const titulo = await obtenTitulo();
+            //Tercer header
+            let periodo = "";
+            if (reporte.Periodo === 'Diario') {
+                periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
+            } else {
+                periodo = `Por el periodo comprendido del 1 al ${obtenDia(data.mes)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
+            }
+          if (dataG.id_perfil !== 7) {
             const datosOrdenados = responseData.result_set.map((fila) => {
                 const filaOrdenada = {};
                 responseData.headers.forEach((columna) => {
@@ -100,16 +124,12 @@ export const Consulta = () => {
                 });
                 return filaOrdenada;
             });
-            let descripcionCortada = reporte.Descripcion.split(' ')
-                .map(word => word.charAt(0)) // Obtiene la primera letra de cada palabra
-                .join(''); // Une las letras para formar la nueva cadena
-
             // Crear un nuevo libro de Excel
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet(descripcionCortada);
 
 
-            const titulo = await obtenTitulo();
+
             // Añadir título a la fila 1
             worksheet.addRow([titulo.result_set[0].Nombre]);
             // Obtener el número de columnas en tus encabezados
@@ -119,8 +139,8 @@ export const Consulta = () => {
             // Establecer el estilo para cada celda de la fila de encabezados
             const headerFirstRow = worksheet.getRow(1);
             headerFirstRow.eachCell((cell) => {
-                cell.font = { bold: true }; // Color de la letra blanco y negrita
-                cell.alignment = { horizontal: 'center' }; // Alineación central
+                cell.font = {bold: true}; // Color de la letra blanco y negrita
+                cell.alignment = {horizontal: 'center'}; // Alineación central
             });
             // Combinar celdas desde A1 hasta la última columna (por ejemplo, N1)
             worksheet.mergeCells(`A1:${ultimaLetraColumna}1`);
@@ -128,24 +148,17 @@ export const Consulta = () => {
             worksheet.addRow([reporte.Descripcion]);
             const headerSecondRow = worksheet.getRow(2);
             headerSecondRow.eachCell((cell) => {
-                cell.font = { bold: true }; // Color de la letra blanco y negrita
-                cell.alignment = { horizontal: 'center' }; // Alineación central
+                cell.font = {bold: true}; // Color de la letra blanco y negrita
+                cell.alignment = {horizontal: 'center'}; // Alineación central
             });
             // Combinar celdas desde A2 hasta la última columna (por ejemplo, N2)
             worksheet.mergeCells(`A2:${ultimaLetraColumna}2`);
 
-            //Tercer header
-            let periodo = "";
-            if(reporte.Periodo === 'Diario'){
-                periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
-            }else{
-                periodo = `Por el periodo comprendido del 1 al ${obtenDia(data.mes)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
-            }
             worksheet.addRow([periodo])
             const headerThirdRow = worksheet.getRow(3);
             headerThirdRow.eachCell((cell) => {
-                cell.font = { bold: true }; // Color de la letra blanco y negrita
-                cell.alignment = { horizontal: 'center' }; // Alineación central
+                cell.font = {bold: true}; // Color de la letra blanco y negrita
+                cell.alignment = {horizontal: 'center'}; // Alineación central
             });
             // Combinar celdas desde A3 hasta la última columna (por ejemplo, N3)
             worksheet.mergeCells(`A3:${ultimaLetraColumna}3`);
@@ -157,23 +170,24 @@ export const Consulta = () => {
 
             // Establecer el estilo para cada celda de la fila de encabezados
             headerRow.eachCell((cell) => {
-                cell.font = { color: { argb: 'FFFFFF' }, bold: true }; // Color de la letra blanco y negrita
-                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '012970' } }; // Color de fondo azul oscuro
-                cell.alignment = { horizontal: 'center' }; // Alineación central
+                cell.font = {color: {argb: 'FFFFFF'}, bold: true}; // Color de la letra blanco y negrita
+                cell.fill = {type: 'pattern', pattern: 'solid', fgColor: {argb: '012970'}}; // Color de fondo azul oscuro
+                cell.alignment = {horizontal: 'center'}; // Alineación central
             });
 
             // Agregar los datos ordenados a la hoja de cálculo
-            datosOrdenados.forEach((fila,index) => {
+            datosOrdenados.forEach((fila, index) => {
                 const rowData = responseData.headers.map(header => fila[header]);
                 worksheet.addRow(rowData);
             });
 
             // Construir el blob y descargar el archivo
             const buffer = await workbook.xlsx.writeBuffer();
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const fileName = `Reporte-${currentDate}-${descripcionCortada}`;
+            const blob = new Blob([buffer], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+
             // Descargar el archivo
-            saveAs(blob, fileName+'.xlsx');
+            saveAs(blob, fileName + '.xlsx');
+        }
 
                 // Crear un nuevo objeto jsPDF
                 const pdf = new jsPDF({
@@ -184,9 +198,13 @@ export const Consulta = () => {
                 });
 
                 // Agregar títulos al PDF
-                pdf.text(titulo, 150, 10, { align: "center" });
+                pdf.setFontSize(8);
+                pdf.text(titulo.result_set[0].Nombre, 150, 10, { align: "center" });
+                if(dataG.id_perfil === 3 && reportesSuc.includes(data.tipo_reporte)){
+                    pdf.text(`${dataG.sucursal} - ${dataG.nombre_sucursal}`, 150, 15, { align: "center" });
+                }
                 pdf.text(reporte.Descripcion, 150, 20, { align: "center" });
-                pdf.text(periodo, 150, 30, { align: "center" });
+                pdf.text(periodo, 150, 25, { align: "center" });
 
                 // Crear una tabla
                 const headers = responseData?.headers;
@@ -211,7 +229,6 @@ export const Consulta = () => {
                 },
                 columnStyles: {
                     0: { cellWidth: 20 },  // Ancho de la primera columna
-                    // Ajusta los anchos de las columnas según tus necesidades
                 },
             });
             pdf.setFontSize(8);
@@ -347,7 +364,7 @@ export const Consulta = () => {
                 }
 
                 {
-                    reporte?.Sucursal === 'Si'
+                    reporte?.Sucursal === 'Si' && ![3,4].includes(dataG.id_perfil)
                     &&  ( <div className="d-flex align-items-center justify-content-center">
                             <div className="col-md-5 form-floating mb-3">
                                 <select
