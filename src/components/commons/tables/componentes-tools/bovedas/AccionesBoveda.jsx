@@ -60,10 +60,20 @@ export const AccionesBoveda = ({item, index,refresh}) => {
             tipo_banco: data.tipo_banco,
             factura: data.factura,
         }
-
-        const formValuesB = getDenominacion(item.Divisa,myDenominacion)
+        console.log("Denominaciones ingresadas: ", myDenominacion)
+        // Combina los objetos en uno solo
+        const objetoCombinado = myDenominacion.reduce((resultado, objeto) => {
+            for (const key in objeto) {
+                resultado[key] = objeto[key];
+            }
+            return resultado;
+        }, {});
+        const formValuesB = getDenominacion(item.Divisa,objetoCombinado)
+        console.log("FORMVALUESB: ",formValuesB)
         eliminarDenominacionesConCantidadCero(formValuesB);
+        console.log("SIN CEROS: ",formValuesB)
         const denominaciones = obtenerObjetoDenominaciones(formValuesB);
+        console.log("DENOMINACIONES: ",denominaciones)
         denominaciones.divisa = item.Divisa;
         denominaciones.movimiento = 'CONFIRMA BOVEDA';
 
@@ -111,7 +121,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
             setDatosDenominacion(data_denominacion);
         }
         getDenominacionesAsignadas();
-    }, []);
+    }, [ item.Divisa,item["No Movimiento"]]);
 
     const validaBtn = () => {
         if(optionBtn === 1){
@@ -123,7 +133,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
 
     const optionsLoad = {
         showModal: guarda,
-        title: "Confirmando Dotación a boveda...",
+        title: `${optionBtn === 1 ? 'Confirmando Dotación a boveda...': 'Rechazando la dotación a boveda...'}`,
     };
 
 
@@ -314,6 +324,11 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                                                     className={`form-control ${errors && errors.factura ? "is-invalid" : ""}`}
                                                                     name='factura'
                                                                     placeholder="Ingresa el numero de referencia"
+                                                                    onChange={(e) => {
+                                                                        const upperCaseValue = e.target.value.toUpperCase();
+                                                                        e.target.value = upperCaseValue;
+                                                                        setValue("factura", upperCaseValue);
+                                                                    }}
                                                                     autoComplete="off"
                                                                 />
                                                                 <label htmlFor="factura">NÚMERO DE REFERENCIA</label>

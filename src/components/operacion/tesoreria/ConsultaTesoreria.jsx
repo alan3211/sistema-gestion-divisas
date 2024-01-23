@@ -5,12 +5,15 @@ import {dataG} from "../../../App";
 import {getResumenSucursales} from "../../../services/operacion-tesoreria";
 import {TableComponent} from "../../commons/tables";
 import {LoaderTable} from "../../commons/LoaderTable";
+import {SyncLoader} from "react-spinners";
+import {isNullOrUndef} from "chart.js/helpers";
 
 export const ConsultaTesoreria = ({type}) => {
 
   const saldoGeneral = useSaldo();
   const [isLoading,setIsLoading] = useState(true);
   const [dataResumen,setDataResumen] = useState([]);
+  const [saldoNuevo,setSaldoNuevo] = useState();
 
   const [showSucursal,setShowSucursal] = useState(false);
   const [dataSucursal,setDataSucursal] = useState([]);
@@ -30,6 +33,11 @@ export const ConsultaTesoreria = ({type}) => {
     useEffect(() => {
         getResumen();
     }, []);
+
+    useEffect(() => {
+        console.log("SALDO ACTUAL: ", saldoGeneral);
+        setSaldoNuevo(saldoGeneral !== undefined ? saldoGeneral : 0);
+    }, [saldoGeneral]);
 
     const options = {
         showMostrar:true,
@@ -72,13 +80,19 @@ export const ConsultaTesoreria = ({type}) => {
                 <h5 className="text-blue text-center">
                     <i className="bi bi-bank me-2"></i>
                     <span>Cuenta Bancaria (MXP):</span>
-                    <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral), 'USD')}</strong>
+                    {isNullOrUndef(saldoNuevo) ? (
+                        <strong className="ms-2">{FormatoMoneda(parseFloat(saldoNuevo), 'USD')}</strong>
+                    ) : saldoNuevo !== 0 ? (
+                        <strong className="ms-2">{FormatoMoneda(parseFloat(saldoNuevo), 'USD')}</strong>
+                    ) : (
+                        <strong className="ms-2"><SyncLoader color="#012970" size={5} /></strong>
+                    )}
                 </h5>
             </div>)}
             {
                 !isLoading
                     ? <TableComponent data={dataResumen} options={options}/>
-                    : <LoaderTable options={{showModal:isLoading}}/>
+                    : <LoaderTable/>
             }
             {
                 showSucursal && (

@@ -114,7 +114,6 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominacionObj = { divisa };
 
     for (const nombre of denominaciones) {
-        console.log(nombre)
         const valor = nombre.startsWith('p') ? `0.${nombre.substring(1)}` : nombre;
         denominacionObj[`denominacion_${nombre}`] = {
             nombre: valor,
@@ -122,7 +121,7 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
         };
     }
 
-    console.log(denominacionObj);
+    console.log("OBJ DENOMINACION ",denominacionObj);
     return denominacionObj;
 };
 

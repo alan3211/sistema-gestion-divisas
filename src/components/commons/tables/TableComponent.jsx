@@ -164,18 +164,11 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                     headers.splice(columnIndex, 1);
 
                     // Eliminar la columna de cada fila en datosOrdenados
-                    datosOrdenados?.forEach((fila) => {
-                        // Verificar si el objeto no es undefined
-                        if (fila) {
-                            // Verificar si la propiedad existe antes de intentar eliminarla
-                            if (fila.hasOwnProperty(columnToDelete)) {
-                                delete fila[columnToDelete];
-                            }
-                        }
+                    datosOrdenados.forEach((fila) => {
+                        fila[columnToDelete] = undefined; // O puedes eliminar completamente la propiedad
                     });
                 }
             });
-
 
             // Agregar los datos ordenados a la hoja de cálculo
             datosOrdenados.forEach((fila, index) => {
@@ -246,6 +239,10 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         // Eliminar columnas según el array disabledColumnsExcel
         disabledColumnsExcel.forEach((columnToDelete) => {
             const columnIndex = headers.indexOf(columnToDelete);
+            console.log(headers)
+            console.log(columnToDelete)
+            console.log(columnIndex)
+
             if (columnIndex !== -1) {
                 // Eliminar la columna del array de headers
                 headers.splice(columnIndex, 1);
@@ -262,9 +259,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
             headers.forEach((columna) => {
                 const filter = getFilterForColumn(columna); // Obtener el filtro adecuado para la columna
                 if (filter) {
-                    if (filter === 'tooltip'){
-                        fila[columna] = applyFilter(filter, fila[columna]);
-                    }else{
+                    if (filter !== 'tooltip'){
                         // Aplicar el filtro a la celda correspondiente
                         fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
                     }

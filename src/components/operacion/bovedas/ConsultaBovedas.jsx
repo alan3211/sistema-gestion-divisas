@@ -8,7 +8,7 @@ import {LoaderTable} from "../../commons/LoaderTable";
 export const ConsultaBovedas = ({perfil}) => {
 
     const { register, handleSubmit, formState: {errors},
-        reset,setValue } = useForm();
+        setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
@@ -34,6 +34,7 @@ export const ConsultaBovedas = ({perfil}) => {
         tableName:'Consulta de Bovedas',
         buscar: true,
         paginacion: true,
+        disabledColumnsExcel:['Acciones'],
         tools:[
             {columna:"Estatus",tool:"estatus"},
             {columna:"Acciones",tool:`${toolPerfil}`,refresh:refreshQuery},
@@ -42,7 +43,6 @@ export const ConsultaBovedas = ({perfil}) => {
                  {columna:'Comentario',filter:'tooltip'},
                  {columna:'Tipo Cambio',filter:'currency'},
         ],
-        disabledColumnsExcel:['Acciones'],
     }
     const onSubmitRecepcion = handleSubmit(async (data) => {
         const encryptedData = encryptRequest(data);
@@ -97,7 +97,7 @@ export const ConsultaBovedas = ({perfil}) => {
             {
                 showTable
                     ? <TableComponent data={data} options={options}/>
-                    : <LoaderTable options={{showModal:showTable}} />
+                    : <LoaderTable/>
             }
         </div>
         </>
