@@ -4,6 +4,7 @@ import {encryptRequest, formattedDate} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 import {dataG} from "../../../../App";
 import {consultaDotacionSucursal, consultaDotacionSucursalVal} from "../../../../services/operacion-sucursal";
+import {LoaderTable} from "../../../commons/LoaderTable";
 
 export const EnvioOperaciones = ({opcion=1}) => {
     const { register, handleSubmit, formState: {errors},
@@ -30,15 +31,19 @@ export const EnvioOperaciones = ({opcion=1}) => {
 
     }
 
+    const toolPerfil = opcion === 1 ? "cancelar-envio-sucursal":"acciones-envio-valores";
+
+
     const options = {
         showMostrar:true,
         excel:true,
         tableName:'Consulta Envio de Operaciones Sucursal',
         buscar: true,
         paginacion: true,
+        disabledColumnsExcel:['Acciones','Detalle'],
         tools:[
             {columna:"Estatus",tool:"estatus"},
-            {columna:"Acciones",tool:"acciones-envio-valores",refresh:refreshQuery},
+            {columna:"Acciones",tool:`${toolPerfil}`,refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:3}},
         ],
         filters:[{columna:'Monto',filter:'currency'}]
@@ -99,7 +104,9 @@ export const EnvioOperaciones = ({opcion=1}) => {
                 </div>
             </div>
             {
-                showTable && <TableComponent data={data} options={options}/>
+                showTable
+                    ? <TableComponent data={data} options={options}/>
+                    : <LoaderTable/>
             }
         </div>
     );

@@ -49,8 +49,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
     const optionsLoad = {
         showModal: guarda,
-        closeCustomModal: () => setGuarda(false),
-        title: "Guardando...",
+        title: `${ optionBtn === 1 ? "Aceptando dotación":"Rechazando dotación"} ...`,
     };
 
     /*Aqui se diferencia entre un boton de aceptar y otro de rechazar*/
@@ -150,7 +149,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         if(item.Operacion === 'Dotación Sucursal'){
             getDenominacionesAsignadas();
         }
-    }, []);
+    }, [item.Moneda,item["No Movimiento"]]);
 
     const validaBtn = () => {
         if(optionBtn === 1){
@@ -205,6 +204,11 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                     id="motivo"
                                                     name="motivo"
                                                     placeholder="Ingresa el motivo de cancelación"
+                                                    onChange={(e) => {
+                                                        const upperCaseValue = e.target.value.toUpperCase();
+                                                        e.target.value = upperCaseValue;
+                                                        setValue("motivo", upperCaseValue);
+                                                    }}
                                                     style={{
                                                         height: '350px',
                                                         resize: 'none'
@@ -251,6 +255,11 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                             id="motivo"
                                             name="motivo"
                                             placeholder="Ingresa el motivo de cancelación"
+                                            onChange={(e) => {
+                                                const upperCaseValue = e.target.value.toUpperCase();
+                                                e.target.value = upperCaseValue;
+                                                setValue("motivo", upperCaseValue);
+                                            }}
                                             style={{
                                                 height: '300px',
                                                 resize: 'none'
@@ -272,8 +281,8 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
+                           {guarda && <ModalLoading options={optionsLoad}/>}
                         </div>
-                        {guarda && <ModalLoading options={optionsLoad}/>}
                     </ModalAccionTesoreriaTool>
                 )
             }

@@ -12,7 +12,7 @@ import {accionesSolicitudValores} from "../../../../../services/tools-services";
 
 export const AccionesRecepcionValores = ({item, index,refresh}) => {
     const [showModal, setShowModal] = useState(false);
-    const {register, handleSubmit, formState: {errors}, reset} = useForm();
+    const {register, handleSubmit, formState: {errors}, reset,setValue} = useForm();
 
     const [optionBtn, setOptionBtn] = useState(1);
 
@@ -104,6 +104,11 @@ export const AccionesRecepcionValores = ({item, index,refresh}) => {
                                         id="motivo"
                                         name="motivo"
                                         placeholder="Ingresa el motivo"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            setValue("motivo", upperCaseValue);
+                                        }}
                                         style={{
                                             height: '300px',
                                             resize: 'none'

@@ -17,7 +17,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
         register,
         handleSubmit,
         formState: {errors}, reset
-        , watch
+        , watch,setValue
     } = useForm();
     const [optionBtn, setOptionBtn] = useState(1);
     const [habilita, setHabilita] = useState({
@@ -134,6 +134,11 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                                     id="motivo"
                                                     name="motivo"
                                                     placeholder="Ingresa el motivo de cancelación"
+                                                    onChange={(e) => {
+                                                        const upperCaseValue = e.target.value.toUpperCase();
+                                                        e.target.value = upperCaseValue;
+                                                        setValue("motivo", upperCaseValue);
+                                                    }}
                                                     style={{
                                                         height: '350px',
                                                         resize: 'none'
@@ -176,6 +181,11 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                             id="motivo"
                                             name="motivo"
                                             placeholder="Ingresa el motivo de cancelación"
+                                            onChange={(e) => {
+                                                const upperCaseValue = e.target.value.toUpperCase();
+                                                e.target.value = upperCaseValue;
+                                                setValue("motivo", upperCaseValue);
+                                            }}
                                             style={{
                                                 height: '300px',
                                                 resize: 'none'

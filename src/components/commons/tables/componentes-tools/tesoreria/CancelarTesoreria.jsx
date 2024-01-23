@@ -8,7 +8,7 @@ import {ModalAccionCancelarTool} from "../../../modals";
 
 export const CancelarTesoreria = ({item, index,refresh}) => {
     const [showModal, setShowModal] = useState(false);
-    const {register, handleSubmit, formState: {errors}, reset} = useForm();
+    const {register,setValue, handleSubmit, formState: {errors}, reset} = useForm();
     const showModalCancelar = () => {
         setShowModal(true);
     };
@@ -73,6 +73,11 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
                                         id="motivo"
                                         name="motivo"
                                         placeholder="Ingresa el motivo de cancelación"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            setValue("motivo", upperCaseValue);
+                                        }}
                                         style={{
                                             height: '300px',
                                             resize: 'none'

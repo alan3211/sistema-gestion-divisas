@@ -3,6 +3,7 @@ import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
 import {encryptRequest, formattedDate} from "../../../utils";
 import {consultaEnvioSucursal} from "../../../services/operacion-tesoreria";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const RecepcionValores = () => {
 
@@ -26,6 +27,7 @@ export const RecepcionValores = () => {
         tableName:'Recepción de Valores desde Sucursal',
         buscar: true,
         paginacion: true,
+        disabledColumnsExcel:['Acciones','Detalle'],
         tools:[
             {columna:"Estatus",tool:"estatus"},
             {columna:"Acciones",tool:"acciones-recepcion-valores",refresh:refreshQuery},
@@ -99,7 +101,9 @@ export const RecepcionValores = () => {
                 </div>
             </div>
             {
-                showTable && <TableComponent data={data} options={options}/>
+                showTable
+                    ? <TableComponent data={data} options={options}/>
+                    : <LoaderTable/>
             }
         </div>
     );

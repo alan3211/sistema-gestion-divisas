@@ -19,7 +19,7 @@ export const AccionesEnvioValores = ({item, index, refresh}) => {
         register,
         handleSubmit,
         formState: {errors}, reset
-        , watch
+        , watch,setValue
     } = useForm();
     const [optionBtn, setOptionBtn] = useState(1);
     const [dataDenominacion, setDataDenominacion] = useState([]);
@@ -118,6 +118,11 @@ export const AccionesEnvioValores = ({item, index, refresh}) => {
                                         id="motivo"
                                         name="motivo"
                                         placeholder="Ingresa el motivo"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            setValue("motivo", upperCaseValue);
+                                        }}
                                         style={{
                                             height: '300px',
                                             resize: 'none'

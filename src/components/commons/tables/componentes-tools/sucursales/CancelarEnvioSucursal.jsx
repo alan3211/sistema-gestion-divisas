@@ -9,7 +9,7 @@ import {toast} from "react-toastify";
 
 export const CancelarEnvioSucursal = ({item, index,refresh}) => {
     const [showModal, setShowModal] = useState(false);
-    const {register, handleSubmit, formState: {errors}, reset} = useForm();
+    const {register, handleSubmit, formState: {errors}, reset,setValue} = useForm();
     const showModalCancelar = () => {
         setShowModal(true);
     };
@@ -74,6 +74,11 @@ export const CancelarEnvioSucursal = ({item, index,refresh}) => {
                                         id="motivo"
                                         name="motivo"
                                         placeholder="Ingresa el motivo de cancelación"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            setValue("motivo", upperCaseValue);
+                                        }}
                                         style={{
                                             height: '300px',
                                             resize: 'none'
