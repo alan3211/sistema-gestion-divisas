@@ -102,8 +102,12 @@ export const AgregaUsuario = () => {
                                     message: 'El campo contraseña no puede ser vacio.'
                                 },
                                 minLength: {
-                                    value: 5,
-                                    message: 'El campo contraseña como mínimo debe de tener al menos 5 caracteres.'
+                                    value: 8,
+                                    message: 'El campo contraseña como mínimo debe de tener al menos 8 caracteres.'
+                                },
+                                maxLength: {
+                                    value: 8,
+                                    message: 'El campo contraseña como máximo debe de tener 8 caracteres.'
                                 }
                             })}
                             type="password"
