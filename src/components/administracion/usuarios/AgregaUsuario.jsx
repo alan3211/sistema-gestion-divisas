@@ -13,6 +13,11 @@ export const AgregaUsuario = () => {
         data.tipo_operacion = 1;
         data.usuario_alta = dataG.usuario;
         data.activo = 1;
+
+        if([1,2,5,6].includes(parseInt(watch("perfil")))){
+            data.sucursal = 5056;
+        }
+
         const encryptedData = encryptRequest(data);
 
         const response = await accionesUsuario(encryptedData);
@@ -153,36 +158,38 @@ export const AgregaUsuario = () => {
                         }
                     </div>
                 </div>
-                <div className="col-md-4 mx-auto">
-                    <div className="form-floating mb-3">
-                        <select
-                            {...register("sucursal",{
-                                required:{
-                                    value:true,
-                                    message:'Debes de seleccionar al menos una sucursal.'
+                {
+                    ![1,2,5,6].includes(parseInt(watch("perfil"))) && (  <div className="col-md-4 mx-auto">
+                        <div className="form-floating mb-3">
+                            <select
+                                {...register("sucursal",{
+                                    required:{
+                                        value:true,
+                                        message:'Debes de seleccionar al menos una sucursal.'
+                                    }
+                                })}
+                                className={`form-select ${!!errors?.perfil ? 'invalid-input':''}`}
+                                id="sucursal"
+                                name="sucursal"
+                                aria-label="Sucursal"
+                            >
+                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                {
+                                    catalogo[1]?.map((ele) => (
+                                        <option key={ele.id + '-' + ele.descripcion}
+                                                value={ele.id}>
+                                            {ele.descripcion}
+                                        </option>
+                                    ))
                                 }
-                            })}
-                            className={`form-select ${!!errors?.perfil ? 'invalid-input':''}`}
-                            id="sucursal"
-                            name="sucursal"
-                            aria-label="Sucursal"
-                        >
-                            <option value="0">SELECCIONA UNA OPCIÓN</option>
+                            </select>
+                            <label htmlFor="sucursal">SUCURSAL</label>
                             {
-                                catalogo[1]?.map((ele) => (
-                                    <option key={ele.id + '-' + ele.descripcion}
-                                            value={ele.id}>
-                                        {ele.descripcion}
-                                    </option>
-                                ))
+                                errors?.sucursal && <div className="invalid-feedback-custom">{errors?.sucursal.message}</div>
                             }
-                        </select>
-                        <label htmlFor="sucursal">SUCURSAL</label>
-                        {
-                            errors?.sucursal && <div className="invalid-feedback-custom">{errors?.sucursal.message}</div>
-                        }
-                    </div>
-                </div>
+                        </div>
+                    </div>)
+                }
                 <div className="col-md-4 mx-auto">
                     <button
                         type="button"
