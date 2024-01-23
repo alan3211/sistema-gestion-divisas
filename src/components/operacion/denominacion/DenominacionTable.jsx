@@ -103,7 +103,7 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
                                             ? "is-invalid"
                                             : ""
                                     }`}
-                                    placeholder="$"
+                                    placeholder={billetesFisicos[index][getPropiedad("denominacion", elemento)]}
                                     onChange={(e) => {
                                         const inputValue = e.target.value;
                                         const newValue = /^[0-9]\d*$/.test(inputValue) ? parseInt(inputValue) : 0;
@@ -115,7 +115,6 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
                                         });
                                     }}
                                     autoComplete="off"
-                                    value={billetesFisicos[index][getPropiedad("denominacion", elemento)]}
                                 />
                             </td>
                             <td>{totalActual * elemento.Denominacion}</td>

@@ -32,7 +32,7 @@ export const CancelarEnvioSucursal = ({item, index,refresh}) => {
 
     const options = {
         showModal,
-        closeCustomModal: () => setShowModal(false),
+        closeModal: () => setShowModal(false),
         title: 'Cancelar Dotación',
         subtitle: 'Ingrese el motivo por el cual desea cancelar el envío de la sucursal.',
     };

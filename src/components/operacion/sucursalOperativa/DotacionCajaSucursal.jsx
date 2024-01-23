@@ -14,6 +14,8 @@ import {getCantidadDisponible, realizarOperacionSucursalDotacion} from "../../..
 import {toast} from "react-toastify";
 import {Denominacion} from "../denominacion";
 import {getUsuariosSistema} from "../../../services";
+import {ModalLoading} from "../../commons/modals/ModalLoading";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const DotacionCajaSucursal = () => {
     const [usuariosCombo,setUsuariosCombo] = useState([]);
@@ -31,6 +33,7 @@ export const DotacionCajaSucursal = () => {
         cantidad: 0
     })
     const [moneda, setMoneda] = useState('0')
+    const [guarda, setGuarda] = useState(false);
 
     const [finalizaOperacion,setFinalizaOperacion] = useState(true);
 
@@ -44,7 +47,14 @@ export const DotacionCajaSucursal = () => {
         setFinalizaOperacion,
     }
 
+    const optionsLoad = {
+        showModal: guarda,
+        title: `Enviando dotación a la cajero ${watch("cajero")} ...`,
+    };
+
     const terminarDotacion = handleSubmit(async(data)=>{
+
+        setGuarda(true);
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
 
@@ -75,6 +85,7 @@ export const DotacionCajaSucursal = () => {
             reset();
             setShowDenominacion(false);
             denominacionD.reset();
+            setGuarda(false);
         }
     });
 
@@ -162,7 +173,7 @@ export const DotacionCajaSucursal = () => {
     }
 
     return (<>
-        <div className="row m-1 g-3">
+        <form className="row m-1 g-3">
             <div className="col-md-3">
                 <div className="form-floating mb-3">
                     <select
@@ -262,7 +273,8 @@ export const DotacionCajaSucursal = () => {
                    GENERAR
                 </button>
             </div>
-        </div>
+        </form>
+        {guarda && <ModalLoading options={optionsLoad}/>}
         <div className="row m-1 g-3">
             <div className="col-md-6 mx-auto">
                 {
@@ -279,7 +291,9 @@ export const DotacionCajaSucursal = () => {
                     <>
                         <div className="d-flex justify-content-center">
                             {
-                                showDenominacion && <Denominacion type="D" moneda={moneda} options={options}/>
+                                showDenominacion
+                                    ? <Denominacion type="D" moneda={moneda} options={options}/>
+                                    : <LoaderTable/>
                             }
                         </div>
                         <div className="col-md-12 d-flex justify-content-center">

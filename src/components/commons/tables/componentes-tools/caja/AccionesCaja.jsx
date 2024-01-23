@@ -9,10 +9,12 @@ import {accionesCaja, getDenominaciones, getDenominacionesCaja} from "../../../.
 import {toast} from "react-toastify";
 import {ModalAccionesTool} from "../../../modals";
 import {DenominacionTableCaja} from "../../../../operacion/denominacion";
+import {ModalLoading} from "../../../modals/ModalLoading";
 
 export const AccionesCaja = ({item, index, refresh}) => {
 
     const [showModal, setShowModal] = useState(false);
+    const [guarda, setGuarda] = useState(false);
     const {
         register,
         handleSubmit,
@@ -32,7 +34,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
         setShowModal(true);
     }
     const onEnvioValores = async () => {
-
+        setGuarda(true);
         const values = {
             id_operacion: item.ID,
             estatus: (optionBtn === 1) ? 'Aceptado' : 'Rechazado',
@@ -69,16 +71,22 @@ export const AccionesCaja = ({item, index, refresh}) => {
             setShowModal(false);
             refresh();
             reset();
+            setGuarda(false);
         }
     }
 
     const options = {
         showModal,
-        closeCustomModal: () => {setShowModal(false); reset()},
+        closeModal: () => {setShowModal(false); reset()},
         title: (optionBtn === 1) ? 'ACEPTAR DOTACIÓN' : 'RECHAZAR DOTACIÓN',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y validar las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas la dotación.',
+    };
+
+    const optionsLoad = {
+        showModal: guarda,
+        title: `${ optionBtn === 1 ? "Aceptando dotación":"Rechazando dotación"} ...`,
     };
 
     useEffect(() => {
@@ -108,7 +116,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                 showModal
                 && (
                     <ModalAccionesTool options={options}>
-                        <div>
+                        <form>
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
@@ -207,7 +215,8 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
-                        </div>
+                            {guarda && <ModalLoading options={optionsLoad}/>}
+                        </form>
                     </ModalAccionesTool>
                 )}
         </td>);

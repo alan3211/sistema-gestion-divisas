@@ -7,6 +7,7 @@ import {ResumenCaja} from "./ResumenCaja";
 import {consultaCaja} from "../../../services/operacion-caja";
 import {dataG} from "../../../App";
 import {ResumenCajaParcial} from "./ResumenCajaParcial";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const CuentaCajaComponent = ({tipo}) => {
 
@@ -52,7 +53,10 @@ export const CuentaCajaComponent = ({tipo}) => {
         return (
            <>
                {
-                  showTable && (<TableComponent data={data} options={options}/>)
+                  showTable
+                      ? <TableComponent data={data} options={options}/>
+                      : <LoaderTable/>
+
                }
 
                {

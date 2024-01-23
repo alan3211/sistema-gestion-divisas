@@ -125,7 +125,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
     const options = {
         showModal,
-        closeCustomModal: () => {
+        closeModal: () => {
             setShowModal(false);
             setValue("motivo",'');
         },
