@@ -34,7 +34,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
 
     return(
         <>
-        <div
+        <form
             className="text-center"
         >
             <div className="col-md-4 mx-auto">
@@ -117,7 +117,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                     GUARDAR
                 </button>
             </div>
-            </div>
+            </form>
         </>
     );
 }

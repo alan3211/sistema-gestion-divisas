@@ -32,7 +32,7 @@ export const OperacionTesoreria = ({perfil}) => {
             { perfil !== 'L' &&(<div className="search-options d-flex justify-content-center align-items-center mt-4">
                 <h5 className="text-blue text-center">
                     <i className="bi bi-bank me-2"></i>
-                    <span>Cuenta Bancaria:</span>
+                    <span>Cuenta Bancaria (MXP):</span>
                     <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral), 'MXP')}</strong>
                 </h5>
             </div>)}

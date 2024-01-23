@@ -66,13 +66,16 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
 
     const options = {
         showMostrar: true,
+        excel:true,
         buscar: true,
         paginacion: true,
         tools: [
             {columna: "Estatus", tool: "estatus"},
             {columna: "Monto a Solicitar", tool: "detalle-solicitud",deps:{setShowSolicitaDenominacion,setDataItem}},
         ],
-        filters:[{columna:'Saldo',filter:'currency'}]
+        filters:[{columna:'Saldo',filter:'currency'}],
+        tableName:'Consulta de Solicitud de Dotación a Boveda',
+        disabledColumnsExcel:['Monto a Solicitar']
     };
 
     const OPTIONS_SOLICITUD_DOTACION = {
@@ -183,7 +186,7 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
             </div>
             {showTable && (
                 <div className="row">
-                    <div className="col-md-8 mx-auto">
+                    <div className="col-md-12">
                         <TableComponent data={data} options={options}/>
                     </div>
                 </div>

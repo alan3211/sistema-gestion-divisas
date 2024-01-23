@@ -33,6 +33,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         tools = [],
         filters=[],
         disabledColumns=[],
+        disabledColumnsExcel=[],
         deps = {},
         params = {},
     } = options || {};
@@ -85,12 +86,15 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     };
 
     const applyFilter = (filtro, valor) => {
-        if(valor){
-            if(filtro === 'currency'){
+        if(filtro === 'currency'){
+            if(valor === '' || valor === null || isNaN(valor)){
+                return FormatoMoneda(0);
+            }else{
                 return FormatoMoneda(valor);
-            } else if (filtro === 'tooltip') {
-                return valor.slice(0, 12) + '...';
             }
+
+        } else if (filtro === 'tooltip') {
+            return valor && valor.slice(0, 12) + '...';
         }
         return valor;
     }
@@ -100,6 +104,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         currentData,tools,filters,applyFilter
     };
 
+    // Administracion de la descarga de excel
     const handleDownloadExcel = async() => {
         if (total_rows > 0) {
             const datosOrdenados = result_set.map((fila) => {
@@ -113,7 +118,6 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
             // Crear un nuevo libro de Excel
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet(tableName);
-
 
             const titulo = await obtenTitulo();
             // Añadir título a la fila 1
@@ -152,11 +156,50 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                 cell.alignment = { horizontal: 'center' }; // Alineación central
             });
 
+            // Eliminar columnas según el array disabledColumnsExcel
+            disabledColumnsExcel.forEach((columnToDelete) => {
+                const columnIndex = headers.indexOf(columnToDelete);
+                if (columnIndex !== -1) {
+                    // Eliminar la columna del array de headers
+                    headers.splice(columnIndex, 1);
+
+                    // Eliminar la columna de cada fila en datosOrdenados
+                    datosOrdenados?.forEach((fila) => {
+                        // Verificar si el objeto no es undefined
+                        if (fila) {
+                            // Verificar si la propiedad existe antes de intentar eliminarla
+                            if (fila.hasOwnProperty(columnToDelete)) {
+                                delete fila[columnToDelete];
+                            }
+                        }
+                    });
+                }
+            });
+
+
             // Agregar los datos ordenados a la hoja de cálculo
-            datosOrdenados.forEach((fila,index) => {
-                const rowData = headers.map(header => fila[header]);
+            datosOrdenados.forEach((fila, index) => {
+                const rowData = Object.values(fila);
+
+                // Aplicar filtros
+                filters.forEach((filtro) => {
+                    const { columna, filter } = filtro;
+                    const columnIndex = headers.indexOf(columna);
+
+                    if (columnIndex !== -1) {
+                        // Verificar si el índice de la columna está dentro de los límites de la fila
+                        if (columnIndex < rowData.length) {
+                            // Aplicar el filtro a la celda correspondiente
+                            if (filter !== 'tooltip'){
+                                rowData[columnIndex] = applyFilter(filter, parseFloat(rowData[columnIndex]));
+                            }
+                        }
+                    }
+                });
+
                 worksheet.addRow(rowData);
             });
+
 
             // Construir el blob y descargar el archivo
             const buffer = await workbook.xlsx.writeBuffer();
@@ -170,6 +213,14 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         }
     };
 
+    // Función para obtener el filtro adecuado para una columna
+    const getFilterForColumn = (columna) => {
+        const filterObject = filters.find((filtro) => filtro.columna === columna);
+        return filterObject ? filterObject.filter : null;
+    };
+
+
+    // Administracion de la descarga de PDF
     const handleDownloadPDF = async() => {
         const titulo = await obtenTitulo();
         // Crear un nuevo objeto jsPDF
@@ -192,9 +243,37 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
             });
             return filaOrdenada;
         });
+        // Eliminar columnas según el array disabledColumnsExcel
+        disabledColumnsExcel.forEach((columnToDelete) => {
+            const columnIndex = headers.indexOf(columnToDelete);
+            if (columnIndex !== -1) {
+                // Eliminar la columna del array de headers
+                headers.splice(columnIndex, 1);
 
-        // Agregar los datos ordenados a la hoja de cálculo
-        const rows = datosOrdenados.map(fila => headers.map(header => fila[header]));
+                // Eliminar la columna de cada fila en datosOrdenados
+                datosOrdenados.forEach((fila) => {
+                    fila[columnToDelete] = undefined; // O puedes eliminar completamente la propiedad
+                });
+            }
+        });
+
+        // Aplicar filtros y formato a los datos en el PDF
+        datosOrdenados.forEach((fila) => {
+            headers.forEach((columna) => {
+                const filter = getFilterForColumn(columna); // Obtener el filtro adecuado para la columna
+                if (filter) {
+                    if (filter === 'tooltip'){
+                        fila[columna] = applyFilter(filter, fila[columna]);
+                    }else{
+                        // Aplicar el filtro a la celda correspondiente
+                        fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
+                    }
+                }
+            });
+        });
+
+        // Generar la tabla para el PDF
+        const rows = datosOrdenados.map((fila) => headers.map((columna) => fila[columna]));
 
         pdf.autoTable({
             head: [headers],  // Encabezados de la tabla

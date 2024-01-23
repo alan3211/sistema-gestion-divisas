@@ -123,7 +123,6 @@ export const AccionesBoveda = ({item, index,refresh}) => {
 
     const optionsLoad = {
         showModal: guarda,
-        closeCustomModal: () => setGuarda(false),
         title: "Confirmando Dotación a boveda...",
     };
 
@@ -254,6 +253,11 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                                                 className={`form-control ${errors && errors.factura ? "is-invalid" : ""}`}
                                                                 name='factura'
                                                                 placeholder="Ingresa el numero de factura"
+                                                                onChange={(e) => {
+                                                                    const upperCaseValue = e.target.value.toUpperCase();
+                                                                    e.target.value = upperCaseValue;
+                                                                    setValue("factura", upperCaseValue);
+                                                                }}
                                                                 autoComplete="off"
                                                             />
                                                             <label htmlFor="factura">NÚMERO DE FACTURA</label>

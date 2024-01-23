@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import {dataG} from "../../../App";
 import {getResumenSucursales} from "../../../services/operacion-tesoreria";
 import {TableComponent} from "../../commons/tables";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const ConsultaTesoreria = ({type}) => {
 
@@ -14,19 +15,19 @@ export const ConsultaTesoreria = ({type}) => {
   const [showSucursal,setShowSucursal] = useState(false);
   const [dataSucursal,setDataSucursal] = useState([]);
 
+    const getResumen = async () => {
+        const valores = {
+            usuario: dataG.usuario,
+            sucursal:''
+        }
+        const encryptedData = encryptRequest(valores);
+        const response =  await getResumenSucursales(encryptedData);
+        console.log(response);
+        setDataResumen(response)
+        setIsLoading(false);
+    }
 
     useEffect(() => {
-        const getResumen = async () => {
-            const valores = {
-                usuario: dataG.usuario,
-                sucursal:''
-            }
-            const encryptedData = encryptRequest(valores);
-            const response =  await getResumenSucursales(encryptedData);
-            console.log(response);
-            setDataResumen(response)
-            setIsLoading(false);
-        }
         getResumen();
     }, []);
 
@@ -42,10 +43,13 @@ export const ConsultaTesoreria = ({type}) => {
             {columna:"Monto MXP",tool:"indicadores-divisas"},
         ],
         filters:[
+            {columna:"Monto USD",filter:'currency'},
+            {columna:"Monto MXP",filter:'currency'},
             {columna:"Monto EUR",filter:'currency'},
             {columna:"Monto GBR",filter:'currency'}
         ],
-        disabledColumns:['indicadorUSD','indicadorMXP']
+        disabledColumns:['indicadorUSD','indicadorMXP'],
+        disabledColumnsExcel:['indicadorUSD','indicadorMXP']
     }
 
     const optionsSuc = {
@@ -67,12 +71,14 @@ export const ConsultaTesoreria = ({type}) => {
             {type !== 'logistica' && (<div className="container d-flex justify-content-center align-items-center">
                 <h5 className="text-blue text-center">
                     <i className="bi bi-bank me-2"></i>
-                    <span>Cuenta Bancaria:</span>
+                    <span>Cuenta Bancaria (MXP):</span>
                     <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral), 'USD')}</strong>
                 </h5>
             </div>)}
             {
-                !isLoading && <TableComponent data={dataResumen} options={options}/>
+                !isLoading
+                    ? <TableComponent data={dataResumen} options={options}/>
+                    : <LoaderTable options={{showModal:isLoading}}/>
             }
             {
                 showSucursal && (
