@@ -9,7 +9,7 @@ import {getLocalidad} from "../../../services";
 
 const denominacionesMXN = ["0.05", "0.10", "0.20", "0.50", "1", "2", "5", "10", "20", "50", "100", "200", "500", "1000"];
 const denominacionesOtras = ["1", "2", "5", "10", "20", "50", "100"];
-const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputChange }) => {
+const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputChange, cantidadBilletes }) => {
     return (
         <td nowrap={true} className="">
             <input
@@ -19,7 +19,7 @@ const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputCh
                 id={nombre}
                 className="form-control-custom"
                 placeholder="$"
-                onChange={(e) => handleInputChange(e, rowIndex, nombre, denominacion)}
+                onChange={(e) => handleInputChange(e, rowIndex, nombre, denominacion,cantidadBilletes)}
                 autoComplete="off"
                 //value={billetesFisicos[rowIndex][nombre] || ""}
             />
@@ -149,7 +149,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
         setValidaGuarda(validaGuardaActualizado);
     }, [billetesFisicos]);
 
-    const handleInputChange = (e, rowIndex, nombre, denominacion) => {
+    const handleInputChange = (e, rowIndex, nombre, denominacion,cantidadBilletes) => {
         const inputValue = e.target.value;
         const newValue = /^[0-9]\d*$/.test(inputValue) ? parseFloat(inputValue) : 0;
 
@@ -166,6 +166,9 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
             });
             return newBilletes;
         });
+
+        // Se realiza la resta de lo disponible a lo que tengo en el input
+
 
         // Obtener la suma por fila y actualizar el estado total Billetes
         const sumaPorFila = obtenerSumaPorFila(billetesFisicos);
@@ -352,6 +355,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                                                         rowIndex={index}
                                                         handleInputChange={handleInputChange}
                                                         billetesFisicos={billetesFisicos}
+                                                        cantidadBilletes={totalCantidadBilletes}
                                                     />
                                                 </>
                                             ))
@@ -365,6 +369,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                                                         rowIndex={index}
                                                         handleInputChange={handleInputChange}
                                                         billetesFisicos={billetesFisicos}
+                                                        cantidadBilletes={totalCantidadBilletes}
                                                     />
                                                 </>
                                             ))}

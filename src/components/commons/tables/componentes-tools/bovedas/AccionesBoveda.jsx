@@ -44,10 +44,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
     const resetea = () => setResetear(true);
 
     const onEnvioValores = async (data) => {
-
         setGuarda(true)
-        console.log(data)
-
         const values = {
             ID: item.ID,
             accion: (optionBtn === 1) ? 'Confirmado' : 'Rechazado',

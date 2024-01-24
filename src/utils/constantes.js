@@ -51,6 +51,7 @@ export const LOGISTICA_ACCIONES_DOTACION_BOVEDA = `${LOGISTICA_URL}dotacion/bove
 export const LOGISTICA_ASIGNA_FONDOS_SUCURSAL = `${LOGISTICA_URL}asigna/boveda/sucursal`
 export const LOGISTICA_CONSULTA_CANTIDAD_SUCURSAL = `${LOGISTICA_URL}consulta/boveda/cantidad`
 export const LOGISTICA_ENVIA_FONDOS_SUCURSAL = `${LOGISTICA_URL}envia-dotacion/sucursal`
+export const LOGISTICA_CANTIDAD_BILLETES = `${LOGISTICA_URL}consulta/cantidad/billetes`
 
 /*OPERACION SUCURSAL*/
 export const SUCURSAL_ENVIO_VALORES_URL = `${SUCURSAL_URL}operativa/envio-valores`
@@ -108,8 +109,8 @@ export const TOOLS_CONSULTA_ACT_RECIENTE_URL = `${TOOLS_URL}consulta/actividad-r
 export const TOOLS_CONSULTA_VENTAS_FECHA_URL = `${TOOLS_URL}consulta/ventas-fecha`
 export const TOOLS_CONSULTA_COMPRAS_FECHA_URL = `${TOOLS_URL}consulta/compras-fecha`
 export const TOOLS_SOLICITUD_ENVIO_VALORES_URL = `${TOOLS_URL}solicitud/envio-valores`
-
 export const TOOLS_CONSULTA_DENOMINACIONES_SOL_URL = `${TOOLS_URL}consulta/denominaciones/solicitadas`
+export const TOOLS_CONSULTA_DENOMINACIONES_DETALLE_URL = `${TOOLS_URL}detalle/denominaciones`
 
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`

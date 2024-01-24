@@ -8,7 +8,7 @@ import {
     TOOLS_CANCELAR_DOTACION_URL,
     TOOLS_CANCELAR_OPERACION_URL,
     TOOLS_CONSULTA_ACT_RECIENTE_URL,
-    TOOLS_CONSULTA_COMPRAS_FECHA_URL, TOOLS_CONSULTA_DENOMINACIONES_SOL_URL,
+    TOOLS_CONSULTA_COMPRAS_FECHA_URL, TOOLS_CONSULTA_DENOMINACIONES_DETALLE_URL, TOOLS_CONSULTA_DENOMINACIONES_SOL_URL,
     TOOLS_CONSULTA_DETALLE_DENOMINACIOENS_URL,
     TOOLS_CONSULTA_DETALLE_URL,
     TOOLS_CONSULTA_ULTIMOS_MOVIMIENTOS_URL,
@@ -552,6 +552,31 @@ export const accionesSolicitudValores = async (encryptedData) => {
 export const obtieneDenominacionesSolicitadas = async (formValues) =>{
     try {
         const url = `${TOOLS_CONSULTA_DENOMINACIONES_SOL_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const getDetalleDenominaciones = async (formValues) =>{
+    try {
+        const url = `${TOOLS_CONSULTA_DENOMINACIONES_DETALLE_URL}`;
 
         const response = await fetch(url, {
             method: 'POST',

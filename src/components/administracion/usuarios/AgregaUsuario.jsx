@@ -1,13 +1,13 @@
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../App";
-import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNombreApellido} from "../../../utils";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {encryptRequest, OPTIONS, validarAlfaNumerico} from "../../../utils";
+import {useCatalogo} from "../../../hook";
 import {toast} from "react-toastify";
 import {accionesUsuario} from "../../../services/administracion-services";
 
 export const AgregaUsuario = () => {
 
-    const catalogo = useCatalogo([21,17]);
+    const catalogo = useCatalogo([21,27]);
     const {register, handleSubmit, formState: {errors}, reset, watch} = useForm();
     const altaDelUsuario = handleSubmit(async (data) => {
         data.tipo_operacion = 1;
@@ -31,7 +31,7 @@ export const AgregaUsuario = () => {
     });
 
     return (
-        <div className="container justify-content-center align-items-center mt-4">
+        <form className="container justify-content-center align-items-center mt-4">
             <div
                 className="text-center mb-4"
             >
@@ -201,6 +201,6 @@ export const AgregaUsuario = () => {
                     </button>
                 </div>
             </div>
-        </div>
+        </form>
     );
 }
