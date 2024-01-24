@@ -29,6 +29,10 @@ export const ConsultaCaja = () => {
         showMostrar: true,
         buscar: true,
         paginacion: true,
+        excel:true,
+        tableName:'Movimientos del día',
+        disabledColumnsExcel:['Denominaciones','Reimpresión ticket','Cancelar Operación'],
+        filters:[{columna:'Monto Entregado',filter:'currency'},{columna:'Monto Moneda',filter:'currency'}],
         tools: [
             {columna:"Estatus",tool:'estatus'},
             { columna: "Denominaciones", tool: 'ver-detalle-denominacion' },
@@ -41,6 +45,10 @@ export const ConsultaCaja = () => {
         showMostrar: true,
         buscar: true,
         paginacion: true,
+        excel:true,
+        tableName:'Movimientos Históricos',
+        disabledColumnsExcel:['Denominaciones','Reimpresión ticket','Cancelar Operación'],
+        filters:[{columna:'Monto Entregado',filter:'currency'},{columna:'Monto Moneda',filter:'currency'}],
         tools: [
             {columna:"Estatus",tool:'estatus'},
             { columna: "Denominaciones", tool: 'ver-detalle-denominacion' },

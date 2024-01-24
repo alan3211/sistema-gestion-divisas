@@ -142,7 +142,10 @@ export const CalculadoraFormComponent = () => {
         setShowAltaCliente(false);
     }
 
-    const preguntaNuevoUsuario = () => {
+    const preguntaNuevoUsuario = async() => {
+        const response = await getOperacion();
+        console.log("RESPONSE: ",response)
+        setDatos(response);
         setNuevoUsuario(true);
         setShowModal(false);
     }
@@ -154,9 +157,6 @@ export const CalculadoraFormComponent = () => {
         setContinuaOperacion(true);
         setNuevoUsuario(false);
         setShowModal(false);
-        const response = await getOperacion();
-        console.log("RESPONSE: ",response)
-        setDatos(response);
     }
 
     const muestraAltaCliente = () =>{

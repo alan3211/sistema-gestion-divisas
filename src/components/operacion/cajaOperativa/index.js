@@ -1,5 +1,4 @@
 export * from './CuentaCajaComponent'
-export * from './ConsultasCaja'
 export * from './CierreComponent'
 export * from './CajaComponent'
 export * from './DotacionComponent'

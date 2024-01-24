@@ -225,8 +225,19 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                         <div className="col-md-6">
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
-                                                (item.Operacion !== 'Dotación Sucursal') ? (<Denominacion type={item.Operacion === 'Dotación Sucursal' ? 'D':'C'} moneda={item.Moneda} options={optionsDenominacion}/>)
-                                                : (<DenominacionTable setDenominacion={setDenominacion} moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} setTotalMonto={setTotalMonto}/>)
+                                                item.Operacion !== 'Dotación Sucursal'
+                                                    ? (<Denominacion
+                                                            type={item.Operacion === 'Dotación Sucursal' ? 'D':item.Operacion === 'Nota de Credito' ? 'CNC' :'C'}
+                                                            moneda={item.Moneda}
+                                                            options={optionsDenominacion}
+                                                    />)
+                                                    : (<DenominacionTable
+                                                            setDenominacion={setDenominacion}
+                                                            moneda={item.Moneda}
+                                                            data={datosDenominacion.result_set}
+                                                            monto={item.Monto}
+                                                            setTotalMonto={setTotalMonto}
+                                                    />)
                                             }
                                         </div>
                                     </div>

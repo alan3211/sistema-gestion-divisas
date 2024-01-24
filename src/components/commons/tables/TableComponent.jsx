@@ -165,14 +165,14 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
 
                     // Eliminar la columna de cada fila en datosOrdenados
                     datosOrdenados.forEach((fila) => {
-                        fila[columnToDelete] = undefined; // O puedes eliminar completamente la propiedad
+                        delete fila[columnToDelete]; // Eliminar la propiedad del objeto
                     });
                 }
             });
 
-            // Agregar los datos ordenados a la hoja de cálculo
+// Agregar los datos ordenados a la hoja de cálculo
             datosOrdenados.forEach((fila, index) => {
-                const rowData = Object.values(fila);
+                const rowData = headers.map((column) => fila[column]);
 
                 // Aplicar filtros
                 filters.forEach((filtro) => {
@@ -183,7 +183,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                         // Verificar si el índice de la columna está dentro de los límites de la fila
                         if (columnIndex < rowData.length) {
                             // Aplicar el filtro a la celda correspondiente
-                            if (filter !== 'tooltip'){
+                            if (filter !== 'tooltip') {
                                 rowData[columnIndex] = applyFilter(filter, parseFloat(rowData[columnIndex]));
                             }
                         }
@@ -191,6 +191,17 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                 });
 
                 worksheet.addRow(rowData);
+            });
+
+            // Actualizar el encabezado en la hoja de cálculo
+            worksheet.getRow(3).values = headers;
+
+            // Estilo para los encabezados actualizados
+            const updatedHeaderRow = worksheet.getRow(3);
+            updatedHeaderRow.eachCell((cell) => {
+                cell.font = { color: { argb: 'FFFFFF' }, bold: true };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '012970' } };
+                cell.alignment = { horizontal: 'center' };
             });
 
 
