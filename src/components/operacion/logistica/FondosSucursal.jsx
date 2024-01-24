@@ -142,7 +142,11 @@ export const FondosSucursal = () => {
                 <strong className="ms-2">{FormatoMoneda(parseFloat(cantidadDisponible))}</strong>
             </h5>)}
             {
-                showData && <AsignaFondosSucursal data={data} moneda={moneda} cantidadDisponible={cantidadDisponible} refreshData={refreshData} />
+                showData && <AsignaFondosSucursal data={data} moneda={moneda}
+                                                  cantidadDisponible={cantidadDisponible}
+                                                  refreshData={refreshData}
+                                                  boveda={watch("boveda")}
+                />
             }
         </>
     );

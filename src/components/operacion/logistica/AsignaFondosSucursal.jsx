@@ -3,8 +3,9 @@ import {useForm} from "react-hook-form";
 import {encryptRequest, FormatoMoneda, formattedDateWS, nextFocus, opciones, OPTIONS} from "../../../utils";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
 import {dataG} from "../../../App";
-import {enviaDotacionSucursal} from "../../../services/operacion-logistica";
+import {enviaDotacionSucursal, getCantidadBilletes} from "../../../services/operacion-logistica";
 import {toast} from "react-toastify";
+import {getLocalidad} from "../../../services";
 
 const denominacionesMXN = ["0.05", "0.10", "0.20", "0.50", "1", "2", "5", "10", "20", "50", "100", "200", "500", "1000"];
 const denominacionesOtras = ["1", "2", "5", "10", "20", "50", "100"];
@@ -27,7 +28,7 @@ const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputCh
 };
 
 
-export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshData}) => {
+export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshData,boveda}) => {
     const [guarda, setGuarda] = useState(false);
     const [dataSuc, setDataSuc] = useState([]);
     const {register, handleSubmit,watch,reset} = useForm();
@@ -83,6 +84,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     const [billetesFisicos, setBilletesFisicos] = useState(initialBilletesFisicos);
     const [totalBilletes, setTotalBilletes] = useState([]);
+    const [totalCantidadBilletes, setTotalCantidadBilletes] = useState({});
     const [totalMonto, setTotalMonto] = useState([0]);
     const [validaGuarda, setValidaGuarda] = useState(true);
 
@@ -188,7 +190,6 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     const optionsLoad = {
         showModal: guarda,
-        closeCustomModal: () => setGuarda(false),
         title: "Guardando...",
     };
 
@@ -271,25 +272,54 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
         }
     }
 
+    const denominaciones = [
+        '.05','.10','.20','.50', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+    ];
 
+    const getDenominacionesCantidades = async () => {
+        const values = {
+            id_boveda:boveda,
+            divisa: moneda,
+        }
+        const encryptedData =  encryptRequest(values);
+        const response = await getCantidadBilletes(encryptedData);
+        setTotalCantidadBilletes(response.result_set[0])
+        console.log("CANT BILLETES: ", totalCantidadBilletes);
+    }
+
+    useEffect(() => {
+        getDenominacionesCantidades();
+    }, [boveda,moneda]);
 
     return (
         <>
             <form className="text-center mt-2" style={{fontSize: "12px"}}>
                 <div className="custom-scrollbar" style={{maxWidth: '100%', overflowX: 'auto'}}>
                     <table className="table table-bordered table-hover custom-scrollbar">
-                        <thead className="table-blue">
+                        <thead className="table-blue sticky top-0">
                         <tr>
                             <th colSpan={5}></th>
                             <th colSpan={moneda === "MXP" ? 14 : 7}>Denominaciones</th>
                             <th colSpan={2}></th>
                         </tr>
                         <tr>
-                            {data.headers?.map((elemento, index) => (
-                                <th className="col-1" key={elemento}>
-                                    <i className={iconosEncabezados[elemento]}></i> {elemento}
-                                </th>
-                            ))}
+                            {data.headers?.map((elemento, index) => {
+
+                                if(moneda === 'MXP' && denominaciones.includes(elemento) ){
+                                    return (<th className="col-1" key={elemento}>
+                                        <i className={iconosEncabezados[elemento]}></i> {elemento} ({totalCantidadBilletes[elemento]})
+                                    </th>)
+                                }else if(moneda !== 'MXP' && denominaciones.includes(elemento)){
+                                    return (<th className="col-1" key={elemento}>
+                                        <i className={iconosEncabezados[elemento]}></i> {elemento} ({totalCantidadBilletes[elemento]})
+                                    </th>)
+                                }else{
+                                    return (<th className="col-1" key={elemento}>
+                                        <i className={iconosEncabezados[elemento]}></i> {elemento}
+                                    </th>)
+                                }
+                            }
+                            )}
                         </tr>
                         </thead>
                         <tbody>

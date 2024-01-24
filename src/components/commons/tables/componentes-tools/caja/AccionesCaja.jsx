@@ -100,7 +100,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
             setData(data_denominacion);
         }
         getDenominacionesAsignadas();
-    }, []);
+    }, [item["No Movimiento"]]);
 
     return (
         <td key={index} className="text-center">
