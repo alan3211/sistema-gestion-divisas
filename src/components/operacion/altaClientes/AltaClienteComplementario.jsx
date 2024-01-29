@@ -521,7 +521,13 @@ export const AltaClienteComplementario = memo(() => {
                         <div className="col-md-3">
                             <div className="form-floating">
                                 <input
-                                    {...propForm.register("vigencia")}
+                                    {...propForm.register("vigencia",{
+                                        required:{
+                                            value:true,
+                                          message:'Debes de seleccionar al menos una vigencia.'
+                                        },
+                                    }
+                                    )}
                                     type="date"
                                     className={`form-control ${!!propForm.errors?.vigencia ? 'invalid-input' : ''}`}
                                     id="vigencia"

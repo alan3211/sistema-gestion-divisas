@@ -13,7 +13,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionB,
     } = useContext(DenominacionContext);
 
-    const {title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,ticket} =  options;
+    const {title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,sucursal} =  options;
     let denominacion = {};
 
     if(type === 'R'){
@@ -153,7 +153,7 @@ export const useDenominacion = ({type,moneda,options}) => {
 
         const valores = {
             usuario: dataG.usuario,
-            sucursal: dataG.sucursal,
+            sucursal: sucursal || dataG.sucursal,
             moneda: moneda,
             tipo_movimiento: type
         }

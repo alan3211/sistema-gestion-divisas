@@ -15,11 +15,18 @@ import {DenominacionContext} from "../../../context/denominacion/DenominacionCon
 import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
+import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 export const EnvioValoresSucursal = () => {
 
-    const {register,handleSubmit
-        ,formState:{errors},reset
-        ,watch} = useForm()
+    const propForm = useForm();
+    const form = {
+        register: propForm.register,
+        handleSubmit: propForm.handleSubmit,
+        errors: propForm.formState.errors,
+        watch: propForm.watch,
+        reset: propForm.reset,
+        setValue: propForm.setValue,
+    }
     const catalogo = useCatalogo([15,17]);
     const [showDenominacion,setShowDenominacion] =  useState(false);
     const [habilita,setHabilita] =  useState({
@@ -34,7 +41,8 @@ export const EnvioValoresSucursal = () => {
 
     const options = {
         title: '',
-        importe: parseInt(watch('monto')),
+        importe: parseFloat(form.watch('monto')),
+        sucursal: form.watch("sucursal"),
         habilita,
         setHabilita,
         setFinalizaOperacion
@@ -46,7 +54,7 @@ export const EnvioValoresSucursal = () => {
         title: "Enviando solicitud de valores...",
     };
 
-    const terminarDotacion = handleSubmit(async(data)=>{
+    const terminarDotacion =form.handleSubmit(async(data)=>{
         setGuarda(true);
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
@@ -74,7 +82,7 @@ export const EnvioValoresSucursal = () => {
         const resultado = await realizarOperacionSucursal(encryptedData);
 
         if(resultado){
-            reset();
+            form.reset();
             setShowDenominacion(false);
             denominacionD.reset();
             setGuarda(false);
@@ -84,61 +92,32 @@ export const EnvioValoresSucursal = () => {
 
     const nuevoEnvio = () => {
         setShowDenominacion(false);
-        reset();
+        form.reset();
         denominacionD.reset();
     }
 
     useEffect(() => {
-        if(watch("moneda") === '0'){
+        if(form.watch("moneda") === '0'){
             setShowDenominacion(false);
         }else{
             setShowDenominacion(true);
         }
-    }, [watch("moneda")]);
+    }, [form.watch("moneda")]);
 
     return (
         <form className="row m-1 g-3 justify-content-center">
             <div className="col-md-3">
-                <div className="form-floating mb-3">
-                    <select
-                        {...register("sucursal", {
-                            required: {
-                                value: true,
-                                message: "Debes de seleccionar al menos una sucursal.",
-                            },
-                            validate: (value) => {
-                                return (
-                                    value !== "0" || "Debes seleccionar una sucursal válida."
-                                );
-                            },
-                        })}
-                        className={`form-select ${!!errors?.sucursal ? "invalid-input" : ""}`}
-                        id="sucursal"
-                        name="sucursal"
-                        aria-label="Sucursal"
-                    >
-                        <option value="0">SELECCIONA UNA OPCIÓN</option>
-                        {catalogo[1]?.map((ele) => (
-                            <option
-                                key={ele.id + "-" + ele.descripcion}
-                                value={ele.id}
-                            >
-                                {ele.descripcion}
-                            </option>
-                        ))}
-                    </select>
-                    <label htmlFor="sucursal">SUCURSAL</label>
-                    {errors?.sucursal && (
-                        <div className="invalid-feedback-custom">
-                            {errors?.sucursal.message}
-                        </div>
-                    )}
-                </div>
+                <FilterComboInput
+                    propFormulario={form}
+                    name="sucursal"
+                    label="SUCURSAL"
+                    options={catalogo[1] || []}
+                />
             </div>
             <div className="col-md-3">
                 <div className="form-floating">
                     <input
-                        {...register("monto",{
+                        {...form.register("monto",{
                             required:{
                                 value:true,
                                 message:'El campo Monto no puede ser vacio.'
@@ -149,7 +128,7 @@ export const EnvioValoresSucursal = () => {
                             }
                         })}
                         type="text"
-                        className={`form-control ${!!errors?.monto ? 'invalid-input':''}`}
+                        className={`form-control ${!!form.errors?.monto ? 'invalid-input':''}`}
                         id="monto"
                         name="monto"
                         placeholder="Ingresa el monto"
@@ -157,14 +136,14 @@ export const EnvioValoresSucursal = () => {
                     />
                     <label htmlFor="monto">MONTO</label>
                     {
-                        errors?.monto && <div className="invalid-feedback-custom">{errors?.monto.message}</div>
+                        form.errors?.monto && <div className="invalid-feedback-custom">{form.errors?.monto.message}</div>
                     }
                 </div>
             </div>
             <div className="col-md-3">
                 <div className="form-floating mb-3">
                     <select
-                        {...register("moneda",{
+                        {...form.register("moneda",{
                             required:{
                                 value:true,
                                 message:'Debes de seleccionar al menos un tipo de moneda.'
@@ -173,7 +152,7 @@ export const EnvioValoresSucursal = () => {
                                 return value !== "0" || 'Debes seleccionar un tipo de moneda válido.';
                             }
                         })}
-                        className={`form-select ${!!errors?.moneda ? 'invalid-input':''}`}
+                        className={`form-select ${!!form.errors?.moneda ? 'invalid-input':''}`}
                         id="moneda"
                         name="moneda"
                         aria-label="Moneda"
@@ -190,13 +169,13 @@ export const EnvioValoresSucursal = () => {
                     </select>
                     <label htmlFor="moneda">MONEDA</label>
                     {
-                        errors?.moneda && <div className="invalid-feedback-custom">{errors?.moneda.message}</div>
+                        form. errors?.moneda && <div className="invalid-feedback-custom">{form.errors?.moneda.message}</div>
                     }
                 </div>
             </div>
             <div className="d-flex justify-content-center">
                 {
-                    showDenominacion && <Denominacion type="D" moneda={watch('moneda')} options={options}/>
+                    showDenominacion && <Denominacion type="D" moneda={form.watch('moneda')} options={options}/>
                 }
             </div>
             <div className="col-md-12 d-flex justify-content-center">
