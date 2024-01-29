@@ -16,6 +16,7 @@ import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
 import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
+import {LoaderTable} from "../../commons/LoaderTable";
 export const EnvioValoresSucursal = () => {
 
     const propForm = useForm();
@@ -36,6 +37,7 @@ export const EnvioValoresSucursal = () => {
 
     const [finalizaOperacion,setFinalizaOperacion] = useState(true);
     const [guarda, setGuarda] = useState(false);
+    const [moneda, setMoneda] = useState('USD')
 
     const {denominacionD} = useContext(DenominacionContext);
 
@@ -96,12 +98,13 @@ export const EnvioValoresSucursal = () => {
         denominacionD.reset();
     }
 
+    const generaSolicitud = () => {
+        setShowDenominacion(true);
+        setMoneda(form.watch("moneda"));
+    }
+
     useEffect(() => {
-        if(form.watch("moneda") === '0'){
-            setShowDenominacion(false);
-        }else{
-            setShowDenominacion(true);
-        }
+        setShowDenominacion(false);
     }, [form.watch("moneda")]);
 
     return (
@@ -173,9 +176,19 @@ export const EnvioValoresSucursal = () => {
                     }
                 </div>
             </div>
+            <div className="col-md-3">
+                <button type="button" className="btn btn-primary mt-2"
+                        onClick={generaSolicitud}>
+                    <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
+                    GENERAR
+                </button>
+            </div>
             <div className="d-flex justify-content-center">
                 {
-                    showDenominacion && <Denominacion type="D" moneda={form.watch('moneda')} options={options}/>
+                    showDenominacion &&
+                    <form>
+                        <Denominacion type="D" moneda={moneda} options={options}/>
+                    </form>
                 }
             </div>
             <div className="col-md-12 d-flex justify-content-center">
