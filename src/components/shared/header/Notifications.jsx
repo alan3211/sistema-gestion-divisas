@@ -2,10 +2,12 @@ import {useEffect, useState} from "react";
 import {dataG} from "../../../App";
 import {encryptRequest, formatRelativeTime} from "../../../utils";
 import {obtieneNotificaciones, updateNotificacion} from "../../../services/tools-services";
+import {useNavigate} from "react-router-dom";
 
 export const Notifications = () => {
 
     const [notifications, setNotifications] = useState([]);
+    const navigator =  useNavigate();
 
     const handleNotificationClick = async(index,opcion) => {
         const values = {
@@ -32,6 +34,13 @@ export const Notifications = () => {
         }
 
     };
+
+    useEffect(() => {
+        if(dataG.estatus === 0){
+            navigator("/");
+        }
+    }, [dataG.estatus]);
+
 
     const getNotificaciones = async () =>{
 

@@ -4,7 +4,8 @@ import {TabsLayout} from "../commons/tabs";
 import {ResumenUsuario} from "./ResumenUsuario";
 import {EditarUsuario} from "./EditarUsuario";
 import {CambiarPassword} from "./CambiarPassword";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 export const PerfilComponent = () => {
 
@@ -17,6 +18,17 @@ export const PerfilComponent = () => {
         {id:'resumen',name:'Resumen',icon:'bi bi-file-earmark-text me-2', element: <ResumenUsuario/>},
         {id:'cambiarPass',name:'Cambiar Contraseña',icon:'bi bi-key me-2', element: <CambiarPassword/>},
     ]
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Verificar si el localStorage está vacío
+        const localStorageIsEmpty = Object.keys(localStorage).length === 0;
+        // Si está vacío, redirigir a "/"
+        if (localStorageIsEmpty) {
+            navigate("/")
+        }
+    }, [Object.keys(localStorage).length]);
 
     return (
         <>

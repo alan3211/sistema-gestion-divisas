@@ -1,8 +1,7 @@
 import {memo, useContext, useEffect, useState} from "react";
-import {ModalConfirm} from "../../commons/modals";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {encryptRequest, OPTIONS, validaFechas, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
+import {encryptRequest, formattedDate, OPTIONS, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
 import {useCatalogo} from "../../../hook";
 import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
@@ -18,10 +17,7 @@ export const AltaClienteComplementario = memo(() => {
     const {propForm} =  useContext(AltaClienteContext);
     const {datosEscaneo,setShowAltaCliente,setContinuaOperacion,setCliente} = useContext(CompraVentaContext);
     const {
-        showModal,
-        setShowModal,
         closeModal,
-        hacerOperacion,
         } = useAltaComplementario();
 
     useEffect(() => {
@@ -406,7 +402,11 @@ export const AltaClienteComplementario = memo(() => {
                             <div className="form-floating mb-3">
                                 <input
                                     {...propForm.register("telefono", {
-                                        validate: (value) => validarNumeroTelefono("Telefono", value)
+                                        validate: (value) => validarNumeroTelefono("Telefono", value),
+                                        maxLength:{
+                                            value:15,
+                                            message:'El campo Teléfono como máximo debe de tener no mas de 15 digitos.'
+                                        },
                                     })}
                                     type="text"
                                     className={`form-control ${!!propForm.errors?.telefono ? 'is-invalid' : ''}`}
@@ -456,6 +456,10 @@ export const AltaClienteComplementario = memo(() => {
                                             value:true,
                                             message:'El campo Número Exterior no puede ser vacio.'
                                         },
+                                        maxLength:{
+                                            value:10,
+                                            message:'El campo Número Exterior como máximo debe de tener no mas de 10 caracteres.'
+                                        },
                                         validate: (value) => validarAlfaNumerico("Número Exterior",value)
                                     })}
                                     type="text"
@@ -490,7 +494,11 @@ export const AltaClienteComplementario = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("numero_interior",{
-                                        validate: (value) => validarAlfaNumerico("Número Interior",value)
+                                        validate: (value) => validarAlfaNumerico("Número Interior",value),
+                                        maxLength:{
+                                            value:10,
+                                            message:'El campo Número Interior como máximo debe de tener no mas de 10 caracteres.'
+                                        },
                                     })}
                                     type="text"
                                     className={`form-control ${!!propForm.errors?.numero_interior ? 'invalid-input':''}`}
@@ -520,6 +528,7 @@ export const AltaClienteComplementario = memo(() => {
                                     name="vigencia"
                                     placeholder="Ingresa la vigencia de la identificación"
                                     autoComplete="off"
+                                    min={formattedDate}
                                 />
                                 <label htmlFor="vigencia">VIGENCIA IDENTIFICACIÓN</label>
                                 {

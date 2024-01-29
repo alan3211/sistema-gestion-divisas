@@ -6,6 +6,8 @@ import {FondosSucursal} from "./FondosSucursal";
 import {EstatusDotaciones} from "../tesoreria/EstatusDotaciones";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 import {SolicitudValores} from "./SolicitudValores";
+import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 export const Logistica = () => {
     const moduleName= {
@@ -21,6 +23,17 @@ export const Logistica = () => {
         {id:'estatus-dot',name:'Estatus Dotaciones',icon:'ri ri-dashboard-2-line me-2',element: <EstatusDotaciones/>},
         {id:'solicita-valores',name:'Solicitud de Valores a Sucursal',icon:'bi bi-receipt me-2',element: <SolicitudValores/>},
     ];
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Verificar si el localStorage está vacío
+        const localStorageIsEmpty = Object.keys(localStorage).length === 0;
+        // Si está vacío, redirigir a "/"
+        if (localStorageIsEmpty) {
+            navigate("/")
+        }
+    }, [Object.keys(localStorage).length]);
 
     return (
         <>

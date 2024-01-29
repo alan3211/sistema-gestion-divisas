@@ -407,7 +407,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                         <input
                                             {...register(`${getPropiedad('denominacion',elemento)}`, {
                                                 validate: {
-                                                    validacionMN: (value) => /^[1-9]\d*$/.test(value) || value === 0,
+                                                    validacionMN: (value) => /^[0-9]\d*$/.test(value) || value === 0,
                                                 },
                                             })}
                                             type="text"
@@ -418,7 +418,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                                 const inputValue = e.target.value;
                                                 const newValue = /^[0-9]\d*$/.test(inputValue) ? inputValue : 0;
 
-                                                if(parseInt(newValue) > 0) {
+                                                if(parseInt(newValue) >= 0) {
                                                     setDifParcial((prevDifParcial) => {
                                                         // Crear una copia del estado actual
                                                         const updatedDifParcial = [...prevDifParcial];

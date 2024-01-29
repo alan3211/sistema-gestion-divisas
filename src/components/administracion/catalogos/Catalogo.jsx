@@ -5,6 +5,8 @@ import {useForm} from "react-hook-form";
 import {useCatalogo} from "../../../hook/useCatalogo";
 import {Monedas} from "./Monedas";
 import {Zonas} from "./Zonas";
+import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 export const Catalogo = () => {
 
@@ -22,6 +24,17 @@ export const Catalogo = () => {
         Sucursales: <Sucursales/>,
         Zonas: <Zonas/>,
     }
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Verificar si el localStorage está vacío
+        const localStorageIsEmpty = Object.keys(localStorage).length === 0;
+        // Si está vacío, redirigir a "/"
+        if (localStorageIsEmpty) {
+            navigate("/")
+        }
+    }, [Object.keys(localStorage).length]);
 
 
 

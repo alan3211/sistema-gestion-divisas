@@ -1,15 +1,15 @@
-import {encryptRequest, formattedDate, OPTIONS, validaFechas} from "../../../utils";
+import {encryptRequest, formattedDate, OPTIONS} from "../../../utils";
 import {useForm} from "react-hook-form";
-import {useCatalogo} from "../../../hook";
-import {consultaEnvioSucursal, estatusOperaciones} from "../../../services/operacion-tesoreria";
-import {TableComponent} from "../../commons/tables";
 import {useEffect, useState} from "react";
 import {dataG} from "../../../App";
 import {cierreSucursalServ} from "../../../services/operacion-sucursal";
 import {ModalTicket} from "../../commons/modals/ModalTicket";
 import {toast} from "react-toastify";
+import {ModalLoading} from "../../commons/modals/ModalLoading";
 
 export const CierreSucursal = () => {
+
+    const [guarda, setGuarda] = useState(false);
 
     const { register, handleSubmit
         , formState: {errors}, setValue} = useForm();
@@ -17,11 +17,17 @@ export const CierreSucursal = () => {
     const [currentDate, setCurrentDate] = useState('');
 
     const onSubmitCierraOperacion = handleSubmit(async (data) => {
+        setGuarda(true);
         data.sucursal = dataG.sucursal;
         data.usuario = dataG.usuario;
         const encryptedData = encryptRequest(data);
         const mensaje = await cierreSucursalServ(encryptedData);
-        toast.warn(mensaje,OPTIONS);
+        if(mensaje.startsWith('No')){
+            toast.warn(mensaje,OPTIONS);
+        }else {
+            toast.success(mensaje,OPTIONS);
+        }
+        setGuarda(false);
         setShowModal(false);
     });
 
@@ -30,6 +36,12 @@ export const CierreSucursal = () => {
         setValue("fecha_operacion",formattedDate);
         setCurrentDate(formattedDate);
     }, []);
+
+    const optionsLoad = {
+        showModal: guarda,
+        title: `Realizando cierre de sucursal ...`,
+    };
+
 
     return(
         <form className="container justify-content-center align-items-center mt-4">
@@ -71,6 +83,9 @@ export const CierreSucursal = () => {
                     </button>
                 </div>
             </div>
+            {
+                guarda && <ModalLoading options={optionsLoad} />
+            }
             {
                 showModal && (
                     <ModalTicket title="¿Está seguro de confirmar el cierre de las operaciones correspondientes al día de hoy?"

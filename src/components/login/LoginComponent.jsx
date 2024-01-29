@@ -6,6 +6,7 @@ import {toast} from "react-toastify";
 import {dataG} from "../../App";
 import jwt_decode from 'jwt-decode';
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 
 export const LoginComponent = () => {
@@ -52,7 +53,6 @@ export const LoginComponent = () => {
         }
 
     });
-
 
     return(
         <main>

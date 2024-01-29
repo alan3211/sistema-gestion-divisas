@@ -428,7 +428,6 @@ export const CalculadoraFormComponent = () => {
 
                             <div className="col-md-12 text-center">
                                 <button className="btn btn-primary me-2" onClick={capturaManual}>CAPTURA MANUAL</button>
-                                <button className="btn btn-orange" onClick={validaInformacion}>VALIDAR INFORMACIÓN</button>
                             </div>
                         </div>
                     </ModalGenericTool>)

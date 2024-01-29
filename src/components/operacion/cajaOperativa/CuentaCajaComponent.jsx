@@ -33,7 +33,6 @@ export const CuentaCajaComponent = ({tipo}) => {
         setResetFunction(reset);
     };
 
-
     const options = {
         tools: [
             {columna:"Denominaciones",tool:'ver-denominaciones', deps:{setShowDetalle,setDataDenominacion,setMoneda,resetForm:resetFunction}},

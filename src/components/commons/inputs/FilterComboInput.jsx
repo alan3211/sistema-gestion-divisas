@@ -40,14 +40,16 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input}) =
         propForm.setValue(name, option.id); // Establece el valor en el formulario
     };
 
-    console.log("FORM", propForm)
-
     return (
         <div className="form-floating mb-3">
             <input
                 type="text"
                 {...propForm.register(name, {
                     required: `El campo ${name} es requerido.`,
+                    maxLength:{
+                        value: name === 'sucursal' ? 5:3,
+                        message:`El campo ${name} como máximo debe de tener no mas de ${name === 'sucursal' ? 5:3} caracteres.`
+                    },
                 })}
                 value={inputValue}
                 onChange={handleInputChange}

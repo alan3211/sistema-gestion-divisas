@@ -4,6 +4,8 @@ import {TabsLayout} from "../../commons/tabs";
 import {AsignaUsuario} from "./AsignaUsuario";
 import {BloqueaUsuario} from "./BloqueaUsuario";
 import {ConsultaUsuarios} from "./ConsultaUsuarios";
+import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 export const Usuarios = () => {
 
@@ -19,6 +21,17 @@ export const Usuarios = () => {
         {id:'asigna-suc',name:'Asignar Usuarios',icon:'bi bi-person-check-fill me-2',element:<AsignaUsuario/>},
         {id:'bloq-usuario',name:'Bloquear/Desbloquear Usuario',icon:'bi bi-person-fill me-2',element: <BloqueaUsuario/>},
     ];
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Verificar si el localStorage está vacío
+        const localStorageIsEmpty = Object.keys(localStorage).length === 0;
+        // Si está vacío, redirigir a "/"
+        if (localStorageIsEmpty) {
+            navigate("/")
+        }
+    }, [Object.keys(localStorage).length]);
 
     return(
         <Layout moduleName={moduleName}>

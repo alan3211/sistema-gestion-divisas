@@ -5,6 +5,7 @@ import {useEffect} from "react";
 import {TableroComponent} from "./TableroComponent";
 import {LogoGrocerys} from "./LogoGrocerys";
 import {encryptRequest, OPTIONS} from "../../../utils";
+import {useNavigate} from "react-router-dom";
 
 
 export const MainComponent = () => {
@@ -48,6 +49,18 @@ export const MainComponent = () => {
 
         return false;
     }
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Verificar si el localStorage está vacío
+        const localStorageIsEmpty = Object.keys(localStorage).length === 0;
+        // Si está vacío, redirigir a "/"
+        if (localStorageIsEmpty) {
+            navigate("/")
+        }
+    }, [Object.keys(localStorage).length]);
+
 
 
     return(
