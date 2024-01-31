@@ -155,6 +155,8 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
+        dataFormulario.moneda=moneda;
+        dataFormulario.monto= denominacionD.calculateGrandTotal();
 
         let denominacionesDotacion = denominacionD.getValues();
         const formValuesD = getDenominacion(moneda,denominacionesDotacion)
@@ -209,6 +211,9 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     const guardarCambio = async() => {
 
+        console.log("data del cambio");
+        console.log(data);
+
         let denominacionesCambio = denominacionC.getValues();
 
         const formValuesC = getDenominacion(operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda,denominacionesCambio);
@@ -227,7 +232,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         console.log("CAMBIO!: ",cambio);
 
         const values = {
-            cliente: data.cliente,
+            cliente: data.Cliente,
             ticket: data.ticket,
             cantidad_entregar: parseFloat(cambio),
             monto: 0.0,
@@ -240,6 +245,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                 obtenerObjetoDenominaciones(formValuesC),
             ]
         }
+        console.log("VALUES DEL CAMBIO: ",values);
         const encryptedData = encryptRequest(values);
 
         const resultado = await realizarOperacion(encryptedData);

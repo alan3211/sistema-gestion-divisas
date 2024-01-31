@@ -266,9 +266,9 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     const validaCantidad = () =>{
 
-        if(parseInt(cantidadDisponible) === 0 || totalMonto.reduce((acc, currentValue) => acc + currentValue,0) === 0){
+        if(parseFloat(cantidadDisponible) === 0.0 || totalMonto.reduce((acc, currentValue) => acc + currentValue,0) === 0.0){
             return true
-        }else if(totalMonto.reduce((acc, currentValue) => acc + currentValue,0) > parseInt(cantidadDisponible)){
+        }else if(totalMonto.reduce((acc, currentValue) => acc + currentValue,0.0) > parseFloat(cantidadDisponible)){
             return true
         }else{
             return false;

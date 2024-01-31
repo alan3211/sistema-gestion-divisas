@@ -2,7 +2,7 @@ import './CombosComponent.css';
 import {useContext, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 
-export const FilterComboInput = ({ propFormulario,name, label, options,input}) => {
+export const FilterComboInput = ({ propFormulario,name, label, options,input,tabIndex}) => {
     const {propForm} =  useContext(AltaClienteContext) || { propForm: propFormulario };
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [inputValue, setInputValue] = useState(input);
@@ -11,6 +11,9 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input}) =
     const handleInputChange = (e) => {
         const inputValue = e.target.value.toUpperCase();
         setInputValue(inputValue);
+
+        propForm.trigger(name);
+
         console.log("INPUT:", inputValue)
         if (inputValue === '') return;
 
@@ -56,6 +59,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input}) =
                 className={`form-control ${propForm.errors[name] ? 'is-invalid' : ''}`}
                 placeholder={`Filtrar por ${name}`}
                 autoComplete="off"
+                tabIndex={tabIndex}
             />
             {showDropdown && (
                 <div className="combo-dropdown">

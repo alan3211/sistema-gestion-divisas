@@ -60,7 +60,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
     const onEnvioValores = async (data) => {
         console.log("DATA:",data);
         setGuarda(true);
-
         const values = {
             id_operacion: item.ID,
             operacion:item.Operacion,

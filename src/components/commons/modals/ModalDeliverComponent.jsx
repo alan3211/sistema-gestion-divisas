@@ -269,12 +269,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
         dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
+        dataFormulario.moneda=moneda;
+        dataFormulario.monto= denominacionD.calculateGrandTotal();
 
         let denominacionesDotacion = denominacionD.getValues();
         const formValuesD = getDenominacion(moneda,denominacionesDotacion)
         eliminarDenominacionesConCantidadCero(formValuesD);
         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
-        denominaciones.divisa = moneda;
+        denominaciones.moneda = moneda;
         denominaciones.tipoOperacion = '0';
         denominaciones.movimiento = 'DOTACION RAPIDA';
 

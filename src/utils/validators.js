@@ -2,7 +2,7 @@ export const validaFechas = (fecha) => {
     // Verificar el formato de la fecha
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!fechaRegex.test(fecha)) {
-        return "El formato de fecha es inválido. Utiliza el formato YYYY-MM-DD.";
+        return "El formato de fecha es inválido. Utiliza el formato DD-MM-AAAA.";
     }
 
     // Obtener el año, mes y día de la fecha actual
@@ -13,17 +13,6 @@ export const validaFechas = (fecha) => {
 
     // Obtener el año, mes y día de la fecha proporcionada
     const [yearNacimiento, monthNacimiento, dayNacimiento] = fecha.split("-").map(Number);
-
-    // Calcular la edad
-    let edad = yearActual - yearNacimiento;
-    if (monthActual < monthNacimiento || (monthActual === monthNacimiento && dayActual < dayNacimiento)) {
-        edad--;
-    }
-
-    // Verificar si es mayor de edad
-    if (edad < 18) {
-        return "El usuario es menor de edad.";
-    }
 
     // Validar año bisiesto
     const esBisiesto = (year) => (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
@@ -41,6 +30,17 @@ export const validaFechas = (fecha) => {
 
     if (dayNacimiento < 1 || dayNacimiento > diasEnMes) {
         return `El día debe estar entre 1 y ${diasEnMes} para el mes y año proporcionados.`;
+    }
+
+    // Calcular la edad
+    let edad = yearActual - yearNacimiento;
+    if (monthActual < monthNacimiento || (monthActual === monthNacimiento && dayActual < dayNacimiento)) {
+        edad--;
+    }
+
+    // Verificar si es mayor de edad
+    if (edad < 18) {
+        return "El usuario es menor de edad.";
     }
 
     return true;

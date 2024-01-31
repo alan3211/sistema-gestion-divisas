@@ -1,7 +1,7 @@
 import {memo, useContext, useEffect, useState} from "react";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {encryptRequest, formattedDate, OPTIONS, validarAlfaNumerico, validarNumeroTelefono} from "../../../utils";
+import {encryptRequest, formattedDate, OPTIONS, validarAlfaNumerico, validarNumeroTelefono, year} from "../../../utils";
 import {useCatalogo} from "../../../hook";
 import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
@@ -158,6 +158,10 @@ export const AltaClienteComplementario = memo(() => {
                                         id="genero"
                                         name="genero"
                                         aria-label="GENERO"
+                                        onChange={()=> {
+                                            propForm.trigger('genero');
+                                        }}
+                                        tabIndex="1"
                                     >
                                         <option value="0">SELECCIONA UNA OPCIÓN</option>
                                         {
@@ -191,6 +195,10 @@ export const AltaClienteComplementario = memo(() => {
                                     id="id_actividad_economica"
                                     name="id_actividad_economica"
                                     aria-label="Actividad Económica"
+                                    onChange={()=>{
+                                        propForm.trigger('id_actividad_economica');
+                                    }}
+                                    tabIndex="2"
                                 >
                                     <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
@@ -215,6 +223,7 @@ export const AltaClienteComplementario = memo(() => {
                                 label="NACIONALIDAD"
                                 options={catalogo[1] || []}
                                 input={propForm.watch("nacionalidad")}
+                                tabIndex="3"
                             />
                         </div>
                         <div className="col-md-3">
@@ -224,6 +233,7 @@ export const AltaClienteComplementario = memo(() => {
                                 label="PAÍS NACIMIENTO"
                                 options={catalogo[1] || []}
                                 input={propForm.watch("pais_nacimiento")}
+                                tabIndex="4"
                             />
                         </div>
                     </div>
@@ -244,6 +254,10 @@ export const AltaClienteComplementario = memo(() => {
                                     id="estado"
                                     name="estado"
                                     aria-label="Estado"
+                                    onChange={()=>{
+                                        propForm.trigger('estado');
+                                    }}
+                                    tabIndex="5"
                                 >
                                     <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
@@ -278,6 +292,10 @@ export const AltaClienteComplementario = memo(() => {
                                     name="municipio"
                                     aria-label="Municipio"
                                     disabled={(propForm.watch('municipio') === '0') && municipios.length === 0}
+                                    onChange={()=>{
+                                        propForm.trigger('municipio');
+                                    }}
+                                    tabIndex="6"
                                 >
                                     <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
@@ -312,6 +330,10 @@ export const AltaClienteComplementario = memo(() => {
                                     name="colonia"
                                     aria-label="Colonia"
                                     disabled={(propForm.watch('colonia') === '0') && colonias.length === 0}
+                                    onChange={()=>{
+                                        propForm.trigger('colonia');
+                                    }}
+                                    tabIndex="7"
                                 >
                                     <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
@@ -346,6 +368,10 @@ export const AltaClienteComplementario = memo(() => {
                                 name="codigo_postal"
                                 aria-label="Código Postal"
                                 disabled={(propForm.watch('codigo_postal') === '0') && codigoPostal.length === 0}
+                                onChange={()=>{
+                                    propForm.trigger('codigo_postal');
+                                }}
+                                tabIndex="8"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -367,7 +393,6 @@ export const AltaClienteComplementario = memo(() => {
                     <div className="row">
                         <div className="col-md-2">
                                 <div className="form-floating mb-3">
-
                                             <select
                                                 {...propForm.register("codigo_telefono",{
                                                     required:{
@@ -382,6 +407,10 @@ export const AltaClienteComplementario = memo(() => {
                                                 id="codigo_telefono"
                                                 name="codigo_telefono"
                                                 aria-label="Codigo Telefono"
+                                                onChange={()=>{
+                                                    propForm.trigger('codigo_telefono');
+                                                }}
+                                                tabIndex="9"
                                             >
                                                 {
                                                     catalogo[10]?.map((ele) => (
@@ -414,6 +443,10 @@ export const AltaClienteComplementario = memo(() => {
                                     name="telefono"
                                     placeholder="Ingresa el teléfono"
                                     autoComplete="off"
+                                    onChange={()=>{
+                                        propForm.trigger('telefono');
+                                    }}
+                                    tabIndex="10"
                                 />
                                 <label htmlFor="telefono">TELÉFONO</label>
                                 {propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>}
@@ -439,8 +472,10 @@ export const AltaClienteComplementario = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("calle", upperCaseValue);
+                                        propForm.trigger('calle');
                                     }}
                                     autoComplete="off"
+                                    tabIndex="11"
                                 />
                                 <label htmlFor="calle">CALLE, AVENIDA, BOULEVARD,CERRADA</label>
                                 {
@@ -471,9 +506,11 @@ export const AltaClienteComplementario = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("numero_exterior", upperCaseValue);
+                                        propForm.trigger('numero_exterior');
                                     }}
                                     autoComplete="off"
                                     disabled={controlName}
+                                    tabIndex="12"
                                 />
                                 <label htmlFor="numero_exterior">NÚMERO EXTERIOR</label>
                                 {
@@ -483,6 +520,7 @@ export const AltaClienteComplementario = memo(() => {
                                     <input className="form-check-input" type="checkbox" id="numero_exteriorC"
                                            onClick={()=>toggleCheck('numero_exterior')} checked={controlName}
                                            autoComplete="off"
+                                           tabIndex="23"
                                     />
                                     <label className="form-check-label" htmlFor="numero_exteriorc">SIN NÚMERO EXTERIOR</label>
                                 </div>
@@ -509,8 +547,10 @@ export const AltaClienteComplementario = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("numero_interior", upperCaseValue);
+                                        propForm.trigger('numero_interior');
                                     }}
                                     autoComplete="off"
+                                    tabIndex="13"
                                 />
                                 <label htmlFor="numero_interior">NÚMERO INTERIOR</label>
                                 {
@@ -535,6 +575,11 @@ export const AltaClienteComplementario = memo(() => {
                                     placeholder="Ingresa la vigencia de la identificación"
                                     autoComplete="off"
                                     min={formattedDate}
+                                    onChange={()=>{
+                                        propForm.trigger('vigencia');
+                                    }}
+                                    tabIndex="14"
+                                    max={`${year+10}-12-31`}
                                 />
                                 <label htmlFor="vigencia">VIGENCIA IDENTIFICACIÓN</label>
                                 {
@@ -564,6 +609,10 @@ export const AltaClienteComplementario = memo(() => {
                                 id="monto"
                                 name="monto"
                                 aria-label="Monto"
+                                onChange={()=>{
+                                    propForm.trigger('monto');
+                                }}
+                                tabIndex="15"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -597,6 +646,10 @@ export const AltaClienteComplementario = memo(() => {
                                 id="frecuencia"
                                 name="frecuencia"
                                 aria-label="Frecuencia"
+                                onChange={()=>{
+                                    propForm.trigger('frecuencia');
+                                }}
+                                tabIndex="16"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -630,6 +683,10 @@ export const AltaClienteComplementario = memo(() => {
                                 id="numero_operaciones"
                                 name="numero_operaciones"
                                 aria-label="# Operaciones"
+                                onChange={()=>{
+                                    propForm.trigger('numero_operaciones');
+                                }}
+                                tabIndex="17"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -665,6 +722,10 @@ export const AltaClienteComplementario = memo(() => {
                                 id="origen_recursos"
                                 name="origen_recursos"
                                 aria-label="Origen Recursos"
+                                onChange={()=>{
+                                    propForm.trigger('origen_recursos');
+                                }}
+                                tabIndex="18"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -703,8 +764,10 @@ export const AltaClienteComplementario = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("esp_origen_recursos", upperCaseValue);
+                                        propForm.trigger('esp_origen_recursos');
                                     }}
                                     autoComplete="off"
+                                    tabIndex="20"
                                 />
                                 <label htmlFor="esp_origen_recursos">ESPECIFIQUE ORIGEN RECURSOS</label>
                                 {
@@ -729,6 +792,10 @@ export const AltaClienteComplementario = memo(() => {
                                 id="destino_recursos"
                                 name="destino_recursos"
                                 aria-label="Destino Recursos"
+                                onChange={()=>{
+                                    propForm.trigger('destino_recursos');
+                                }}
+                                tabIndex="19"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -767,8 +834,10 @@ export const AltaClienteComplementario = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("esp_destino_recursos", upperCaseValue);
+                                        propForm.trigger('esp_destino_recursos');
                                     }}
                                     autoComplete="off"
+                                    tabIndex="21"
                                 />
                                 <label htmlFor="esp_destino_recursos">ESPECIFIQUE DESTINO RECURSOS</label>
                                 {
@@ -783,6 +852,7 @@ export const AltaClienteComplementario = memo(() => {
                             <button
                                 type="button"
                                 onClick={handleValidateFinalForm}
+                                tabIndex="22"
                                 className="m-2 btn btn-primary d-grid gap-2">
                                 <span
                                     className="bi bi-check-circle-fill me-2"

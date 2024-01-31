@@ -58,6 +58,8 @@ export const AccionesBoveda = ({item, index,refresh}) => {
             factura: data.factura,
         }
         console.log("Denominaciones ingresadas: ", myDenominacion)
+
+        if(Object.values(myDenominacion).length !== 0){
         // Combina los objetos en uno solo
         const objetoCombinado = myDenominacion.reduce((resultado, objeto) => {
             for (const key in objeto) {
@@ -77,9 +79,8 @@ export const AccionesBoveda = ({item, index,refresh}) => {
         values.denominacion = [
             denominaciones,
         ]
+        }
 
-        console.log("CONFIRMA DOTACION A A BOVEDA")
-        console.log(values)
         const encryptedData = encryptRequest(values);
         const resultado = await accionesSolicitudBoveda(encryptedData);
 
