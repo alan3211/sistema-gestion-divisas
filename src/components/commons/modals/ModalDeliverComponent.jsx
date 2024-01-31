@@ -506,7 +506,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                                 name="denominacion_cambio"
                                                 aria-label="DENOMINACION"
                                             >
-                                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                                 {
                                                     dataMoneda?.map((ele) => (
                                                         <option key={ele.Denominacion + '-' + ele["Billetes Disponibles"]}

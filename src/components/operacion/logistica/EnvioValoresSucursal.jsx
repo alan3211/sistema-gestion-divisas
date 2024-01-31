@@ -160,7 +160,7 @@ export const EnvioValoresSucursal = () => {
                         name="moneda"
                         aria-label="Moneda"
                     >
-                        <option value="0">SELECCIONA UNA OPCIÓN</option>
+                        <option value="">SELECCIONA UNA OPCIÓN</option>
                         {
                             catalogo[0]?.map((ele) => (
                                 <option key={ele.id + '-' + ele.descripcion}

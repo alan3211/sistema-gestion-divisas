@@ -191,7 +191,7 @@ export const DotacionCajaSucursal = () => {
                         name="cajero"
                         aria-label="cajero"
                     >
-                        <option value="0">SELECCIONA UNA OPCIÓN</option>
+                        <option value="">SELECCIONA UNA OPCIÓN</option>
                         {
                            usuariosCombo?.map((ele) => (
                                 <option key={ele.Usu + '-' + ele.Nombre}
@@ -250,7 +250,7 @@ export const DotacionCajaSucursal = () => {
                         name="moneda"
                         aria-label="Moneda"
                     >
-                        <option value="0">SELECCIONA UNA OPCIÓN</option>
+                        <option value="">SELECCIONA UNA OPCIÓN</option>
                         {
                             catalogo[0]?.map((ele) => (
                                 <option key={ele.id + '-' + ele.descripcion}

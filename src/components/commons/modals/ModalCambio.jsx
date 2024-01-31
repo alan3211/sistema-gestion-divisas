@@ -407,7 +407,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                             name="denominacion_cambio"
                                             aria-label="DENOMINACION"
                                         >
-                                            <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                            <option value="">SELECCIONA UNA OPCIÓN</option>
                                             {
                                                 dataMoneda?.map((ele) => (
                                                     <option key={ele.Denominacion + '-' + ele["Billetes Disponibles"]}

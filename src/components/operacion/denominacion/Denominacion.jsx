@@ -8,7 +8,7 @@ export const Denominacion = ({type, moneda, options}) => {
     const valores = {type, moneda, options}
 
     const {
-        title, data, denominacionMappings, register, errors, setValue, calculateTotal,
+        title, data, denominacionMappings, register, errors, setValue,trigger, calculateTotal,
         validacionColor, calculateGrandTotal
     } = useDenominacion(valores)
 
@@ -39,15 +39,18 @@ export const Denominacion = ({type, moneda, options}) => {
                                                     {...register(`denominacion_${name}`, {
                                                         validate: {
                                                                 validacionMN: (value) => {
+                                                                    console.log("--------")
                                                                     console.log(type !== 'R')
                                                                     console.log(parseInt(value))
                                                                     console.log(elemento['Billetes Disponibles'])
                                                                     console.log(type !== 'R' && parseInt(value) > elemento['Billetes Disponibles'])
+                                                                    console.log(type !== 'R' && parseInt(value) > parseInt(elemento['Billetes Disponibles']))
+                                                                    console.log("--------")
                                                                     if ([6].includes(dataG.id_perfil)) {
                                                                         console.log("SIN VALIDAR")
                                                                         return validarMoneda(`denominacion_${name}`, value);
                                                                     } else {
-                                                                        if (type !== 'R' && parseInt(value) > elemento['Billetes Disponibles']) {
+                                                                        if (type !== 'R' && parseInt(value) > elemento['Billetes Disponibles'] || parseInt(value) <= 0) {
                                                                             setValue(`denominacion_${name}`, 0)
                                                                             return "No hay suficientes billetes disponibles.";
                                                                         }
@@ -58,9 +61,10 @@ export const Denominacion = ({type, moneda, options}) => {
                                                         }
                                                     )
                                                     }
-                                                    tabIndex={index + 1}
+                                                    tabIndex={index+1}
                                                     type="text"
                                                     name={`denominacion_${name}`}
+                                                    onBlur={() => trigger(`denominacion_${name}`)}
                                                     className={`form-control ${errors && errors[`denominacion_${name}`] ? 'is-invalid' : ''}`}
                                                     placeholder=" - "
                                                     disabled={dataG.perfil === 'Cajero' && options.tipo !== 'R' && elemento['Billetes Disponibles'] <= 0}

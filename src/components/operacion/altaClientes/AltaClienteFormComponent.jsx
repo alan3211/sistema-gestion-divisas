@@ -39,6 +39,14 @@ export const AltaClienteFormComponent = memo(() => {
 
     }, []);
 
+    const [tipoIdentificacionError, setTipoIdentificacionError] = useState(false);
+
+    useEffect(() => {
+        // Validar al montar el componente
+        const tipoIdentificacionValue = propForm.watch("tipo_identificacion");
+        const isValid = tipoIdentificacionValue !== "";
+        setTipoIdentificacionError(!isValid);
+    }, [propForm]);
 
     const nuevoCliente = () => {
         propForm.setComplementarios(true);
@@ -167,8 +175,8 @@ export const AltaClienteFormComponent = memo(() => {
                                             message: 'El campo Apellido Paterno no puede ser vacio.'
                                         },
                                         minLength: {
-                                            value: 2,
-                                            message: 'El campo Apellido Paterno como mínimo debe de tener al menos 2 caracteres.'
+                                            value: 1,
+                                            message: 'El campo Apellido Materno como mínimo debe de tener al menos 1 carácter.'
                                         },
                                         maxLength: {
                                             value: 25,
@@ -210,6 +218,10 @@ export const AltaClienteFormComponent = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("apellido_materno", {
+                                        minLength: {
+                                            value: 1,
+                                            message: 'El campo Apellido Materno como mínimo debe de tener al menos 1 carácter.'
+                                        },
                                         maxLength: {
                                             value: 25,
                                             message: 'El campo Apellido Materno como máximo debe de tener no mas de 25 caracteres.'
@@ -251,11 +263,7 @@ export const AltaClienteFormComponent = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("fecha_nacimiento", {
-                                        required: {
-                                            value: true,
-                                            message: 'El campo Fecha Nacimiento no puede ser vacio.'
-                                        },
-                                        validate: validaFechas
+                                        validate: (fecha) => validaFechas(fecha)
                                     })}
                                     type="date"
                                     className={`form-control ${!!propForm.errors?.fecha_nacimiento ? 'invalid-input' : ''}`}
@@ -263,13 +271,11 @@ export const AltaClienteFormComponent = memo(() => {
                                     name="fecha_nacimiento"
                                     placeholder="Ingresa la fecha de nacimiento"
                                     disabled={propForm.showEdit}
-                                    onChange={()=>{
-                                        propForm.trigger('fecha_nacimiento');
-                                    }}
                                     autoComplete="off"
                                     tabIndex="4"
                                     min="1900-01-01"
                                     max={`${year}-12-31`}
+                                    required
                                 />
                                 <label htmlFor="fecha_nacimiento">FECHA NACIMIENTO</label>
                                 {
@@ -289,16 +295,15 @@ export const AltaClienteFormComponent = memo(() => {
                                             message: 'Debes de seleccionar al menos un tipo de identificación.'
                                         },
                                         validate: value => {
-                                            return value !== "" || 'Debes seleccionar un tipo de identificación válido.'
+                                            const isValid = value !== "";
+                                            setTipoIdentificacionError(!isValid);
+                                            return isValid || 'Debes seleccionar un tipo de identificación válido.';
                                         }
                                     })}
-                                    className={`form-select ${!!propForm.errors?.tipo_identificacion ? 'invalid-input' : ''}`}
+                                    className={`form-select ${tipoIdentificacionError ? 'invalid-input' : ''}`}
                                     id="tipo_identificacion"
                                     name="tipo_identificacion"
                                     aria-label="Tipo Identificación"
-                                    onChange={()=>{
-                                        propForm.trigger('tipo_identificacion');
-                                    }}
                                     disabled={propForm.showEdit}
                                     tabIndex="5"
                                 >
@@ -314,8 +319,8 @@ export const AltaClienteFormComponent = memo(() => {
                                 </select>
                                 <label htmlFor="tipo_identificacion">TIPO IDENTIFICACIÓN</label>
                                 {
-                                    propForm.errors?.tipo_identificacion && <div
-                                        className="invalid-feedback-custom">{propForm.errors?.tipo_identificacion.message}</div>
+                                    tipoIdentificacionError  && <div
+                                        className="invalid-feedback-custom">Debes seleccionar un tipo de identificación válido.</div>
                                 }
                             </div>
                         </div>

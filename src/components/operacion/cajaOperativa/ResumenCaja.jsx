@@ -333,7 +333,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                 name="usuario_traspaso"
                                 aria-label="Usuario"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {usuariosCombo?.map((ele) => (
                                     <option
                                         key={ele.Usu + "-" + ele.Nombre}

@@ -266,7 +266,7 @@ export const Consulta = () => {
                             name="tipo_reporte"
                             aria-label="Tipo Reporte"
                         >
-                            <option value="0">SELECCIONA UNA OPCIÓN</option>
+                            <option value="">SELECCIONA UNA OPCIÓN</option>
                             {
                                 data?.map((ele) => (
                                     <option key={ele.Id + '-' + ele.Descripcion}
@@ -382,7 +382,7 @@ export const Consulta = () => {
                                     name="sucursal"
                                     aria-label="Sucursal"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[0]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -423,7 +423,7 @@ export const Consulta = () => {
                                     name="moneda"
                                     aria-label="Moneda"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {catalogo[1]?.map((ele) => (
                                         <option
                                             key={ele.id + "-" + ele.descripcion}

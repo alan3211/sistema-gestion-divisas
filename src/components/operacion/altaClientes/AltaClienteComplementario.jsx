@@ -158,12 +158,9 @@ export const AltaClienteComplementario = memo(() => {
                                         id="genero"
                                         name="genero"
                                         aria-label="GENERO"
-                                        onChange={()=> {
-                                            propForm.trigger('genero');
-                                        }}
                                         tabIndex="1"
                                     >
-                                        <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                        <option value="">SELECCIONA UNA OPCIÓN</option>
                                         {
                                             catalogo[9]?.map((ele) => (
                                                 <option key={ele.id + '-' + ele.descripcion}
@@ -195,12 +192,9 @@ export const AltaClienteComplementario = memo(() => {
                                     id="id_actividad_economica"
                                     name="id_actividad_economica"
                                     aria-label="Actividad Económica"
-                                    onChange={()=>{
-                                        propForm.trigger('id_actividad_economica');
-                                    }}
                                     tabIndex="2"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[0]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -254,12 +248,9 @@ export const AltaClienteComplementario = memo(() => {
                                     id="estado"
                                     name="estado"
                                     aria-label="Estado"
-                                    onChange={()=>{
-                                        propForm.trigger('estado');
-                                    }}
                                     tabIndex="5"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[3]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -292,12 +283,9 @@ export const AltaClienteComplementario = memo(() => {
                                     name="municipio"
                                     aria-label="Municipio"
                                     disabled={(propForm.watch('municipio') === '0') && municipios.length === 0}
-                                    onChange={()=>{
-                                        propForm.trigger('municipio');
-                                    }}
                                     tabIndex="6"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         municipios?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -330,12 +318,9 @@ export const AltaClienteComplementario = memo(() => {
                                     name="colonia"
                                     aria-label="Colonia"
                                     disabled={(propForm.watch('colonia') === '0') && colonias.length === 0}
-                                    onChange={()=>{
-                                        propForm.trigger('colonia');
-                                    }}
                                     tabIndex="7"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         colonias?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -368,12 +353,9 @@ export const AltaClienteComplementario = memo(() => {
                                 name="codigo_postal"
                                 aria-label="Código Postal"
                                 disabled={(propForm.watch('codigo_postal') === '0') && codigoPostal.length === 0}
-                                onChange={()=>{
-                                    propForm.trigger('codigo_postal');
-                                }}
                                 tabIndex="8"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     codigoPostal?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -407,9 +389,6 @@ export const AltaClienteComplementario = memo(() => {
                                                 id="codigo_telefono"
                                                 name="codigo_telefono"
                                                 aria-label="Codigo Telefono"
-                                                onChange={()=>{
-                                                    propForm.trigger('codigo_telefono');
-                                                }}
                                                 tabIndex="9"
                                             >
                                                 {
@@ -433,8 +412,8 @@ export const AltaClienteComplementario = memo(() => {
                                     {...propForm.register("telefono", {
                                         validate: (value) => validarNumeroTelefono("Telefono", value),
                                         maxLength:{
-                                            value:15,
-                                            message:'El campo Teléfono como máximo debe de tener no mas de 15 digitos.'
+                                            value:10,
+                                            message:'El campo Teléfono como máximo debe de tener no mas de 10 digitos.'
                                         },
                                     })}
                                     type="text"
@@ -609,12 +588,9 @@ export const AltaClienteComplementario = memo(() => {
                                 id="monto"
                                 name="monto"
                                 aria-label="Monto"
-                                onChange={()=>{
-                                    propForm.trigger('monto');
-                                }}
                                 tabIndex="15"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[4]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -646,12 +622,9 @@ export const AltaClienteComplementario = memo(() => {
                                 id="frecuencia"
                                 name="frecuencia"
                                 aria-label="Frecuencia"
-                                onChange={()=>{
-                                    propForm.trigger('frecuencia');
-                                }}
                                 tabIndex="16"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[5]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -683,12 +656,9 @@ export const AltaClienteComplementario = memo(() => {
                                 id="numero_operaciones"
                                 name="numero_operaciones"
                                 aria-label="# Operaciones"
-                                onChange={()=>{
-                                    propForm.trigger('numero_operaciones');
-                                }}
                                 tabIndex="17"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[6]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -722,12 +692,9 @@ export const AltaClienteComplementario = memo(() => {
                                 id="origen_recursos"
                                 name="origen_recursos"
                                 aria-label="Origen Recursos"
-                                onChange={()=>{
-                                    propForm.trigger('origen_recursos');
-                                }}
                                 tabIndex="18"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[7]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -792,12 +759,9 @@ export const AltaClienteComplementario = memo(() => {
                                 id="destino_recursos"
                                 name="destino_recursos"
                                 aria-label="Destino Recursos"
-                                onChange={()=>{
-                                    propForm.trigger('destino_recursos');
-                                }}
                                 tabIndex="19"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[8]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}

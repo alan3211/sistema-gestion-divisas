@@ -293,7 +293,7 @@ export const CalculadoraFormComponent = () => {
                                 name="tipo_operacion"
                                 aria-label="Tipo de Operación"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[0]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -327,7 +327,7 @@ export const CalculadoraFormComponent = () => {
                                 name="moneda"
                                 aria-label="Moneda"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[1]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}

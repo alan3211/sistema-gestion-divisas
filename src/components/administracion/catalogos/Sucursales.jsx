@@ -164,7 +164,7 @@ export const Sucursales = () => {
                                     name="region"
                                     aria-label="Región"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[2]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -198,7 +198,7 @@ export const Sucursales = () => {
                                     name="estado"
                                     aria-label="Estado"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[3]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -232,7 +232,7 @@ export const Sucursales = () => {
                                     aria-label="Municipio"
                                     disabled={(watch('municipio') === '0') && municipios.length === 0}
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         municipios?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -265,7 +265,7 @@ export const Sucursales = () => {
                                     name="tipo_establecimiento"
                                     aria-label="Tipo"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[4]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}

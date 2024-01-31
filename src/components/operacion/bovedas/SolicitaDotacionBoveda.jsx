@@ -165,7 +165,7 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
                             aria-label="Moneda"
                             onChange={handleMonedaChange}
                         >
-                            <option value="0">SELECCIONA UNA OPCIÓN</option>
+                            <option value="">SELECCIONA UNA OPCIÓN</option>
                             {catalogo[0]?.map((ele) => (
                                 <option
                                     key={ele.id + "-" + ele.descripcion}
