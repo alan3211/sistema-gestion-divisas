@@ -12,8 +12,6 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
         const inputValue = e.target.value.toUpperCase();
         setInputValue(inputValue);
 
-        propForm.trigger(name);
-
         console.log("INPUT:", inputValue)
         if (inputValue === '') return;
 
@@ -35,6 +33,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
 
         setFilteredOptions(filteredOptions);
         setShowDropdown(filteredOptions.length > 0);
+        propForm.trigger(name);
     };
 
     const handleOptionClick = (option) => {

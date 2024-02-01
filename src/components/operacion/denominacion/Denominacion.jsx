@@ -28,53 +28,49 @@ export const Denominacion = ({type, moneda, options}) => {
                             </tr>
                             </thead>
                             <tbody>
-                                {data?.map((elemento,index) => {
-                                    let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
-                                    return (
-                                        <tr key={`denominacion_${name}`}>
-                                            {(type !== "R") && <td>{elemento['Billetes Disponibles']}</td>}
-                                            <td>{elemento.Denominacion}</td>
-                                            <td>
-                                                <input
-                                                    {...register(`denominacion_${name}`, {
-                                                        validate: {
-                                                                validacionMN: (value) => {
-                                                                    console.log("--------")
-                                                                    console.log(type !== 'R')
-                                                                    console.log(parseInt(value))
-                                                                    console.log(elemento['Billetes Disponibles'])
-                                                                    console.log(type !== 'R' && parseInt(value) > elemento['Billetes Disponibles'])
-                                                                    console.log(type !== 'R' && parseInt(value) > parseInt(elemento['Billetes Disponibles']))
-                                                                    console.log("--------")
-                                                                    if ([6].includes(dataG.id_perfil)) {
-                                                                        console.log("SIN VALIDAR")
-                                                                        return validarMoneda(`denominacion_${name}`, value);
-                                                                    } else {
-                                                                        if (type !== 'R' && parseInt(value) > elemento['Billetes Disponibles'] || parseInt(value) <= 0) {
-                                                                            setValue(`denominacion_${name}`, 0)
-                                                                            return "No hay suficientes billetes disponibles.";
-                                                                        }
-                                                                        return validarMoneda(`denominacion_${name}`, value);
-                                                                    }
+                            {data?.map((elemento, index) => {
+                                let name = denominacionMappings[elemento.Denominacion] || elemento.Denominacion;
+                                return (
+                                    <tr key={`denominacion_${name}`}>
+                                        {(type !== "R") && <td>{elemento['Billetes Disponibles']}</td>}
+                                        <td>{elemento.Denominacion}</td>
+                                        <td>
+                                            <input
+                                                {...register(`denominacion_${name}`, {
+                                                    validate: {
+                                                        validacionMN: (value) => {
+                                                            if ([6].includes(dataG.id_perfil)) {
+                                                                console.log("SIN VALIDAR")
+                                                                return validarMoneda(`denominacion_${name}`, value);
+                                                            } else {
+                                                                if (type !== 'R' && parseInt(value) > elemento['Billetes Disponibles'] || parseInt(value) <= 0) {
+                                                                    setValue(`denominacion_${name}`, 0)
+                                                                    return "No hay suficientes billetes disponibles.";
                                                                 }
+                                                                return validarMoneda(`denominacion_${name}`, value);
                                                             }
                                                         }
-                                                    )
                                                     }
-                                                    tabIndex={index+1}
-                                                    type="text"
-                                                    name={`denominacion_${name}`}
-                                                    onBlur={() => trigger(`denominacion_${name}`)}
-                                                    className={`form-control ${errors && errors[`denominacion_${name}`] ? 'is-invalid' : ''}`}
-                                                    placeholder=" - "
-                                                    disabled={dataG.perfil === 'Cajero' && options.tipo !== 'R' && elemento['Billetes Disponibles'] <= 0}
-                                                    autoComplete="off"
-                                                />
-                                            </td>
-                                            <td>{calculateTotal(elemento)}</td>
-                                        </tr>
-                                    )
-                                })}
+                                                })}
+                                                type="text"
+                                                name={`denominacion_${name}`}
+                                                //onBlur={() => trigger(`denominacion_${name}`)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Tab") {
+                                                        const inputName = `denominacion_${name}`;
+                                                        trigger(inputName);
+                                                    }
+                                                }}
+                                                className={`form-control ${errors && errors[`denominacion_${name}`] ? 'is-invalid' : ''}`}
+                                                placeholder=" - "
+                                                disabled={dataG.id_perfil === 4 && options.tipo !== 'R' && elemento['Billetes Disponibles'] <= 0}
+                                                autoComplete="off"
+                                            />
+                                        </td>
+                                        <td>{calculateTotal(elemento)}</td>
+                                    </tr>
+                                )
+                            })}
                             </tbody>
                             <tfoot className="sticky bottom-0">
                             <tr>
