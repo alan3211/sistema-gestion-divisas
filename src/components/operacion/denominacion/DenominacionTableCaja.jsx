@@ -1,9 +1,9 @@
-import {FormatoMoneda} from "../../../utils";
+import {FormatoDenominacion, FormatoMoneda} from "../../../utils";
 
 export const DenominacionTableCaja = ({data=[],monto,moneda}) => {
     console.log("TABLA CAJA", data)
     return (
-        <div className="table-responsive text-center mt-2">
+        <div className="table-responsive text-center mt-2" style={{maxHeight: "400px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}>
             <table className="table table-bordered table-hover">
                 <thead className="table-dark">
                 <tr>
@@ -16,7 +16,7 @@ export const DenominacionTableCaja = ({data=[],monto,moneda}) => {
                     let name = elemento.nombre;
                     return (
                         <tr key={`denominacion_${name}`}>
-                            <td>{parseFloat(elemento.nombre)}</td>
+                            <td>{FormatoDenominacion(parseFloat(elemento.nombre))}</td>
                             <td>{parseInt(elemento.cantidad)}</td>
                         </tr>
                     )

@@ -1,7 +1,6 @@
-import {FormatoMoneda, validarMoneda} from "../../../utils";
+import {FormatoDenominacion, FormatoMoneda, validarMoneda} from "../../../utils";
 import {useDenominacion} from "../../../hook";
 import {dataG} from "../../../App";
-import {useEffect} from "react";
 
 export const Denominacion = ({type, moneda, options}) => {
 
@@ -17,7 +16,7 @@ export const Denominacion = ({type, moneda, options}) => {
             <div className="text-center mt-2">
                 <h5 className="p-2 "><strong>{title}</strong></h5>
                 <div className="card-body">
-                    <div className="table-responsive custom-scrollbar" style={{maxHeight: "400px", overflowY: "auto"}}>
+                    <div className="table-responsive custom-scrollbar" style={{maxHeight: "400px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}>
                         <table className="table table-bordered table-hover">
                             <thead className="table-dark sticky top-0">
                             <tr>
@@ -33,7 +32,7 @@ export const Denominacion = ({type, moneda, options}) => {
                                 return (
                                     <tr key={`denominacion_${name}`}>
                                         {(type !== "R") && <td>{elemento['Billetes Disponibles']}</td>}
-                                        <td>{elemento.Denominacion}</td>
+                                        <td>{FormatoDenominacion(elemento.Denominacion)}</td>
                                         <td>
                                             <input
                                                 {...register(`denominacion_${name}`, {

@@ -250,9 +250,6 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         // Eliminar columnas según el array disabledColumnsExcel
         disabledColumnsExcel.forEach((columnToDelete) => {
             const columnIndex = headers.indexOf(columnToDelete);
-            console.log(headers)
-            console.log(columnToDelete)
-            console.log(columnIndex)
 
             if (columnIndex !== -1) {
                 // Eliminar la columna del array de headers
@@ -338,7 +335,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                             </label>
                         </div>
                     )}
-                    <div className="col-9 col-sm-8 col-md-9 col-lg-10">
+                    <div className="col-12">
                         <div className="row justify-content-end">
                             {buscar && result_set && (
                                 <div className="col-12 col-md-3 col-lg-3 mb-2">

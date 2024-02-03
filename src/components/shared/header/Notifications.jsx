@@ -17,22 +17,8 @@ export const Notifications = () => {
             usuario: dataG.usuario,
         }
         const encryptedData = encryptRequest(values);
-
-        const {total_rows} = await updateNotificacion(encryptedData);
-
-        // Copia el estado actual de notificaciones
-        const updatedNotifications = [...notifications];
-
-        if(total_rows !== 0) {
-            // Elimina la notificación seleccionada
-            updatedNotifications.splice(index, 1);
-
-            // Actualiza el estado
-            setNotifications(updatedNotifications);
-        }else{
-            setNotifications([]);
-        }
-
+        await updateNotificacion(encryptedData);
+        getNotificaciones();
     };
 
     useEffect(() => {

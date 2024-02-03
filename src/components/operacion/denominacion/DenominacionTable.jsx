@@ -1,4 +1,4 @@
-import { FormatoMoneda } from "../../../utils";
+import {FormatoDenominacion, FormatoMoneda} from "../../../utils";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -61,7 +61,7 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
     }, [billetesFisicos]);
 
     return (
-        <form className="table-responsive text-center mt-2 custom-scrollbar" style={{maxHeight: "400px", overflowY: "auto"}}>
+        <form className="table-responsive text-center mt-2 custom-scrollbar" style={{maxHeight: "400px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}>
             <table className="table table-bordered table-hover">
                 <thead className="table-dark sticky top-0">
                 <tr>
@@ -82,7 +82,7 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
 
                     return (
                         <tr key={`denominacion_${name}`}>
-                            <td>{name}</td>
+                            <td>{FormatoDenominacion(name)}</td>
                             <td>{
                                     elemento.hasOwnProperty("Cantidad a Recibir")
                                         ? parseFloat(elemento["Cantidad a Recibir"])

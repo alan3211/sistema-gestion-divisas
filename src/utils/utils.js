@@ -165,14 +165,11 @@ export const encryptRequest = (data) => {
     return encryptedBase64
 }
 
-export const recordValues = (values) =>{
-    if(!values.rememberMe){
-        localStorage.setItem("usuario",values.usuario);
-        localStorage.setItem("rememberMe",true);
-    }else{
-        localStorage.removeItem("usuario",values.usuario);
-        localStorage.removeItem("rememberMe",false);
+export const FormatoDenominacion = (value) => {
+    if(['.05','.10','.20','.50'].includes(value)){
+        return `${value } ¢`;
     }
+    return value;
 }
 
 export const DENOMINACIONES = {
