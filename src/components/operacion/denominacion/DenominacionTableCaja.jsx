@@ -16,7 +16,7 @@ export const DenominacionTableCaja = ({data=[],monto,moneda}) => {
                     let name = elemento.nombre;
                     return (
                         <tr key={`denominacion_${name}`}>
-                            <td>{FormatoDenominacion(parseFloat(elemento.nombre))}</td>
+                            <td>{FormatoDenominacion(parseFloat(name))}</td>
                             <td>{parseInt(elemento.cantidad)}</td>
                         </tr>
                     )

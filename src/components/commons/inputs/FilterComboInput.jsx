@@ -33,7 +33,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
 
         setFilteredOptions(filteredOptions);
         setShowDropdown(filteredOptions.length > 0);
-        propForm.trigger(name);
+        //propForm.trigger(name);
     };
 
     const handleOptionClick = (option) => {

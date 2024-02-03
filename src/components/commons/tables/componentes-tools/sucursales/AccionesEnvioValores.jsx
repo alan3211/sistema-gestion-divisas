@@ -65,7 +65,7 @@ export const AccionesEnvioValores = ({item, index, refresh}) => {
         closeModal: () => setShowModal(false),
         title:  (optionBtn === 1) ? 'Confirmación de Valores' :'Rechazar Envio de Solicitud de Valores',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
-        subtitle: (optionBtn === 1) ? 'Ingrese comentarios para este envio de valores.':'Ingrese el motivo por el cual desea rechazar la solicitud de valores.',
+        subtitle: (optionBtn === 1) ? 'Valide las denominaciones solicitadas.':'Ingrese el motivo por el cual desea rechazar la solicitud de valores.',
     };
 
     useEffect(() => {
@@ -96,7 +96,8 @@ export const AccionesEnvioValores = ({item, index, refresh}) => {
                 && (
                     <ModalGenericTool options={options}>
                         <div className="row">
-                            <div className={optionBtn === 1 ? 'col-md-6':'col-md-12'}>
+                            {
+                                optionBtn !== 1 && (<div className='col-md-12'>
                                 <div className="form-floating">
                                     <textarea
                                         {...register("motivo", {
@@ -134,17 +135,18 @@ export const AccionesEnvioValores = ({item, index, refresh}) => {
                                         <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
                                     }
                                 </div>
-                            </div>
+                            </div>)
+                            }
                             {
                                 optionBtn === 1 && (
-                                    <div className="col-md-6 mb-3">
+                                    <div className="col-md-12 mb-3">
                                         <DenominacionTableCaja data={dataDenominacion} moneda={item.Moneda} monto={item.Monto}/>
                                     </div>
                                 )
                             }
                             <div className="d-flex justify-content-end mt-3">
                                 <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
-                                        onClick={optionBtn === 1 ? handleConfirmaValores:handleRechazarEnvio} disabled={watch("motivo") === ""}>
+                                        onClick={optionBtn === 1 ? handleConfirmaValores:handleRechazarEnvio}>
                                     <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>

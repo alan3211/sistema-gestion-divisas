@@ -404,12 +404,12 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 <Modal.Footer>
                     <button className="btn btn-orange" onClick={solicitudDotacionRapida}>
                         <i className="bi bi-currency-exchange me-2"></i>
-                        DOTACIÓN RAPIDA
+                        DOTACIÓN PARCIAL
                     </button>
-                    <Button variant="success" onClick={solicitaCambio}>
+                   {/* <Button variant="success" onClick={solicitaCambio}>
                         <i className="bi bi-cash me-2"></i>
                         SOLICITAR DENOMINACIÓN
-                    </Button>
+                    </Button>*/}
                     <Button variant="primary" onClick={()=> hacerOperacion()} disabled={habilita.entrega || habilita.recibe}>
                         <i className="bi bi-arrow-left-right me-2"></i>
                         FINALIZAR OPERACIÓN

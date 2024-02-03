@@ -51,7 +51,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
         setGuarda(true)
         const values = {
             ID: item.ID,
-            accion: (optionBtn === 1) ? 'En transito' : 'Rechazado',
+            accion: (optionBtn === 1) ? 'Confirmado' : 'Rechazado',
             moneda: item.Divisa,
             motivo: watch("motivo"),
             operacion: 'DOTACION BOVEDA',

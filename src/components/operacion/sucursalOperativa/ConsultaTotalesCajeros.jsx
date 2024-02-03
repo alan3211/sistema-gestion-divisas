@@ -11,7 +11,7 @@ export const ConsultaTotalesCajeros = ({ data }) => {
     const [selectedElemento, setSelectedElemento] = useState(null);
 
     const options = {
-        size: 'md',
+        size: 'lg',
         showModal,
         closeModal: () => setShowModal(false),
         title: 'Detalle de Denominaciones',

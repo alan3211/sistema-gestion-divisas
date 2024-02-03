@@ -300,9 +300,9 @@ export const DotacionCajaSucursal = () => {
                             <button type="button" className="btn btn-secondary me-3" onClick={nuevoEnvio}>
                                 <i className="bi bi-plus"></i> NUEVA DOTACIÓN
                             </button>
-                            <button type="button" className="btn btn-primary"  onClick={terminarDotacion} disabled={finalizaOperacion || parseFloat(showDisponible.cantidad) === 0}>
+                            <button type="button" className="btn btn-success"  onClick={terminarDotacion} disabled={finalizaOperacion || parseFloat(showDisponible.cantidad) === 0}>
                                 <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
-                                FINALIZAR OPERACIÓN
+                                DOTAR CAJA
                             </button>
                         </div>
                     </>

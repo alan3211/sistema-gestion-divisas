@@ -166,7 +166,7 @@ export const encryptRequest = (data) => {
 }
 
 export const FormatoDenominacion = (value) => {
-    if(['.05','.10','.20','.50'].includes(value)){
+    if(['.05','.10','.20','.50',0.05,0.10,0.20,0.50].includes(value)){
         return `${value } ¢`;
     }
     return value;

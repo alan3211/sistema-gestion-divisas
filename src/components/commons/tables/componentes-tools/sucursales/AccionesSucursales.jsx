@@ -130,7 +130,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         },
         title: (optionBtn === 1) ? 'Aceptar Operación' : 'Rechazar Operación',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
-        subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y las denominaciones recibidas.'
+        subtitle: (optionBtn === 1) ? 'Favor de capturar las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas el movimiento.',
     };
 
@@ -181,47 +181,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
-                                        <div className="col-md-6 mt-5">
-                                            <div className="form-floating">
-                                                <textarea
-                                                    {...register("motivo", {
-                                                        required: {
-                                                            value: true,
-                                                            message: 'El campo Motivo no puede ser vacío.'
-                                                        },
-                                                        minLength: {
-                                                            value: 25,
-                                                            message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
-                                                        },
-                                                        maxLength: {
-                                                            value: 200,
-                                                            message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
-                                                        },
-                                                        validate: (value) => validarAlfaNumerico("Motivo", value)
-                                                    })}
-                                                    className={`form-control ${!!errors?.motivo ? 'is-invalid' : ''}`}
-                                                    id="motivo"
-                                                    name="motivo"
-                                                    placeholder="Ingresa el motivo de cancelación"
-                                                    onChange={(e) => {
-                                                        const upperCaseValue = e.target.value.toUpperCase();
-                                                        e.target.value = upperCaseValue;
-                                                        setValue("motivo", upperCaseValue);
-                                                    }}
-                                                    style={{
-                                                        height: '350px',
-                                                        resize: 'none'
-                                                    }}
-                                                />
-                                                <label htmlFor="motivo">MOTIVO</label>
-                                                {
-                                                    errors?.motivo &&
-                                                    <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
-                                                }
-                                            </div>
-
-                                        </div>
-                                        <div className="col-md-6">
+                                        <div className="col-md-12">
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
                                                 item.Operacion !== 'Dotación Sucursal'

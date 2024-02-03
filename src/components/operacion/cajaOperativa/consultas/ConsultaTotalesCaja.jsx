@@ -11,7 +11,7 @@ export const ConsultaTotalesCaja = ({data}) => {
     const [datos, setDatos] = useState([])
 
     const options = {
-        size:'md',
+        size:'lg',
         showModal,
         closeModal: () => setShowModal(false),
         title: 'Detalle de Denominaciones',
