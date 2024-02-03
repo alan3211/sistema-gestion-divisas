@@ -399,8 +399,8 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                 <div className="col-md-12">
                     <button type="button" className="m-2 btn btn-primary" onClick={onSubmit} disabled={validaCantidad()}>
                         <span className="me-2">
-                            GUARDAR
-                            <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
+                            DOTAR
+                            <span className="bi bi-cash-stack ms-2" role="status" aria-hidden="true"></span>
                         </span>
                     </button>
                 </div>

@@ -179,8 +179,8 @@ export const AltaClienteFormComponent = memo(() => {
                                             message: 'El campo Apellido Materno como mínimo debe de tener al menos 1 carácter.'
                                         },
                                         maxLength: {
-                                            value: 25,
-                                            message: 'El campo Apellido Paterno como máximo debe de tener no mas de 25 caracteres.'
+                                            value: 30,
+                                            message: 'El campo Apellido Paterno como máximo debe de tener no mas de 30 caracteres.'
                                         },
                                         validate: (value) => validarNombreApellido("Apellido Paterno", value)
                                     })}
@@ -223,8 +223,8 @@ export const AltaClienteFormComponent = memo(() => {
                                             message: 'El campo Apellido Materno como mínimo debe de tener al menos 1 carácter.'
                                         },
                                         maxLength: {
-                                            value: 25,
-                                            message: 'El campo Apellido Materno como máximo debe de tener no mas de 25 caracteres.'
+                                            value: 30,
+                                            message: 'El campo Apellido Materno como máximo debe de tener no mas de 30 caracteres.'
                                         },
                                         validate: (value) => validarNombreApellido("Apellido Materno", value)
                                     })}
@@ -364,10 +364,6 @@ export const AltaClienteFormComponent = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("correo_electronico", {
-                                        required: {
-                                            value: true,
-                                            message: 'El campo Correo Electrónico no puede ser vacio.'
-                                        },
                                         validate: (value) => validarCorreoElectronico(value)
                                     })}
                                     type="text"

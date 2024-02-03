@@ -2,11 +2,12 @@ import {Layout,CardLayout} from "../../commons";
 import {Identificaciones} from "./Identificaciones";
 import {Sucursales} from "./Sucursales";
 import {useForm} from "react-hook-form";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {useCatalogo} from "../../../hook";
 import {Monedas} from "./Monedas";
 import {Zonas} from "./Zonas";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
+import {Bancos} from "./Bancos";
 
 export const Catalogo = () => {
 
@@ -23,6 +24,7 @@ export const Catalogo = () => {
         Moneda: <Monedas/>,
         Sucursales: <Sucursales/>,
         Zonas: <Zonas/>,
+        Bancos: <Bancos/>
     }
 
     const navigate = useNavigate();

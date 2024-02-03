@@ -15,7 +15,7 @@ export const Tesoreria = () => {
     };
 
     const tabs = [
-        {id:'consulta',name:'Consulta',icon:'ri ri-search-line me-2', element: <ConsultaTesoreria type="tesoreria"/>},
+        {id:'consulta',name:'Analisis de Fondos',icon:'bi bi-bar-chart-fill me-2', element: <ConsultaTesoreria type="tesoreria"/>},
         {id:'dota-suc',name:'Operación Tesorería',icon:'ri ri-store-2-line me-2',element:<OperacionTesoreria perfil="T"/>},
         {id:'estatus-boveda',name:'Fondos Enviados a Boveda',icon:'bi bi-file-earmark-text me-2',element: <ConsultaBovedas perfil="T"/>},
     ];
