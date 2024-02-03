@@ -11,7 +11,7 @@ import {
     FormatoMoneda,
     formattedDate,
     hora,
-    OPTIONS,
+    OPTIONS, redondearNumero,
     validarMoneda
 } from "../../../utils";
 import {toast} from "react-toastify";
@@ -126,8 +126,8 @@ export const CalculadoraFormComponent = () => {
             clearForm();
         }else{
             setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
-            data.cantidad_entregar = parseInt(result.result_set[0].CantidadEntrega,10);
-            data.decimal_sobrante = parseFloat(result.result_set[0].CantidadEntrega) - parseInt(result.result_set[0].CantidadEntrega,10);
+            data.cantidad_entregar = redondearNumero(parseFloat(result.result_set[0].CantidadEntrega));
+            //data.decimal_sobrante = parseFloat(result.result_set[0].CantidadEntrega) - parseInt(result.result_set[0].CantidadEntrega,10);
             setShowCantidadEntregada(true);
         }
     });
@@ -142,7 +142,10 @@ export const CalculadoraFormComponent = () => {
         setShowAltaCliente(false);
     }
 
-    const preguntaNuevoUsuario = () => {
+    const preguntaNuevoUsuario = async() => {
+        const response = await getOperacion();
+        console.log("RESPONSE: ",response)
+        setDatos(response);
         setNuevoUsuario(true);
         setShowModal(false);
     }
@@ -154,9 +157,6 @@ export const CalculadoraFormComponent = () => {
         setContinuaOperacion(true);
         setNuevoUsuario(false);
         setShowModal(false);
-        const response = await getOperacion();
-        console.log("RESPONSE: ",response)
-        setDatos(response);
     }
 
     const muestraAltaCliente = () =>{
@@ -224,7 +224,7 @@ export const CalculadoraFormComponent = () => {
             monto: parseInt(datos.monto),
             divisa: datos.moneda,
             tipo_cambio: datos.tipo_cambio,
-            cantidad_entregar: datos.cantidad_entregar
+            cantidad_entregar: parseFloat(datos.cantidad_entregar)
         }
 
         console.log(operacionEnvia);
@@ -262,9 +262,19 @@ export const CalculadoraFormComponent = () => {
         subtitle:'Inicie el proceso de escaneo de documentos. Una vez completado, haga clic en el botón \'Validar Información\' para continuar con el registro del usuario.'
     }
 
+    /* Este metodo regresa el titulo para indicar al cajero que necesita realizar */
+    const muestraTitle = () => {
+        if(datos.tipo_operacion === '1'){
+            return `La cotización fue de ${FormatoMoneda(parseFloat(cantidad),'')} ¿Desea realizar una operación con esta cotización?`
+        }else{
+            return `La cotización de ${datos.monto} ${datos.moneda} fue por la cantidad de ${FormatoMoneda(parseFloat(cantidad),'')} MXP ¿Desea realizar una operación con esta cotización?`
+        }
+    }
+
+
     return (
         <>
-            <div className="row g-3">
+            <form className="row g-3">
                 <div className="row">
                     <div className="col-md-6">
                         <div className="form-floating mb-3">
@@ -283,7 +293,7 @@ export const CalculadoraFormComponent = () => {
                                 name="tipo_operacion"
                                 aria-label="Tipo de Operación"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[0]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -317,7 +327,7 @@ export const CalculadoraFormComponent = () => {
                                 name="moneda"
                                 aria-label="Moneda"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[1]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -356,7 +366,7 @@ export const CalculadoraFormComponent = () => {
                                 placeholder="Ingresa la cantidad a cotizar por el usuario"
                                 autoComplete="off"
                             />
-                            <label htmlFor="monto" className="form-label">CANTIDAD A COTIZAR <i>({muestraDivisa(1)})</i></label>
+                            <label htmlFor="monto" className="form-label">CANTIDAD A COTIZAR <i>({watch("moneda") === '0' ?'USD':watch("moneda")})</i></label>
                             {
                                 errors?.monto && <div className="invalid-feedback">{errors?.monto.message}</div>
                             }
@@ -372,7 +382,7 @@ export const CalculadoraFormComponent = () => {
                                                readOnly
                                                autoComplete="off"
                                         />
-                                        <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>({muestraDivisa(2)})</i></label>
+                                        <label htmlFor="floatingCE">CANTIDAD A {datos.tipo_operacion === '1' ? 'ENTREGAR':'RECIBIR'} <i>({datos.tipo_operacion === '1' ? muestraDivisa(2):'MXP'})</i></label>
                             </div>
                         }
                     </div>
@@ -390,10 +400,10 @@ export const CalculadoraFormComponent = () => {
                         <strong>COTIZAR</strong>
                     </button>
                 </div>
-            </div>
+            </form>
 
             {
-                cantidad !== 0 && (<ModalConfirm title={`La cotización fue de ${FormatoMoneda(parseFloat(cantidad),'')} ¿Desea realizar una operación con esta cotización?`}
+                cantidad !== 0 && (<ModalConfirm title={muestraTitle()}
                           showModal={showModal}
                           closeModal={closeModal}
                           hacerOperacion={preguntaNuevoUsuario}
@@ -418,7 +428,6 @@ export const CalculadoraFormComponent = () => {
 
                             <div className="col-md-12 text-center">
                                 <button className="btn btn-primary me-2" onClick={capturaManual}>CAPTURA MANUAL</button>
-                                <button className="btn btn-orange" onClick={validaInformacion}>VALIDAR INFORMACIÓN</button>
                             </div>
                         </div>
                     </ModalGenericTool>)

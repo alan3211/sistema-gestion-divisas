@@ -70,8 +70,12 @@ export const CambiarPassword = () => {
                                         message: 'El campo Contraseña Nueva no puede ser vacio.'
                                     },
                                     minLength:{
-                                        value:5,
-                                        message:'El campo contraseña nueva como mínimo debe de tener al menos 5 caracteres.'
+                                        value:8,
+                                        message:'El campo contraseña nueva como mínimo debe de tener al menos 8 caracteres.'
+                                    },
+                                    maxLength:{
+                                        value:8,
+                                        message:'El campo contraseña nueva como máximo debe de tener 8 caracteres.'
                                     },
                                     validate: (value) => validarAlfaNumerico("Contraseña Nueva", value)
                                 })}

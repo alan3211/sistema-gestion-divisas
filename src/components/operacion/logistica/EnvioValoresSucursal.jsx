@@ -1,7 +1,7 @@
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateWS,
     getDenominacion,
-    obtenerObjetoDenominaciones, opciones,
+    obtenerObjetoDenominaciones, opciones, OPTIONS,
     validarMoneda
 } from "../../../utils";
 import {Denominacion} from "../denominacion";
@@ -14,15 +14,21 @@ import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
-
-
-
+import {ModalLoading} from "../../commons/modals/ModalLoading";
+import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
+import {LoaderTable} from "../../commons/LoaderTable";
 export const EnvioValoresSucursal = () => {
 
-    const {register,handleSubmit
-        ,formState:{errors},reset
-        ,watch} = useForm()
-    const catalogo = useCatalogo([15]);
+    const propForm = useForm();
+    const form = {
+        register: propForm.register,
+        handleSubmit: propForm.handleSubmit,
+        errors: propForm.formState.errors,
+        watch: propForm.watch,
+        reset: propForm.reset,
+        setValue: propForm.setValue,
+    }
+    const catalogo = useCatalogo([15,17]);
     const [showDenominacion,setShowDenominacion] =  useState(false);
     const [habilita,setHabilita] =  useState({
         recibe: true,
@@ -30,25 +36,34 @@ export const EnvioValoresSucursal = () => {
     });
 
     const [finalizaOperacion,setFinalizaOperacion] = useState(true);
+    const [guarda, setGuarda] = useState(false);
+    const [moneda, setMoneda] = useState('USD')
 
     const {denominacionD} = useContext(DenominacionContext);
 
     const options = {
         title: '',
-        importe: parseInt(watch('monto')),
+        importe: parseFloat(form.watch('monto')),
+        sucursal: form.watch("sucursal"),
         habilita,
         setHabilita,
         setFinalizaOperacion
     }
 
-    const terminarDotacion = handleSubmit(async(data)=>{
+    const optionsLoad = {
+        showModal: guarda,
+        closeCustomModal: () => setGuarda(false),
+        title: "Enviando solicitud de valores...",
+    };
+
+    const terminarDotacion =form.handleSubmit(async(data)=>{
+        setGuarda(true);
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
 
-        data.operacion = 'Envio Valores';
+        data.operacion = 'SOLICITA VALORES';
         data.usuario = dataG.usuario;
-        data.sucursal = dataG.sucursal;
-        data.ticket = `ENVVAL${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        data.ticket = `SOLVAL${data.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
         data.noCliente='0';
         data.traspaso='';
 
@@ -68,42 +83,44 @@ export const EnvioValoresSucursal = () => {
 
         const resultado = await realizarOperacionSucursal(encryptedData);
 
-        console.log(resultado);
         if(resultado){
-            toast.success(`Se ha enviado los valores correctamente de ${data.moneda}`,{
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "colored",
-            });
-            reset();
+            form.reset();
             setShowDenominacion(false);
             denominacionD.reset();
+            setGuarda(false);
+            toast.success(resultado,OPTIONS);
         }
     });
 
     const nuevoEnvio = () => {
         setShowDenominacion(false);
-        reset();
+        form.reset();
         denominacionD.reset();
     }
 
+    const generaSolicitud = () => {
+        setShowDenominacion(true);
+        setMoneda(form.watch("moneda"));
+    }
+
     useEffect(() => {
-        if(watch("moneda") === '0'){
-            setShowDenominacion(false);
-        }else{
-            setShowDenominacion(true);
-        }
-    }, [watch("moneda")]);
+        setShowDenominacion(false);
+    }, [form.watch("moneda")]);
 
     return (
-        <div className="row m-1 g-3 justify-content-center">
+        <form className="row m-1 g-3 justify-content-center">
+            <div className="col-md-3">
+                <FilterComboInput
+                    propFormulario={form}
+                    name="sucursal"
+                    label="SUCURSAL"
+                    options={catalogo[1] || []}
+                />
+            </div>
             <div className="col-md-3">
                 <div className="form-floating">
                     <input
-                        {...register("monto",{
+                        {...form.register("monto",{
                             required:{
                                 value:true,
                                 message:'El campo Monto no puede ser vacio.'
@@ -114,7 +131,7 @@ export const EnvioValoresSucursal = () => {
                             }
                         })}
                         type="text"
-                        className={`form-control ${!!errors?.monto ? 'invalid-input':''}`}
+                        className={`form-control ${!!form.errors?.monto ? 'invalid-input':''}`}
                         id="monto"
                         name="monto"
                         placeholder="Ingresa el monto"
@@ -122,14 +139,14 @@ export const EnvioValoresSucursal = () => {
                     />
                     <label htmlFor="monto">MONTO</label>
                     {
-                        errors?.monto && <div className="invalid-feedback-custom">{errors?.monto.message}</div>
+                        form.errors?.monto && <div className="invalid-feedback-custom">{form.errors?.monto.message}</div>
                     }
                 </div>
             </div>
             <div className="col-md-3">
                 <div className="form-floating mb-3">
                     <select
-                        {...register("moneda",{
+                        {...form.register("moneda",{
                             required:{
                                 value:true,
                                 message:'Debes de seleccionar al menos un tipo de moneda.'
@@ -138,12 +155,12 @@ export const EnvioValoresSucursal = () => {
                                 return value !== "0" || 'Debes seleccionar un tipo de moneda válido.';
                             }
                         })}
-                        className={`form-select ${!!errors?.moneda ? 'invalid-input':''}`}
+                        className={`form-select ${!!form.errors?.moneda ? 'invalid-input':''}`}
                         id="moneda"
                         name="moneda"
                         aria-label="Moneda"
                     >
-                        <option value="0">SELECCIONA UNA OPCIÓN</option>
+                        <option value="">SELECCIONA UNA OPCIÓN</option>
                         {
                             catalogo[0]?.map((ele) => (
                                 <option key={ele.id + '-' + ele.descripcion}
@@ -155,13 +172,23 @@ export const EnvioValoresSucursal = () => {
                     </select>
                     <label htmlFor="moneda">MONEDA</label>
                     {
-                        errors?.moneda && <div className="invalid-feedback-custom">{errors?.moneda.message}</div>
+                        form. errors?.moneda && <div className="invalid-feedback-custom">{form.errors?.moneda.message}</div>
                     }
                 </div>
             </div>
+            <div className="col-md-3">
+                <button type="button" className="btn btn-primary mt-2"
+                        onClick={generaSolicitud}>
+                    <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
+                    GENERAR
+                </button>
+            </div>
             <div className="d-flex justify-content-center">
                 {
-                    showDenominacion && <Denominacion type="D" moneda={watch('moneda')} options={options}/>
+                    showDenominacion &&
+                    <form>
+                        <Denominacion type="D" moneda={moneda} options={options}/>
+                    </form>
                 }
             </div>
             <div className="col-md-12 d-flex justify-content-center">
@@ -174,7 +201,7 @@ export const EnvioValoresSucursal = () => {
                    FINALIZAR OPERACIÓN
                 </button>
             </div>
-
-        </div>
+            {guarda && <ModalLoading options={optionsLoad}/>}
+        </form>
     );
 }

@@ -7,12 +7,12 @@ import {
     obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarNumeros
 } from "../../../utils";
 import {dataG} from "../../../App";
-import {obtieneDenominaciones, realizarOperacion} from "../../../services";
+import {guardaConfirmacionFactura, obtieneDenominaciones, realizarOperacion} from "../../../services";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
-import {usePrinter} from "../../../hook/usePrinter";
+import {usePrinter} from "../../../hook";
 import {ModalTicket} from "./ModalTicket";
 import {ModalGenericTool} from "./ModalTools";
 import {ModalLoading} from "./ModalLoading";
@@ -57,7 +57,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             const valores = {
                 usuario: dataG.usuario,
                 sucursal: dataG.sucursal,
-                moneda: operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda,
+                moneda: operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda,
                 tipo_movimiento: "D"
             }
 
@@ -139,11 +139,10 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     });
 
-
     // Sección de dotación Rapida
     const handleDotacionRapida = async()=>{
         setGuarda(true);
-        const moneda = operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda;
+        const moneda = operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda;
 
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
@@ -156,6 +155,8 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
+        dataFormulario.moneda=moneda;
+        dataFormulario.monto= denominacionD.calculateGrandTotal();
 
         let denominacionesDotacion = denominacionD.getValues();
         const formValuesD = getDenominacion(moneda,denominacionesDotacion)
@@ -193,7 +194,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     }
 
     const optionsDot = {
-        title: `Solicitando cambio en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
+        title: `Solicitando cambio en (${operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})`,
         importe: solicitaDotacionFormulario.watch("denominacion_cambio") !== '0' ? parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")):0,
         importeFinal: solicitaDotacionFormulario.watch("denominacion_cambio") !== '0' ?(parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad"))):0,
         habilita,
@@ -202,7 +203,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     }
 
     const optionsDotRap = {
-        title: `Solicitando dotación rápida en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
+        title: `Solicitando dotación rápida en (${operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})`,
         habilita,
         setHabilita,
         tipo: 'SD',
@@ -210,9 +211,12 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     const guardarCambio = async() => {
 
+        console.log("data del cambio");
+        console.log(data);
+
         let denominacionesCambio = denominacionC.getValues();
 
-        const formValuesC = getDenominacion("MXP",denominacionesCambio);
+        const formValuesC = getDenominacion(operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda,denominacionesCambio);
 
         if(operacion.tipo_operacion === '1') {
             formValuesC.tipoOperacion = 'COMPRA';
@@ -220,7 +224,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             formValuesC.tipoOperacion = 'VENTA';
         }
 
-        formValuesC.divisa = 'MXP';
+        formValuesC.divisa = operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda;
         formValuesC.movimiento = 'CAMBIO AL USUARIO';
 
         eliminarDenominacionesConCantidadCero(formValuesC);
@@ -228,11 +232,11 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         console.log("CAMBIO!: ",cambio);
 
         const values = {
-            cliente: data.cliente,
+            cliente: data.Cliente,
             ticket: data.ticket,
-            cantidad_entregar: parseInt(cambio),
-            monto: '0.0',
-            divisa:'MXP',
+            cantidad_entregar: parseFloat(cambio),
+            monto: 0.0,
+            divisa:operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda,
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
             traspaso: '',
@@ -241,6 +245,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                 obtenerObjetoDenominaciones(formValuesC),
             ]
         }
+        console.log("VALUES DEL CAMBIO: ",values);
         const encryptedData = encryptRequest(values);
 
         const resultado = await realizarOperacion(encryptedData);
@@ -255,6 +260,27 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         imprimeTicketNuevamente(0)
     }
 
+    const guardaFactura = async ()=> {
+
+        const values = {
+            ticket: data.ticket,
+            resguardo: 'SI'
+        }
+
+        const encryptedData =  encryptRequest(values);
+
+        const response = await guardaConfirmacionFactura(encryptedData)
+
+        if(response.total_rows === 0){
+            toast.error('Hubo un problema al resguardar la factura',OPTIONS);
+        }else{
+            imprimir(0);
+            setShowModalFactura(false)
+            setShowModal(true)
+        }
+
+    }
+
     return(
         <>
             <Modal centered size="lg" show={showModalCambio}>
@@ -262,7 +288,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                     <Modal.Title>
                         <h5 className="text-blue">
                             <i className="bx bx-money m-2"></i>
-                            Entrega de Cambio (MXP)
+                            Entrega de Cambio ({operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})
                         </h5>
                     </Modal.Title>
                 </Modal.Header>
@@ -278,14 +304,14 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                        readOnly
                                        autoComplete="off"
                                 />
-                                <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>(MXP)</i></label>
+                                <label htmlFor="floatingCE">CANTIDAD A ENTREGAR <i>({operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})</i></label>
                             </div>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-12">
                             <div className="form-group">
-                                <Denominacion type="C" moneda="MXP" options={options}/>
+                                <Denominacion type="C" moneda={operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda} options={options}/>
                             </div>
                         </div>
                     </div>
@@ -300,13 +326,12 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                         <i className="bi bi-cash me-2"></i>
                         SOLICITAR DENOMINACIÓN
                     </Button>
-                    <Button variant="primary" disabled={denominacionC.calculateGrandTotal != redondearNumero(cambio)} onClick={guardarCambio}>
+                    <Button variant="primary" disabled={redondearNumero(denominacionC.calculateGrandTotal) != redondearNumero(cambio)} onClick={guardarCambio}>
                         <i className="bi bi-arrow-left-right me-2"></i>
                         ENTREGAR CAMBIO
                     </Button>
                 </Modal.Footer>
             </Modal>
-
             {
                 showModal && (
                     <ModalTicket title="¿Se imprimió el ticket correctamente?"
@@ -328,12 +353,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                      imprimir(0);
                                      setShowModal(true)
                                  }}
-                                 hacerOperacion={()=> {
-                                     toast.info('Se guarda la factura.', OPTIONS);
-                                     imprimir(0);
-                                     setShowModal(true)
-                                     setShowModalFactura(false)
-                                 }}
+                                 hacerOperacion={guardaFactura}
                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
                 )
             }
@@ -342,7 +362,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                     <ModalGenericTool options={OPTIONS_DOTACION_RAPIDA}>
                         { estadoDotacion && (<div className="row">
                             <Denominacion type="SD"
-                                          moneda={operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda}
+                                          moneda={operacion.tipo_operacion !== "1" ? `MXP` : operacion.moneda}
                                           options={optionsDotRap}/>
                             <div className="col-md-6 mx-auto">
                                 <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_DOTACION_RAPIDA.closeModal}>
@@ -387,7 +407,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                             name="denominacion_cambio"
                                             aria-label="DENOMINACION"
                                         >
-                                            <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                            <option value="">SELECCIONA UNA OPCIÓN</option>
                                             {
                                                 dataMoneda?.map((ele) => (
                                                     <option key={ele.Denominacion + '-' + ele["Billetes Disponibles"]}
@@ -440,13 +460,13 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                             value={parseFloat(solicitaDotacionFormulario.watch("denominacion_cambio")) *  parseFloat(solicitaDotacionFormulario.watch("cantidad") || 0) } readOnly
                                             autoComplete="off"
                                         />
-                                        <label htmlFor="monto" className="form-label">TOTAL A CAMBIAR ({operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda})</label>
+                                        <label htmlFor="monto" className="form-label">TOTAL A CAMBIAR ({operacion.tipo_operacion !== "1" ? `MXP` : operacion.moneda})</label>
                                     </div>
                                 </div>
                             </div>
                             { estadoDotacion && (<div className="row">
                                 <Denominacion type="SD"
-                                              moneda={operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda}
+                                              moneda={operacion.tipo_operacion !== "1" ? `MXP` : operacion.moneda}
                                               options={optionsDot}/>
                                 <div className="col-md-6 mx-auto">
                                     <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_SOL_DENOMINACION.closeModal}>

@@ -46,7 +46,7 @@ export const TipoConsultas = () => {
                             autoComplete="off"
                         />
                         <label className="form-check-label" htmlFor="consulta_caja">
-                            <strong>Consulta</strong>
+                            <strong>De Fondos</strong>
                         </label>
                     </div>
                 </div>

@@ -3,16 +3,18 @@ import {useForm} from "react-hook-form";
 
 export const DenominacionProvider = ({children}) => {
 
-    const denominacionE = useForm();
-    const denominacionR = useForm();
-    const denominacionC = useForm();
-    const denominacionD = useForm();
+    const denominacionE = useForm(); // Para Entrega de divisas
+    const denominacionR = useForm(); // Para Recibir divisas de usuario
+    const denominacionC = useForm(); // Para dar Cambio al usuario
+    const denominacionD = useForm(); // Para dar dotaciones a sucursal
+    const denominacionB = useForm(); // Para Boveda
 
     const proveedorDenominacion = {
         denominacionE,
         denominacionR,
         denominacionC,
         denominacionD,
+        denominacionB,
     }
 
     return(

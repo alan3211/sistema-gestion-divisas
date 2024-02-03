@@ -19,6 +19,7 @@ export const AltaClienteProvider = ({children}) => {
         reset,
         setValue,
         getValues,
+        trigger,
     } = useForm({defaultValues:AltaClienteFormulario});
 
     const propForm = {
@@ -37,6 +38,7 @@ export const AltaClienteProvider = ({children}) => {
         reset,
         setValue,
         getValues,
+        trigger,
         showEdit,
         setShowEdit
     }

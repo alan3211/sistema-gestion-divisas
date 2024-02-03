@@ -6,6 +6,7 @@ export const ClienteCoincidenciaComponent = ({dataClientes,showAddCliente,addCli
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Coincidencias de usuarios',
         buscar: true,
         paginacion: true,
         tools: [

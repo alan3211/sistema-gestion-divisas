@@ -1,13 +1,13 @@
 import {
-    CAJA_CONSULTA_DIVISAS_URL,
+    CAJA_CONSULTA_DIVISAS_URL, SUCURSAL_CIERRE_DIA_URL,
     SUCURSAL_CONSULTA_DOTACIONES_URL,
     SUCURSAL_DISPONIBLE_DIVISAS_CAJA_URL,
     SUCURSAL_DISPONIBLE_DIVISAS_URL,
     SUCURSAL_DISPONIBLE_URL,
-    SUCURSAL_DOTA_CAJA_URL,
+    SUCURSAL_DOTA_CAJA_URL, SUCURSAL_ENVIA_VALORES_SUC_URL,
     SUCURSAL_ENVIO_VALORES_URL,
     SUCURSAL_MOVIMIENTOS_URL, SUCURSAL_SOLICITUD_CAMBIO_URL,
-    TESORERIA_ENVIO_SUCURSAL_URL
+    TESORERIA_ENVIO_SUCURSAL_URL, TESORERIA_ESTATUS_DOTACIONES_URL
 } from "../utils";
 
 export const realizarOperacionSucursal =  async(formValues) => {
@@ -63,6 +63,32 @@ export const realizarOperacionSucursalDotacion =  async(formValues) => {
 export const consultaDotacionSucursal = async (encryptedData) => {
     try {
         const url = `${SUCURSAL_CONSULTA_DOTACIONES_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:encryptedData})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+
+export const consultaDotacionSucursalVal = async (encryptedData) => {
+    try {
+        const url = `${SUCURSAL_ENVIA_VALORES_SUC_URL}`;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -198,6 +224,31 @@ export const realizarSolicitudCambio =  async(formValues) => {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const cierreSucursalServ = async (encryptedData) => {
+    try {
+        const url = `${SUCURSAL_CIERRE_DIA_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:encryptedData})
         });
 
         if (!response.ok) {

@@ -2,9 +2,12 @@ import {Layout,CardLayout} from "../../commons";
 import {Identificaciones} from "./Identificaciones";
 import {Sucursales} from "./Sucursales";
 import {useForm} from "react-hook-form";
-import {useCatalogo} from "../../../hook/useCatalogo";
+import {useCatalogo} from "../../../hook";
 import {Monedas} from "./Monedas";
 import {Zonas} from "./Zonas";
+import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
+import {Bancos} from "./Bancos";
 
 export const Catalogo = () => {
 
@@ -21,7 +24,19 @@ export const Catalogo = () => {
         Moneda: <Monedas/>,
         Sucursales: <Sucursales/>,
         Zonas: <Zonas/>,
+        Bancos: <Bancos/>
     }
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Verificar si el localStorage está vacío
+        const localStorageIsEmpty = Object.keys(localStorage).length === 0;
+        // Si está vacío, redirigir a "/"
+        if (localStorageIsEmpty) {
+            navigate("/")
+        }
+    }, [Object.keys(localStorage).length]);
 
 
 
@@ -46,7 +61,7 @@ export const Catalogo = () => {
                                 name="catalogo"
                                 aria-label="Catálogo"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {catalogos[0]?.map((ele) => (
                                     <option
                                         key={ele.id + "-" + ele.descripcion}

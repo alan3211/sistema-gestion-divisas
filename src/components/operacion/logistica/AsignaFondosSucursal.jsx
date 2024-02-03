@@ -3,12 +3,13 @@ import {useForm} from "react-hook-form";
 import {encryptRequest, FormatoMoneda, formattedDateWS, nextFocus, opciones, OPTIONS} from "../../../utils";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
 import {dataG} from "../../../App";
-import {enviaDotacionSucursal} from "../../../services/operacion-logistica";
+import {enviaDotacionSucursal, getCantidadBilletes} from "../../../services/operacion-logistica";
 import {toast} from "react-toastify";
+import {getLocalidad} from "../../../services";
 
 const denominacionesMXN = ["0.05", "0.10", "0.20", "0.50", "1", "2", "5", "10", "20", "50", "100", "200", "500", "1000"];
 const denominacionesOtras = ["1", "2", "5", "10", "20", "50", "100"];
-const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputChange }) => {
+const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputChange, cantidadBilletes }) => {
     return (
         <td nowrap={true} className="">
             <input
@@ -18,7 +19,7 @@ const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputCh
                 id={nombre}
                 className="form-control-custom"
                 placeholder="$"
-                onChange={(e) => handleInputChange(e, rowIndex, nombre, denominacion)}
+                onChange={(e) => handleInputChange(e, rowIndex, nombre, denominacion,cantidadBilletes)}
                 autoComplete="off"
                 //value={billetesFisicos[rowIndex][nombre] || ""}
             />
@@ -27,7 +28,7 @@ const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputCh
 };
 
 
-export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshData}) => {
+export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshData,boveda}) => {
     const [guarda, setGuarda] = useState(false);
     const [dataSuc, setDataSuc] = useState([]);
     const {register, handleSubmit,watch,reset} = useForm();
@@ -83,6 +84,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     const [billetesFisicos, setBilletesFisicos] = useState(initialBilletesFisicos);
     const [totalBilletes, setTotalBilletes] = useState([]);
+    const [totalCantidadBilletes, setTotalCantidadBilletes] = useState({});
     const [totalMonto, setTotalMonto] = useState([0]);
     const [validaGuarda, setValidaGuarda] = useState(true);
 
@@ -147,7 +149,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
         setValidaGuarda(validaGuardaActualizado);
     }, [billetesFisicos]);
 
-    const handleInputChange = (e, rowIndex, nombre, denominacion) => {
+    const handleInputChange = (e, rowIndex, nombre, denominacion,cantidadBilletes) => {
         const inputValue = e.target.value;
         const newValue = /^[0-9]\d*$/.test(inputValue) ? parseFloat(inputValue) : 0;
 
@@ -164,6 +166,9 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
             });
             return newBilletes;
         });
+
+        // Se realiza la resta de lo disponible a lo que tengo en el input
+
 
         // Obtener la suma por fila y actualizar el estado total Billetes
         const sumaPorFila = obtenerSumaPorFila(billetesFisicos);
@@ -188,7 +193,6 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     const optionsLoad = {
         showModal: guarda,
-        closeCustomModal: () => setGuarda(false),
         title: "Guardando...",
     };
 
@@ -262,34 +266,63 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     const validaCantidad = () =>{
 
-        if(parseInt(cantidadDisponible) === 0 || totalMonto.reduce((acc, currentValue) => acc + currentValue,0) === 0){
+        if(parseFloat(cantidadDisponible) === 0.0 || totalMonto.reduce((acc, currentValue) => acc + currentValue,0) === 0.0){
             return true
-        }else if(totalMonto.reduce((acc, currentValue) => acc + currentValue,0) > parseInt(cantidadDisponible)){
+        }else if(totalMonto.reduce((acc, currentValue) => acc + currentValue,0.0) > parseFloat(cantidadDisponible)){
             return true
         }else{
             return false;
         }
     }
 
+    const denominaciones = [
+        '.05','.10','.20','.50', '1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'
+    ];
 
+    const getDenominacionesCantidades = async () => {
+        const values = {
+            id_boveda:boveda,
+            divisa: moneda,
+        }
+        const encryptedData =  encryptRequest(values);
+        const response = await getCantidadBilletes(encryptedData);
+        setTotalCantidadBilletes(response.result_set[0])
+        console.log("CANT BILLETES: ", totalCantidadBilletes);
+    }
+
+    useEffect(() => {
+        getDenominacionesCantidades();
+    }, [boveda,moneda]);
 
     return (
         <>
-            <div className="text-center mt-2" style={{fontSize: "12px"}}>
+            <form className="text-center mt-2" style={{fontSize: "12px"}}>
                 <div className="custom-scrollbar" style={{maxWidth: '100%', overflowX: 'auto'}}>
                     <table className="table table-bordered table-hover custom-scrollbar">
-                        <thead className="table-blue">
+                        <thead className="table-blue sticky top-0">
                         <tr>
                             <th colSpan={5}></th>
                             <th colSpan={moneda === "MXP" ? 14 : 7}>Denominaciones</th>
                             <th colSpan={2}></th>
                         </tr>
                         <tr>
-                            {data.headers?.map((elemento, index) => (
-                                <th className="col-1" key={elemento}>
-                                    <i className={iconosEncabezados[elemento]}></i> {elemento}
-                                </th>
-                            ))}
+                            {data.headers?.map((elemento, index) => {
+
+                                if(moneda === 'MXP' && denominaciones.includes(elemento) ){
+                                    return (<th className="col-1" key={elemento}>
+                                        <i className={iconosEncabezados[elemento]}></i> {elemento} ({totalCantidadBilletes[elemento]})
+                                    </th>)
+                                }else if(moneda !== 'MXP' && denominaciones.includes(elemento)){
+                                    return (<th className="col-1" key={elemento}>
+                                        <i className={iconosEncabezados[elemento]}></i> {elemento} ({totalCantidadBilletes[elemento]})
+                                    </th>)
+                                }else{
+                                    return (<th className="col-1" key={elemento}>
+                                        <i className={iconosEncabezados[elemento]}></i> {elemento}
+                                    </th>)
+                                }
+                            }
+                            )}
                         </tr>
                         </thead>
                         <tbody>
@@ -322,6 +355,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                                                         rowIndex={index}
                                                         handleInputChange={handleInputChange}
                                                         billetesFisicos={billetesFisicos}
+                                                        cantidadBilletes={totalCantidadBilletes}
                                                     />
                                                 </>
                                             ))
@@ -335,6 +369,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                                                         rowIndex={index}
                                                         handleInputChange={handleInputChange}
                                                         billetesFisicos={billetesFisicos}
+                                                        cantidadBilletes={totalCantidadBilletes}
                                                     />
                                                 </>
                                             ))}
@@ -364,12 +399,12 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                 <div className="col-md-12">
                     <button type="button" className="m-2 btn btn-primary" onClick={onSubmit} disabled={validaCantidad()}>
                         <span className="me-2">
-                            GUARDAR
-                            <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
+                            DOTAR
+                            <span className="bi bi-cash-stack ms-2" role="status" aria-hidden="true"></span>
                         </span>
                     </button>
                 </div>
-            </div>
+            </form>
             {guarda && <ModalLoading options={optionsLoad}/>}
         </>
     );

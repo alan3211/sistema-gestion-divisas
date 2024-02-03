@@ -2,7 +2,7 @@ import {useCatalogo} from "../../../hook/useCatalogo";
 import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
 import {dataG} from "../../../App";
-import {encryptRequest} from "../../../utils";
+import {encryptRequest, OPTIONS} from "../../../utils";
 import {accionesUsuario} from "../../../services/administracion-services";
 import {toast} from "react-toastify";
 import {getUsuariosSistema} from "../../../services";
@@ -33,14 +33,7 @@ export const BloqueaUsuario = () => {
         const response = await accionesUsuario(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             reset();
             setValue("sucursal_origen", "0");
             setUsuarios([])
@@ -89,7 +82,7 @@ export const BloqueaUsuario = () => {
                             name="sucursal_origen"
                             aria-label="Sucursal Origen"
                         >
-                            <option value="0">SELECCIONA UNA OPCIÓN</option>
+                            <option value="">SELECCIONA UNA OPCIÓN</option>
                             {
                                 catalogo[0]?.map((ele) => (
                                     <option key={ele.id + '-' + ele.descripcion}
@@ -124,7 +117,7 @@ export const BloqueaUsuario = () => {
                             aria-label="usuario"
                             disabled={(watch('sucursal_origen') === '0') && usuarios.length === 0}
                         >
-                            <option value="0">SELECCIONA UNA OPCIÓN</option>
+                            <option value="">SELECCIONA UNA OPCIÓN</option>
                             {
                                 usuarios && usuarios.map((ele) => (
                                     <option key={ele.Usu + '-' + ele.Nombre} value={ele.Usu}>

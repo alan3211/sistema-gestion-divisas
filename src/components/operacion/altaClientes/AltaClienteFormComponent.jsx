@@ -4,7 +4,7 @@ import {memo, useContext, useEffect, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 import {validaCliente} from "../../../services";
 import {
-    encryptRequest, OPTIONS,
+    encryptRequest,
     validaFechas,
     validarAlfaNumerico,
     validarCorreoElectronico,
@@ -39,6 +39,14 @@ export const AltaClienteFormComponent = memo(() => {
 
     }, []);
 
+    const [tipoIdentificacionError, setTipoIdentificacionError] = useState(false);
+
+    useEffect(() => {
+        // Validar al montar el componente
+        const tipoIdentificacionValue = propForm.watch("tipo_identificacion");
+        const isValid = tipoIdentificacionValue !== "";
+        setTipoIdentificacionError(!isValid);
+    }, [propForm]);
 
     const nuevoCliente = () => {
         propForm.setComplementarios(true);
@@ -145,9 +153,11 @@ export const AltaClienteFormComponent = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("nombre", upperCaseValue);
+                                        propForm.trigger('nombre');
                                     }}
                                     disabled={propForm.showEdit}
                                     autoComplete="off"
+                                    tabIndex="1"
                                 />
                                 <label htmlFor="nombre">NOMBRES(S)</label>
                                 {
@@ -165,12 +175,12 @@ export const AltaClienteFormComponent = memo(() => {
                                             message: 'El campo Apellido Paterno no puede ser vacio.'
                                         },
                                         minLength: {
-                                            value: 2,
-                                            message: 'El campo Apellido Paterno como mínimo debe de tener al menos 2 caracteres.'
+                                            value: 1,
+                                            message: 'El campo Apellido Materno como mínimo debe de tener al menos 1 carácter.'
                                         },
                                         maxLength: {
-                                            value: 25,
-                                            message: 'El campo Apellido Paterno como máximo debe de tener no mas de 25 caracteres.'
+                                            value: 30,
+                                            message: 'El campo Apellido Paterno como máximo debe de tener no mas de 30 caracteres.'
                                         },
                                         validate: (value) => validarNombreApellido("Apellido Paterno", value)
                                     })}
@@ -183,9 +193,11 @@ export const AltaClienteFormComponent = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("apellido_paterno", upperCaseValue);
+                                        propForm.trigger('apellido_paterno');
                                     }}
                                     disabled={propForm.showEdit || controlName.lastName }
                                     autoComplete="off"
+                                    tabIndex="2"
                                 />
                                 <label htmlFor="apellido_paterno">APELLIDO PATERNO</label>
                                 {
@@ -196,6 +208,7 @@ export const AltaClienteFormComponent = memo(() => {
                                     <input className="form-check-input" type="checkbox" id="lastNameCheck"
                                     onClick={()=>toggleName('apellido_paterno')} checked={controlName.lastName}
                                            disabled={controlName.secondlastName}
+                                           tabIndex="11"
                                     />
                                         <label className="form-check-label" htmlFor="lastNameCheck">SIN APELLIDO PATERNO</label>
                                 </div>
@@ -205,9 +218,13 @@ export const AltaClienteFormComponent = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("apellido_materno", {
+                                        minLength: {
+                                            value: 1,
+                                            message: 'El campo Apellido Materno como mínimo debe de tener al menos 1 carácter.'
+                                        },
                                         maxLength: {
-                                            value: 25,
-                                            message: 'El campo Apellido Materno como máximo debe de tener no mas de 25 caracteres.'
+                                            value: 30,
+                                            message: 'El campo Apellido Materno como máximo debe de tener no mas de 30 caracteres.'
                                         },
                                         validate: (value) => validarNombreApellido("Apellido Materno", value)
                                     })}
@@ -220,9 +237,11 @@ export const AltaClienteFormComponent = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("apellido_materno", upperCaseValue);
+                                        propForm.trigger('apellido_materno');
                                     }}
                                     disabled={propForm.showEdit || controlName.secondlastName }
                                     autoComplete="off"
+                                    tabIndex="3"
                                 />
                                 <label htmlFor="apellido_materno">APELLIDO MATERNO</label>
                                 {
@@ -234,6 +253,7 @@ export const AltaClienteFormComponent = memo(() => {
                                            onClick={()=>toggleName('apellido_materno')} checked={controlName.secondlastName}
                                         disabled={controlName.lastName}
                                            autoComplete="off"
+                                           tabIndex="12"
                                     />
                                     <label className="form-check-label" htmlFor="secondLastNameCheck">SIN APELLIDO MATERNO</label>
                                 </div>
@@ -243,11 +263,7 @@ export const AltaClienteFormComponent = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("fecha_nacimiento", {
-                                        required: {
-                                            value: true,
-                                            message: 'El campo Fecha Nacimiento no puede ser vacio.'
-                                        },
-                                        validate: validaFechas
+                                        validate: (fecha) => validaFechas(fecha)
                                     })}
                                     type="date"
                                     className={`form-control ${!!propForm.errors?.fecha_nacimiento ? 'invalid-input' : ''}`}
@@ -256,6 +272,10 @@ export const AltaClienteFormComponent = memo(() => {
                                     placeholder="Ingresa la fecha de nacimiento"
                                     disabled={propForm.showEdit}
                                     autoComplete="off"
+                                    tabIndex="4"
+                                    min="1900-01-01"
+                                    max={`${year}-12-31`}
+                                    required
                                 />
                                 <label htmlFor="fecha_nacimiento">FECHA NACIMIENTO</label>
                                 {
@@ -275,16 +295,19 @@ export const AltaClienteFormComponent = memo(() => {
                                             message: 'Debes de seleccionar al menos un tipo de identificación.'
                                         },
                                         validate: value => {
-                                            return value !== "0" || 'Debes seleccionar un tipo de identificación válido.';
+                                            const isValid = value !== "";
+                                            setTipoIdentificacionError(!isValid);
+                                            return isValid || 'Debes seleccionar un tipo de identificación válido.';
                                         }
                                     })}
-                                    className={`form-select ${!!propForm.errors?.tipo_identificacion ? 'invalid-input' : ''}`}
+                                    className={`form-select ${tipoIdentificacionError ? 'invalid-input' : ''}`}
                                     id="tipo_identificacion"
                                     name="tipo_identificacion"
                                     aria-label="Tipo Identificación"
                                     disabled={propForm.showEdit}
+                                    tabIndex="5"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[0]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -296,8 +319,8 @@ export const AltaClienteFormComponent = memo(() => {
                                 </select>
                                 <label htmlFor="tipo_identificacion">TIPO IDENTIFICACIÓN</label>
                                 {
-                                    propForm.errors?.tipo_identificacion && <div
-                                        className="invalid-feedback-custom">{propForm.errors?.tipo_identificacion.message}</div>
+                                    tipoIdentificacionError  && <div
+                                        className="invalid-feedback-custom">Debes seleccionar un tipo de identificación válido.</div>
                                 }
                             </div>
                         </div>
@@ -324,9 +347,11 @@ export const AltaClienteFormComponent = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("numero_identificacion", upperCaseValue);
+                                        propForm.trigger('numero_identificacion');
                                     }}
                                     disabled={propForm.showEdit}
                                     autoComplete="off"
+                                    tabIndex="6"
                                 />
                                 <label htmlFor="numero_identificacion">NÚMERO IDENTIFICACIÓN</label>
                                 {
@@ -339,10 +364,6 @@ export const AltaClienteFormComponent = memo(() => {
                             <div className="form-floating">
                                 <input
                                     {...propForm.register("correo_electronico", {
-                                        required: {
-                                            value: true,
-                                            message: 'El campo Correo Electrónico no puede ser vacio.'
-                                        },
                                         validate: (value) => validarCorreoElectronico(value)
                                     })}
                                     type="text"
@@ -354,9 +375,11 @@ export const AltaClienteFormComponent = memo(() => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("correo_electronico", upperCaseValue);
+                                        propForm.trigger('correo_electronico');
                                     }}
                                     disabled={propForm.showEdit}
                                     autoComplete="off"
+                                    tabIndex="7"
                                 />
                                 <label htmlFor="correo_electronico">CORREO ELECTRÓNICO</label>
                                 {
@@ -372,6 +395,7 @@ export const AltaClienteFormComponent = memo(() => {
                                     className="m-2 btn btn-primary d-grid gap-2"
                                     onClick={onSubmitValidaCliente}
                                     disabled={propForm.showEdit}
+                                    tabIndex="8"
                                 >
                                   <span className="me-2">
                                       <strong>SIGUIENTE</strong>
@@ -393,6 +417,7 @@ export const AltaClienteFormComponent = memo(() => {
                                             setShowCliente(false)
                                         }}
                                         disabled={!propForm.showEdit}
+                                        tabIndex="9"
                                     >
                                       <span className="d-flex align-items-center text-white">
                                         <span className="bi bi-pencil-fill me-2" role="status" aria-hidden="true"></span>

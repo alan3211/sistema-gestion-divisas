@@ -9,13 +9,16 @@ import {accionesSolicitudBoveda} from "../../../../../services/operacion-logisti
 
 export const CancelarEnvioBoveda = ({item, index,refresh}) => {
     const [showModal, setShowModal] = useState(false);
-    const {register, handleSubmit, formState: {errors}, reset} = useForm();
+    const {register,
+        handleSubmit,
+        formState: {errors},
+        reset,setValue} = useForm();
     const showModalCancelar = () => {
         setShowModal(true);
     };
 
     const handleCancelarEnvio = async (data) => {
-        data.id_operacion = item.ID;
+        data.ID = item.ID;
         data.accion = "Cancelado";
         data.usuario = dataG.usuario;
 
@@ -60,6 +63,10 @@ export const CancelarEnvioBoveda = ({item, index,refresh}) => {
                                                 value: true,
                                                 message: 'El campo Motivo no puede ser vacío.'
                                             },
+                                            minLength: {
+                                                value: 25,
+                                                message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
+                                            },
                                             maxLength: {
                                                 value: 200,
                                                 message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
@@ -70,6 +77,11 @@ export const CancelarEnvioBoveda = ({item, index,refresh}) => {
                                         id="motivo"
                                         name="motivo"
                                         placeholder="Ingresa el motivo de cancelación"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            setValue("motivo", upperCaseValue);
+                                        }}
                                         style={{
                                             height: '300px',
                                             resize: 'none'

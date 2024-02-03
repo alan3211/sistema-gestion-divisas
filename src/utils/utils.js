@@ -106,7 +106,7 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const getDenominacionCantidad = (nombre) => {
         if (replaceValues && replaceValues.hasOwnProperty(`denominacion_${nombre}`)) {
             const cantidad = replaceValues[`denominacion_${nombre}`];
-            return cantidad == '' ? 0 : parseInt(cantidad);
+            return cantidad === '' ? 0 : parseInt(cantidad);
         }
         return 0; // Si no existe la propiedad, asignar 0 por defecto
     };
@@ -114,7 +114,6 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
     const denominacionObj = { divisa };
 
     for (const nombre of denominaciones) {
-        console.log(nombre)
         const valor = nombre.startsWith('p') ? `0.${nombre.substring(1)}` : nombre;
         denominacionObj[`denominacion_${nombre}`] = {
             nombre: valor,
@@ -122,7 +121,7 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
         };
     }
 
-    console.log(denominacionObj);
+    console.log("OBJ DENOMINACION ",denominacionObj);
     return denominacionObj;
 };
 
@@ -256,4 +255,74 @@ export const convertirFecha = (input) => {
     // Devolver la fecha en formato yyyy-mm-dd
     return yyyy + '-' + mm + '-' + dd;
 }
+
+export const obtenDia = (mes) => {
+    // Verificar si el mes tiene 30 o 31 días
+    if (mes === 4 || mes === 6 || mes === 9 || mes === 11) {
+        return 30;
+    } else if (mes === 2) {
+        // Verificar si el año es bisiesto para febrero
+        // Un año bisiesto es divisible por 4, pero no por 100, a menos que sea divisible por 400.
+        const esBisiesto = (anio) => (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
+
+        // Devolver 29 días si es bisiesto, de lo contrario, 28 días
+        return esBisiesto(new Date().getFullYear()) ? 29 : 28;
+    } else {
+        // El resto de los meses tiene 31 días
+        return 31;
+    }
+}
+
+export const obtenerNombreMes = (mes) => {
+    const nombresMeses = [
+        "Enero", "Febrero", "Marzo", "Abril",
+        "Mayo", "Junio", "Julio", "Agosto",
+        "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    // Verificar si el número del mes está en el rango válido
+    if (mes >= 1 && mes <= 12) {
+        // Restar 1 al mes, ya que los arrays en JavaScript son de base 0
+        return nombresMeses[mes - 1];
+    } else {
+        // Devolver un mensaje de error si el número del mes no es válido
+        return "Mes no válido";
+    }
+}
+
+export const formatRelativeTime = (hourString) => {
+    const now = new Date();
+    const notificationTime = new Date();
+    const [hour, minute, second] = hourString.split(':');
+    notificationTime.setHours(hour, minute, second);
+
+    const timeDifference = now - notificationTime;
+    const seconds = Math.floor(timeDifference / 1000);
+
+    if (seconds < 60) {
+        return 'Hace un momento';
+    } else if (seconds < 3600) {
+        const minutes = Math.floor(seconds / 60);
+        return `Hace ${minutes} ${minutes > 1 ? 'minutos' : 'minuto'}`;
+    } else {
+        const hours = Math.floor(seconds / 3600);
+        return `Hace ${hours} ${hours > 1 ? 'horas' : 'hora'}`;
+    }
+}
+
+export const obtenerFechaDiaAnterior = () => {
+    // Obtén la fecha actual
+    const fechaActual = new Date();
+
+    // Resta un día a la fecha actual
+    fechaActual.setDate(fechaActual.getDate() - 1);
+
+    // Formatea la fecha en YYYY-MM-DD
+    const anio = fechaActual.getFullYear();
+    const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+    const dia = String(fechaActual.getDate()).padStart(2, '0');
+
+    return `${anio}-${mes}-${dia}`;
+}
+
 export const perfiles = ['Super Usuario','Administrador','Tesorero','Coordinador Logística']

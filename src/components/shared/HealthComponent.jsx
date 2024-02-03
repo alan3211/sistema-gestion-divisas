@@ -1,6 +1,7 @@
 import logo from "../../assets/logoF.png";
 import {useNavigate} from "react-router-dom";
 import {year} from "../../utils";
+import {useEffect} from "react";
 
 export const HealthComponent = () => {
 
@@ -11,6 +12,16 @@ export const HealthComponent = () => {
     const regresar = ()=>{
         navigate("/")
     }
+
+
+    useEffect(() => {
+        // Verificar si el localStorage está vacío
+        const localStorageIsEmpty = Object.keys(localStorage).length === 0;
+        // Si está vacío, redirigir a "/"
+        if (localStorageIsEmpty) {
+            navigate("/")
+        }
+    }, [Object.keys(localStorage).length]);
 
 
     return (<main>

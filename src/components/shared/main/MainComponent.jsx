@@ -4,7 +4,8 @@ import {toast} from "react-toastify";
 import {useEffect} from "react";
 import {TableroComponent} from "./TableroComponent";
 import {LogoGrocerys} from "./LogoGrocerys";
-import {encryptRequest} from "../../../utils";
+import {encryptRequest, OPTIONS} from "../../../utils";
+import {useNavigate} from "react-router-dom";
 
 
 export const MainComponent = () => {
@@ -21,14 +22,7 @@ export const MainComponent = () => {
         const encryptedData = encryptRequest(formValue);
         const {resultado} = await getValidaTipoCambioDia(encryptedData);
         if(resultado){
-            toast.error(resultado, {
-                position: "top-center",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.error(resultado, OPTIONS);
         }
     }
 
@@ -37,14 +31,7 @@ export const MainComponent = () => {
         const encryptedData = encryptRequest(formValue);
         const {resultado} = await getValidaTipoCambioDia(encryptedData);
         if(resultado){
-            toast.warn(resultado, {
-                position: "top-center",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.warn(resultado, OPTIONS);
         }
 
     }
@@ -55,13 +42,25 @@ export const MainComponent = () => {
 
     const validaTableros = () => {
         if (
-            (dataG.perfil && (dataG.perfil.includes('Super Usuario') || dataG.perfil.includes('Tesorero') || dataG.perfil.includes('Coordinador Logística')))
+            [0,6].includes(dataG.id_perfil)
         ) {
             return true;
         }
 
         return false;
     }
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Verificar si el localStorage está vacío
+        const localStorageIsEmpty = Object.keys(localStorage).length === 0;
+        // Si está vacío, redirigir a "/"
+        if (localStorageIsEmpty) {
+            navigate("/")
+        }
+    }, [Object.keys(localStorage).length]);
+
 
 
     return(

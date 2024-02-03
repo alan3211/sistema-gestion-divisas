@@ -21,15 +21,14 @@ import {HealthComponent} from "./components/shared/HealthComponent";
 import {NotFound} from "./components/shared/NotFound";
 import {Logistica} from "./components/operacion/logistica/Logistica";
 import {AltaClienteFinal} from "./components/operacion/altaClientes/AltaClienteFinal";
+import {Reportes} from "./components/reportes/Reportes";
 import {useEffect} from "react";
-import {encryptRequest} from "./utils";
-import {finSesion} from "./services";
-import {validaToken} from "./services/inicio-services";
 
-export let dataG = {
+export let dataG = JSON.parse(localStorage.getItem('usuario_data')) || {
     sucursal:0,
     username:"",
     perfil:"",
+    id_perfil:0,
     usuario:"",
     direccion:"",
     nombre_sucursal:"",
@@ -38,7 +37,22 @@ export let dataG = {
     estatus:0,
     menus:[],
 };
+
 const App = () => {
+
+    // Al cargar la página, verifica si hay datos de usuario en localStorage y úsalos si están disponibles
+    useEffect(() => {
+        const storedUserData = JSON.parse(localStorage.getItem('v'));
+        if (storedUserData) {
+            dataG = storedUserData;
+        }
+    }, []);
+
+    // Al cerrar la aplicación o al cambiar los datos del usuario, actualiza localStorage
+    useEffect(() => {
+        localStorage.setItem('usuario_data', JSON.stringify(dataG));
+    }, [dataG]);
+
     return (
         <div className="app-root content">
             <Router>
@@ -57,6 +71,8 @@ const App = () => {
                            element={<MainLayout><TesoreriaProvider><Tesoreria/></TesoreriaProvider></MainLayout>}/>
                     <Route exact path="/logistica"
                            element={<MainLayout><Logistica/></MainLayout>}/>
+                    <Route exact path="/reportesEstadisticos"
+                           element={<MainLayout><Reportes/></MainLayout>}/>
                     <Route exact path="/cargaTipoCambio" element={
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>

@@ -7,6 +7,7 @@ import {ResumenCaja} from "./ResumenCaja";
 import {consultaCaja} from "../../../services/operacion-caja";
 import {dataG} from "../../../App";
 import {ResumenCajaParcial} from "./ResumenCajaParcial";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const CuentaCajaComponent = ({tipo}) => {
 
@@ -32,11 +33,11 @@ export const CuentaCajaComponent = ({tipo}) => {
         setResetFunction(reset);
     };
 
-
     const options = {
         tools: [
             {columna:"Denominaciones",tool:'ver-denominaciones', deps:{setShowDetalle,setDataDenominacion,setMoneda,resetForm:resetFunction}},
-        ]
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
     }
 
     if (data.total_rows === 0) {
@@ -51,7 +52,10 @@ export const CuentaCajaComponent = ({tipo}) => {
         return (
            <>
                {
-                  showTable && (<TableComponent data={data} options={options}/>)
+                  showTable
+                      ? <TableComponent data={data} options={options}/>
+                      : <LoaderTable/>
+
                }
 
                {

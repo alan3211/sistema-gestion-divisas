@@ -147,7 +147,7 @@ export const ConsultasSucursal = () => {
                                         onChange={(e) => setSelectedCajero(e.target.value)}
                                         disabled={usuariosCombo.length === 0}
                                     >
-                                        <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                        <option value="">SELECCIONA UNA OPCIÓN</option>
                                         {usuariosCombo?.map((ele) => (
                                             <option
                                                 key={ele.Usu + "-" + ele.Nombre}

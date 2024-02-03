@@ -10,9 +10,10 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionE,
         denominacionC,
         denominacionD,
+        denominacionB,
     } = useContext(DenominacionContext);
 
-    const {title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,ticket} =  options;
+    const {title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,sucursal} =  options;
     let denominacion = {};
 
     if(type === 'R'){
@@ -21,6 +22,8 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacion = denominacionE;
     }else if(type === 'C'){
         denominacion = denominacionC;
+    }else if(type === 'B'){
+        denominacion = denominacionB;
     }else{
         denominacion = denominacionD;
     }
@@ -43,7 +46,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0;
         const denominacionValue = parseFloat(elemento.Denominacion);
         if(elemento.hasOwnProperty("Billetes Disponibles")){
-            if(dataG.perfil === 'Supervisor'){
+            if([6].includes(dataG.id_perfil)){
                 return redondearNumero(parseFloat(cantidad * denominacionValue));
             }else{
                 if(elemento["Billetes Disponibles"] >= cantidad){
@@ -78,15 +81,6 @@ export const useDenominacion = ({type,moneda,options}) => {
         return grandTotal;
     };
 
-    if(type === 'R'){
-        denominacionR.calculateGrandTotal = calculateGrandTotal;
-    }else{
-        denominacionE.calculateGrandTotal = calculateGrandTotal;
-        denominacionD.calculateGrandTotal = calculateGrandTotal;
-        denominacion.calculateGrandTotal = calculateGrandTotal;
-    }
-
-
     // Valida solo cuando hace la operacion del cliente y entrega billetes
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
@@ -110,7 +104,7 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else if (type === 'C') {
-            if (grandTotal === parseFloat(importe)) {
+            if (parseFloat(redondearNumero(grandTotal)) === parseFloat(importe)) {
                 denominacionC.calculateGrandTotal = grandTotal;
                 return 'text-success';
             } else {
@@ -140,15 +134,17 @@ export const useDenominacion = ({type,moneda,options}) => {
         if(type === 'C'){
             isValid = calculateGrandTotal() >= importe;
             newHabilita.recibe = !isValid;
-        }
-
-        if (type === 'R') {
+        }else if (type === 'R') {
             isValid = calculateGrandTotal() >= calculaValorMonto;
             newHabilita.recibe = !isValid;
-        } else {
-            isValid = calculateGrandTotal() === importe;
+        } else if (type === 'E') {
+            isValid = calculateGrandTotal() === parseFloat(importe);
             newHabilita.entrega = !isValid;
+        }else if(type === 'B'){
+            isValid = calculateGrandTotal() >= importe;
+            newHabilita.recibe = !isValid;
         }
+
         setHabilita(newHabilita);
     }, [calculateGrandTotal(), type]);
 
@@ -157,7 +153,7 @@ export const useDenominacion = ({type,moneda,options}) => {
 
         const valores = {
             usuario: dataG.usuario,
-            sucursal: dataG.sucursal,
+            sucursal: sucursal || dataG.sucursal,
             moneda: moneda,
             tipo_movimiento: type
         }
@@ -196,6 +192,16 @@ export const useDenominacion = ({type,moneda,options}) => {
         console.log("RERENDER")
         fetchData();
     }, [options.reRender]);
+
+    if(type === 'R'){
+        denominacionR.calculateGrandTotal = calculateGrandTotal;
+    }else{
+        denominacionE.calculateGrandTotal = calculateGrandTotal;
+        denominacionD.calculateGrandTotal = calculateGrandTotal;
+        denominacionB.calculateGrandTotal = calculateGrandTotal;
+        denominacion.calculateGrandTotal = calculateGrandTotal;
+    }
+
 
     return {
         title,data,denominacionMappings,register,trigger,errors,setValue,reset,calculateTotal,

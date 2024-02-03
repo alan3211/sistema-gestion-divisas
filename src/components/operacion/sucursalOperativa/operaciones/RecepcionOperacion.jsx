@@ -4,6 +4,7 @@ import {encryptRequest, formattedDate} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 import {consultaMovimientoSucursal} from "../../../../services/operacion-sucursal";
 import {dataG} from "../../../../App";
+import {LoaderTable} from "../../../commons/LoaderTable";
 
 export const RecepcionOperacion = () => {
     const { register, handleSubmit, formState: {errors},
@@ -29,8 +30,10 @@ export const RecepcionOperacion = () => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Recepcion de Operaciones Sucursal',
         buscar: true,
         paginacion: true,
+        disabledColumnsExcel:['Acciones','Detalle'],
         tools:[
             {columna:"Estatus",tool:"estatus"},
             {columna:"Acciones",tool:"acciones-sucursales",refresh:refreshQuery},
@@ -91,7 +94,9 @@ export const RecepcionOperacion = () => {
                 </div>
             </div>
             {
-                showTable && <TableComponent data={data} options={options}/>
+                showTable
+                    ? <TableComponent data={data} options={options}/>
+                    : <LoaderTable/>
             }
         </div>
     );

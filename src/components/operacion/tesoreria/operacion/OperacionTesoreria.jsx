@@ -1,17 +1,19 @@
 import {useEffect, useState} from "react";
 import {DotacionSucursales} from "./DotacionSucursales";
 import {MovimientoBancario} from "./MovimientoBancario";
-import {formateaMoneda, FormatoMoneda} from "../../../../utils";
+import {FormatoMoneda} from "../../../../utils";
 import {useSaldo} from "../../../../hook";
 import {getConsultaSaldoCuenta} from "../../../../services/operacion-tesoreria";
+import {SyncLoader} from "react-spinners";
+import {isNullOrUndef} from "chart.js/helpers";
 
 export const OperacionTesoreria = ({perfil}) => {
 
-    const [saldoGeneral, setSaldoGeneral] = useState(0); // Inicializa con un valor predeterminado
+    const [saldoNuevo, setSaldoNuevo] = useState(0); // Inicializa con un valor predeterminado
     const [selectedOption, setSelectedOption] = useState(perfil === 'T' ?"movBancario": "dotacionSuc");
 
     // Usa useSaldo para obtener el saldo actual
-    const saldoActual = useSaldo();
+    const saldoGeneral = useSaldo();
 
     const handleRadioChange = ({ target: { value } }) => {
         setSelectedOption(value);
@@ -19,21 +21,27 @@ export const OperacionTesoreria = ({perfil}) => {
 
     const actualizarSaldo = async () => {
         const {saldo_cuenta} = await getConsultaSaldoCuenta();
-        setSaldoGeneral(saldo_cuenta);
+        setSaldoNuevo(saldo_cuenta);
     };
 
     useEffect(() => {
-        // Actualiza el valor del saldo cuando cambie
-        setSaldoGeneral(saldoActual);
-    }, [saldoActual]);
+        console.log("SALDO ACTUAL: ", saldoGeneral);
+        setSaldoNuevo(saldoGeneral !== undefined ? saldoGeneral : 0);
+    }, [saldoGeneral]);
 
     return(
         <>
             { perfil !== 'L' &&(<div className="search-options d-flex justify-content-center align-items-center mt-4">
                 <h5 className="text-blue text-center">
                     <i className="bi bi-bank me-2"></i>
-                    <span>Cuenta Bancaria:</span>
-                    <strong className="ms-2">{FormatoMoneda(parseFloat(saldoGeneral), 'MXP')}</strong>
+                    <span>Cuenta Bancaria (MXP):</span>
+                    {isNullOrUndef(saldoNuevo) ? (
+                        <strong className="ms-2">{FormatoMoneda(parseFloat(saldoNuevo), 'USD')}</strong>
+                    ) : saldoNuevo !== 0 ? (
+                        <strong className="ms-2">{FormatoMoneda(parseFloat(saldoNuevo), 'USD')}</strong>
+                    ) : (
+                        <strong className="ms-2"><SyncLoader color="#012970" size={5} /></strong>
+                    )}
                 </h5>
             </div>)}
         <div className="search-options d-flex justify-content-center align-items-center mt-3">

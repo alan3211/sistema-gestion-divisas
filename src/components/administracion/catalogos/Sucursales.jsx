@@ -1,5 +1,5 @@
 import {useForm} from "react-hook-form";
-import {encryptRequest, validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNumeros, validarNumeroTelefono} from "../../../utils";
 import {getLocalidad, guardaCatalogo} from "../../../services";
 import {toast} from "react-toastify";
 import {useCatalogo} from "../../../hook/useCatalogo";
@@ -26,14 +26,7 @@ export const Sucursales = () => {
         const response = await guardaCatalogo(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             reset();
         }
     });
@@ -171,7 +164,7 @@ export const Sucursales = () => {
                                     name="region"
                                     aria-label="Región"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[2]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -205,7 +198,7 @@ export const Sucursales = () => {
                                     name="estado"
                                     aria-label="Estado"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[3]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -239,7 +232,7 @@ export const Sucursales = () => {
                                     aria-label="Municipio"
                                     disabled={(watch('municipio') === '0') && municipios.length === 0}
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         municipios?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -272,7 +265,7 @@ export const Sucursales = () => {
                                     name="tipo_establecimiento"
                                     aria-label="Tipo"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[4]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}

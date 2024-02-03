@@ -3,7 +3,7 @@ import {useState} from "react";
 import {toast} from "react-toastify";
 import {ModalAccionTesoreriaTool} from "../../../modals";
 import {useForm} from "react-hook-form";
-import {encryptRequest, validarAlfaNumerico, validarMoneda} from "../../../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, validarMoneda} from "../../../../../utils";
 import {accionesTesoreria} from "../../../../../services/tools-services";
 import {dataG} from "../../../../../App";
 
@@ -14,7 +14,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
         register,
         handleSubmit,
         formState: {errors}, reset
-        , watch
+        , watch,setValue
     } = useForm();
     const [optionBtn, setOptionBtn] = useState(1);
 
@@ -31,6 +31,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
             motivo: watch("motivo"),
             usuario: dataG.usuario,
             sucursal: item['Sucursal Envia'],
+            usuario_envia: item['Usuario Envia'],
             monto_equivalente: (optionBtn === 1) ? watch("monto_equivalente") : item.Monto,
             monto: item.Monto,
             moneda: item.Moneda
@@ -41,14 +42,7 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
         const response = await accionesTesoreria(encryptedData);
 
         if (response.result_set[0].Mensaje !== '') {
-            toast.success(response.result_set[0].Mensaje, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response.result_set[0].Mensaje, OPTIONS);
             setShowModal(false);
             refresh();
             reset();
@@ -114,6 +108,10 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
                                                 value: true,
                                                 message: 'El campo Motivo no puede ser vacío.'
                                             },
+                                            minLength: {
+                                                value: 25,
+                                                message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
+                                            },
                                             maxLength: {
                                                 value: 200,
                                                 message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
@@ -124,6 +122,11 @@ export const AccionesTesoreria = ({item, index, refresh}) => {
                                         id="motivo"
                                         name="motivo"
                                         placeholder="Ingresa el motivo de cancelación"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            setValue("motivo", upperCaseValue);
+                                        }}
                                         style={{
                                             height: '300px',
                                             resize: 'none'

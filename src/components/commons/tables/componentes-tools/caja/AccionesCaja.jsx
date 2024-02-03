@@ -2,22 +2,24 @@ import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {
     encryptRequest,
-    obtenerObjetoDenominaciones,
+    obtenerObjetoDenominaciones, OPTIONS,
     validarAlfaNumerico
 } from "../../../../../utils";
 import {accionesCaja, getDenominaciones, getDenominacionesCaja} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
 import {ModalAccionesTool} from "../../../modals";
 import {DenominacionTableCaja} from "../../../../operacion/denominacion";
+import {ModalLoading} from "../../../modals/ModalLoading";
 
 export const AccionesCaja = ({item, index, refresh}) => {
 
     const [showModal, setShowModal] = useState(false);
+    const [guarda, setGuarda] = useState(false);
     const {
         register,
         handleSubmit,
         formState: {errors}, reset
-        , watch
+        , watch,setValue
     } = useForm();
     const [optionBtn, setOptionBtn] = useState(1);
     const [habilita, setHabilita] = useState({
@@ -32,12 +34,13 @@ export const AccionesCaja = ({item, index, refresh}) => {
         setShowModal(true);
     }
     const onEnvioValores = async () => {
-
+        setGuarda(true);
         const values = {
             id_operacion: item.ID,
             estatus: (optionBtn === 1) ? 'Aceptado' : 'Rechazado',
             motivo: watch("motivo"),
             usuario: item.Caja,
+            usuario_envia: item['Usuario Envia'],
             sucursal: item["Sucursal Envia"],
             noCliente:'',
             diferencia:0,
@@ -64,27 +67,26 @@ export const AccionesCaja = ({item, index, refresh}) => {
        const response = await accionesCaja(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             setShowModal(false);
             refresh();
             reset();
+            setGuarda(false);
         }
     }
 
     const options = {
         showModal,
-        closeCustomModal: () => {setShowModal(false); reset()},
+        closeModal: () => {setShowModal(false); reset()},
         title: (optionBtn === 1) ? 'ACEPTAR DOTACIÓN' : 'RECHAZAR DOTACIÓN',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y validar las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas la dotación.',
+    };
+
+    const optionsLoad = {
+        showModal: guarda,
+        title: `${ optionBtn === 1 ? "Aceptando dotación":"Rechazando dotación"} ...`,
     };
 
     useEffect(() => {
@@ -98,7 +100,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
             setData(data_denominacion);
         }
         getDenominacionesAsignadas();
-    }, []);
+    }, [item["No Movimiento"]]);
 
     return (
         <td key={index} className="text-center">
@@ -114,7 +116,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                 showModal
                 && (
                     <ModalAccionesTool options={options}>
-                        <div>
+                        <form>
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
@@ -126,6 +128,10 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                                             value: true,
                                                             message: 'El campo Motivo no puede ser vacío.'
                                                         },
+                                                        minLength: {
+                                                            value: 25,
+                                                            message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
+                                                        },
                                                         maxLength: {
                                                             value: 200,
                                                             message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
@@ -136,6 +142,11 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                                     id="motivo"
                                                     name="motivo"
                                                     placeholder="Ingresa el motivo de cancelación"
+                                                    onChange={(e) => {
+                                                        const upperCaseValue = e.target.value.toUpperCase();
+                                                        e.target.value = upperCaseValue;
+                                                        setValue("motivo", upperCaseValue);
+                                                    }}
                                                     style={{
                                                         height: '350px',
                                                         resize: 'none'
@@ -164,6 +175,10 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                                     value: true,
                                                     message: 'El campo Motivo no puede ser vacío.'
                                                 },
+                                                minLength: {
+                                                    value: 25,
+                                                    message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
+                                                },
                                                 maxLength: {
                                                     value: 200,
                                                     message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
@@ -174,6 +189,11 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                             id="motivo"
                                             name="motivo"
                                             placeholder="Ingresa el motivo de cancelación"
+                                            onChange={(e) => {
+                                                const upperCaseValue = e.target.value.toUpperCase();
+                                                e.target.value = upperCaseValue;
+                                                setValue("motivo", upperCaseValue);
+                                            }}
                                             style={{
                                                 height: '300px',
                                                 resize: 'none'
@@ -195,7 +215,8 @@ export const AccionesCaja = ({item, index, refresh}) => {
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
-                        </div>
+                            {guarda && <ModalLoading options={optionsLoad}/>}
+                        </form>
                     </ModalAccionesTool>
                 )}
         </td>);

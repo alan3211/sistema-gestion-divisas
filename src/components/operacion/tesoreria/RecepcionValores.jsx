@@ -3,6 +3,7 @@ import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
 import {encryptRequest, formattedDate} from "../../../utils";
 import {consultaEnvioSucursal} from "../../../services/operacion-tesoreria";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const RecepcionValores = () => {
 
@@ -23,14 +24,18 @@ export const RecepcionValores = () => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Recepción de Valores desde Sucursal',
         buscar: true,
         paginacion: true,
+        disabledColumnsExcel:['Acciones','Detalle'],
         tools:[
             {columna:"Estatus",tool:"estatus"},
-            {columna:"Acciones",tool:"acciones-tesoreria",refresh:refreshQuery},
+            {columna:"Acciones",tool:"acciones-recepcion-valores",refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:1}},
         ],
-        filters:[{columna:'Monto',filter:'currency'}]
+        filters:
+            [{columna:'Comentario',filter:'tooltip'},
+            {columna:'Monto',filter:'currency'}],
     }
 
     const onSubmitRecepcion = handleSubmit(async (data) => {
@@ -96,7 +101,9 @@ export const RecepcionValores = () => {
                 </div>
             </div>
             {
-                showTable && <TableComponent data={data} options={options}/>
+                showTable
+                    ? <TableComponent data={data} options={options}/>
+                    : <LoaderTable/>
             }
         </div>
     );

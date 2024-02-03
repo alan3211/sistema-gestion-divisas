@@ -15,6 +15,8 @@ import {DenominacionContext} from "../../../../../context/denominacion/Denominac
 import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
 import {DenominacionProvider} from "../../../../../context/denominacion/DenominacionProvider";
 import {ModalLoading} from "../../../modals/ModalLoading";
+import {dataG} from "../../../../../App";
+import {Overlay} from "../../../toast/Overlay";
 
 export const AccionesSucursales = ({item, index, refresh}) => {
     const [guarda, setGuarda] = useState(false);
@@ -47,8 +49,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
     const optionsLoad = {
         showModal: guarda,
-        closeCustomModal: () => setGuarda(false),
-        title: "Guardando...",
+        title: `${ optionBtn === 1 ? "Aceptando dotación":"Rechazando dotación"} ...`,
     };
 
     /*Aqui se diferencia entre un boton de aceptar y otro de rechazar*/
@@ -57,10 +58,8 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         setShowModal(true);
     }
     const onEnvioValores = async (data) => {
-
         console.log("DATA:",data);
         setGuarda(true);
-
         const values = {
             id_operacion: item.ID,
             operacion:item.Operacion,
@@ -68,6 +67,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             estatus: (optionBtn === 1) ? 'Aceptado' : 'Rechazado',
             motivo: watch("motivo"),
             usuario: item.Usuario,
+            usuario_envia: dataG.usuario,
             sucursal: item.Sucursal,
             monto: item.Monto,
             moneda: item.Moneda,
@@ -124,7 +124,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
     const options = {
         showModal,
-        closeCustomModal: () => {
+        closeModal: () => {
             setShowModal(false);
             setValue("motivo",'');
         },
@@ -148,7 +148,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         if(item.Operacion === 'Dotación Sucursal'){
             getDenominacionesAsignadas();
         }
-    }, []);
+    }, [item.Moneda,item["No Movimiento"]]);
 
     const validaBtn = () => {
         if(optionBtn === 1){
@@ -161,6 +161,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             return watch("motivo") === '';
         }
     }
+
 
     return (
         <td key={index} className="text-center">
@@ -188,6 +189,10 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                             value: true,
                                                             message: 'El campo Motivo no puede ser vacío.'
                                                         },
+                                                        minLength: {
+                                                            value: 25,
+                                                            message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
+                                                        },
                                                         maxLength: {
                                                             value: 200,
                                                             message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
@@ -198,6 +203,11 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                     id="motivo"
                                                     name="motivo"
                                                     placeholder="Ingresa el motivo de cancelación"
+                                                    onChange={(e) => {
+                                                        const upperCaseValue = e.target.value.toUpperCase();
+                                                        e.target.value = upperCaseValue;
+                                                        setValue("motivo", upperCaseValue);
+                                                    }}
                                                     style={{
                                                         height: '350px',
                                                         resize: 'none'
@@ -214,8 +224,19 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                         <div className="col-md-6">
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
-                                                (item.Operacion !== 'Dotación Sucursal') ? (<Denominacion type={item.Operacion === 'Dotación Sucursal' ? 'D':'C'} moneda={item.Moneda} options={optionsDenominacion}/>)
-                                                : (<DenominacionTable setDenominacion={setDenominacion} moneda={item.Moneda} data={datosDenominacion.result_set} monto={item.Monto} setTotalMonto={setTotalMonto}/>)
+                                                item.Operacion !== 'Dotación Sucursal'
+                                                    ? (<Denominacion
+                                                            type={item.Operacion === 'Dotación Sucursal' ? 'D':item.Operacion === 'Nota de Credito' ? 'CNC' :'C'}
+                                                            moneda={item.Moneda}
+                                                            options={optionsDenominacion}
+                                                    />)
+                                                    : (<DenominacionTable
+                                                            setDenominacion={setDenominacion}
+                                                            moneda={item.Moneda}
+                                                            data={datosDenominacion.result_set}
+                                                            monto={item.Monto}
+                                                            setTotalMonto={setTotalMonto}
+                                                    />)
                                             }
                                         </div>
                                     </div>
@@ -230,6 +251,10 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                     value: true,
                                                     message: 'El campo Motivo no puede ser vacío.'
                                                 },
+                                                minLength: {
+                                                    value: 25,
+                                                    message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
+                                                },
                                                 maxLength: {
                                                     value: 200,
                                                     message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
@@ -240,6 +265,11 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                             id="motivo"
                                             name="motivo"
                                             placeholder="Ingresa el motivo de cancelación"
+                                            onChange={(e) => {
+                                                const upperCaseValue = e.target.value.toUpperCase();
+                                                e.target.value = upperCaseValue;
+                                                setValue("motivo", upperCaseValue);
+                                            }}
                                             style={{
                                                 height: '300px',
                                                 resize: 'none'
@@ -261,10 +291,11 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                     {optionBtn === 1 ? 'ACEPTAR' : 'RECHAZAR'}
                                 </button>
                             </div>
+                           {guarda && <ModalLoading options={optionsLoad}/>}
                         </div>
                     </ModalAccionTesoreriaTool>
-                )}
-            {guarda && <ModalLoading options={optionsLoad}/>}
+                )
+            }
         </td>
     );
 }

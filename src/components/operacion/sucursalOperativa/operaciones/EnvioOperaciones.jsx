@@ -3,9 +3,10 @@ import {useEffect, useState} from "react";
 import {encryptRequest, formattedDate} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 import {dataG} from "../../../../App";
-import {consultaDotacionSucursal} from "../../../../services/operacion-sucursal";
+import {consultaDotacionSucursal, consultaDotacionSucursalVal} from "../../../../services/operacion-sucursal";
+import {LoaderTable} from "../../../commons/LoaderTable";
 
-export const EnvioOperaciones = () => {
+export const EnvioOperaciones = ({opcion=1}) => {
     const { register, handleSubmit, formState: {errors},
         reset,setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
@@ -14,25 +15,35 @@ export const EnvioOperaciones = () => {
     const [currentDate, setCurrentDate] = useState('');
 
     useEffect(() => {
+        setCurrentDate(formattedDate);
         // Obtener la fecha actual en el formato YYYY-MM-DD
         setValue("fecha_operacion",formattedDate)
         // Realizar la consulta automáticamente al cargar la página
-        onSubmitRecepcion({ fecha: formattedDate });
+        onSubmitRecepcion({ fecha_operacion: formattedDate});
     }, []);
 
     const refreshQuery = async () =>{
-        const response = await consultaDotacionSucursal(formData);
-        setData(response);
+        if(opcion === 1){
+            setData(await consultaDotacionSucursal(formData));
+        }else{
+            setData(await consultaDotacionSucursalVal(formData));
+        }
+
     }
+
+    const toolPerfil = opcion === 1 ? "cancelar-envio-sucursal":"acciones-envio-valores";
+
 
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Envio de Operaciones Sucursal',
         buscar: true,
         paginacion: true,
+        disabledColumnsExcel:['Acciones','Detalle'],
         tools:[
             {columna:"Estatus",tool:"estatus"},
-            {columna:"Cancelar",tool:"cancelar-envio-sucursal",refresh:refreshQuery},
+            {columna:"Acciones",tool:`${toolPerfil}`,refresh:refreshQuery},
             {columna:"Detalle",tool:"detalle",  params:{opcion:3}},
         ],
         filters:[{columna:'Monto',filter:'currency'}]
@@ -42,8 +53,12 @@ export const EnvioOperaciones = () => {
         data.sucursal = dataG.sucursal;
         const encryptedData = encryptRequest(data);
         setFormData(encryptedData);
-        const response = await consultaDotacionSucursal(encryptedData);
-        setData(response);
+        //Opera_ConsultaDotacionesSucursal
+        if(opcion === 1){
+            setData(await consultaDotacionSucursal(encryptedData));
+        }else{
+            setData(await consultaDotacionSucursalVal(encryptedData));
+        }
         setShowTable(true)
     });
 
@@ -89,7 +104,9 @@ export const EnvioOperaciones = () => {
                 </div>
             </div>
             {
-                showTable && <TableComponent data={data} options={options}/>
+                showTable
+                    ? <TableComponent data={data} options={options}/>
+                    : <LoaderTable/>
             }
         </div>
     );

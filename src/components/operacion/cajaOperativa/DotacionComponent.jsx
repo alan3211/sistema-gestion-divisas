@@ -5,6 +5,7 @@ import {
 import {dataG} from "../../../App";
 import {getDotaciones} from "../../../services/operacion-caja";
 import {TableComponent} from "../../commons/tables";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const DotacionComponent = () => {
 
@@ -41,8 +42,10 @@ export const DotacionComponent = () => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta Dotaciones',
         buscar: true,
         paginacion: true,
+        disabledColumnsExcel:['Detalle','Acciones'],
         tools:[
             {columna:"Estatus",tool:"estatus"},
             {columna:"Acciones",tool:"acciones-caja", refresh:refreshQuery},
@@ -56,11 +59,10 @@ export const DotacionComponent = () => {
 
     return(
         <div className="mt-4">
-            {showData ? (
-                <TableComponent data={data} options={options} />
-            ) : (
-                <p>Cargando datos...</p>
-            )}
+            {showData
+                ? <TableComponent data={data} options={options} />
+                : <LoaderTable/>
+            }
         </div>
     );
 }

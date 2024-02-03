@@ -1,5 +1,5 @@
 import {useForm} from "react-hook-form";
-import {encryptRequest, validarAlfaNumerico, validarMayus} from "../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, validarMayus} from "../../../utils";
 import {guardaCatalogo} from "../../../services";
 import {toast} from "react-toastify";
 
@@ -21,14 +21,7 @@ export const Monedas = () => {
         const response =  await guardaCatalogo(encryptedData);
 
         if (response !== '') {
-            toast.success(response, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response, OPTIONS);
             reset();
         }
     });

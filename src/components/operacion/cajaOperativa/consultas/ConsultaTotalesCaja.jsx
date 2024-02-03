@@ -1,6 +1,41 @@
-import {DENOMINACIONES, FormatoMoneda} from "../../../../utils";
+import {DENOMINACIONES, encryptRequest, FormatoMoneda} from "../../../../utils";
+import {useEffect, useState} from "react";
+import {ModalGenericTool} from "../../../commons/modals";
+import {getDetalleDenominaciones} from "../../../../services/tools-services";
+import {DenominacionTableCaja} from "../../denominacion";
+import {dataG} from "../../../../App";
 
 export const ConsultaTotalesCaja = ({data}) => {
+
+    const [showModal, setShowModal] = useState(false);
+    const [datos, setDatos] = useState([])
+
+    const options = {
+        size:'md',
+        showModal,
+        closeModal: () => setShowModal(false),
+        title: 'Detalle de Denominaciones',
+        icon: 'bi bi-currency-exchange m-2 text-success',
+        subtitle: '',
+    };
+
+    const obtieneDetalleDenominaciones = async() => {
+            const valores = {
+                opcion: 1,
+                usuario: dataG.usuario,
+                sucursal: dataG.sucursal,
+                moneda: data.Moneda,
+                tipo_operacion: 'DOTACION CAJA',
+            }
+            const encryptedData = encryptRequest(valores);
+            const data_denominacion = await getDetalleDenominaciones(encryptedData)
+            setDatos(data_denominacion.result_set);
+    }
+
+    useEffect(() => {
+        obtieneDetalleDenominaciones();
+    }, [data.Moneda]);
+
     return (
         <>
             <div className="col-md-3">
@@ -18,15 +53,31 @@ export const ConsultaTotalesCaja = ({data}) => {
                                     {parseInt(data.Billetes)}
                                 </span>
                                 <span className="text-muted small pt-2 ps-1">
+                                    <a
+                                        onClick={()=> setShowModal(true)}
+                                        style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                                    >
                                     {
                                          parseInt(data.Billetes) > 1 || parseInt(data.Billetes) === 0 ? 'billetes disponibles':'billete disponible'
                                     }
+                                    </a>
                                 </span>
                             </div>
                         </div>
                     </div>
-
                 </div>
+                {
+                    showModal
+                        && (
+                            <ModalGenericTool options={options}>
+                                <div className="row">
+                                    <div className="col-md-9 mx-auto">
+                                        <DenominacionTableCaja data={datos} monto={data.Monto} moneda={data.Moneda}/>
+                                    </div>
+                                </div>
+                            </ModalGenericTool>
+                    )
+                }
             </div>
         </>
     );

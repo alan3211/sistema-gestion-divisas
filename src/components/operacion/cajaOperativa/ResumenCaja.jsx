@@ -18,11 +18,14 @@ import { entregaCaja } from "../../../services/operacion-caja";
 import { getUsuariosSistema } from "../../../services";
 import { MessageComponent } from "../../commons";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
+import {ModalGenericTool} from "../../commons/modals";
 
 
 export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetForm }) => {
 
     const [guarda,setGuarda] = useState(false);
+    const [showDiferencias, setShowDiferencias] = useState(false);
+    const [cierraCajaForm, setCierraCajaForm] = useState({});
     const getPropiedad = (property,elemento) => {
         let propiedad='';
         if(elemento.Denominacion === '0.05'){
@@ -174,6 +177,15 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         title:'Guardando...'
     }
 
+    const optionsModal = {
+        size:'md',
+        showModal: showDiferencias,
+        closeModal: () => setShowDiferencias(false),
+        title: 'Cierre de Caja',
+        icon: 'bi bi-cash m-2 text-blue',
+        subtitle: 'Existen diferencias en los montos, ¿Desea enviar el cierre de caja al supervisor?'
+    };
+
     const onSubmit = handleSubmit(async (datos) => {
         console.log("Array de objetos:", datos);
         const usuario_traspaso = datos.usuario_traspaso || '';
@@ -217,8 +229,15 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
         if (totalDiferencia !== 0) {
             cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
-            onEnviaNotas(cierreCaja);
+            setShowDiferencias(true);
+            setCierraCajaForm(cierreCaja);
+            console.log("LLEGO AQUI")
         } else if(totalDiferencia !== 0 && totalDiferenciaMontos === 0){
+            setShowDiferencias(true);
+            setCierraCajaForm(cierreCaja)
+            console.log("LLEGO AQUI")
+        } else{
+            setShowDiferencias(false);
             const encryptedData = encryptRequest(cierreCaja);
             setGuarda(true)
             const response = await entregaCaja(encryptedData);
@@ -229,35 +248,26 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                 reset();
                 setShowDetalle(false);
                 refresh();
-            }
-        } else{
-            const encryptedData = encryptRequest(cierreCaja);
-            setGuarda(true)
-           const response = await entregaCaja(encryptedData);
-
-            if (response !== '') {
-                setGuarda(false)
-                toast.success(response, OPTIONS);
-                reset();
-                setShowDetalle(false);
-                refresh();
+                options.closeCustomModal();
             }
         }
         console.warn("Cierre CAJA",cierreCaja)
     });
 
-    const onEnviaNotas = async (cierreCaja) => {
-        console.log("CIERRE FINAL: ", cierreCaja);
-        const encryptedData = encryptRequest(cierreCaja);
+    const cierraCajaDiferencias = async() => {
+        console.log("CIERRA CAJA DIF")
+        console.log(cierraCajaForm)
+        const encryptedData = encryptRequest(cierraCajaForm);
         setGuarda(true)
         const response = await entregaCaja(encryptedData);
+
         if (response !== '') {
             setGuarda(false)
             toast.success(response, OPTIONS);
             reset();
-            options.closeCustomModal();
             setShowDetalle(false);
             refresh();
+            options.closeCustomModal();
         }
     }
 
@@ -323,7 +333,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                 name="usuario_traspaso"
                                 aria-label="Usuario"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {usuariosCombo?.map((ele) => (
                                     <option
                                         key={ele.Usu + "-" + ele.Nombre}
@@ -407,7 +417,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                         <input
                                             {...register(`${getPropiedad('denominacion',elemento)}`, {
                                                 validate: {
-                                                    validacionMN: (value) => /^[1-9]\d*$/.test(value) || value === 0,
+                                                    validacionMN: (value) => /^[0-9]\d*$/.test(value) || value === 0,
                                                 },
                                             })}
                                             type="text"
@@ -418,7 +428,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                                 const inputValue = e.target.value;
                                                 const newValue = /^[0-9]\d*$/.test(inputValue) ? inputValue : 0;
 
-                                                if(parseInt(newValue) > 0) {
+                                                if(parseInt(newValue) >= 0) {
                                                     setDifParcial((prevDifParcial) => {
                                                         // Crear una copia del estado actual
                                                         const updatedDifParcial = [...prevDifParcial];
@@ -519,6 +529,24 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                               </span>
                         </button>
                     </div>
+                    {
+                        showDiferencias && (
+                            <ModalGenericTool options={optionsModal}>
+                                <div className="d-flex justify-content-center mt-2">
+                                    <button type="button" className={`btn btn-danger me-2`} onClick={optionsModal.closeModal}>
+                                        <i className='bi bi-x-circle me-2'></i>
+                                        NO
+                                    </button>
+
+                                    <button type="button" className="btn btn-success"
+                                            onClick={cierraCajaDiferencias}>
+                                        <i className="bi bi-check-circle me-2"></i>
+                                        SI,DE ACUERDO
+                                    </button>
+                                </div>
+                            </ModalGenericTool>
+                        )
+                    }
                 </>)
             }
         </div>

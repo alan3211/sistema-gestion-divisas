@@ -60,7 +60,7 @@ export const FormCliente = ({tipo}) => {
         } else {
             data.cliente = '';
         }
-
+        data.tipo_operacion =  operacion.tipo_operacion;
         console.log("DATOS: ", data)
         const encryptedData = encryptRequest(data);
         const dataClientes = await buscaCliente(encryptedData);

@@ -1,8 +1,7 @@
-export const ConsultasCaja = () => {
+export const Bancos = () => {
+
     return (
         <>
-
-
         </>
     );
 }

@@ -61,7 +61,7 @@ export const TableroCoordinadorLogistico = () => {
         <section className="section dashboard">
             {!isLoading && (<>
                 <div className="row">
-                    <div className="col-md-5">
+                    <div className="col-md-6">
                         <div className="row">
                             <div className="col-md-6">
                                 <Ventas data={estadistica[0]?.result_set?.[0] || {}}/>
@@ -71,7 +71,7 @@ export const TableroCoordinadorLogistico = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-7">
+                    <div className="col-md-6">
                         <CompraVentaProvider><TipoCambioComponent/></CompraVentaProvider>
                     </div>
                 </div>

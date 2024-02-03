@@ -25,6 +25,7 @@ export const DetalleDenominaciones = ({item, index, columna, params}) => {
     const opciones = {
         showMostrar:true,
         excel:true,
+        tableName:'Detalle de denominaciones',
         buscar: true,
         paginacion: true,
     }

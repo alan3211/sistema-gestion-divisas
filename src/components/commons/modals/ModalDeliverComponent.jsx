@@ -1,7 +1,7 @@
 import {Button, Modal} from "react-bootstrap";
 import {useContext, useEffect, useMemo, useState} from "react";
 import {dataG} from "../../../App";
-import {obtieneDenominaciones, realizarOperacion} from "../../../services";
+import {guardaConfirmacionFactura, obtieneDenominaciones, realizarOperacion} from "../../../services";
 import {ModalCambio} from "./ModalCambio";
 import {
     eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateWS,
@@ -58,9 +58,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
     // Calcula el valor del monto de la parte decimal con 2 digitos
     const calculaValorMonto = useMemo(() => {
         if (operacion.tipo_operacion === '2') {
-            const conversionAPesos = operacion.decimal_sobrante * parseFloat(operacion.tipo_cambio);
-            const diferenciaAMostrar = parseFloat(operacion.monto) - conversionAPesos;
-            return redondearNumero(diferenciaAMostrar.toFixed(2));
+            return redondearNumero(parseFloat(operacion.cantidad_entregar));
         }
         return redondearNumero(operacion.monto);
     }, [operacion.cantidad_entregar, operacion.tipo_cambio, operacion.monto, operacion.tipo_operacion]);
@@ -100,9 +98,9 @@ export const ModalDeliverComponent = ({configuration}) =>{
         const values = {
             cliente: datos.Cliente,
             ticket: datos.ticket,
-            divisa: operacion.moneda,
-            cantidad_entregar: parseInt(operacion.cantidad_entregar),
-            monto: parseFloat(calculaValorMonto).toFixed(2),
+            divisa: muestraDivisa(),
+            cantidad_entregar: parseFloat(operacion.cantidad_entregar),
+            monto: parseFloat(operacion.monto),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
             traspaso: '',
@@ -130,7 +128,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     const options = {
         title: `Recibido del usuario (${muestraDivisa()})`,
-        importe: parseFloat(parseInt(operacion.monto)),
+        importe: operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto,
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
@@ -139,7 +137,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     const optionsE = {
         title: `Entregado al usuario (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
-        importe:parseFloat(operacion.cantidad_entregar),
+        importe:operacion.tipo_operacion === "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto,
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
@@ -271,12 +269,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
         dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
+        dataFormulario.moneda=moneda;
+        dataFormulario.monto= denominacionD.calculateGrandTotal();
 
         let denominacionesDotacion = denominacionD.getValues();
         const formValuesD = getDenominacion(moneda,denominacionesDotacion)
         eliminarDenominacionesConCantidadCero(formValuesD);
         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
-        denominaciones.divisa = moneda;
+        denominaciones.moneda = moneda;
         denominaciones.tipoOperacion = '0';
         denominaciones.movimiento = 'DOTACION RAPIDA';
 
@@ -307,16 +307,40 @@ export const ModalDeliverComponent = ({configuration}) =>{
         title:'Guardando...'
     }
 
+    const guardaFactura = async ()=> {
+
+        const values = {
+            ticket: datos.ticket,
+            resguardo: 'SI'
+        }
+
+        const encryptedData =  encryptRequest(values);
+
+        const response = await guardaConfirmacionFactura(encryptedData)
+
+        if(response.total_rows === 0){
+            toast.error('Hubo un problema al resguardar la factura',OPTIONS);
+        }else{
+            imprimir(0);
+            setShowModalFactura(false)
+            setShowModal(true)
+        }
+
+    }
+
     return(
         <>
-            <Modal centered size="xl" show={showCustomModal} onHide={closeCustomModal}>
-                <Modal.Header closeButton>
+            <Modal centered size="xl" show={showCustomModal} backdrop="static" keyboard={false}>
+                <Modal.Header>
                     <Modal.Title>
-                        <h5 className="text-blue">
-                            <i className="bi bi-currency-exchange m-2"></i>
-                            {titulo}
-                        </h5>
+                        <div className="d-flex align-items-center justify-content-end w-100">
+                            <h5 className="text-blue m-0">
+                                <i className="bi bi-currency-exchange m-2"></i>
+                                {titulo}
+                            </h5>
+                        </div>
                     </Modal.Title>
+                    <button type="button" className="btn-close" onClick={closeCustomModal} aria-label="Close"></button>
                 </Modal.Header>
 
                 <Modal.Body style={{ maxHeight: "550px", overflowY: "auto" }}>
@@ -331,7 +355,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     value={operacion.monto} readOnly
                                     autoComplete="off"
                                 />
-                                <label htmlFor="monto" className="form-label">IMPORTE <i>({muestraDivisa()})</i></label>
+                                <label htmlFor="monto" className="form-label">IMPORTE <i>({operacion.moneda})</i></label>
                             </div>
                         </div>
                         <div className="col-md-4 mb-3 d-flex">
@@ -341,11 +365,11 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     id="monto"
                                     name="monto"
                                     className={`form-control mb-1`}
-                                    placeholder="Ingresa la cantidad a cotizar por el usuario"
-                                    value={calculaValorMonto} readOnly
+                                    placeholder="Ingresa la cantidad a por el usuario"
+                                    value={operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto} readOnly
                                     autoComplete="off"
                                 />
-                                <label htmlFor="monto" className="form-label">CANTIDAD A COTIZAR <i>({muestraDivisa()})</i></label>
+                                <label htmlFor="monto" className="form-label">CANTIDAD A {operacion.tipo_operacion === '1' ? 'COTIZAR':'RECIBIR'} <i>({operacion.tipo_operacion === '1' ? operacion.moneda:'MXP'})</i></label>
                             </div>
                         </div>
                         <div className="col-md-4 mb-3 d-flex">
@@ -353,7 +377,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                 <input type="text"
                                        className={`form-control mb-1`}
                                        id="floatingCE"
-                                       value={operacion.cantidad_entregar}
+                                       value={operacion.tipo_operacion === "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto}
                                        readOnly
                                        autoComplete="off"
                                 />
@@ -428,12 +452,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                      imprimir(0);
                                      setShowModal(true)
                                  }}
-                                 hacerOperacion={()=> {
-                                     toast.info('Se guarda la factura.', OPTIONS);
-                                     imprimir(0);
-                                     setShowModal(true)
-                                     setShowModalFactura(false)
-                                 }}
+                                 hacerOperacion={guardaFactura}
                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
                 )
             }
@@ -487,7 +506,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                                 name="denominacion_cambio"
                                                 aria-label="DENOMINACION"
                                             >
-                                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                                 {
                                                     dataMoneda?.map((ele) => (
                                                         <option key={ele.Denominacion + '-' + ele["Billetes Disponibles"]}

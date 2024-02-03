@@ -7,6 +7,7 @@ export const useGetUsuariosSistema = (valores) => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Usuarios de Sistema',
         paginacion: true,
         buscar:true,
         tools:[

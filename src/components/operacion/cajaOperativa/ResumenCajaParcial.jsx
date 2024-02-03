@@ -8,7 +8,7 @@ import {
     getDiferenciaDenominacion,
     obtenerArrayDifDenominaciones,
     obtenerObjetoDenominaciones,
-    opciones,
+    opciones, OPTIONS,
 } from "../../../utils";
 import {dataG} from "../../../App";
 import {toast} from "react-toastify";
@@ -210,14 +210,7 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
 
             if (response !== '') {
                 setGuarda(false)
-                toast.success('Se ha realizado el cierre parcial', {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    theme: "light",
-                });
+                toast.success('Se ha realizado el cierre parcial', OPTIONS);
                 reset();
                 setShowDetalle(false);
                 refresh();

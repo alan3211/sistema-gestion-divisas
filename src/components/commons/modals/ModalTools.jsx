@@ -21,14 +21,15 @@ export const ModalDetalleTool = ({options,children}) => {
 
 export const ModalAccionTesoreriaTool = ({options,children}) => {
     return (
-        <Modal centered size={options.size || 'xl'} show={options.showModal} onHide={options.closeCustomModal}>
-            <Modal.Header closeButton>
+        <Modal centered size={options.size || 'xl'} show={options.showModal} backdrop="static" keyboard={false}>
+            <Modal.Header>
                 <Modal.Title>
                     <h5>
                         <i className={options.icon}></i>
                         {options.title}
                     </h5>
                 </Modal.Title>
+                <button type="button" className="btn-close" onClick={options.closeModal} aria-label="Close"></button>
             </Modal.Header>
             <Modal.Body>
                 <p>{options.subtitle}</p>
@@ -40,14 +41,15 @@ export const ModalAccionTesoreriaTool = ({options,children}) => {
 
 export const ModalAccionCancelarTool = ({options,children}) => {
     return (
-        <Modal centered size="lg" show={options.showModal} onHide={options.closeCustomModal}>
-            <Modal.Header closeButton>
+        <Modal centered size="lg" show={options.showModal} backdrop="static" keyboard={false}>
+            <Modal.Header>
                 <Modal.Title>
                     <h5>
                         <i className="bi bi-x-circle m-2 text-danger"></i>
                         {options.title}
                     </h5>
                 </Modal.Title>
+                <button type="button" className="btn-close" onClick={options.closeModal} aria-label="Close"></button>
             </Modal.Header>
             <Modal.Body>
                 <p>{options.subtitle}</p>
@@ -59,14 +61,15 @@ export const ModalAccionCancelarTool = ({options,children}) => {
 
 export const ModalAccionesTool = ({options,children}) => {
     return (
-        <Modal centered size="xl" show={options.showModal} onHide={options.closeCustomModal}>
-            <Modal.Header closeButton>
+        <Modal centered size="xl" show={options.showModal} backdrop="static" keyboard={false}>
+            <Modal.Header>
                 <Modal.Title>
                     <h5>
                         <i className={options.icon}></i>
                         {options.title}
                     </h5>
                 </Modal.Title>
+                <button type="button" className="btn-close" onClick={options.closeModal} aria-label="Close"></button>
             </Modal.Header>
             <Modal.Body>
                 <p>{options.subtitle}</p>
@@ -78,14 +81,15 @@ export const ModalAccionesTool = ({options,children}) => {
 
 export const ModalGenericTool = ({options,children}) => {
     return (
-        <Modal centered size={options.size} show={options.showModal}>
-            <Modal.Header closeButton onClick={options.closeModal}>
+        <Modal centered size={options.size} show={options.showModal} backdrop="static" keyboard={false}>
+            <Modal.Header>
                 <Modal.Title>
                     <h5 className="card-title">
                         <i className={options.icon}></i>
                         {options.title}
                     </h5>
                 </Modal.Title>
+                <button type="button" className="btn-close" onClick={options.closeModal} aria-label="Close"></button>
             </Modal.Header>
             <Modal.Body>
                 <p>{options.subtitle}</p>

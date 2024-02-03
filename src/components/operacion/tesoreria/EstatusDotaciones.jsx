@@ -1,9 +1,10 @@
-import {encryptRequest, formattedDate, validaFechas} from "../../../utils";
+import {encryptRequest, formattedDate} from "../../../utils";
 import {useForm} from "react-hook-form";
 import {useCatalogo} from "../../../hook";
-import {consultaEnvioSucursal, estatusOperaciones} from "../../../services/operacion-tesoreria";
+import {estatusOperaciones} from "../../../services/operacion-tesoreria";
 import {TableComponent} from "../../commons/tables";
 import {useEffect, useState} from "react";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const EstatusDotaciones = () => {
 
@@ -26,6 +27,8 @@ export const EstatusDotaciones = () => {
         buscar: true,
         paginacion: true,
         excel:true,
+        tableName:'Estatus Dotaciones',
+        disabledColumnsExcel:['Cancelar','Detalle'],
         tools: [
             {columna:"Estatus",tool:'estatus'},
             {columna:"Detalle",tool:'detalle',params:{opcion:2}},
@@ -82,7 +85,7 @@ export const EstatusDotaciones = () => {
                             value={currentSucursal}
                             onChange={(e)=> setCurrentSucursal(e.target.value)}
                         >
-                            <option value="0">SELECCIONA UNA OPCIÓN</option>
+                            <option value="">SELECCIONA UNA OPCIÓN</option>
                             {catalogo[1]?.map((ele) => (
                                 <option
                                     key={ele.id + "-" + ele.descripcion}
@@ -136,7 +139,9 @@ export const EstatusDotaciones = () => {
                 </div>
             </div>
             {
-                showTable && <TableComponent data={data} options={options}/>
+                showTable
+                    ? <TableComponent data={data} options={options}/>
+                    : <LoaderTable/>
             }
         </div>
     );

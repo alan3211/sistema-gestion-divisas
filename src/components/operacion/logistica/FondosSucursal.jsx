@@ -71,7 +71,7 @@ export const FondosSucursal = () => {
                                 name="boveda"
                                 aria-label="Boveda"
                             >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[0]?.map((ele) => (
                                         <option key={ele.id + '-' + ele.descripcion}
@@ -104,7 +104,7 @@ export const FondosSucursal = () => {
                                     name="moneda"
                                     aria-label="Moneda"
                                 >
-                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    <option value="">SELECCIONA UNA OPCIÓN</option>
                                     {
                                         catalogo[1]?.map((ele) => (
                                             <option key={ele.id + '-' + ele.descripcion}
@@ -126,12 +126,12 @@ export const FondosSucursal = () => {
                                 type="button"
                                 onClick={handleForm}
                                 className="btn btn-primary mt-2">
-                                CONSULTAR
                                 <span
-                                    className="bi bi-search ms-2"
+                                    className="bi bi-check-circle me-2"
                                     role="status"
                                     aria-hidden="true">
                                 </span>
+                                GENERAR
                             </button>
                         </div>
                 </div>
@@ -142,7 +142,11 @@ export const FondosSucursal = () => {
                 <strong className="ms-2">{FormatoMoneda(parseFloat(cantidadDisponible))}</strong>
             </h5>)}
             {
-                showData && <AsignaFondosSucursal data={data} moneda={moneda} cantidadDisponible={cantidadDisponible} refreshData={refreshData} />
+                showData && <AsignaFondosSucursal data={data} moneda={moneda}
+                                                  cantidadDisponible={cantidadDisponible}
+                                                  refreshData={refreshData}
+                                                  boveda={watch("boveda")}
+                />
             }
         </>
     );

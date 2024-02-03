@@ -1,14 +1,14 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../../../App";
-import {encryptRequest, validarAlfaNumerico} from "../../../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico} from "../../../../../utils";
 import {cancelarEnvioSucursal} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
 import {ModalAccionCancelarTool} from "../../../modals";
 
 export const CancelarTesoreria = ({item, index,refresh}) => {
     const [showModal, setShowModal] = useState(false);
-    const {register, handleSubmit, formState: {errors}, reset} = useForm();
+    const {register,setValue, handleSubmit, formState: {errors}, reset} = useForm();
     const showModalCancelar = () => {
         setShowModal(true);
     };
@@ -22,14 +22,7 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
         const response = await cancelarEnvioSucursal(encryptedData);
 
         if (response.result_set[0].Mensaje !== '') {
-            toast.success(response.result_set[0].Mensaje, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                theme: "light",
-            });
+            toast.success(response.result_set[0].Mensaje, OPTIONS);
             setShowModal(false);
             refresh();
             reset();
@@ -38,7 +31,7 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
 
     const options = {
         showModal,
-        closeCustomModal: () => setShowModal(false),
+        closeModal: () => setShowModal(false),
         title: 'Cancelar Dotación',
         subtitle: 'Ingrese el motivo por el cual desea cancelar el envío a la sucursal.',
     };
@@ -66,6 +59,10 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
                                                 value: true,
                                                 message: 'El campo Motivo no puede ser vacío.'
                                             },
+                                            minLength: {
+                                                value: 25,
+                                                message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
+                                            },
                                             maxLength: {
                                                 value: 200,
                                                 message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
@@ -76,6 +73,11 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
                                         id="motivo"
                                         name="motivo"
                                         placeholder="Ingresa el motivo de cancelación"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            setValue("motivo", upperCaseValue);
+                                        }}
                                         style={{
                                             height: '300px',
                                             resize: 'none'

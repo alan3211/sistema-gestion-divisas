@@ -1,16 +1,20 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {MessageComponent} from "../MessageComponent";
-import {encryptRequest, FormatoMoneda, mensajeSinElementos, validaFechas} from "../../../utils";
+import {
+    encryptRequest,
+    FormatoMoneda, formattedDate,
+    mensajeSinElementos,
+    OPTIONS,
+} from "../../../utils";
 
 import './table.css';
-import {getTools} from "./operaciones/operaciones-tools";
 import {useForm} from "react-hook-form";
-import {writeFile} from "xlsx";
-import * as XLSX from "xlsx";
-import jsPDF from 'jspdf';
-
-
-
+import {obtenTitulo} from "../../../services/reportes-services";
+import * as ExcelJS from "exceljs";
+import { saveAs } from 'file-saver';
+import {toast} from "react-toastify";
+import {Tabla} from "./Tabla";
+import jsPDF from "jspdf";
 
 export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
     const [resultSet, setResultSet] = useState([]);
@@ -19,27 +23,20 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     const [searchTerm, setSearchTerm] = useState("");
     const [sortColumn, setSortColumn] = useState("");
     const [sortDirection, setSortDirection] = useState("asc");
-    const {register,handleSubmit,formState:{errors}} = useForm();
 
     const {
         showMostrar = false,
         excel=false,
         buscar = false,
-        buscarFecha = false,
         paginacion = false,
+        tableName = 'Consulta',
         tools = [],
         filters=[],
         disabledColumns=[],
+        disabledColumnsExcel=[],
         deps = {},
         params = {},
     } = options || {};
-
-
-    if (total_rows === 0) {
-        return (<MessageComponent estilos={mensajeSinElementos}>
-                No se encontraron datos con los parametros especificados.
-            </MessageComponent>);
-    }
 
     const handlePerPageChange = (event) => {
         setPerPage(parseInt(event.target.value));
@@ -69,7 +66,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
     };
 
     // Filtrar los datos según el término de búsqueda
-    const filteredData = result_set.filter((item) => Object.values(item).some((value) => String(value).toLowerCase().includes(searchTerm.toLowerCase())));
+    const filteredData = result_set ? result_set?.filter((item) => Object.values(item).some((value) => String(value).toLowerCase().includes(searchTerm.toLowerCase()))) : [];
 
     // Calcular el número total de páginas
     const totalPages = Math.ceil(filteredData.length / perPage);
@@ -90,51 +87,244 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
 
     const applyFilter = (filtro, valor) => {
         if(filtro === 'currency'){
-            return FormatoMoneda(valor);
+            if(valor === '' || valor === null || isNaN(valor)){
+                return FormatoMoneda(0);
+            }else{
+                return FormatoMoneda(valor);
+            }
+
+        } else if (filtro === 'tooltip') {
+            return valor && valor.slice(0, 12) + '...';
         }
+        return valor;
     }
 
-    const onHandleDateChange = handleSubmit(async(data)=>{
-       params.fecha = data.fecha;
-       const encryptedData =  encryptRequest(params);
-       setResultSet(deps.funcion(encryptedData));
-    });
-
-    const handleDownloadExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(filteredData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Consulta");
-
-        // Guarda el archivo
-        const fileName = "datos_tabla.xlsx";
-        writeFile(wb, fileName);
+    const opciones = {
+        headers,disabledColumns,sortColumn,sortDirection,handleSort,
+        currentData,tools,filters,applyFilter
     };
 
-    const handleDownloadPDF = () => {
-        // Crear instancia de jsPDF
-        const pdfDoc = new jsPDF();
+    // Administracion de la descarga de excel
+    const handleDownloadExcel = async() => {
+        if (total_rows > 0) {
+            const datosOrdenados = result_set.map((fila) => {
+                const filaOrdenada = {};
+                headers.forEach((columna) => {
+                    filaOrdenada[columna] = fila[columna];
+                });
+                return filaOrdenada;
+            });
 
-        // Convertir el objeto JSON a cadena
-        const jsonString = JSON.stringify(result_set, null, 2);
+            // Crear un nuevo libro de Excel
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(tableName);
 
-        // Agregar la cadena al documento PDF
-        pdfDoc.text(jsonString, 10, 10);
+            const titulo = await obtenTitulo();
+            // Añadir título a la fila 1
+            worksheet.addRow([titulo.result_set[0].Nombre]);
+            // Obtener el número de columnas en tus encabezados
+            const numColumnas = headers.length;
+            // Obtener la letra de la última columna (por ejemplo, 'N' si tienes 14 columnas)
+            const ultimaLetraColumna = String.fromCharCode('A'.charCodeAt(0) + numColumnas - 1);
+            // Establecer el estilo para cada celda de la fila de encabezados
+            const headerFirstRow = worksheet.getRow(1);
+            headerFirstRow.eachCell((cell) => {
+                cell.font = { bold: true }; // Color de la letra blanco y negrita
+                cell.alignment = { horizontal: 'center' }; // Alineación central
+            });
+            // Combinar celdas desde A1 hasta la última columna (por ejemplo, N1)
+            worksheet.mergeCells(`A1:${ultimaLetraColumna}1`);
 
-        // Guardar el archivo PDF
-        pdfDoc.save("tabla.pdf");
+            worksheet.addRow([tableName]);
+            const headerSecondRow = worksheet.getRow(2);
+            headerSecondRow.eachCell((cell) => {
+                cell.font = { bold: true }; // Color de la letra blanco y negrita
+                cell.alignment = { horizontal: 'center' }; // Alineación central
+            });
+            // Combinar celdas desde A2 hasta la última columna (por ejemplo, N2)
+            worksheet.mergeCells(`A2:${ultimaLetraColumna}2`);
+
+            // Agregar encabezado
+            worksheet.addRow(headers); // Reemplaza con tus encabezados
+            // Estilo para los encabezados
+            const headerRow = worksheet.getRow(3); // Fila de encabezados
+
+            // Establecer el estilo para cada celda de la fila de encabezados
+            headerRow.eachCell((cell) => {
+                cell.font = { color: { argb: 'FFFFFF' }, bold: true }; // Color de la letra blanco y negrita
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '012970' } }; // Color de fondo azul oscuro
+                cell.alignment = { horizontal: 'center' }; // Alineación central
+            });
+
+            // Eliminar columnas según el array disabledColumnsExcel
+            disabledColumnsExcel.forEach((columnToDelete) => {
+                const columnIndex = headers.indexOf(columnToDelete);
+                if (columnIndex !== -1) {
+                    // Eliminar la columna del array de headers
+                    headers.splice(columnIndex, 1);
+
+                    // Eliminar la columna de cada fila en datosOrdenados
+                    datosOrdenados.forEach((fila) => {
+                        delete fila[columnToDelete]; // Eliminar la propiedad del objeto
+                    });
+                }
+            });
+
+// Agregar los datos ordenados a la hoja de cálculo
+            datosOrdenados.forEach((fila, index) => {
+                const rowData = headers.map((column) => fila[column]);
+
+                // Aplicar filtros
+                filters.forEach((filtro) => {
+                    const { columna, filter } = filtro;
+                    const columnIndex = headers.indexOf(columna);
+
+                    if (columnIndex !== -1) {
+                        // Verificar si el índice de la columna está dentro de los límites de la fila
+                        if (columnIndex < rowData.length) {
+                            // Aplicar el filtro a la celda correspondiente
+                            if (filter !== 'tooltip') {
+                                rowData[columnIndex] = applyFilter(filter, parseFloat(rowData[columnIndex]));
+                            }
+                        }
+                    }
+                });
+
+                worksheet.addRow(rowData);
+            });
+
+            // Actualizar el encabezado en la hoja de cálculo
+            worksheet.getRow(3).values = headers;
+
+            // Estilo para los encabezados actualizados
+            const updatedHeaderRow = worksheet.getRow(3);
+            updatedHeaderRow.eachCell((cell) => {
+                cell.font = { color: { argb: 'FFFFFF' }, bold: true };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '012970' } };
+                cell.alignment = { horizontal: 'center' };
+            });
+
+
+            // Construir el blob y descargar el archivo
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const fileName = `Consulta-${formattedDate}-${tableName}.xlsx`;
+
+            // Descargar el archivo
+            saveAs(blob, fileName);
+        } else {
+            toast.warn(`Hubo un problema para generar el excel con la tabla. Valide si existe información`, OPTIONS);
+        }
+    };
+
+    // Función para obtener el filtro adecuado para una columna
+    const getFilterForColumn = (columna) => {
+        const filterObject = filters.find((filtro) => filtro.columna === columna);
+        return filterObject ? filterObject.filter : null;
     };
 
 
+    // Administracion de la descarga de PDF
+    const handleDownloadPDF = async() => {
+        const titulo = await obtenTitulo();
+        // Crear un nuevo objeto jsPDF
+        const pdf = new jsPDF({
+            orientation: 'l',
+            unit: 'mm',
+            format: 'a4',
+            putOnlyUsedFonts: true
+        });
+
+        // Agregar títulos al PDF
+        pdf.text(titulo.result_set[0].Nombre, 150, 10, { align: "center" });
+        pdf.text(tableName, 150, 20, { align: "center" });
+
+        // Crear una tabla
+        const datosOrdenados = result_set.map((fila) => {
+            const filaOrdenada = {};
+            headers.forEach((columna) => {
+                filaOrdenada[columna] = fila[columna];
+            });
+            return filaOrdenada;
+        });
+        // Eliminar columnas según el array disabledColumnsExcel
+        disabledColumnsExcel.forEach((columnToDelete) => {
+            const columnIndex = headers.indexOf(columnToDelete);
+            console.log(headers)
+            console.log(columnToDelete)
+            console.log(columnIndex)
+
+            if (columnIndex !== -1) {
+                // Eliminar la columna del array de headers
+                headers.splice(columnIndex, 1);
+
+                // Eliminar la columna de cada fila en datosOrdenados
+                datosOrdenados.forEach((fila) => {
+                    fila[columnToDelete] = undefined; // O puedes eliminar completamente la propiedad
+                });
+            }
+        });
+
+        // Aplicar filtros y formato a los datos en el PDF
+        datosOrdenados.forEach((fila) => {
+            headers.forEach((columna) => {
+                const filter = getFilterForColumn(columna); // Obtener el filtro adecuado para la columna
+                if (filter) {
+                    if (filter !== 'tooltip'){
+                        // Aplicar el filtro a la celda correspondiente
+                        fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
+                    }
+                }
+            });
+        });
+
+        // Generar la tabla para el PDF
+        const rows = datosOrdenados.map((fila) => headers.map((columna) => fila[columna]));
+
+        pdf.autoTable({
+            head: [headers],  // Encabezados de la tabla
+            body: rows,  // Datos de la tabla
+            startY: 40,
+            theme: 'grid',  // Estilo de la tabla (puedes cambiarlo según tus preferencias)
+            styles: {
+                fontSize: 8,
+                cellPadding: 1,
+                valign: 'middle',
+                halign: 'center',
+                overflow: 'linebreak',
+                lineWidth: 0.1,
+            },
+            headStyles: {
+                fillColor: [1, 41, 112],  // Color de fondo del encabezado (#012970)
+                textColor: [255, 255, 255]  // Color del texto del encabezado (blanco)
+            },
+            columnStyles: {
+                0: { cellWidth: 20 },  // Ancho de la primera columna
+                // Ajusta los anchos de las columnas según tus necesidades
+            },
+        });
+
+        // Descargar el PDF
+        pdf.save(`${tableName}.pdf`);
+    }
+
+    if (total_rows === 0) {
+        return (
+                <MessageComponent estilos={mensajeSinElementos}>
+                    No se encontraron datos con los parametros especificados.
+                </MessageComponent>
+        );
+    }
     return (<>
             <div className="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns mx-auto"
                  style={{"fontSize": "12px"}}>
-                <div className="datatable-top">
+                <div className="datatable-top row">
                     {showMostrar && filteredData.length >= 5 && (
-                        <div className="row datatable-dropdown col-12 col-md-4 justify-content-start">
-                            <label>
-                                Mostrar
+                        <div className="col-3 col-sm-4 col-md-4 col-lg-2 mt-3">
+                            <label className="d-flex align-items-center me-2">
+                                <span>Mostrar</span>
                                 <select
-                                    className="datatable-selector m-2"
+                                    className="datatable-selector ms-2"
                                     value={perPage}
                                     onChange={handlePerPageChange}
                                 >
@@ -144,36 +334,14 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                     <option value="50">50</option>
                                     <option value="200">200</option>
                                 </select>
-                                por página
+                                <span className="ms-2">por página</span>
                             </label>
                         </div>
                     )}
-
-                    <div className="datatable-search col-12 col-md-6">
+                    <div className="col-9 col-sm-8 col-md-9 col-lg-10">
                         <div className="row justify-content-end">
-                            <div className={buscarFecha ? "col-12 col-md-4" : "d-none d-md-block"}>
-                                {buscarFecha && (
-                                    <div className="form-floating">
-                                        <input
-                                            {...register("fecha", {})}
-                                            type="date"
-                                            className={`form-control ${!!errors?.fecha ? 'invalid-input' : ''}`}
-                                            id="fecha"
-                                            name="fecha"
-                                            placeholder="Ingresa la fecha de consulta"
-                                            onChange={onHandleDateChange}
-                                            autoComplete="off"
-                                        />
-                                        <label htmlFor="fecha">FECHA CONSULTA</label>
-                                        {errors?.fecha && (
-                                            <div className="invalid-feedback-custom">{errors?.fecha.message}</div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className={buscar ? "col-12 col-md-4" : "col-12"}>
-                                {buscar && (
+                            {buscar && result_set && (
+                                <div className="col-12 col-md-3 col-lg-3 mb-2">
                                     <div className="row form-floating">
                                         <input
                                             key="searchTable"
@@ -183,16 +351,16 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                             onChange={handleSearch}
                                             autoComplete="off"
                                         />
-                                        <label htmlFor="fecha">
+                                        <label htmlFor="fecha" className="mt-1">
                                             BUSCAR EN LA TABLA
                                             <i className="bx bx-search ms-2"></i>
                                         </label>
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
 
-                            {excel && (
-                                <div className="justify-content-center align-content-start col-12 col-md-3 mt-2">
+                            {excel && result_set && (
+                                <div className="col-12 col-md-3 col-lg-2 mt-2">
                                     <button
                                         className="btn btn-success me-2"
                                         onClick={handleDownloadExcel}
@@ -202,6 +370,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                     >
                                         <i className="ri ri-file-excel-2-fill"></i>
                                     </button>
+
                                     <button
                                         className="btn btn-danger"
                                         onClick={handleDownloadPDF}
@@ -213,7 +382,6 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                                     </button>
                                 </div>
                             )}
-
                         </div>
                     </div>
                 </div>
@@ -222,63 +390,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                     currentData.length !== 0 ? (
                         <>
                             <div className="datatable-container table-overflow">
-                                <table className="table datatable-table table-responsive table-striped">
-                                    <thead className="table-blue">
-                                    <tr>
-                                        {headers.map((key, index) => {
-                                                if(disabledColumns.includes(key)){
-                                                    return;
-                                                }
-                                                return (<th
-                                                    key={index}
-                                                    data-sortable="true"
-                                                    className={sortColumn === key ? `sorted ${sortDirection} text-center` : "text-center"}
-                                                    onClick={() => handleSort(key)}
-                                                >
-                                                    <a className="datatable-sorter">
-                                                        {key}
-                                                    </a>
-                                                </th>)
-                                            }
-                                        )}
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {currentData.map((item, index) => {
-                                            return (<tr key={index} data-index={index}>
-                                                {headers.map((key, index) => {
-                                                    if(disabledColumns.includes(key)){
-                                                        return;
-                                                    }else{
-                                                        // Busca el objeto tool correspondiente a la columna actual
-                                                        const toolInfo = tools.find(tool => tool.columna === key);
-                                                        // Si se encuentra un objeto tool, renderiza el componente correspondiente
-                                                        if (toolInfo) {
-                                                            return getTools(toolInfo,item,index)
-                                                        } else {
-                                                            const filterElement = filters.find(element => element.columna === key);
-
-                                                            if (filterElement) {
-                                                                return (
-                                                                    <td key={index} className="text-center">
-                                                                        {applyFilter(filterElement.filter, parseFloat(item[key]))}
-                                                                    </td>
-                                                                );
-                                                            } else {
-                                                                return (
-                                                                    <td key={index} className="text-center">
-                                                                        {item[key]}
-                                                                    </td>
-                                                                );
-                                                            }
-                                                        }
-                                                    }
-                                                })}
-                                            </tr>)
-                                        }
-                                    )}
-                                    </tbody>
-                                </table>
+                                <Tabla options={opciones}/>
                             </div>
                             {paginacion && (<div className="datatable-bottom">
                                 <div className="datatable-info">

@@ -34,7 +34,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
 
     return(
         <>
-        <div
+        <form
             className="text-center"
         >
             <div className="col-md-4 mx-auto">
@@ -56,7 +56,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                         name="tipo_movimiento"
                         aria-label="tipo_movimiento"
                     >
-                        <option value="0">SELECCIONA UNA OPCIÓN</option>
+                        <option value="">SELECCIONA UNA OPCIÓN</option>
                         {catalogo[0]?.map((ele) => (
                             <option
                                 key={ele.id + "-" + ele.descripcion}
@@ -117,7 +117,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                     GUARDAR
                 </button>
             </div>
-            </div>
+            </form>
         </>
     );
 }

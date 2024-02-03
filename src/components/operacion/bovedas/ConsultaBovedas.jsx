@@ -3,11 +3,12 @@ import {useEffect, useState} from "react";
 import {encryptRequest, formattedDate} from "../../../utils";
 import {TableComponent} from "../../commons/tables";
 import {consultaDotacionBoveda} from "../../../services/operacion-logistica";
+import {LoaderTable} from "../../commons/LoaderTable";
 
 export const ConsultaBovedas = ({perfil}) => {
 
     const { register, handleSubmit, formState: {errors},
-        reset,setValue } = useForm();
+        setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
@@ -30,13 +31,18 @@ export const ConsultaBovedas = ({perfil}) => {
     const options = {
         showMostrar:true,
         excel:true,
+        tableName:'Consulta de Bovedas',
         buscar: true,
         paginacion: true,
+        disabledColumnsExcel:['Acciones'],
         tools:[
             {columna:"Estatus",tool:"estatus"},
             {columna:"Acciones",tool:`${toolPerfil}`,refresh:refreshQuery},
         ],
-        filters:[{columna:'Monto Solicitado',filter:'currency'}]
+        filters:[{columna:'Monto Solicitado',filter:'currency'},
+                 {columna:'Comentario',filter:'tooltip'},
+                 {columna:'Tipo Cambio',filter:'currency'},
+        ],
     }
     const onSubmitRecepcion = handleSubmit(async (data) => {
         const encryptedData = encryptRequest(data);
@@ -48,7 +54,8 @@ export const ConsultaBovedas = ({perfil}) => {
 
 
     return (
-        <div className="container justify-content-center align-items-center mt-4">
+        <>
+        <div className="justify-content-center align-items-center mt-4">
             <div
                 className="text-center mb-4"
             >
@@ -88,10 +95,11 @@ export const ConsultaBovedas = ({perfil}) => {
                 </div>
             </div>
             {
-            showTable && (
-                 <TableComponent data={data} options={options}/>
-                )
+                showTable
+                    ? <TableComponent data={data} options={options}/>
+                    : <LoaderTable/>
             }
         </div>
+        </>
     );
 }

@@ -17,7 +17,6 @@ export const useSaldo =  () => {
         getConsultaTesoreria();
     }, []);
 
-    console.log("saldoGeneral");
-    console.log(saldoGeneral);
+
     return saldoGeneral;
 }
