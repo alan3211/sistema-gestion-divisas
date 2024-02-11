@@ -4,6 +4,7 @@ import {useContext, useState} from "react";
 import {CardLayout} from "../../commons";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+import {convertirFechaADD} from "../../../utils";
 
 export const DatosClientes = ({operacion, cliente}) => {
 
@@ -12,7 +13,10 @@ export const DatosClientes = ({operacion, cliente}) => {
     const {datos} = useContext(CompraVentaContext);
 
     console.log("DATOS!!!",datos)
-    datos.Cliente = cliente.Cliente;
+    console.log("DATOS CLIENTE @@@!!!",cliente);
+    console.log("DATOS OPERACION @@@!!!",operacion);
+    datos.Cliente = cliente.Cliente || cliente.Usuario;
+
 
     const configuration = {
         showModal,
@@ -27,6 +31,16 @@ export const DatosClientes = ({operacion, cliente}) => {
 
     const continuaOperacion = async () => {
         setShowCustomModal(true);
+    }
+
+    const formatoFecha = () => {
+        let fecha = '';
+        if(cliente.hasOwnProperty('FechaNacimiento')){
+            fecha = convertirFechaADD(cliente.FechaNacimiento);
+        }else if(cliente.hasOwnProperty('Fecha Nacimiento')){
+            fecha = convertirFechaADD(cliente['Fecha Nacimiento']);
+        }
+        return fecha;
     }
 
     return (
@@ -93,14 +107,14 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="fechaNacimiento"
-                                value={cliente.FechaNacimiento || cliente['Fecha Nacimiento']}
+                                value={formatoFecha()}
                                 readOnly
                                 autoComplete="off"
                             />
                             <label htmlFor="fechaNacimiento">FECHA NACIMIENTO</label>
                         </div>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <div className="form-floating m-2">
                             <button
                                 type="button"
@@ -109,7 +123,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 disabled={Object.keys(operacion).length === 0}
                             >
                                 <span className="me-2">
-                                    <strong>CONTINUAR</strong>
+                                    <strong>CONTINUAR OPERACIÓN</strong>
                                       <span
                                           className="bi bi-arrow-right-circle-fill ms-2"
                                           role="status"

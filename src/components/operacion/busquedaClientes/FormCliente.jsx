@@ -103,7 +103,7 @@ export const FormCliente = ({tipo}) => {
     }
 
     return (<>
-            <div className="row g-3">
+            <form className="row g-3">
                 {
                     tipo === 'cliente'
                         ? (
@@ -302,7 +302,7 @@ export const FormCliente = ({tipo}) => {
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>
-            </div>
+            </form>
             {
                 showModalAltaUsuario && (
                     <ModalConfirm title={`El usuario no existe registrado en el sistema. ¿Desea realizar un alta de usuario?`}

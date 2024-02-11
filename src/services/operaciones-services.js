@@ -3,7 +3,7 @@ import {
     OPERACIONES_ALTACLIENTE_URL,
     OPERACIONES_BUSCACLIENTE_URL, OPERACIONES_CONSULTA_TIPOCAMBIO_URL,
     OPERACIONES_CONSULTALDENOMINACIONES_URL,
-    OPERACIONES_CONVERSION_URL,
+    OPERACIONES_CONVERSION_URL, OPERACIONES_ENVIAMENSAJES_DOTA_PARCIAL_URL,
     OPERACIONES_ENVIAMENSAJES_URL,
     OPERACIONES_HACEROPERACION_URL,
     OPERACIONES_REALIZAOPERACION_URL, OPERACIONES_RESGUARDA_FACTURA_URL,
@@ -291,6 +291,32 @@ export const guardaConfirmacionFactura =  async(formValues) => {
 
         const response = await fetch(url, {
             method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+
+export const enviaMensajeDotacionParcial =  async(formValues) => {
+    try {
+        const url = `${OPERACIONES_ENVIAMENSAJES_DOTA_PARCIAL_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem("token")}`

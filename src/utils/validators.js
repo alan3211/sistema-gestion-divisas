@@ -116,3 +116,11 @@ export const validarMoneda = (name, value) => {
     return true;
 }
 
+export const validarMonedaUSD = (name, value) => {
+    const monedaNumberRegex = /^$|^-?\d+(\.\d{0})?$/;
+    if (!monedaNumberRegex.test(value)) {
+        return `El campo ${name} no corresponde a una moneda válida.`;
+    }
+    return true;
+}
+

@@ -5,7 +5,7 @@ import {
     obtenerObjetoDenominaciones, OPTIONS,
     validarAlfaNumerico
 } from "../../../../../utils";
-import {accionesCaja, getDenominaciones, getDenominacionesCaja} from "../../../../../services/tools-services";
+import {accionesCaja, getDenominacionesCaja} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
 import {ModalAccionesTool} from "../../../modals";
 import {DenominacionTableCaja} from "../../../../operacion/denominacion";

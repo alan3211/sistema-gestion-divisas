@@ -15,7 +15,6 @@ export const AccionesRecepcionValores = ({item, index,refresh}) => {
     const {register, handleSubmit, formState: {errors}, reset,setValue} = useForm();
 
     const [optionBtn, setOptionBtn] = useState(1);
-
     const onHandleOptions = (option) => {
         setOptionBtn(option);
         setShowModal(true);

@@ -1,6 +1,6 @@
 //const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-const URL = 'http://192.168.101.45:9000/';
-//const URL = 'http://localhost:9000/';
+//const URL = 'http://192.168.101.45:9000/';
+const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -34,6 +34,7 @@ export const OPERACIONES_HACEROPERACION_URL = `${OPERACIONES_URL}realiza/preoper
 export const OPERACIONES_REALIZAOPERACION_URL = `${OPERACIONES_URL}realiza/operacion`
 export const OPERACIONES_CONSULTALDENOMINACIONES_URL = `${OPERACIONES_URL}consulta/denominaciones`
 export const OPERACIONES_ENVIAMENSAJES_URL = `${OPERACIONES_URL}envia/mensaje`
+export const OPERACIONES_ENVIAMENSAJES_DOTA_PARCIAL_URL = `${OPERACIONES_URL}envia/mensaje/dotacion/parcial`
 export const OPERACIONES_VALIDA_INFORMACION_URL = `${OPERACIONES_URL}valida/informacion`
 export const OPERACIONES_RESGUARDA_FACTURA_URL = `${OPERACIONES_URL}resguarda/factura`
 
@@ -65,6 +66,7 @@ export const SUCURSAL_DISPONIBLE_DIVISAS_CAJA_URL = `${SUCURSAL_URL}consulta/dis
 export const SUCURSAL_SOLICITUD_CAMBIO_URL = `${SUCURSAL_URL}solicitud/cambio`
 
 export const SUCURSAL_CIERRE_DIA_URL = `${SUCURSAL_URL}cierre`
+export const SUCURSAL_VALIDACION_CIERRE_CAJA_URL = `${SUCURSAL_URL}cierre/validacion/caja`
 
 /*OPERACION CAJA*/
 export const CAJA_CONSULTA_DOTACIONES_URL = `${CAJA_URL}consulta/dotaciones`

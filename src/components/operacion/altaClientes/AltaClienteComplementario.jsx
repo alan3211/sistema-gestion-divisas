@@ -15,21 +15,10 @@ import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContex
 export const AltaClienteComplementario = memo(() => {
 
     const {propForm} =  useContext(AltaClienteContext);
-    const {datosEscaneo,setShowAltaCliente,setContinuaOperacion,setCliente} = useContext(CompraVentaContext);
+    const {setShowAltaCliente,setContinuaOperacion,setCliente} = useContext(CompraVentaContext);
     const {
         closeModal,
         } = useAltaComplementario();
-
-    useEffect(() => {
-
-        if(Object.keys(datosEscaneo).length !== 0) {
-            propForm.setValue("genero",datosEscaneo.genero);
-            propForm.setValue("calle",datosEscaneo.calle);
-            propForm.setValue("nacionalidad",datosEscaneo.estado.split(".")[1]);
-            propForm.setValue("pais_nacimiento",datosEscaneo.estado.split(".")[1]);
-        }
-
-    }, []);
 
     const catalogo = useCatalogo([1,3,3,6,12,13,14,10,11,18,25]);
 
@@ -39,10 +28,6 @@ export const AltaClienteComplementario = memo(() => {
 
         if(data.numero_exterior.includes("SIN NÚMERO EXTERIOR")){
             data.numero_exterior="";
-        }
-
-        if(Object.keys(datosEscaneo).length !== 0) {
-            data.vigencia = `${parseInt(datosEscaneo.vigencia)+1000}-12-31`;
         }
 
         if(data.origen_recursos !== '5'){

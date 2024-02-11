@@ -52,10 +52,6 @@ export const mensajeSinElementos = {
     icono: 'ri-error-warning-fill'
 }
 
-export const mensajeSinOperaciones = {
-    estilo: 'alert-warning',
-    icono: 'ri-error-warning-fill'
-}
 
 // Función para eliminar objetos con cantidad 0
 export const eliminarDenominacionesConCantidadCero = (denominacionesObj) => {
@@ -252,6 +248,23 @@ export const convertirFecha = (input) => {
     // Devolver la fecha en formato yyyy-mm-dd
     return yyyy + '-' + mm + '-' + dd;
 }
+
+export const convertirFechaADD = (input) => {
+    // Dividir la cadena de entrada en año, mes y día
+    var partes = input.split('-');
+
+    // Crear un objeto Date con los componentes de la fecha
+    var fecha = new Date(partes[0], partes[1] - 1, partes[2]);
+
+    // Obtener los componentes de la fecha en formato DD/MM/YYYY
+    var dd = ('0' + fecha.getDate()).slice(-2);
+    var mm = ('0' + (fecha.getMonth() + 1)).slice(-2);
+    var yyyy = fecha.getFullYear();
+
+    // Devolver la fecha en formato DD/MM/YYYY
+    return dd + '/' + mm + '/' + yyyy;
+}
+
 
 export const obtenDia = (mes) => {
     // Verificar si el mes tiene 30 o 31 días

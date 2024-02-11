@@ -20,6 +20,9 @@ import {realizarOperacionSucursal, realizarSolicitudCambio} from "../../../servi
 import {ModalLoading} from "./ModalLoading";
 
 export const ModalDeliverComponent = ({configuration}) =>{
+
+    console.log("Configuracion!: ", configuration);
+
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
     const [showCambio,setShowCambio] = useState(false);
     const [habilita,setHabilita] =  useState({
@@ -94,6 +97,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
         eliminarDenominacionesConCantidadCero(formValuesR);
         eliminarDenominacionesConCantidadCero(formValuesE);
+
+        console.log("DATOS: ",datos);
 
         const values = {
             cliente: datos.Cliente,
@@ -330,7 +335,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     return(
         <>
-            <Modal centered size="xl" show={showCustomModal} backdrop="static" keyboard={false}>
+            <Modal fullscreen  show={showCustomModal} backdrop="static" keyboard={false}>
                 <Modal.Header>
                     <Modal.Title>
                         <div className="d-flex align-items-center justify-content-end w-100">
@@ -369,7 +374,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     value={operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto} readOnly
                                     autoComplete="off"
                                 />
-                                <label htmlFor="monto" className="form-label">CANTIDAD A {operacion.tipo_operacion === '1' ? 'COTIZAR':'RECIBIR'} <i>({operacion.tipo_operacion === '1' ? operacion.moneda:'MXP'})</i></label>
+                                <label htmlFor="monto" className="form-label">CANTIDAD A RECIBIR <i>({operacion.tipo_operacion === '1' ? operacion.moneda:'MXP'})</i></label>
                             </div>
                         </div>
                         <div className="col-md-4 mb-3 d-flex">

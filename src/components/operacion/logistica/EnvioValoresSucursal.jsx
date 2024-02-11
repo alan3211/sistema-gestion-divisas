@@ -16,7 +16,6 @@ import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
 import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
-import {LoaderTable} from "../../commons/LoaderTable";
 export const EnvioValoresSucursal = () => {
 
     const propForm = useForm();

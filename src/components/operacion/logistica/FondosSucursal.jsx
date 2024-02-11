@@ -47,8 +47,7 @@ export const FondosSucursal = () => {
     useEffect(() => {
         setShowData(false);
         setShowCantidad(false)
-    }, [watch("moneda")]);
-
+    }, [watch("moneda"),watch("boveda")]);
 
     return(
         <>

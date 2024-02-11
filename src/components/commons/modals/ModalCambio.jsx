@@ -231,6 +231,8 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
         console.log("CAMBIO!: ",cambio);
 
+        console.log("DATOS: ",data);
+
         const values = {
             cliente: data.Cliente,
             ticket: data.ticket,

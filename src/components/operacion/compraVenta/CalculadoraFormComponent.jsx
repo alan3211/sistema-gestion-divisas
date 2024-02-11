@@ -1,18 +1,16 @@
 import {useContext, useState} from 'react';
 import {dataG} from "../../../App";
-import {consultaInformacionCarga, enviaMensaje, hacerOperacion, realizaConversion} from "../../../services";
-import {ModalConfirm, ModalGenericTool} from "../../commons/modals";
+import {enviaMensaje, enviaMensajeDotacionParcial, hacerOperacion, realizaConversion} from "../../../services";
+import {ModalConfirm} from "../../commons/modals";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {useCatalogo} from "../../../hook";
 import {
-    convertirFecha,
     DENOMINACIONES,
     encryptRequest,
     FormatoMoneda,
     formattedDate,
-    hora,
     OPTIONS, redondearNumero,
-    validarMoneda
+    validarMonedaUSD
 } from "../../../utils";
 import {toast} from "react-toastify";
 
@@ -31,13 +29,11 @@ export const CalculadoraFormComponent = () => {
         setContinuaOperacion,
         nuevoUsuario, setNuevoUsuario,
         setShowAltaCliente,
-        showModalAltaCliente, setShowModalAltaCliente,
         register,
         handleSubmit,
         errors,
         reset,
         watch,
-        setDatosEscaneo,
         busquedaCliente: {setShowCliente},
         datos,setDatos,
     } = useContext(CompraVentaContext);
@@ -127,7 +123,6 @@ export const CalculadoraFormComponent = () => {
         }else{
             setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
             data.cantidad_entregar = redondearNumero(parseFloat(result.result_set[0].CantidadEntrega));
-            //data.decimal_sobrante = parseFloat(result.result_set[0].CantidadEntrega) - parseInt(result.result_set[0].CantidadEntrega,10);
             setShowCantidadEntregada(true);
         }
     });
@@ -160,48 +155,23 @@ export const CalculadoraFormComponent = () => {
     }
 
     const muestraAltaCliente = () =>{
-        setShowModalAltaCliente(true);
         setShowModal(false);
         setNuevoUsuario(false);
-    }
-
-    const capturaManual = () =>{
-        setShowModalAltaCliente(false);
-        setShowAltaCliente(true);
-    }
-
-    const validaInformacion = async()=> {
-        const response = await consultaInformacionCarga(encryptRequest({fecha:formattedDate,usuario:dataG.usuario,sucursal:dataG.sucursal}));
-        const informacion = {
-            colonia: response[0].City,
-            genero: response[0]["Job Title"].substring(4),
-            vigencia: response[0].Company,
-            fecha_nacimiento: convertirFecha(response[0].Department),
-            nombre: response[0]["First Name"],
-            apellido_paterno: response[0]["Last Name"].split(" ")[0],
-            apellido_materno: response[0]["Last Name"].split(" ")[1],
-            estado: response[0].State,
-            calle: response[0].Street,
-            cp: response[0]["ZIP Code"],
-            numero_identificacion: response[1]["First Name"]
-        }
-        console.log(informacion)
-        setDatosEscaneo(informacion);
-        setShowModalAltaCliente(false);
         setShowAltaCliente(true);
     }
 
     const enviarNotificacion = async() => {
+
         const valores = {
-            id:0,
-            accion:1,
             sucursal: dataG.sucursal,
             caja: dataG.usuario,
-            mensaje: `La caja ${dataG.usuario} requiere una dotación de ${showModalDotacion.monto} ${showModalDotacion.moneda} para continuar la operación.`
+            monto: showModalDotacion.monto,
+            moneda: showModalDotacion.moneda,
         }
+
         const encryptedData = encryptRequest(valores)
 
-        const response = await enviaMensaje(encryptedData);
+        const response = await enviaMensajeDotacionParcial(encryptedData);
         toast.warn(response.result_set[0].Mensaje,OPTIONS);
         setShowModalDotacion({
             show:false,
@@ -244,22 +214,13 @@ export const CalculadoraFormComponent = () => {
 
     /*Valida la cantidad entregada si rebasa el limite diario de una sucursal*/
     const validaCantidadEntregada = () => {
+        console.warn("mensaje de cantidad")
+        console.warn(cantidad)
         if (parseFloat(cantidad) > dataG.limite_diario) {
             toast.warn(`Esta sucursal solo permite un límite diario de $${dataG.limite_diario} por cliente.`, OPTIONS);
         } else {
             setShowModal(true);
         }
-    }
-
-    const OPTIONS_MODAL = {
-        size: 'lg',
-        showModal: () => setShowModalAltaCliente(true),
-        closeModal: () => {
-            setShowModalAltaCliente(false)
-        },
-        icon:'bi bi-camera text-blue me-2',
-        title:'Escaneo de Documentos',
-        subtitle:'Inicie el proceso de escaneo de documentos. Una vez completado, haga clic en el botón \'Validar Información\' para continuar con el registro del usuario.'
     }
 
     /* Este metodo regresa el titulo para indicar al cajero que necesita realizar */
@@ -355,7 +316,7 @@ export const CalculadoraFormComponent = () => {
                                         message: 'El campo Cantidad a Cotizar no puede estar vacío.'
                                     },
                                     validate: {
-                                        moneda: (value) => validarMoneda("Cantidad a Cotizar", value),
+                                        moneda: (value) => validarMonedaUSD("Cantidad a Cotizar", value),
                                         mayorACero: value => parseFloat(value) > 0 || "La Cantidad a Cotizar debe ser mayor a 0"
                                     }
                                 })}
@@ -395,6 +356,7 @@ export const CalculadoraFormComponent = () => {
                         type="button"
                         className="btn btn-success d-flex p-3"
                         onClick={handleSubmitCotizacion}
+                        disabled={parseFloat(cantidad) > dataG.limite_diario}
                     >
                         <i className="bi bi-cash-coin me-2"></i>
                         <strong>COTIZAR</strong>
@@ -419,18 +381,6 @@ export const CalculadoraFormComponent = () => {
                                                  closeModalAndReturn={muestraAltaCliente}
                                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"
                 />)
-            }
-            {
-                showModalAltaCliente && (
-
-                    <ModalGenericTool options={OPTIONS_MODAL}>
-                        <div className="row">
-
-                            <div className="col-md-12 text-center">
-                                <button className="btn btn-primary me-2" onClick={capturaManual}>CAPTURA MANUAL</button>
-                            </div>
-                        </div>
-                    </ModalGenericTool>)
             }
             {
                 showModalDotacion.show && (

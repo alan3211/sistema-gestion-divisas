@@ -3,14 +3,22 @@ import {useCatalogo} from "../../../hook";
 import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest, FormatoMoneda,
+    eliminarDenominacionesConCantidadCero,
+    encryptRequest,
+    FormatoMoneda,
     formattedDateWS,
     getDenominacion,
     obtenerObjetoDenominaciones,
-    opciones, OPTIONS, validarMoneda
+    opciones,
+    OPTIONS,
+    validarMoneda
 } from "../../../utils";
 import {dataG} from "../../../App";
-import {getCantidadDisponible, realizarOperacionSucursalDotacion} from "../../../services/operacion-sucursal";
+import {
+    cierreCajaAnterior,
+    getCantidadDisponible,
+    realizarOperacionSucursalDotacion
+} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
 import {Denominacion} from "../denominacion";
 import {getUsuariosSistema} from "../../../services";
@@ -51,6 +59,17 @@ export const DotacionCajaSucursal = () => {
         showModal: guarda,
         title: `Enviando dotación a la cajero ${watch("cajero")} ...`,
     };
+
+    // Validacion del cierre de cajas anterior.
+    const validaCierreDeCajasAnterior = async() => {
+        const valores = {
+            sucursal: dataG.sucursal,
+            moneda: moneda
+        }
+        const encryptedData = encryptRequest(valores);
+        return await cierreCajaAnterior(encryptedData);
+    }
+
 
     const terminarDotacion = handleSubmit(async(data)=>{
 
@@ -158,7 +177,7 @@ export const DotacionCajaSucursal = () => {
         });
     }, [watch("moneda")]);
 
-    const consultaDotaciones = () => {
+    const consultaDotaciones = async () => {
         if(watch("moneda") === '0'){
             setShowDenominacion(false);
             setShowDisponible({
@@ -166,8 +185,14 @@ export const DotacionCajaSucursal = () => {
                 cantidad: 0
             });
         }else{
-            obtieneDisponibilidad();
-            setShowDenominacion(true);
+            const mensaje = await validaCierreDeCajasAnterior();
+            if (mensaje.includes('cierre de dias anteriores')) {
+                toast.warn(mensaje, OPTIONS);
+                setShowDenominacion(false);
+            } else {
+                obtieneDisponibilidad();
+                setShowDenominacion(true);
+            }
         }
         setMoneda(watch("moneda"));
     }
