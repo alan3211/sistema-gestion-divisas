@@ -1,18 +1,40 @@
 /*Herramienta para cancelar desde la sucursal*/
-import {encryptRequest, OPTIONS, validarAlfaNumerico} from "../../../../../utils";
-import {ModalAccionCancelarTool} from "../../../modals";
-import {useState} from "react";
+import {
+    eliminarDenominacionesConCantidadCero,
+    encryptRequest,
+    FormatoMoneda,
+    formattedDateWS, getDenominacion, obtenerObjetoDenominaciones,
+    opciones,
+    OPTIONS,
+    validarAlfaNumerico
+} from "../../../../../utils";
+import {ModalAccionCancelarTool, ModalGenericTool} from "../../../modals";
+import {useContext, useState} from "react";
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../../../App";
 import {cancelarEnvioSucursalOperativa} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
+import {Denominacion} from "../../../../operacion/denominacion";
+import {ModalLoading} from "../../../modals/ModalLoading";
+import {DenominacionContext} from "../../../../../context/denominacion/DenominacionContext";
+import {realizarOperacionSucursal, realizarOperacionSucursalDP} from "../../../../../services/operacion-sucursal";
 
-export const CancelarEnvioSucursal = ({item, index,refresh}) => {
+export const CancelarEnvioSucursal = ({item, index, refresh}) => {
+    const {denominacionD} = useContext(DenominacionContext);
     const [showModal, setShowModal] = useState(false);
-    const {register, handleSubmit, formState: {errors}, reset,setValue} = useForm();
+    const [guarda, setGuarda] = useState(false);
+    const [showModalDotar, setShowModalDotar] = useState(false);
+    const {register, handleSubmit, formState: {errors}, reset, setValue} = useForm();
     const showModalCancelar = () => {
         setShowModal(true);
-    };
+    }
+
+    const [habilita, setHabilita] = useState({
+        recibe: true,
+        entrega: true,
+    });
+
+    const [finalizaOperacion, setFinalizaOperacion] = useState(true);
 
     const handleCancelarEnvio = async (data) => {
         data.id_operacion = item.ID;
@@ -37,23 +59,113 @@ export const CancelarEnvioSucursal = ({item, index,refresh}) => {
         subtitle: 'Ingrese el motivo por el cual desea cancelar el envío de la sucursal.',
     };
 
+    const optionsModal = {
+        size: 'xl',
+        showModal: showModalDotar,
+        closeModal: () => setShowModalDotar(false),
+        title: 'Solicitud de Dotación Parcial',
+        icon: 'bi bi-cash m-2 text-success',
+        subtitle: `La caja ${item['Usuario Envia']} requiere la cantidad de ${FormatoMoneda(parseFloat(item.Monto))} en la denominación ${item.Moneda}`
+    };
+
+    const optionsTable = {
+        title: '',
+        importe: parseFloat(item.Monto),
+        sucursal: item['Sucursal Envia'],
+        habilita,
+        setHabilita,
+        setFinalizaOperacion
+    }
+
+    const optionsLoad = {
+        showModal: guarda,
+        closeCustomModal: () => setGuarda(false),
+        title: "Realizando la dotación parcial...",
+    };
+
+    const terminarDotacionParcial = async () => {
+        setGuarda(true);
+
+        const valores = {
+            operacion: 'DOTACION PARCIAL',
+            usuario: dataG.usuario,
+            opcion:1,
+            sucursal: item['Sucursal Envia'],
+            ticket: item['No Movimiento'],
+            noCliente: '0',
+            traspaso: '',
+        }
+
+        let denominacionesDotacion = denominacionD.getValues();
+        const formValuesD = getDenominacion(item.Moneda, denominacionesDotacion)
+        eliminarDenominacionesConCantidadCero(formValuesD);
+        const denominaciones = obtenerObjetoDenominaciones(formValuesD);
+        denominaciones.divisa = item.Moneda;
+        denominaciones.tipoOperacion = '0';
+        denominaciones.movimiento = 'DOTACION PARCIAL';
+
+        valores.denominacion = [
+            denominaciones,
+        ]
+
+        const encryptedData = encryptRequest(valores);
+
+        const resultado = await realizarOperacionSucursalDP(encryptedData);
+
+        if (resultado) {
+            denominacionD.reset();
+            setGuarda(false);
+            toast.success(resultado, OPTIONS);
+            setShowModalDotar(false);
+            refresh();
+        }
+    };
+
     return (
         <td key={index} className="text-center">
-            <button
-                className="btn btn-danger"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="CANCELAR"
-                disabled={item.Estatus !== 'Pendiente'}
-                onClick={showModalCancelar}
-            >
-                <i className="bi bi-x-circle"></i>
-            </button>
-            {showModal && (
-                <ModalAccionCancelarTool options={options}>
-                    <div>
-                        <div className="col-md-12">
-                            <div className="form-floating">
+            {item.Estatus === 'Pendiente' &&
+                (<button
+                    className="btn btn-danger"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="CANCELAR"
+                    disabled={item.Estatus !== 'Pendiente'}
+                    onClick={showModalCancelar}
+                >
+                    <i className="bi bi-x-circle"></i>
+                </button>)
+            }
+            {item.Estatus === 'Solicitado' &&
+                (<>
+                    <button
+                        className="btn btn-success me-2"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="DOTAR"
+                        disabled={item.Estatus !== 'Solicitado'}
+                        onClick={() => setShowModalDotar(true)}
+                    >
+                        <i className="bi bi-cash-stack"></i>
+                    </button>
+                    <button
+                        className="btn btn-danger"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="CANCELAR"
+                        disabled={item.Estatus !== 'Solicitado'}
+                        onClick={showModalCancelar}
+                    >
+                        <i className="bi bi-x-circle"></i>
+                    </button>
+                </>)
+            }
+            {
+                showModal &&
+                (
+                    <ModalAccionCancelarTool options={options}>
+                        <div>
+                            <div className="col-md-12">
+                                <div className="form-floating">
                                     <textarea
                                         {...register("motivo", {
                                             required: {
@@ -84,23 +196,43 @@ export const CancelarEnvioSucursal = ({item, index,refresh}) => {
                                             resize: 'none'
                                         }}
                                     />
-                                <label htmlFor="motivo">MOTIVO</label>
-                                {
-                                    errors?.motivo &&
-                                    <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
-                                }
+                                    <label htmlFor="motivo">MOTIVO</label>
+                                    {
+                                        errors?.motivo &&
+                                        <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
+                                    }
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-end mt-2">
+                                <button type="button" className="btn btn-danger"
+                                        onClick={handleSubmit(handleCancelarEnvio)}>
+                                    <i className="bi bi-x-circle me-1"></i>
+                                    CANCELAR ENVÍO
+                                </button>
                             </div>
                         </div>
-                        <div className="d-flex justify-content-end mt-2">
-                            <button type="button" className="btn btn-danger"
-                                    onClick={handleSubmit(handleCancelarEnvio)}>
-                                <i className="bi bi-x-circle me-1"></i>
-                                CANCELAR ENVÍO
-                            </button>
-                        </div>
-                    </div>
-                </ModalAccionCancelarTool>
-            )}
+                    </ModalAccionCancelarTool>
+                )
+            }
+            {
+                showModalDotar &&
+                (
+                    <ModalGenericTool options={optionsModal}>
+                        <>
+                            <Denominacion type="SD" moneda={item.Moneda} options={optionsTable}/>
+                            <div className="col-md-12 d-flex justify-content-center">
+                                <button type="button" className="btn btn-primary"
+                                        onClick={terminarDotacionParcial}
+                                        disabled={finalizaOperacion}>
+                                    <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
+                                    TERMINAR DOTACIÓN
+                                </button>
+                            </div>
+                            {guarda && <ModalLoading options={optionsLoad}/>}
+                        </>
+                    </ModalGenericTool>
+                )
+            }
         </td>
     );
 };

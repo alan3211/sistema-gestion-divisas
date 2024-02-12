@@ -111,7 +111,8 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else if (type === 'SD') {
-            if (grandTotal === parseFloat(importeFinal)) {
+
+            if (grandTotal === parseFloat(importeFinal) || grandTotal === parseFloat(importe)) {
                 return 'text-success';
             } else {
                 return 'text-danger';

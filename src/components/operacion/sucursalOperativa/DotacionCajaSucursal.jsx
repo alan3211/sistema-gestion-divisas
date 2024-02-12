@@ -64,8 +64,9 @@ export const DotacionCajaSucursal = () => {
     const validaCierreDeCajasAnterior = async() => {
         const valores = {
             sucursal: dataG.sucursal,
-            moneda: moneda
+            moneda: watch("moneda")
         }
+        console.log("Valores: ",valores)
         const encryptedData = encryptRequest(valores);
         return await cierreCajaAnterior(encryptedData);
     }
@@ -178,7 +179,10 @@ export const DotacionCajaSucursal = () => {
     }, [watch("moneda")]);
 
     const consultaDotaciones = async () => {
+        console.log("MONEDA");
+        console.log(watch("moneda"));
         if(watch("moneda") === '0'){
+
             setShowDenominacion(false);
             setShowDisponible({
                 isAvailable: false,

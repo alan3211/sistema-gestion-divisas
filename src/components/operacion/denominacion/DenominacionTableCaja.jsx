@@ -13,11 +13,11 @@ export const DenominacionTableCaja = ({data=[],monto,moneda}) => {
                 </thead>
                 <tbody>
                 {data?.map((elemento) => {
-                    let name = elemento.nombre;
+                    let name = elemento.nombre || elemento.Denominacion;
                     return (
                         <tr key={`denominacion_${name}`}>
                             <td>{FormatoDenominacion(parseFloat(name))}</td>
-                            <td>{parseInt(elemento.cantidad)}</td>
+                            <td>{elemento.cantidad ? parseInt(elemento.cantidad) : parseInt(elemento['Billetes Disponibles'])}</td>
                         </tr>
                     )
                 })}

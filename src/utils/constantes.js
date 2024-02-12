@@ -1,6 +1,6 @@
-//const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-//const URL = 'http://192.168.101.45:9000/';
-const URL = 'http://localhost:9000/';
+// const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+const URL = 'http://192.168.101.45:9000/';
+// const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -29,6 +29,7 @@ export const OPERACIONES_VALIDACLIENTE_URL = `${OPERACIONES_URL}validaCliente`
 export const OPERACIONES_TIPOCAMBIO_URL = `${OPERACIONES_URL}tipoCambio`
 export const OPERACIONES_CONSULTA_TIPOCAMBIO_URL = `${OPERACIONES_URL}tipoCambio/consulta`
 export const OPERACIONES_CONVERSION_URL = `${OPERACIONES_URL}conversion`
+export const OPERACIONES_VALIDA_DOTACION_PARCIAL_URL = `${OPERACIONES_URL}valida/dotacion/parcial`
 export const OPERACIONES_BUSCACLIENTE_URL = `${OPERACIONES_URL}buscaCliente`
 export const OPERACIONES_HACEROPERACION_URL = `${OPERACIONES_URL}realiza/preoperacion`
 export const OPERACIONES_REALIZAOPERACION_URL = `${OPERACIONES_URL}realiza/operacion`
@@ -56,6 +57,7 @@ export const LOGISTICA_CANTIDAD_BILLETES = `${LOGISTICA_URL}consulta/cantidad/bi
 
 /*OPERACION SUCURSAL*/
 export const SUCURSAL_ENVIO_VALORES_URL = `${SUCURSAL_URL}operativa/envio-valores`
+export const SUCURSAL_ENVIO_VALORES_DOTPARCIAL_URL = `${SUCURSAL_URL}operativa/envio-valores/dotacion/parcial`
 export const SUCURSAL_DOTA_CAJA_URL = `${SUCURSAL_URL}operativa/dota-caja`
 export const SUCURSAL_CONSULTA_DOTACIONES_URL = `${SUCURSAL_URL}operativa/consulta-dotacion`
 export const SUCURSAL_ENVIA_VALORES_SUC_URL = `${SUCURSAL_URL}operativa/consulta-dotacion/sucursal/valores`

@@ -4,7 +4,7 @@ import {
     SUCURSAL_DISPONIBLE_DIVISAS_CAJA_URL,
     SUCURSAL_DISPONIBLE_DIVISAS_URL,
     SUCURSAL_DISPONIBLE_URL,
-    SUCURSAL_DOTA_CAJA_URL, SUCURSAL_ENVIA_VALORES_SUC_URL,
+    SUCURSAL_DOTA_CAJA_URL, SUCURSAL_ENVIA_VALORES_SUC_URL, SUCURSAL_ENVIO_VALORES_DOTPARCIAL_URL,
     SUCURSAL_ENVIO_VALORES_URL,
     SUCURSAL_MOVIMIENTOS_URL, SUCURSAL_SOLICITUD_CAMBIO_URL, SUCURSAL_VALIDACION_CIERRE_CAJA_URL,
 } from "../utils";
@@ -273,6 +273,31 @@ export const cierreCajaAnterior = async (encryptedData) => {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify({encryptedData:encryptedData})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const realizarOperacionSucursalDP =  async(formValues) => {
+    try {
+        const url = `${SUCURSAL_ENVIO_VALORES_DOTPARCIAL_URL}`;
+
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
         });
 
         if (!response.ok) {

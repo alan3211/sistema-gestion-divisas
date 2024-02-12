@@ -1,7 +1,13 @@
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {dataG} from "../../../App";
-import {enviaMensaje, enviaMensajeDotacionParcial, hacerOperacion, realizaConversion} from "../../../services";
-import {ModalConfirm} from "../../commons/modals";
+import {
+    enviaMensaje,
+    enviaMensajeDotacionParcial,
+    hacerOperacion,
+    realizaConversion,
+    validaDotParcial
+} from "../../../services";
+import {ModalConfirm, ModalGenericTool} from "../../commons/modals";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {useCatalogo} from "../../../hook";
 import {
@@ -13,6 +19,9 @@ import {
     validarMonedaUSD
 } from "../../../utils";
 import {toast} from "react-toastify";
+import {LoaderTable} from "../../commons/LoaderTable";
+import {getDotaciones} from "../../../services/operacion-caja";
+import {TableComponent} from "../../commons/tables";
 
 
 export const CalculadoraFormComponent = () => {
@@ -45,6 +54,19 @@ export const CalculadoraFormComponent = () => {
         monto:0.0,
         moneda:''
     }]);
+    const [showEspera, setShowEspera] = useState(false);
+    const [showMuestraTabla, setShowMuestraTabla] = useState(false);
+    const [ticket, setTicket] = useState('');
+    const [data,setData] = useState({});
+    const [formData,setFormData] = useState('');
+
+    useEffect(() => {
+        let intervaloId;
+        if (ticket !== '') {
+            intervaloId = setInterval(validaEstatusDotacionParcial, 5000);
+        }
+        return () => clearInterval(intervaloId);
+    }, [ticket]);
 
 
     /*Cierra el modal cuando se le da en la "x"*/
@@ -90,8 +112,31 @@ export const CalculadoraFormComponent = () => {
         return valor;
     }
 
+    /*Validar el intervalo para saber si ya cambio el estatus*/
+    const validaEstatusDotacionParcial = async () => {
+        const valores = {
+            opcion: 2,
+            ticket: ticket,
+        }
+        const response = await validaDotParcial(encryptRequest(valores));
+        console.log("RESPUESTA: ", response);
+        if (response === 'Pendiente') {
+            setShowMuestraTabla(true);
+        } else {
+            setShowMuestraTabla(false);
+        }
+    }
+
+
+
+
     /*Cuando se le da click en cotizar*/
     const handleSubmitCotizacion = handleSubmit(async (data) => {
+
+        if(data.tipo_operacion === 1){
+            data.moneda = 'MXP'
+        }
+
         data.sucursal = parseInt(dataG.sucursal);
         data.cajero = dataG.usuario;
         data["tipo_cambio"] = obtieneDivisa(tipoDivisa, data);
@@ -111,6 +156,7 @@ export const CalculadoraFormComponent = () => {
             setShowCantidadEntregada(false);
             if (result.result_set[0].Mensaje.includes('Indica')){
                 toast.info(result.result_set[0].Mensaje,OPTIONS);
+                clearForm();
             }else{
                 setShowModalDotacion({
                     show:true,
@@ -119,7 +165,6 @@ export const CalculadoraFormComponent = () => {
                     moneda:result.result_set[0].Moneda,
                 });
             }
-            clearForm();
         }else{
             setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
             data.cantidad_entregar = redondearNumero(parseFloat(result.result_set[0].CantidadEntrega));
@@ -139,12 +184,10 @@ export const CalculadoraFormComponent = () => {
 
     const preguntaNuevoUsuario = async() => {
         const response = await getOperacion();
-        console.log("RESPONSE: ",response)
         setDatos(response);
         setNuevoUsuario(true);
         setShowModal(false);
     }
-
 
     /*Sirve para continuar la operacion si no es nuevo usuario*/
     const continuarOperacion = async() => {
@@ -173,12 +216,15 @@ export const CalculadoraFormComponent = () => {
 
         const response = await enviaMensajeDotacionParcial(encryptedData);
         toast.warn(response.result_set[0].Mensaje,OPTIONS);
+        console.log("result --> tickets: ",response);
+        setTicket(response.result_set[0].Noticket)
         setShowModalDotacion({
             show:false,
             mensaje:'',
             monto:0.0,
             moneda:'',
         });
+        setShowEspera(true);
     }
 
     /*Guarda la preoperacion*/
@@ -231,6 +277,57 @@ export const CalculadoraFormComponent = () => {
             return `La cotización de ${datos.monto} ${datos.moneda} fue por la cantidad de ${FormatoMoneda(parseFloat(cantidad),'')} MXP ¿Desea realizar una operación con esta cotización?`
         }
     }
+
+    const optionsModal = {
+        size:'xl',
+        showModal: showEspera,
+        closeModal: () => setShowEspera(false),
+        title: 'Solicitud de Dotación Parcial',
+        icon: 'bi bi-cash m-2 text-blue',
+        subtitle: '',
+        waiting:showEspera
+    };
+
+    const refreshQuery = async () =>{
+        const data_response = await getDotaciones(formData);
+        data_response.headers = [...data_response.headers,'Acciones'];
+        setData(data_response);
+        setShowEspera(false);
+    }
+
+
+    const optionsCajaTable = {
+        showMostrar:true,
+        excel:true,
+        tableName:'Consulta Dotaciones',
+        buscar: true,
+        paginacion: true,
+        disabledColumnsExcel:['Detalle','Acciones'],
+        tools:[
+            {columna:"Estatus",tool:"estatus"},
+            {columna:"Acciones",tool:"acciones-caja",refresh:refreshQuery},
+
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
+    }
+
+    useEffect(()=>{
+
+        const valores = {
+            fecha: formattedDate,
+            usuario: dataG.usuario,
+            sucursal: dataG.sucursal,
+        }
+        const encryptedData = encryptRequest(valores);
+        setFormData(encryptedData);
+
+        const getConsultaDotaciones = async () =>{
+            const data_response = await getDotaciones(encryptedData);
+            data_response.headers = [...data_response.headers,'Acciones'];
+            setData(data_response);
+        }
+        getConsultaDotaciones();
+    },[]);
 
 
     return (
@@ -390,6 +487,16 @@ export const CalculadoraFormComponent = () => {
                                   hacerOperacion={enviarNotificacion}
                                   closeModalAndReturn={closeModalAndReturn}
                                   icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
+            {
+                showEspera && (
+                    <ModalGenericTool options={optionsModal}>
+                        {showMuestraTabla
+                            ? <TableComponent data={data} options={optionsCajaTable} />
+                            : <LoaderTable title="Esperando respuesta del supervisor..."/>
+                        }
+                    </ModalGenericTool>
                 )
             }
         </>
