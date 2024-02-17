@@ -3,7 +3,7 @@ import {FormatoDenominacion, FormatoMoneda} from "../../../utils";
 export const DenominacionTableCaja = ({data=[],monto,moneda}) => {
     console.log("TABLA CAJA", data)
     return (
-        <div className="table-responsive text-center mt-2" style={{maxHeight: "400px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}>
+        <div className="table-responsive text-center mt-2" style={{maxHeight: "500px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}>
             <table className="table table-bordered table-hover">
                 <thead className="table-dark">
                 <tr>

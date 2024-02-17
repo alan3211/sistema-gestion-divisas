@@ -33,7 +33,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
 
         setFilteredOptions(filteredOptions);
         setShowDropdown(filteredOptions.length > 0);
-        //propForm.trigger(name);
+        propForm.trigger(name);
     };
 
     const handleOptionClick = (option) => {
@@ -43,7 +43,7 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
     };
 
     return (
-        <div className="form-floating mb-3">
+        <form className="form-floating mb-3" onSubmit={(e) => e.preventDefault()}>
             <input
                 type="text"
                 {...propForm.register(name, {
@@ -77,6 +77,6 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
             {propForm.errors[name] && (
                 <div className="invalid-feedback-custom">{propForm.errors[name].message}</div>
             )}
-        </div>
+        </form>
     );
 };

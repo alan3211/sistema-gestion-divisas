@@ -1,10 +1,9 @@
 import {useEffect, useRef, useState} from "react";
 import {dataG} from "../../App";
 import {
-    encryptRequest,
+    encryptRequest, FormatoMoneda,
     formattedDate,
     formattedDateDD,
-    formattedDateH,
     obtenDia,
     obtenerNombreMes,
     OPTIONS
@@ -83,6 +82,58 @@ export const Consulta = () => {
         setReporte(objetoEncontrado);
     }, [watch("tipo_reporte")]);
 
+    // Filtros para mostrar en el Excel y PDF
+    const filters = [
+        {columna:"Monto MXP", filter:"currency"},
+        {columna:"Monto USD", filter:"currency"},
+        {columna:"Tipo Cambio Promedio", filter:"currency"},
+        {columna:".05", filter:"currency"},
+        {columna:".10", filter:"currency"},
+        {columna:".20", filter:"currency"},
+        {columna:".50", filter:"currency"},
+        {columna:"1", filter:"currency"},
+        {columna:"2", filter:"currency"},
+        {columna:"5", filter:"currency"},
+        {columna:"10", filter:"currency"},
+        {columna:"20", filter:"currency"},
+        {columna:"50", filter:"currency"},
+        {columna:"100", filter:"currency"},
+        {columna:"200", filter:"currency"},
+        {columna:"500", filter:"currency"},
+        {columna:"1000", filter:"currency"},
+        {columna:"TC Promedio", filter:"currency"},
+        {columna:"Importe USD", filter:"currency"},
+        {columna:"Importe Venta MXP", filter:"currency"},
+        {columna:"Costo Venta USD", filter:"currency"},
+        {columna:"Utilidad/Perdida", filter:"currency"},
+        {columna:"Total Operación Compra", filter:"currency"},
+        {columna:"Tipo Cambio", filter:"currency"},
+        {columna:"Costo de Venta USD", filter:"currency"},
+        {columna:"Utilidad / Perdida", filter:"currency"},
+
+    ];
+
+    // Función para obtener el filtro adecuado para una columna
+    const getFilterForColumn = (columna) => {
+        const filterObject = filters.find((filtro) => filtro.columna === columna);
+        return filterObject ? filterObject.filter : null;
+    };
+
+    const applyFilter = (filtro, valor) => {
+        if(filtro === 'currency'){
+            if(valor === '' || valor === null || isNaN(valor)){
+                return FormatoMoneda(0);
+            }else{
+                return FormatoMoneda(valor);
+            }
+
+        } else if (filtro === 'tooltip') {
+            return valor && valor.slice(0, 12) + '...';
+        }
+        return valor;
+    }
+
+
     const generaReporteContable = handleSubmit(async (data) => {
         console.log("DATA DE REPORTE", data);
         console.log("TipoReporte", reporte.Proceso);
@@ -105,7 +156,15 @@ export const Consulta = () => {
             .map(word => word.charAt(0)) // Obtiene la primera letra de cada palabra
             .join(''); // Une las letras para formar la nueva cadena
 
-        const fileName = `Reporte-${currentDate}-${descripcionCortada}`;
+        const fileName = `Reporte-${currentDate}`;
+
+        const datosOrdenados = responseData.result_set.map((fila) => {
+            const filaOrdenada = {};
+            responseData.headers.forEach((columna) => {
+                filaOrdenada[columna] = fila[columna];
+            });
+            return filaOrdenada;
+        });
 
         if (responseData.total_rows > 0) {
             const titulo = await obtenTitulo();
@@ -117,18 +176,9 @@ export const Consulta = () => {
                 periodo = `Por el periodo comprendido del 1 al ${obtenDia(data.mes)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
             }
           if (dataG.id_perfil !== 7) {
-            const datosOrdenados = responseData.result_set.map((fila) => {
-                const filaOrdenada = {};
-                responseData.headers.forEach((columna) => {
-                    filaOrdenada[columna] = fila[columna];
-                });
-                return filaOrdenada;
-            });
             // Crear un nuevo libro de Excel
             const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet(descripcionCortada);
-
-
+            const worksheet = workbook.addWorksheet("Reporte");
 
             // Añadir título a la fila 1
             worksheet.addRow([titulo.result_set[0].Nombre]);
@@ -169,17 +219,46 @@ export const Consulta = () => {
             const headerRow = worksheet.getRow(4); // Fila de encabezados
 
             // Establecer el estilo para cada celda de la fila de encabezados
-            headerRow.eachCell((cell) => {
+            headerRow.eachCell((cell,index) => {
                 cell.font = {color: {argb: 'FFFFFF'}, bold: true}; // Color de la letra blanco y negrita
                 cell.fill = {type: 'pattern', pattern: 'solid', fgColor: {argb: '012970'}}; // Color de fondo azul oscuro
                 cell.alignment = {horizontal: 'center'}; // Alineación central
+                const column = worksheet.getColumn(index + 1); // Indexamos desde 1
+                const headerLength = headerRow.toString().length;
+                const currentWidth = column.width || 12; // Si el ancho actual de la columna es 0, usar 12 como valor predeterminado
+                column.width = Math.max(currentWidth, headerLength + 2); // Ajustar el ancho de la columna
             });
 
-            // Agregar los datos ordenados a la hoja de cálculo
-            datosOrdenados.forEach((fila, index) => {
-                const rowData = responseData.headers.map(header => fila[header]);
-                worksheet.addRow(rowData);
-            });
+
+              // Agregar los datos ordenados a la hoja de cálculo
+              datosOrdenados.forEach((fila, index) => {
+                  const rowData = responseData.headers.map((column) => fila[column]);
+
+                  // Aplicar filtros
+                  filters.forEach((filtro) => {
+                      const { columna, filter } = filtro;
+                      const columnIndex = responseData.headers.indexOf(columna);
+
+                      if (columnIndex !== -1) {
+                          // Verificar si el índice de la columna está dentro de los límites de la fila
+                          if (columnIndex < rowData.length) {
+                              // Aplicar el filtro a la celda correspondiente
+                              if (filter !== 'tooltip') {
+                                  rowData[columnIndex] = applyFilter(filter, parseFloat(rowData[columnIndex]));
+                              }
+                          }
+                      }
+                  });
+
+                  rowData.forEach((valor, index) => {
+                      const column = worksheet.getColumn(index + 1); // Indexamos desde 1
+                      const cellLength = valor ? valor.toString().length : 0;
+                      const currentWidth = column.width || 12; // Si el ancho actual de la columna es 0, usar 12 como valor predeterminado
+                      column.width = Math.max(currentWidth, cellLength + 2); // Ajustar el ancho de la columna
+                  });
+
+                  worksheet.addRow(rowData);
+              });
 
             // Construir el blob y descargar el archivo
             const buffer = await workbook.xlsx.writeBuffer();
@@ -208,11 +287,27 @@ export const Consulta = () => {
 
                 // Crear una tabla
                 const headers = responseData?.headers;
-                const dataT = responseData?.result_set.map(fila => headers.map(header => fila[header]));
+               // const dataT = responseData?.result_set.map(fila => headers.map(header => fila[header]));
+
+                // Aplicar filtros y formato a los datos en el PDF
+                datosOrdenados.forEach((fila) => {
+                    headers.forEach((columna) => {
+                        const filter = getFilterForColumn(columna); // Obtener el filtro adecuado para la columna
+                        if (filter) {
+                            if (filter !== 'tooltip'){
+                                // Aplicar el filtro a la celda correspondiente
+                                fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
+                            }
+                        }
+                    });
+                });
+
+                // Generar la tabla para el PDF
+                const rows = datosOrdenados.map((fila) => headers.map((columna) => fila[columna]));
 
             pdf.autoTable({
                 head: [headers],  // Encabezados de la tabla
-                body: dataT,  // Datos de la tabla
+                body: rows,  // Datos de la tabla
                 startY: 40,
                 theme: 'grid',  // Estilo de la tabla (puedes cambiarlo según tus preferencias)
                 styles: {

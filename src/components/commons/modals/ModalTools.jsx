@@ -3,7 +3,7 @@ import {formattedDate} from "../../../utils";
 
 export const ModalDetalleTool = ({options,children}) => {
     return (
-        <Modal centered size="lg" show={options.showModal} onHide={options.closeCustomModal}>
+        <Modal fullscreen show={options.showModal} onHide={options.closeCustomModal}>
             <Modal.Header closeButton>
                 <Modal.Title>
                     <h5 className="text-blue">
@@ -21,7 +21,7 @@ export const ModalDetalleTool = ({options,children}) => {
 
 export const ModalAccionTesoreriaTool = ({options,children}) => {
     return (
-        <Modal centered size={options.size || 'xl'} show={options.showModal} backdrop="static" keyboard={false}>
+        <Modal fullscreen show={options.showModal} backdrop="static" keyboard={false}>
             <Modal.Header>
                 <Modal.Title>
                     <h5>
@@ -41,7 +41,7 @@ export const ModalAccionTesoreriaTool = ({options,children}) => {
 
 export const ModalAccionCancelarTool = ({options,children}) => {
     return (
-        <Modal centered size="lg" show={options.showModal} backdrop="static" keyboard={false}>
+        <Modal fullscreen show={options.showModal} backdrop="static" keyboard={false}>
             <Modal.Header>
                 <Modal.Title>
                     <h5>
@@ -61,7 +61,7 @@ export const ModalAccionCancelarTool = ({options,children}) => {
 
 export const ModalAccionesTool = ({options,children}) => {
     return (
-        <Modal centered size="xl" show={options.showModal} backdrop="static" keyboard={false}>
+        <Modal fullscreen show={options.showModal} backdrop="static" keyboard={false}>
             <Modal.Header>
                 <Modal.Title>
                     <h5>
@@ -81,7 +81,7 @@ export const ModalAccionesTool = ({options,children}) => {
 
 export const ModalGenericTool = ({options,children}) => {
     return (
-        <Modal centered size={options.size} show={options.showModal} backdrop="static" keyboard={false}>
+        <Modal fullscreen show={options.showModal} backdrop="static" keyboard={false}>
             <Modal.Header>
                 <Modal.Title>
                     <h5 className="card-title">

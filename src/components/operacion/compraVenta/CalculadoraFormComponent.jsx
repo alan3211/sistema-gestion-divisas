@@ -1,7 +1,6 @@
 import {useContext, useEffect, useState} from 'react';
 import {dataG} from "../../../App";
 import {
-    enviaMensaje,
     enviaMensajeDotacionParcial,
     hacerOperacion,
     realizaConversion,
@@ -327,12 +326,12 @@ export const CalculadoraFormComponent = () => {
             setData(data_response);
         }
         getConsultaDotaciones();
-    },[]);
+    },[showMuestraTabla]);
 
 
     return (
         <>
-            <form className="row g-3">
+            <form className="row g-3" onSubmit={(e) => e.preventDefault()}>
                 <div className="row">
                     <div className="col-md-6">
                         <div className="form-floating mb-3">

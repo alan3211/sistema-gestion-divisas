@@ -203,7 +203,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     }
 
     const optionsDotRap = {
-        title: `Solicitando dotación rápida en (${operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})`,
+        title: `Solicitando dotación parcial en (${operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})`,
         habilita,
         setHabilita,
         tipo: 'SD',
@@ -285,7 +285,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     return(
         <>
-            <Modal centered size="lg" show={showModalCambio}>
+            <Modal fullscreen show={showModalCambio}>
                 <Modal.Header>
                     <Modal.Title>
                         <h5 className="text-blue">

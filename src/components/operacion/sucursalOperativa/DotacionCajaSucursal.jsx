@@ -11,7 +11,7 @@ import {
     obtenerObjetoDenominaciones,
     opciones,
     OPTIONS,
-    validarMoneda
+    validarMoneda, validarMonedaUSD
 } from "../../../utils";
 import {dataG} from "../../../App";
 import {
@@ -29,7 +29,7 @@ export const DotacionCajaSucursal = () => {
     const [usuariosCombo,setUsuariosCombo] = useState([]);
     const {register,handleSubmit
         ,formState:{errors},reset,setValue
-        ,watch} = useForm()
+        ,watch,trigger,} = useForm()
     const catalogo = useCatalogo([15]);
     const [showDenominacion,setShowDenominacion] =  useState(false);
     const [habilita,setHabilita] =  useState({
@@ -201,8 +201,19 @@ export const DotacionCajaSucursal = () => {
         setMoneda(watch("moneda"));
     }
 
+    const validaMonto = () => {
+        let mensaje;
+        if (watch("moneda") === 'USD') {
+            mensaje = validarMonedaUSD("Monto",watch("monto"));
+        } else {
+            mensaje = validarMoneda("Monto",watch("monto"));
+        }
+        return typeof mensaje === 'string'
+    }
+
+
     return (<>
-        <form className="row m-1 g-3">
+        <form className="row m-1 g-3" onSubmit={(e) => e.preventDefault()}>
             <div className="col-md-3">
                 <div className="form-floating mb-3">
                     <select
@@ -233,32 +244,6 @@ export const DotacionCajaSucursal = () => {
                     <label htmlFor="cajero">CAJEROS</label>
                     {
                         errors?.cajero && <div className="invalid-feedback-custom">{errors?.cajero.message}</div>
-                    }
-                </div>
-            </div>
-            <div className="col-md-3">
-                <div className="form-floating">
-                    <input
-                        {...register("monto",{
-                            required:{
-                                value:true,
-                                message:'El campo Monto no puede ser vacio.'
-                            },
-                            validate: {
-                                validacionMN: (value) => validarMoneda("Monto",value),
-                                mayorACero: value => parseFloat(value) > 0 || "El Monto debe ser mayor a 0",
-                            }
-                        })}
-                        type="text"
-                        className={`form-control ${!!errors?.monto ? 'invalid-input':''}`}
-                        id="monto"
-                        name="monto"
-                        placeholder="Ingresa el monto"
-                        autoComplete="off"
-                    />
-                    <label htmlFor="monto">MONTO</label>
-                    {
-                        errors?.monto && <div className="invalid-feedback-custom">{errors?.monto.message}</div>
                     }
                 </div>
             </div>
@@ -295,9 +280,42 @@ export const DotacionCajaSucursal = () => {
                     }
                 </div>
             </div>
+            <div className="col-md-3">
+                <div className="form-floating">
+                    <input
+                        {...register("monto",{
+                            required:{
+                                value:true,
+                                message:'El campo Monto no puede ser vacio.'
+                            },
+                            validate: {
+                                validacionMN: (value) => validarMoneda("Monto",value),
+                                mayorACero: value => parseFloat(value) > 0 || "El Monto debe ser mayor a 0",
+                            }
+                        })}
+                        type="text"
+                        className={`form-control ${!!errors?.monto ? 'invalid-input':''}`}
+                        id="monto"
+                        name="monto"
+                        placeholder="Ingresa el monto"
+                        autoComplete="off"
+                        onChange={(e) => {
+                            // Actualiza el valor del campo de entrada
+                            e.preventDefault();
+                            setValue("monto", e.target.value);
+                            trigger("monto")
+                        }}
+                    />
+                    <label htmlFor="monto">MONTO</label>
+                    {
+                        errors?.monto && <div className="invalid-feedback-custom">{errors?.monto.message}</div>
+                    }
+                </div>
+            </div>
             <div className="col-md-2 mx-auto mb-2">
                 <button type="button" className="btn btn-primary mt-2"
-                        onClick={consultaDotaciones}>
+                        onClick={consultaDotaciones}
+                        disabled={validaMonto()}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                    GENERAR
                 </button>

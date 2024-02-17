@@ -71,7 +71,6 @@ export const FormCliente = ({tipo}) => {
                 console.log("UN REGISTRO", dataClientes);
                 if (dataClientes.result_set[0].hasOwnProperty('Resultado')) {
                     const mensaje = dataClientes.result_set[0].Resultado;
-
                     if (mensaje.includes('excede')) {
                         toast.warn(mensaje, OPTIONS);
                     } else {
@@ -103,7 +102,7 @@ export const FormCliente = ({tipo}) => {
     }
 
     return (<>
-            <form className="row g-3">
+            <form className="row g-3" onSubmit={(e) => e.preventDefault()}>
                 {
                     tipo === 'cliente'
                         ? (

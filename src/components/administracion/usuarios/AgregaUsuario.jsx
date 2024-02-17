@@ -31,7 +31,7 @@ export const AgregaUsuario = () => {
     });
 
     return (
-        <form className="container justify-content-center align-items-center mt-4">
+        <form className="container justify-content-center align-items-center mt-4" onSubmit={(e) => e.preventDefault()}>
             <div
                 className="text-center mb-4"
             >

@@ -47,10 +47,18 @@ export const useDenominacion = ({type,moneda,options}) => {
         const denominacionValue = parseFloat(elemento.Denominacion);
         if(elemento.hasOwnProperty("Billetes Disponibles")){
             if([6].includes(dataG.id_perfil)){
-                return redondearNumero(parseFloat(cantidad * denominacionValue));
+                if (parseFloat(cantidad) < 0.0){
+                    return redondearNumero(0.0);
+                }else{
+                    return redondearNumero(parseFloat(cantidad * denominacionValue));
+                }
             }else{
                 if(elemento["Billetes Disponibles"] >= cantidad){
-                    return redondearNumero(parseFloat(cantidad * denominacionValue));
+                    if (parseFloat(cantidad) < 0.0){
+                        return redondearNumero(0.0);
+                    }else{
+                        return redondearNumero(parseFloat(cantidad * denominacionValue));
+                    }
                 }else{
                     return redondearNumero(0.0);
                 }

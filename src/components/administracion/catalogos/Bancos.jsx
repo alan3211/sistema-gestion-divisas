@@ -30,7 +30,7 @@ export const Bancos = () => {
     return (
         <>
             <hr />
-            <form className="row">
+            <form className="row" onSubmit={(e) => e.preventDefault()}>
                 <div className="col-md-6 mx-auto">
                     <div className="row">
                         <div className="col-md-6">

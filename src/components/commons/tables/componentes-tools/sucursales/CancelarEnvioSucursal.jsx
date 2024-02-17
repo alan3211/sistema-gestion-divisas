@@ -24,7 +24,10 @@ export const CancelarEnvioSucursal = ({item, index, refresh}) => {
     const [showModal, setShowModal] = useState(false);
     const [guarda, setGuarda] = useState(false);
     const [showModalDotar, setShowModalDotar] = useState(false);
-    const {register, handleSubmit, formState: {errors}, reset, setValue} = useForm();
+    const {register,
+        handleSubmit,
+        formState: {errors}, reset,
+        setValue} = useForm();
     const showModalCancelar = () => {
         setShowModal(true);
     }

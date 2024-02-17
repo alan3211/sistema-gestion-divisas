@@ -1,8 +1,11 @@
 import {AltaClienteFormComponent} from "./AltaClienteFormComponent";
 import {AltaClienteComplementario} from "./AltaClienteComplementario";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 import {useNavigate} from "react-router-dom";
+import {ModalGenericTool} from "../../commons/modals";
+import {FormatoMoneda} from "../../../utils";
+import {FileUploader} from "react-drag-drop-files";
 
 export const AltaClienteFinal = () => {
 
@@ -18,6 +21,7 @@ export const AltaClienteFinal = () => {
             navigate("/")
         }
     }, [Object.keys(localStorage).length]);
+
 
     return (<>
         <div className="row">

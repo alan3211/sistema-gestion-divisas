@@ -2,7 +2,7 @@ import {
     eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateWS,
     getDenominacion,
     obtenerObjetoDenominaciones, opciones, OPTIONS,
-    validarMoneda
+    validarMoneda, validarMonedaUSD
 } from "../../../utils";
 import {Denominacion} from "../denominacion";
 
@@ -26,6 +26,7 @@ export const EnvioValoresSucursal = () => {
         watch: propForm.watch,
         reset: propForm.reset,
         setValue: propForm.setValue,
+        trigger: propForm.trigger,
     }
     const catalogo = useCatalogo([15,17]);
     const [showDenominacion,setShowDenominacion] =  useState(false);
@@ -84,6 +85,7 @@ export const EnvioValoresSucursal = () => {
 
         if(resultado){
             form.reset();
+            form.setValue("sucursal","");
             setShowDenominacion(false);
             denominacionD.reset();
             setGuarda(false);
@@ -94,6 +96,7 @@ export const EnvioValoresSucursal = () => {
     const nuevoEnvio = () => {
         setShowDenominacion(false);
         form.reset();
+        form.setValue("sucursal","");
         denominacionD.reset();
     }
 
@@ -106,8 +109,18 @@ export const EnvioValoresSucursal = () => {
         setShowDenominacion(false);
     }, [form.watch("moneda")]);
 
+    const validaMonto = () => {
+        let mensaje;
+        if (form.watch("moneda") === 'USD') {
+            mensaje = validarMonedaUSD("Monto",form.watch("monto"));
+        } else {
+            mensaje = validarMoneda("Monto",form.watch("monto"));
+        }
+        return typeof mensaje === 'string'
+    }
+
     return (
-        <form className="row m-1 g-3 justify-content-center">
+        <form className="row m-1 g-3 justify-content-center" onSubmit={(e) => e.preventDefault()}>
             <div className="col-md-3">
                 <FilterComboInput
                     propFormulario={form}
@@ -115,32 +128,6 @@ export const EnvioValoresSucursal = () => {
                     label="SUCURSAL"
                     options={catalogo[1] || []}
                 />
-            </div>
-            <div className="col-md-3">
-                <div className="form-floating">
-                    <input
-                        {...form.register("monto",{
-                            required:{
-                                value:true,
-                                message:'El campo Monto no puede ser vacio.'
-                            },
-                            validate: {
-                                validacionMN: (value) => validarMoneda("Monto",value),
-                                mayorACero: value => parseFloat(value) > 0 || "El Monto debe ser mayor a 0",
-                            }
-                        })}
-                        type="text"
-                        className={`form-control ${!!form.errors?.monto ? 'invalid-input':''}`}
-                        id="monto"
-                        name="monto"
-                        placeholder="Ingresa el monto"
-                        autoComplete="off"
-                    />
-                    <label htmlFor="monto">MONTO</label>
-                    {
-                        form.errors?.monto && <div className="invalid-feedback-custom">{form.errors?.monto.message}</div>
-                    }
-                </div>
             </div>
             <div className="col-md-3">
                 <div className="form-floating mb-3">
@@ -176,30 +163,67 @@ export const EnvioValoresSucursal = () => {
                 </div>
             </div>
             <div className="col-md-3">
+                <div className="form-floating">
+                    <input
+                        {...form.register("monto",{
+                            validate: {
+                                validacionMoneda: (value) => {
+                                    console.log("Moneda: ",form.watch("moneda"))
+                                    if (form.watch("moneda") === 'USD') {
+                                        return validarMonedaUSD("Monto",value);
+                                    } else {
+                                        return validarMoneda("Monto",value);
+                                    }
+                                },
+                            }
+                        })}
+                        type="text"
+                        className={`form-control ${!!form.errors?.monto ? 'invalid-input':''}`}
+                        id="monto"
+                        name="monto"
+                        placeholder="Ingresa el monto"
+                        autoComplete="off"
+                        onChange={(e) => {
+                            // Actualiza el valor del campo de entrada
+                            e.preventDefault();
+                            form.setValue("monto", e.target.value);
+                            form.trigger("monto")
+                        }}
+                    />
+                    <label htmlFor="monto">MONTO</label>
+                    {
+                        form.errors?.monto && <div className="invalid-feedback-custom">{form.errors?.monto.message}</div>
+                    }
+                </div>
+            </div>
+            <div className="col-md-3">
                 <button type="button" className="btn btn-primary mt-2"
-                        onClick={generaSolicitud}>
+                        onClick={generaSolicitud}
+                        disabled={validaMonto()}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                     GENERAR
                 </button>
             </div>
-            <div className="d-flex justify-content-center">
                 {
                     showDenominacion &&
-                    <form>
-                        <Denominacion type="D" moneda={moneda} options={options}/>
-                    </form>
+                    <>
+                        <div className="d-flex justify-content-center">
+                            <form>
+                                <Denominacion type="D" moneda={moneda} options={options}/>
+                            </form>
+                        </div>
+                        <div className="col-md-12 d-flex justify-content-center">
+                                <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
+                                    <i className="bi bi-box-arrow-up-right"></i> NUEVO ENVÍO
+                                </button>
+                                <button type="button" className="btn btn-primary"
+                                        onClick={terminarDotacion} disabled={finalizaOperacion}>
+                                    <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
+                                   FINALIZAR OPERACIÓN
+                                </button>
+                        </div>
+                    </>
                 }
-            </div>
-            <div className="col-md-12 d-flex justify-content-center">
-                <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
-                    <i className="bi bi-box-arrow-up-right"></i> NUEVO ENVÍO
-                </button>
-                <button type="button" className="btn btn-primary"
-                        onClick={terminarDotacion} disabled={finalizaOperacion}>
-                    <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
-                   FINALIZAR OPERACIÓN
-                </button>
-            </div>
             {guarda && <ModalLoading options={optionsLoad}/>}
         </form>
     );

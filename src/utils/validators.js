@@ -109,18 +109,77 @@ export const validarNumeroTelefono = (name,value) => {
     return true;
 }
 export const validarMoneda = (name, value) => {
-    const monedaNumberRegex = /^$|^-?\d+(\.\d{1,5})?$/;
-    if (!monedaNumberRegex.test(value)) {
-        return `El campo ${name} no corresponde a una moneda válida.`;
+
+    if(value){
+        // Verificar que no sea un campo vacío
+        if (!value.trim()) {
+            return `El campo ${name} no puede estar vacío.`;
+        }
+
+        // Verificar el formato numérico con dos decimales
+        const monedaNumberRegex = /^$|^-?\d+(\.\d{1,2})?$/;
+        if (!monedaNumberRegex.test(value)) {
+            return `El campo ${name} no corresponde a una moneda válida (Ejemplo 1.00).`;
+        }
+
+        // Verificar que no sea un número negativo
+        if (parseFloat(value) < 0) {
+            return `No se permiten valores negativos en el campo ${name}.`;
+        }
+
+        // Verificar que sea mayor a cero
+        if (parseFloat(value) === 0) {
+            return `El valor en el campo ${name} debe ser mayor a 0.`;
+        }
+
+        return true;
+    }else{
+        return `El campo ${name} no puede estar vacío.`;
     }
-    return true;
 }
 
 export const validarMonedaUSD = (name, value) => {
-    const monedaNumberRegex = /^$|^-?\d+(\.\d{0})?$/;
-    if (!monedaNumberRegex.test(value)) {
-        return `El campo ${name} no corresponde a una moneda válida.`;
-    }
-    return true;
-}
+    if (value){
+        // Verificar que no sea un campo vacío
+        if (!value.trim()) {
+            return `El campo ${name} no puede estar vacío.`;
+        }
 
+        // Verificar el formato numérico con dos decimales
+        const monedaNumberRegex = /^-?\d+(\.00)?$/;
+        if (!monedaNumberRegex.test(value)) {
+            return `El campo ${name} no corresponde a una moneda válida (Ejemplo 1.00).`;
+        }
+
+        // Verificar que no sea un número negativo
+        if (parseFloat(value) < 0) {
+            return `No se permiten valores negativos en el campo ${name}.`;
+        }
+
+        // Verificar que sea mayor a cero
+        if (parseFloat(value) === 0) {
+            return `El valor en el campo ${name} debe ser mayor a 0.`;
+        }
+
+        return true;
+    }else{
+        return `El campo ${name} no puede estar vacío.`;
+    }
+};
+
+export const validarEnteroPositivo = (numero) => {
+    // Utilizamos la función isNaN para comprobar si no es un número válido
+    if (isNaN(numero)) {
+        return false;
+    }
+
+    // Convertimos el número a entero
+    var numeroEntero = parseInt(numero);
+
+    // Comprobamos si es un entero positivo o cero
+    if (numeroEntero >= 0 && Number.isInteger(numeroEntero)) {
+        return true;
+    } else {
+        return false;
+    }
+}

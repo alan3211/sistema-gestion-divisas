@@ -103,7 +103,10 @@ export const AccionesBoveda = ({item, index,refresh}) => {
     const options = {
         size:'xl',
         showModal,
-        closeModal: () => setShowModal(false),
+        closeModal: () => {
+            setShowModal(false);
+            reset();
+        },
         title: (optionBtn === 1) ? 'Confirmar Envío de Dotación a Bóveda' : 'Rechazar Envío de Dotación de Bóveda',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
         subtitle: (optionBtn !== 1) ? 'Ingresa el motivo por el cual rechazas el envío de la dotación a la bóveda.':
@@ -196,6 +199,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                             height: '300px',
                                             resize: 'none'
                                         }}
+                                        tabIndex="1"
                                     />
                                     <label htmlFor="motivo">MOTIVO</label>
                                     {
@@ -231,6 +235,12 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                                             placeholder="$"
                                                             autoComplete="off"
                                                             tabIndex="1"
+                                                            onChange={(e) => {
+                                                                // Actualiza el valor del campo de entrada
+                                                                e.preventDefault();
+                                                                setValue("tipo_cambio", e.target.value);
+                                                                trigger("tipo_cambio")
+                                                            }}
                                                         />
                                                         <label htmlFor="tipo_cambio">TIPO DE CAMBIO</label>
                                                         {errors && errors.tipo_cambio && (

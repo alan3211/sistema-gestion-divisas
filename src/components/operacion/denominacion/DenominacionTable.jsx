@@ -1,9 +1,10 @@
-import {FormatoDenominacion, FormatoMoneda} from "../../../utils";
-import { useState, useEffect } from "react";
+import {FormatoDenominacion, FormatoMoneda, validarEnteroPositivo} from "../../../utils";
+import {useState, useEffect, useRef} from "react";
 import { useForm } from "react-hook-form";
 
 export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDenominacion,resetea,boveda}) => {
 
+    const tableRef = useRef(null);
     const getPropiedad = (property, elemento) => {
         let propiedad = "";
         if (elemento.Denominacion === ".05") {
@@ -34,6 +35,8 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
         register,
         formState: { errors },
         reset,
+        trigger,
+        setValue,
     } = useForm();
 
     useEffect(() => {
@@ -60,8 +63,22 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
 
     }, [billetesFisicos]);
 
+    const handleTabKeyDown = (e, name,amount) => {
+        if (e.key === "Tab") {
+            const inputName = `denominacion_${name}`;
+            trigger(inputName);
+            // Mover scroll hacia abajo
+            if (tableRef.current) {
+                tableRef.current.scrollTop += amount;
+            }
+        }
+    };
+
     return (
-        <form className="table-responsive text-center mt-2 custom-scrollbar" style={{maxHeight: "400px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}>
+        <form className="table-responsive text-center mt-2 custom-scrollbar"
+              style={{maxHeight: "500px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}
+              ref={tableRef}
+              onSubmit={(e) => e.preventDefault()}>
             <table className="table table-bordered table-hover">
                 <thead className="table-dark sticky top-0">
                 <tr>
@@ -93,7 +110,9 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
                                 <input
                                     {...register(`${getPropiedad("denominacion", elemento)}`, {
                                         validate: {
-                                            validacionMN: (value) => /^[0-9]\d*$/.test(value) || value === 0,
+                                            validacionMN: (value) => {
+                                                return validarEnteroPositivo(value);
+                                            }
                                         },
                                     })}
                                     type="text"
@@ -106,7 +125,8 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
                                     placeholder={billetesFisicos[index][getPropiedad("denominacion", elemento)]}
                                     onChange={(e) => {
                                         const inputValue = e.target.value;
-                                        const newValue = /^[0-9]\d*$/.test(inputValue) ? parseInt(inputValue) : 0;
+                                        const newValue = validarEnteroPositivo(inputValue) ? parseInt(inputValue) : 0;
+                                        setValue(`denominacion_${name}`,newValue)
 
                                         setBilletesFisicos((prevBilletes) => {
                                             const newBilletes = [...prevBilletes];
@@ -115,6 +135,9 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
                                         });
                                     }}
                                     autoComplete="off"
+                                    onKeyDown={(e) => {
+                                        handleTabKeyDown(e, name,50)
+                                    }}
                                 />
                             </td>
                             <td>{totalActual * elemento.Denominacion}</td>

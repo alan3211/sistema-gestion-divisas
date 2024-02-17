@@ -1,6 +1,7 @@
-// const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
-const URL = 'http://192.168.101.45:9000/';
-// const URL = 'http://localhost:9000/';
+//const URL = 'https://grocerys-back-dev.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+//const URL = 'http://192.168.101.45:9000/';
+//const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -20,6 +21,7 @@ export const PERFIL_URL = `${URL}perfil/`;
 export const REPORTES_URL = `${URL}reportes/`;
 export const ADMINISTRACION_URL = `${URL}administracion/`;
 export const TOOLS_URL = `${URL}tools/`;
+export const COMMONS_URL = `${URL}commons/`;
 export const LOGIN_FIN_SESION_URL = `${LOGIN_URL}finSesion`;
 
 
@@ -115,6 +117,10 @@ export const TOOLS_CONSULTA_COMPRAS_FECHA_URL = `${TOOLS_URL}consulta/compras-fe
 export const TOOLS_SOLICITUD_ENVIO_VALORES_URL = `${TOOLS_URL}solicitud/envio-valores`
 export const TOOLS_CONSULTA_DENOMINACIONES_SOL_URL = `${TOOLS_URL}consulta/denominaciones/solicitadas`
 export const TOOLS_CONSULTA_DENOMINACIONES_DETALLE_URL = `${TOOLS_URL}detalle/denominaciones`
+
+/*Carga de Archivos*/
+export const TOOLS_CARGA_ARCHIVOS_URL = `${COMMONS_URL}carga/archivos`
+
 
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`

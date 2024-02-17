@@ -1,7 +1,7 @@
 import {memo, useContext, useEffect, useState} from "react";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {encryptRequest, formattedDate, OPTIONS, validarAlfaNumerico, validarNumeroTelefono, year} from "../../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNumeroTelefono, year} from "../../../utils";
 import {useCatalogo} from "../../../hook";
 import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
@@ -9,13 +9,16 @@ import {getLocalidad, guardaCliente} from "../../../services";
 import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 import {toast} from "react-toastify";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+import {ModalGenericTool} from "../../commons/modals";
+import {FileUploader} from "react-drag-drop-files";
+import {cargaArchivos} from "../../../services/commons-services";
 
 
 
 export const AltaClienteComplementario = memo(() => {
 
     const {propForm} =  useContext(AltaClienteContext);
-    const {setShowAltaCliente,setContinuaOperacion,setCliente} = useContext(CompraVentaContext);
+    const {setShowAltaCliente,cliente,setCliente,setContinuaOperacion} = useContext(CompraVentaContext);
     const {
         closeModal,
         } = useAltaComplementario();
@@ -45,11 +48,10 @@ export const AltaClienteComplementario = memo(() => {
             toast.warn(dataClientes.result_set[0].Mensaje,OPTIONS);
             closeModalAndReturn();
         }else{
+            propForm.setShowCargaDocumentos(true);
             toast.success(`El registro se ha completado satisfactoriamente con el número de usuario ${ dataClientes.result_set[0].Cliente}.`,OPTIONS)
             setCliente(dataClientes.result_set[0].Cliente);
-            setShowAltaCliente(false);
-            setContinuaOperacion(true);
-
+            //setShowAltaCliente(false);
         }
     });
 
@@ -133,6 +135,33 @@ export const AltaClienteComplementario = memo(() => {
         setSelectValidationErrorError({generoError: !isValidGenero});
     }, [propForm]);
 
+
+    const options = {
+        size:'xl',
+        showModal: propForm.showCargaDocumentos,
+        closeModal: () => propForm.setShowCargaDocumentos(false),
+        title: 'Carga de Documentos de usuario',
+        icon: 'bi bi-file-earmark-arrow-up m-2',
+        subtitle: 'Sube los documentos del usuario para almacenarlos en su expediente.',
+    };
+
+    const fileTypes = ["JPEG", "PNG","PDF"];
+    const [file, setFile] = useState(null);
+
+    const handleChange = async(archivo) => {
+        setFile(archivo);
+        const formData = new FormData();
+        formData.append("usuario_sistema",dataG.usuario);
+        formData.append("sucursal",dataG.sucursal);
+        formData.append("usuario",cliente);
+        formData.append(`Usuario_${cliente}`, file);
+
+        const response =  await cargaArchivos(formData);
+
+        console.log(response);
+
+    };
+
     return (
         <>
             <div className="row g-3">
@@ -156,7 +185,7 @@ export const AltaClienteComplementario = memo(() => {
                                         id="genero"
                                         name="genero"
                                         aria-label="GENERO"
-                                        tabIndex="1"
+                                        tabIndex="12"
                                     >
                                         <option value="0">SELECCIONA UNA OPCIÓN</option>
                                         {
@@ -191,7 +220,7 @@ export const AltaClienteComplementario = memo(() => {
                                     id="id_actividad_economica"
                                     name="id_actividad_economica"
                                     aria-label="Actividad Económica"
-                                    tabIndex="2"
+                                    tabIndex="13"
                                 >
                                     <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
@@ -216,7 +245,7 @@ export const AltaClienteComplementario = memo(() => {
                                 label="NACIONALIDAD"
                                 options={catalogo[1] || []}
                                 input={propForm.watch("nacionalidad")}
-                                tabIndex="3"
+                                tabIndex="14"
                             />
                         </div>
                         <div className="col-md-3">
@@ -226,7 +255,7 @@ export const AltaClienteComplementario = memo(() => {
                                 label="PAÍS NACIMIENTO"
                                 options={catalogo[1] || []}
                                 input={propForm.watch("pais_nacimiento")}
-                                tabIndex="4"
+                                tabIndex="15"
                             />
                         </div>
                     </div>
@@ -247,7 +276,7 @@ export const AltaClienteComplementario = memo(() => {
                                     id="estado"
                                     name="estado"
                                     aria-label="Estado"
-                                    tabIndex="5"
+                                    tabIndex="16"
                                 >
                                     <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
@@ -282,7 +311,7 @@ export const AltaClienteComplementario = memo(() => {
                                     name="municipio"
                                     aria-label="Municipio"
                                     disabled={(propForm.watch('municipio') === '0') && municipios.length === 0}
-                                    tabIndex="6"
+                                    tabIndex="17"
                                 >
                                     <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
@@ -317,7 +346,7 @@ export const AltaClienteComplementario = memo(() => {
                                     name="colonia"
                                     aria-label="Colonia"
                                     disabled={(propForm.watch('colonia') === '0') && colonias.length === 0}
-                                    tabIndex="7"
+                                    tabIndex="18"
                                 >
                                     <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
@@ -352,7 +381,7 @@ export const AltaClienteComplementario = memo(() => {
                                 name="codigo_postal"
                                 aria-label="Código Postal"
                                 disabled={(propForm.watch('codigo_postal') === '0') && codigoPostal.length === 0}
-                                tabIndex="8"
+                                tabIndex="19"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -388,8 +417,9 @@ export const AltaClienteComplementario = memo(() => {
                                                 id="codigo_telefono"
                                                 name="codigo_telefono"
                                                 aria-label="Codigo Telefono"
-                                                tabIndex="9"
+                                                tabIndex="20"
                                             >
+                                                <option value="0">SELECCIONA UNA OPCIÓN</option>
                                                 {
                                                     catalogo[10]?.map((ele) => (
                                                         <option key={ele.id + '-' + ele.descripcion}
@@ -421,7 +451,7 @@ export const AltaClienteComplementario = memo(() => {
                                     name="telefono"
                                     placeholder="Ingresa el teléfono"
                                     autoComplete="off"
-                                    tabIndex="10"
+                                    tabIndex="21"
                                 />
                                 <label htmlFor="telefono">TELÉFONO</label>
                                 {propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>}
@@ -450,7 +480,7 @@ export const AltaClienteComplementario = memo(() => {
                                         propForm.trigger('calle');
                                     }}
                                     autoComplete="off"
-                                    tabIndex="11"
+                                    tabIndex="22"
                                 />
                                 <label htmlFor="calle">CALLE, AVENIDA, BOULEVARD,CERRADA</label>
                                 {
@@ -485,7 +515,7 @@ export const AltaClienteComplementario = memo(() => {
                                     }}
                                     autoComplete="off"
                                     disabled={controlName}
-                                    tabIndex="12"
+                                    tabIndex="23"
                                 />
                                 <label htmlFor="numero_exterior">NÚMERO EXTERIOR</label>
                                 {
@@ -495,7 +525,7 @@ export const AltaClienteComplementario = memo(() => {
                                     <input className="form-check-input" type="checkbox" id="numero_exteriorC"
                                            onClick={()=>toggleCheck('numero_exterior')} checked={controlName}
                                            autoComplete="off"
-                                           tabIndex="23"
+                                           tabIndex="25"
                                     />
                                     <label className="form-check-label" htmlFor="numero_exteriorc">SIN NÚMERO EXTERIOR</label>
                                 </div>
@@ -525,7 +555,7 @@ export const AltaClienteComplementario = memo(() => {
                                         propForm.trigger('numero_interior');
                                     }}
                                     autoComplete="off"
-                                    tabIndex="13"
+                                    tabIndex="24"
                                 />
                                 <label htmlFor="numero_interior">NÚMERO INTERIOR</label>
                                 {
@@ -549,8 +579,8 @@ export const AltaClienteComplementario = memo(() => {
                                     name="vigencia"
                                     placeholder="Ingresa la vigencia de la identificación"
                                     autoComplete="off"
-                                    min={formattedDate}
-                                    tabIndex="14"
+                                    min={new Date().toISOString().split('T')[0]}
+                                    tabIndex="26"
                                     max={`${year+10}-12-31`}
                                 />
                                 <label htmlFor="vigencia">VIGENCIA IDENTIFICACIÓN</label>
@@ -581,7 +611,7 @@ export const AltaClienteComplementario = memo(() => {
                                 id="monto"
                                 name="monto"
                                 aria-label="Monto"
-                                tabIndex="15"
+                                tabIndex="27"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -615,7 +645,7 @@ export const AltaClienteComplementario = memo(() => {
                                 id="frecuencia"
                                 name="frecuencia"
                                 aria-label="Frecuencia"
-                                tabIndex="16"
+                                tabIndex="28"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -649,7 +679,7 @@ export const AltaClienteComplementario = memo(() => {
                                 id="numero_operaciones"
                                 name="numero_operaciones"
                                 aria-label="# Operaciones"
-                                tabIndex="17"
+                                tabIndex="29"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -685,7 +715,7 @@ export const AltaClienteComplementario = memo(() => {
                                 id="origen_recursos"
                                 name="origen_recursos"
                                 aria-label="Origen Recursos"
-                                tabIndex="18"
+                                tabIndex="30"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -727,7 +757,7 @@ export const AltaClienteComplementario = memo(() => {
                                         propForm.trigger('esp_origen_recursos');
                                     }}
                                     autoComplete="off"
-                                    tabIndex="20"
+                                    tabIndex="32"
                                 />
                                 <label htmlFor="esp_origen_recursos">ESPECIFIQUE ORIGEN RECURSOS</label>
                                 {
@@ -752,7 +782,7 @@ export const AltaClienteComplementario = memo(() => {
                                 id="destino_recursos"
                                 name="destino_recursos"
                                 aria-label="Destino Recursos"
-                                tabIndex="19"
+                                tabIndex="31"
                             >
                                 <option value="0">SELECCIONA UNA OPCIÓN</option>
                                 {
@@ -794,7 +824,7 @@ export const AltaClienteComplementario = memo(() => {
                                         propForm.trigger('esp_destino_recursos');
                                     }}
                                     autoComplete="off"
-                                    tabIndex="21"
+                                    tabIndex="33"
                                 />
                                 <label htmlFor="esp_destino_recursos">ESPECIFIQUE DESTINO RECURSOS</label>
                                 {
@@ -809,14 +839,14 @@ export const AltaClienteComplementario = memo(() => {
                             <button
                                 type="button"
                                 onClick={handleValidateFinalForm}
-                                tabIndex="22"
+                                tabIndex="34"
                                 className="m-2 btn btn-primary d-grid gap-2">
                                 <span
-                                    className="bi bi-check-circle-fill me-2"
+                                    className="bi bi-file-earmark-arrow-up me-2"
                                     role="status"
                                     aria-hidden="true">
                                     <span className="ms-2">
-                                        CONTINUAR OPERACIÓN
+                                        CONTINUAR CON CARGA DE DOCUMENTOS
                                     </span>
                                 </span>
                             </button>
@@ -824,6 +854,50 @@ export const AltaClienteComplementario = memo(() => {
                     </div>
                 </CardLayout>
             </div>
+            {
+                propForm.showCargaDocumentos &&
+                (
+                    <ModalGenericTool options={options}>
+                        <div className="row justify-content-center align-items-center">
+                            <div className="col-md-12 text-center">
+                                <FileUploader
+                                    handleChange={handleChange}
+                                    name="file"
+                                    types={fileTypes}
+                                    label="Seleccionar archivo ..."
+                                />
+                                {file && <p>Archivos subidos: {file.length}</p>}
+                            </div>
+                        </div>
+                        <div className="row justify-content-center">
+                            <div className="col-md-12">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setContinuaOperacion(true);
+                                        setShowAltaCliente(false);
+                                        propForm.setShowCargaDocumentos(false);
+                                    }
+                                    }
+                                    className="m-2 btn btn-primary d-grid gap-2"
+                                    disabled={file && file.length === 0}
+                                    tabIndex="37"
+                                >
+                <span className="me-2">
+                    <strong>CONTINUAR OPERACIÓN COMPRA/VENTA</strong>
+                    <span
+                        className="bi bi-arrow-right-circle-fill ms-2"
+                        role="status"
+                        aria-hidden="true">
+                    </span>
+                </span>
+                                </button>
+                            </div>
+                        </div>
+                    </ModalGenericTool>
+
+                )
+            }
         </>
     );
 })
