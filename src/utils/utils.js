@@ -300,6 +300,18 @@ export const obtenerNombreMes = (mes) => {
     }
 }
 
+const esBisiesto = (anio) => (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
+
+export const obtenerDiasEnMes = (mes, anio)=> {
+    // Array con la cantidad de días por mes (sin contar el año bisiesto)
+    const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    // Si el mes es febrero y el año es bisiesto, se actualiza la cantidad de días
+    if (mes === 1 && esBisiesto(anio)) {
+        return 29;
+    }
+    return diasPorMes[mes];
+}
+
 export const formatRelativeTime = (hourString) => {
     const now = new Date();
     const notificationTime = new Date();

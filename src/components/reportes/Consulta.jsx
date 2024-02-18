@@ -4,7 +4,7 @@ import {
     encryptRequest, FormatoMoneda,
     formattedDate,
     formattedDateDD,
-    obtenDia,
+    obtenDia, obtenerDiasEnMes,
     obtenerNombreMes,
     OPTIONS
 } from "../../utils";
@@ -110,7 +110,17 @@ export const Consulta = () => {
         {columna:"Tipo Cambio", filter:"currency"},
         {columna:"Costo de Venta USD", filter:"currency"},
         {columna:"Utilidad / Perdida", filter:"currency"},
-
+        {columna:"Tipo Cambio Compra", filter:"currency"},
+        {columna:"Tipo Cambio Vta Promedio", filter:"currency"},
+        {columna:"Entradas Compra", filter:"currency"},
+        {columna:"Salidas Venta", filter:"currency"},
+        {columna:"Saldo USD", filter:"currency"},
+        {columna:"Saldo MXP", filter:"currency"},
+        {columna:"Valor USD", filter:"currency"},
+        {columna:"Tipo Cambio Venta", filter:"currency"},
+        {columna:"Costo Vta Promedio", filter:"currency"},
+        {columna:"Venta USD a MXP", filter:"currency"},
+        {columna:"Utilidad Venta USD", filter:"currency"},
     ];
 
     // Función para obtener el filtro adecuado para una columna
@@ -152,9 +162,6 @@ export const Consulta = () => {
         const encryptedData = encryptRequest(data);
 
         const responseData = await consultaReporteFinal(encryptedData);
-        let descripcionCortada = reporte.Descripcion.split(' ')
-            .map(word => word.charAt(0)) // Obtiene la primera letra de cada palabra
-            .join(''); // Une las letras para formar la nueva cadena
 
         const fileName = `Reporte-${currentDate}`;
 
@@ -173,7 +180,7 @@ export const Consulta = () => {
             if (reporte.Periodo === 'Diario') {
                 periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
             } else {
-                periodo = `Por el periodo comprendido del 1 al ${obtenDia(data.mes)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
+                periodo = `Por el periodo comprendido del 1 al ${obtenerDiasEnMes(data.mes,data.anio)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
             }
           if (dataG.id_perfil !== 7) {
             // Crear un nuevo libro de Excel
