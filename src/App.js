@@ -42,7 +42,7 @@ const App = () => {
 
     // Al cargar la página, verifica si hay datos de usuario en localStorage y úsalos si están disponibles
     useEffect(() => {
-        const storedUserData = JSON.parse(localStorage.getItem('v'));
+        const storedUserData = JSON.parse(localStorage.getItem('usuario_data'));
         if (storedUserData) {
             dataG = storedUserData;
         }
@@ -55,7 +55,7 @@ const App = () => {
 
     return (
         <div className="app-root content">
-            <Router>
+           <Router>
                 <Routes>
                     <Route exact  path="/" element={<LoginComponent/>}/>
                     <Route exact path="/health" element={<HealthComponent/>}/>
