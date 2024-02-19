@@ -858,44 +858,47 @@ export const AltaClienteComplementario = memo(() => {
                 propForm.showCargaDocumentos &&
                 (
                     <ModalGenericTool options={options}>
-                        <div className="row justify-content-center align-items-center">
-                            <div className="col-md-12 text-center">
-                                <FileUploader
-                                    handleChange={handleChange}
-                                    name="file"
-                                    types={fileTypes}
-                                    label="Seleccionar archivo ..."
-                                />
-                                {file && <p>Archivos subidos: {file.length}</p>}
+                        <div className="modal-content">
+                            <div className="modal-body">
+                                <div className="row justify-content-center align-items-center">
+                                    <div className="col-md-12 text-center">
+                                        <FileUploader
+
+                                            handleChange={handleChange}
+
+                                            name="file"
+                                            types={fileTypes}
+                                            label="Seleccionar archivo ..."
+                                            style={{ border: '2px dashed #aaa', padding: '20px', borderRadius: '5px' }}
+                                        />
+                                        {file && <p>Archivos subidos: {file.name}</p>}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="row justify-content-center">
-                            <div className="col-md-12">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setContinuaOperacion(true);
-                                        setShowAltaCliente(false);
-                                        propForm.setShowCargaDocumentos(false);
-                                    }
-                                    }
-                                    className="m-2 btn btn-primary d-grid gap-2"
-                                    disabled={file && file.length === 0}
-                                    tabIndex="37"
-                                >
-                <span className="me-2">
-                    <strong>CONTINUAR OPERACIÓN COMPRA/VENTA</strong>
-                    <span
-                        className="bi bi-arrow-right-circle-fill ms-2"
-                        role="status"
-                        aria-hidden="true">
-                    </span>
-                </span>
-                                </button>
+                            <div className="modal-footer">
+                                <div className="row justify-content-center">
+                                    <div className="col-md-12">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setContinuaOperacion(true);
+                                                setShowAltaCliente(false);
+                                                propForm.setShowCargaDocumentos(false);
+                                            }}
+                                            className="m-2 btn btn-primary"
+                                            tabIndex="37"
+                                            style={{ fontWeight: 'bold' }}
+                                        >
+                                <span className="me-2">
+                                    CONTINUAR OPERACIÓN COMPRA/VENTA
+                                    <span className="bi bi-arrow-right-circle-fill ms-2" role="status" aria-hidden="true"></span>
+                                </span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </ModalGenericTool>
-
                 )
             }
         </>

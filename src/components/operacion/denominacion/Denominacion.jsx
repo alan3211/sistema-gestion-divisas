@@ -72,7 +72,7 @@ export const Denominacion = ({type, moneda, options}) => {
                                                                     return validarMoneda(`denominacion_${name}`, value);
                                                                 }
                                                             } else {
-                                                                if(validarEnteroPositivo(value)) {
+                                                                if(!validarEnteroPositivo(value)) {
                                                                     setValue(`denominacion_${name}`, 0)
                                                                     return "Cantidad no es entera.";
                                                                 }else if (type !== 'R' && parseInt(value) > elemento['Billetes Disponibles'] || parseInt(value) <= 0) {

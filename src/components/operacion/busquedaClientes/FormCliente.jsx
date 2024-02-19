@@ -46,7 +46,7 @@ export const FormCliente = ({tipo}) => {
         data.tipo_busqueda = tipo === 'cliente' ? 1 : 2
         data.limite_diario = dataG.limite_diario;
         data.limite_mensual = dataG.limite_mensual;
-        data.tipo_cambio =  operacion.tipo_cambio
+        data.tipo_cambio =  parseFloat(operacion.tipo_cambio)
 
         if (operacion.tipo_operacion === '1') {
             data.monto = parseInt(operacion.monto);
