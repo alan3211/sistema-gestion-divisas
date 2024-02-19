@@ -222,7 +222,8 @@ export const getTextDivisa = (divisa) => {
     const divisas = {
         "USD": { plural: "dólares", singular: "dólar" },
         "EUR": { plural: "euros", singular: "euro" },
-        "GBR": { plural: "libras", singular: "libra" }
+        "GBR": { plural: "libras", singular: "libra" },
+        "MXP": { plural: "pesos mexicanos", singular: "peso mexicano" }
     };
 
     // Validación de la divisa

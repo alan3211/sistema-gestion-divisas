@@ -1,9 +1,9 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {dataG} from "../../App";
 import {
     encryptRequest, FormatoMoneda,
     formattedDate,
-    formattedDateDD,
+    formattedDateDD, getTextDivisa,
     obtenerDiasEnMes,
     obtenerNombreMes,
     OPTIONS
@@ -69,10 +69,13 @@ export const Consulta = () => {
         const currentMonth = new Date().getMonth() + 1; // Se suma 1 porque los meses van de 0 a 11
         const currentYear = new Date().getFullYear();
 
-        setValue("mes", currentMonth);
-        setValue("anio", currentYear);
+        setValue("mes", currentMonth.toString());
+        setValue("anio", currentYear.toString());
+        setValue("moneda","");
+        setValue("sucursal","");
+        setValue("fecha_operacion","");
         consultaReportes(encryptRequest({id_perfil:dataG.id_perfil}));
-    }, []);
+    }, [watch("tipo_reporte")]);
 
     useEffect(() => {
         let objetoEncontrado = data.find(function(elemento) {
@@ -142,9 +145,28 @@ export const Consulta = () => {
         return valor;
     }
 
-    const createExcelReport = async (responseData,titulo,data) => {
+    const nombreArchivo = (data) => {
+        let fileName='';
         // Nombre del archivo final a descargar
-        const fileName = `Reporte-${currentDate}`;
+        if(data.moneda === '' && data.fecha_operacion === '' && data.sucursal === ''){
+            fileName = `${reporte.Descripcion}-${currentDate}`;
+        }else if (data.moneda !== ''){
+            fileName = `${reporte.Descripcion}-${currentDate}-${data.moneda}`;
+        }else if (data.fecha_operacion !== ''){
+            fileName = `${reporte.Descripcion}-${currentDate}-Operacion-${data.fecha_operacion}`;
+        } else if (data.sucursal !== ''){
+            if(data.sucursal === 1000){
+                fileName = `TOTALES-${reporte.Descripcion}-${currentDate}`;
+            }else{
+                fileName = `${data.sucursal}-${reporte.Descripcion}-${currentDate}`;
+            }
+        }
+        return fileName;
+    }
+
+    const createExcelReport = async (responseData,titulo,data) => {
+        let fileName= nombreArchivo(data);
+
         // Se ordenan los datos que se encontraron por sucursal
         console.log("responseData")
         console.log(responseData);
@@ -289,39 +311,23 @@ export const Consulta = () => {
                             const columnValues = worksheet.getColumn(index).values.slice(4); // Comenzar desde la quinta fila (después de los encabezados)
                             let total = 0;
 
-                            // Sumar solo los valores que se pueden interpretar como montos o números
-                            columnValues.forEach((val) => {
+                            columnValues.forEach((val, rowIndex) => {
+                                if (rowIndex === 0) return; // Ignorar la primera fila (nombre de la columna)
+
                                 const parsedValue = parseFloat(val.replace(/[^\d.-]/g, '')); // Eliminar caracteres no numéricos antes de intentar convertir a número
                                 if (!isNaN(parsedValue)) {
-                                    total += parsedValue;
+                                    // Verificar si el nombre de la columna es un dígito
+                                    const columnNameIsDigit = /^\d+$/.test(columnName);
+                                    // Verificar si el nombre de la columna contiene la palabra "Promedio"
+                                    const containsPromedio = columnName.includes("Promedio");
+                                    const containsCambio = columnName.includes("Cambio");
+                                    if ((!columnNameIsDigit || rowIndex !== 0) && !containsPromedio && !containsCambio ) {
+                                        total += parsedValue;
+                                    }
                                 }
-                            });
+                            })
 
                             totalsRow.getCell(index).value = total;
-                            totalsRow.font = { bold: true }; // Asegurar que el texto esté en negrita
-                            // Aplicar filtro currency a la columna
-                            worksheet.getColumn(index).numFmt = '$#,##0.00';
-                        } else if (columnName.includes(" Promedio")) {
-                            const columnValues = worksheet.getColumn(index).values.slice(4); // Comenzar desde la quinta fila (después de los encabezados)
-                            let total = 0;
-                            let count = 0;
-
-                            // Sumar solo los valores que se pueden interpretar como montos o números
-                            columnValues.forEach((val) => {
-                                const parsedValue = parseFloat(val.replace(/[^\d.-]/g, '')); // Eliminar caracteres no numéricos antes de intentar convertir a número
-                                if (!isNaN(parsedValue)) {
-                                    total += parsedValue;
-                                    count++;
-                                }
-                            });
-
-                            let result = 0;
-                            if (count > 0) {
-                                // Si hay al menos un valor numérico, calcular el promedio
-                                result = total / count;
-                            }
-
-                            totalsRow.getCell(index).value = result;
                             totalsRow.font = { bold: true }; // Asegurar que el texto esté en negrita
                             // Aplicar filtro currency a la columna
                             worksheet.getColumn(index).numFmt = '$#,##0.00';
@@ -350,7 +356,7 @@ export const Consulta = () => {
 
     const createPDFReport = (responseData, titulo, data) => {
         // Nombre del archivo final a descargar
-        const fileName = `Reporte-${currentDate}`;
+        let fileName= nombreArchivo(data);
         // Crear un nuevo objeto jsPDF
         const pdf = new jsPDF({
             orientation: 'l',
@@ -378,6 +384,7 @@ export const Consulta = () => {
                 const sucursalData = registrosPorSucursal[sucursal];
 
                 let periodo = "";
+                console.log("REPORTE: ",reporte);
                 if (reporte.Periodo === 'Diario') {
                     periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
                 } else {
@@ -389,8 +396,8 @@ export const Consulta = () => {
                 pdf.text(titulo.result_set[0].Nombre, 150, 10, {align: "center"});
                 // Agregar título de la sucursal
                 pdf.text(`Sucursal ${sucursal}`, 150, 15,{align: "center"});
-                pdf.text(reporte.Descripcion, 150, 25, {align: "center"});
-                pdf.text(periodo, 150, 30, {align: "center"});
+                pdf.text(reporte.Descripcion, 150, 20, {align: "center"});
+                pdf.text(periodo, 150, 25, {align: "center"});
 
                 // Crear una tabla para esta sucursal
                 const headers = responseData.headers;
@@ -399,7 +406,10 @@ export const Consulta = () => {
                 const totalsRow = headers.map((header, index) => {
                     const keywords = filters.map(filtro => filtro.columna);
                     const containsKeyword = keywords.some(keyword => header.includes(keyword));
-                    if (index > 0 && containsKeyword) {
+                    const containsPromedio = header.includes("Promedio");
+                    const containsCambio = header.includes("Cambio");
+
+                    if (index > 0 && containsKeyword && !containsPromedio && !containsCambio) {
                         const total = sucursalData.reduce((acc, curr) => acc + (parseFloat(curr[header]) || 0), 0);
                         return total.toFixed(2);
                     } else {
@@ -436,7 +446,7 @@ export const Consulta = () => {
                 pdf.autoTable({
                     head: [headers],
                     body: rows,
-                    startY: 20,
+                    startY: 40,
                     theme: 'grid',
                     styles: {
                         fontSize: 8,
@@ -484,194 +494,268 @@ export const Consulta = () => {
         const responseData = await consultaReporteFinal(encryptedData);
         const titulo = await obtenTitulo();
 
-        // Si la sucursal que se llamo fue TODAS entonces se muestra la logica de la paginacion por hojas en el excel y PDF
-        if (parseInt(data.sucursal) === 1000){
-            if (dataG.id_perfil !== 7) {
-                createExcelReport(responseData, titulo, data);
-            }
-            createPDFReport(responseData, titulo, data)
-        }else {
-            const fileName = `Reporte-${currentDate}`;
-            const datosOrdenados = responseData.result_set.map((fila) => {
-                const filaOrdenada = {};
-                responseData.headers.forEach((columna) => {
-                    filaOrdenada[columna] = fila[columna];
-                });
-                return filaOrdenada;
-            });
-
-            if (responseData.total_rows > 0) {
-                const titulo = await obtenTitulo();
-                //Tercer header
-                let periodo = "";
-                if (reporte.Periodo === 'Diario') {
-                    periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
-                } else {
-                    periodo = `Por el periodo comprendido del 1 al ${obtenerDiasEnMes(data.mes, data.anio)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
-                }
+        if(responseData.total_rows === 0){
+            toast.warn("No se ha encontrado información con los parametros ingresados. Te recomendamos verificar si hay operaciones registradas.",OPTIONS);
+            setGuarda(false);
+        }else{
+            // Si la sucursal que se llamo fue TODAS entonces se muestra la logica de la paginacion por hojas en el excel y PDF
+            if (parseInt(data.sucursal) === 1000){
                 if (dataG.id_perfil !== 7) {
-                    // Crear un nuevo libro de Excel
-                    const workbook = new ExcelJS.Workbook();
-                    const worksheet = workbook.addWorksheet("Reporte");
-
-                    // Añadir título a la fila 1
-                    worksheet.addRow([titulo.result_set[0].Nombre]);
-                    // Obtener el número de columnas en tus encabezados
-                    const numColumnas = responseData.headers.length;
-                    // Obtener la letra de la última columna (por ejemplo, 'N' si tienes 14 columnas)
-                    const ultimaLetraColumna = String.fromCharCode('A'.charCodeAt(0) + numColumnas - 1);
-                    // Establecer el estilo para cada celda de la fila de encabezados
-                    const headerFirstRow = worksheet.getRow(1);
-                    headerFirstRow.eachCell((cell) => {
-                        cell.font = {bold: true}; // Color de la letra blanco y negrita
-                        cell.alignment = {horizontal: 'center'}; // Alineación central
+                    createExcelReport(responseData, titulo, data);
+                }
+                createPDFReport(responseData, titulo, data)
+            }else {
+                let fileName= nombreArchivo(data);
+                const datosOrdenados = responseData.result_set.map((fila) => {
+                    const filaOrdenada = {};
+                    responseData.headers.forEach((columna) => {
+                        filaOrdenada[columna] = fila[columna];
                     });
-                    // Combinar celdas desde A1 hasta la última columna (por ejemplo, N1)
-                    worksheet.mergeCells(`A1:${ultimaLetraColumna}1`);
+                    return filaOrdenada;
+                });
 
-                    worksheet.addRow([reporte.Descripcion]);
-                    const headerSecondRow = worksheet.getRow(2);
-                    headerSecondRow.eachCell((cell) => {
-                        cell.font = {bold: true}; // Color de la letra blanco y negrita
-                        cell.alignment = {horizontal: 'center'}; // Alineación central
-                    });
-                    // Combinar celdas desde A2 hasta la última columna (por ejemplo, N2)
-                    worksheet.mergeCells(`A2:${ultimaLetraColumna}2`);
+                if (responseData.total_rows > 0) {
+                    const titulo = await obtenTitulo();
+                    //Tercer header
+                    let periodo = "";
+                    if (reporte.Periodo === 'Diario') {
+                        periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
+                    } else {
+                        periodo = `Por el periodo comprendido del 1 al ${obtenerDiasEnMes(data.mes, data.anio)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
+                    }
+                    if (dataG.id_perfil !== 7) {
+                        // Crear un nuevo libro de Excel
+                        const workbook = new ExcelJS.Workbook();
+                        const worksheet = workbook.addWorksheet("Reporte");
 
-                    worksheet.addRow([periodo])
-                    const headerThirdRow = worksheet.getRow(3);
-                    headerThirdRow.eachCell((cell) => {
-                        cell.font = {bold: true}; // Color de la letra blanco y negrita
-                        cell.alignment = {horizontal: 'center'}; // Alineación central
-                    });
-                    // Combinar celdas desde A3 hasta la última columna (por ejemplo, N3)
-                    worksheet.mergeCells(`A3:${ultimaLetraColumna}3`);
+                        // Añadir título a la fila 1
+                        worksheet.addRow([titulo.result_set[0].Nombre]);
+                        // Obtener el número de columnas en tus encabezados
+                        const numColumnas = responseData.headers.length;
+                        // Obtener la letra de la última columna (por ejemplo, 'N' si tienes 14 columnas)
+                        const ultimaLetraColumna = String.fromCharCode('A'.charCodeAt(0) + numColumnas - 1);
+                        // Establecer el estilo para cada celda de la fila de encabezados
+                        const headerFirstRow = worksheet.getRow(1);
+                        headerFirstRow.eachCell((cell) => {
+                            cell.font = {bold: true}; // Color de la letra blanco y negrita
+                            cell.alignment = {horizontal: 'center'}; // Alineación central
+                        });
+                        // Combinar celdas desde A1 hasta la última columna (por ejemplo, N1)
+                        worksheet.mergeCells(`A1:${ultimaLetraColumna}1`);
 
-                    // Agregar encabezado
-                    worksheet.addRow(responseData.headers); // Reemplaza con tus encabezados
-                    // Estilo para los encabezados
-                    const headerRow = worksheet.getRow(4); // Fila de encabezados
+                        worksheet.addRow([`${reporte.Descripcion} ${data.moneda === '' ? '':`EN ${getTextDivisa(data.moneda).plural.toUpperCase()}`}`]);
+                        const headerSecondRow = worksheet.getRow(2);
+                        headerSecondRow.eachCell((cell) => {
+                            cell.font = {bold: true}; // Color de la letra blanco y negrita
+                            cell.alignment = {horizontal: 'center'}; // Alineación central
+                        });
+                        // Combinar celdas desde A2 hasta la última columna (por ejemplo, N2)
+                        worksheet.mergeCells(`A2:${ultimaLetraColumna}2`);
 
-                    // Establecer el estilo para cada celda de la fila de encabezados
-                    headerRow.eachCell((cell, index) => {
-                        cell.font = {color: {argb: 'FFFFFF'}, bold: true}; // Color de la letra blanco y negrita
-                        cell.fill = {type: 'pattern', pattern: 'solid', fgColor: {argb: '012970'}}; // Color de fondo azul oscuro
-                        cell.alignment = {horizontal: 'center'}; // Alineación central
-                        const column = worksheet.getColumn(index + 1); // Indexamos desde 1
-                        const headerLength = headerRow.toString().length;
-                        const currentWidth = column.width || 12; // Si el ancho actual de la columna es 0, usar 12 como valor predeterminado
-                        column.width = Math.max(currentWidth, headerLength + 2); // Ajustar el ancho de la columna
-                    });
+                        worksheet.addRow([periodo])
+                        const headerThirdRow = worksheet.getRow(3);
+                        headerThirdRow.eachCell((cell) => {
+                            cell.font = {bold: true}; // Color de la letra blanco y negrita
+                            cell.alignment = {horizontal: 'center'}; // Alineación central
+                        });
+                        // Combinar celdas desde A3 hasta la última columna (por ejemplo, N3)
+                        worksheet.mergeCells(`A3:${ultimaLetraColumna}3`);
+
+                        // Agregar encabezado
+                        worksheet.addRow(responseData.headers); // Reemplaza con tus encabezados
+                        // Estilo para los encabezados
+                        const headerRow = worksheet.getRow(4); // Fila de encabezados
+
+                        // Establecer el estilo para cada celda de la fila de encabezados
+                        headerRow.eachCell((cell, index) => {
+                            cell.font = {color: {argb: 'FFFFFF'}, bold: true}; // Color de la letra blanco y negrita
+                            cell.fill = {type: 'pattern', pattern: 'solid', fgColor: {argb: '012970'}}; // Color de fondo azul oscuro
+                            cell.alignment = {horizontal: 'center'}; // Alineación central
+                            const column = worksheet.getColumn(index + 1); // Indexamos desde 1
+                            const headerLength = headerRow.toString().length;
+                            const currentWidth = column.width || 12; // Si el ancho actual de la columna es 0, usar 12 como valor predeterminado
+                            column.width = Math.max(currentWidth, headerLength + 2); // Ajustar el ancho de la columna
+                        });
 
 
-                    // Agregar los datos ordenados a la hoja de cálculo
-                    datosOrdenados.forEach((fila, index) => {
-                        const rowData = responseData.headers.map((column) => fila[column]);
+                        // Agregar los datos ordenados a la hoja de cálculo
+                        datosOrdenados.forEach((fila, index) => {
+                            const rowData = responseData.headers.map((column) => fila[column]);
 
-                        // Aplicar filtros
-                        filters.forEach((filtro) => {
-                            const {columna, filter} = filtro;
-                            const columnIndex = responseData.headers.indexOf(columna);
+                            // Aplicar filtros
+                            filters.forEach((filtro) => {
+                                const {columna, filter} = filtro;
+                                const columnIndex = responseData.headers.indexOf(columna);
 
-                            if (columnIndex !== -1) {
-                                // Verificar si el índice de la columna está dentro de los límites de la fila
-                                if (columnIndex < rowData.length) {
-                                    // Aplicar el filtro a la celda correspondiente
-                                    if (filter !== 'tooltip') {
-                                        rowData[columnIndex] = applyFilter(filter, parseFloat(rowData[columnIndex]));
+                                if (columnIndex !== -1) {
+                                    // Verificar si el índice de la columna está dentro de los límites de la fila
+                                    if (columnIndex < rowData.length) {
+                                        // Aplicar el filtro a la celda correspondiente
+                                        if (filter !== 'tooltip') {
+                                            rowData[columnIndex] = applyFilter(filter, parseFloat(rowData[columnIndex]));
+                                        }
                                     }
                                 }
+                            });
+
+                            rowData.forEach((valor, index) => {
+                                const column = worksheet.getColumn(index + 1); // Indexamos desde 1
+                                const cellLength = valor ? valor.toString().length : 0;
+                                const currentWidth = column.width || 12; // Si el ancho actual de la columna es 0, usar 12 como valor predeterminado
+                                column.width = Math.max(currentWidth, cellLength + 2); // Ajustar el ancho de la columna
+                            });
+
+                            worksheet.addRow(rowData);
+                        });
+
+                        // Calcular y agregar los totales
+                        const totalsRow = worksheet.addRow([]);
+
+                        // Establecer el valor de la primera celda como "Totales" y aplicar estilo
+                        const totalsCell = totalsRow.getCell(1);
+                        totalsCell.value = 'Totales';
+                        totalsCell.font = { bold: true }; // Asegurar que el texto esté en negrita
+                        totalsCell.alignment = { horizontal: 'center' }; // Alinear el texto al centro
+
+                        headerRow.eachCell((headerCell, index) => {
+                            const columnName = headerCell.value;
+                            const keywords = filters.map(filtro => filtro.columna);
+                            // Verificar si el nombre de la columna contiene al menos una de las palabras clave
+                            const containsKeyword = keywords.some(keyword => columnName.includes(keyword));
+
+                            if (index > 0 && containsKeyword) {
+                                const columnValues = worksheet.getColumn(index).values.slice(4); // Comenzar desde la quinta fila (después de los encabezados)
+                                let total = 0;
+
+                                columnValues.forEach((val, rowIndex) => {
+                                    if (rowIndex === 0) return; // Ignorar la primera fila (nombre de la columna)
+
+                                    const parsedValue = parseFloat(val.replace(/[^\d.-]/g, '')); // Eliminar caracteres no numéricos antes de intentar convertir a número
+                                    if (!isNaN(parsedValue)) {
+                                        // Verificar si el nombre de la columna es un dígito
+                                        const columnNameIsDigit = /^\d+$/.test(columnName);
+                                        // Verificar si el nombre de la columna contiene la palabra "Promedio"
+                                        const containsPromedio = columnName.includes("Promedio");
+                                        const containsCambio = columnName.includes("Cambio");
+                                        if ((!columnNameIsDigit || rowIndex !== 0) && !containsPromedio && !containsCambio ) {
+                                            total += parsedValue;
+                                        }
+                                    }
+                                })
+
+                                totalsRow.getCell(index).value = total;
+                                totalsRow.font = { bold: true }; // Asegurar que el texto esté en negrita
+                                // Aplicar filtro currency a la columna
+                                worksheet.getColumn(index).numFmt = '$#,##0.00';
+                            }else {
+                                if(index !== 1) totalsRow.getCell(index).value = ''; // Dejar vacías las celdas de los totales para las columnas que no cumplen con los requisitos
                             }
                         });
 
-                        rowData.forEach((valor, index) => {
-                            const column = worksheet.getColumn(index + 1); // Indexamos desde 1
-                            const cellLength = valor ? valor.toString().length : 0;
-                            const currentWidth = column.width || 12; // Si el ancho actual de la columna es 0, usar 12 como valor predeterminado
-                            column.width = Math.max(currentWidth, cellLength + 2); // Ajustar el ancho de la columna
-                        });
+                        // Construir el blob y descargar el archivo
+                        const buffer = await workbook.xlsx.writeBuffer();
+                        const blob = new Blob([buffer], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
 
-                        worksheet.addRow(rowData);
+                        // Descargar el archivo
+                        saveAs(blob, fileName + '.xlsx');
+                    }
+
+                    // Crear un nuevo objeto jsPDF
+                    const pdf = new jsPDF({
+                        orientation: 'l',
+                        unit: 'mm',
+                        format: 'a4',
+                        putOnlyUsedFonts: true
                     });
 
-                    // Construir el blob y descargar el archivo
-                    const buffer = await workbook.xlsx.writeBuffer();
-                    const blob = new Blob([buffer], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+                    // Agregar títulos al PDF
+                    pdf.setFontSize(8);
+                    pdf.text(titulo.result_set[0].Nombre, 150, 10, {align: "center"});
+                    if (dataG.id_perfil === 3 && reportesSuc.includes(data.tipo_reporte)) {
+                        pdf.text(`${dataG.sucursal} - ${dataG.nombre_sucursal}`, 150, 15, {align: "center"});
+                    }
+                    pdf.text(`${reporte.Descripcion} ${data.moneda === '' ? '':`EN ${getTextDivisa(data.moneda).plural.toUpperCase()}`}`, 150, 20, {align: "center"});
+                    pdf.text(periodo, 150, 25, {align: "center"});
 
-                    // Descargar el archivo
-                    saveAs(blob, fileName + '.xlsx');
-                }
+                    // Crear una tabla
+                    const headers = responseData?.headers;
+                    // const dataT = responseData?.result_set.map(fila => headers.map(header => fila[header]));
 
-                // Crear un nuevo objeto jsPDF
-                const pdf = new jsPDF({
-                    orientation: 'l',
-                    unit: 'mm',
-                    format: 'a4',
-                    putOnlyUsedFonts: true
-                });
+                    // Calcular totales
+                    const totalsRow = headers.map((header, index) => {
+                        const keywords = filters.map(filtro => filtro.columna);
+                        const containsKeyword = keywords.some(keyword => header.includes(keyword));
+                        const containsPromedio = header.includes("Promedio");
+                        const containsCambio = header.includes("Cambio");
 
-                // Agregar títulos al PDF
-                pdf.setFontSize(8);
-                pdf.text(titulo.result_set[0].Nombre, 150, 10, {align: "center"});
-                if (dataG.id_perfil === 3 && reportesSuc.includes(data.tipo_reporte)) {
-                    pdf.text(`${dataG.sucursal} - ${dataG.nombre_sucursal}`, 150, 15, {align: "center"});
-                }
-                pdf.text(reporte.Descripcion, 150, 20, {align: "center"});
-                pdf.text(periodo, 150, 25, {align: "center"});
-
-                // Crear una tabla
-                const headers = responseData?.headers;
-                // const dataT = responseData?.result_set.map(fila => headers.map(header => fila[header]));
-
-                // Aplicar filtros y formato a los datos en el PDF
-                datosOrdenados.forEach((fila) => {
-                    headers.forEach((columna) => {
-                        const filter = getFilterForColumn(columna); // Obtener el filtro adecuado para la columna
-                        if (filter) {
-                            if (filter !== 'tooltip') {
-                                // Aplicar el filtro a la celda correspondiente
-                                fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
-                            }
+                        if (index > 0 && containsKeyword && !containsPromedio && !containsCambio) {
+                            const total = datosOrdenados.reduce((acc, curr) => acc + (parseFloat(curr[header]) || 0), 0);
+                            return total.toFixed(2);
+                        } else {
+                            if (index === 0) return 'Totales';
+                            else return '';
                         }
                     });
-                });
 
-                // Generar la tabla para el PDF
-                const rows = datosOrdenados.map((fila) => headers.map((columna) => fila[columna]));
+                    // Aplicar filtros y formato a la fila de totales
+                    totalsRow.forEach((value, index) => {
+                        const header = headers[index];
+                        const filter = getFilterForColumn(header);
+                        if (filter && filter !== 'tooltip') {
+                            totalsRow[index] = applyFilter(filter, parseFloat(value));
+                        }
+                    });
 
-                pdf.autoTable({
-                    head: [headers],  // Encabezados de la tabla
-                    body: rows,  // Datos de la tabla
-                    startY: 40,
-                    theme: 'grid',  // Estilo de la tabla (puedes cambiarlo según tus preferencias)
-                    styles: {
-                        fontSize: 8,
-                        cellPadding: 1,
-                        valign: 'middle',
-                        halign: 'center',
-                        overflow: 'linebreak',
-                        lineWidth: 0.1,
-                    },
-                    headStyles: {
-                        fillColor: [1, 41, 112],  // Color de fondo del encabezado (#012970)
-                        textColor: [255, 255, 255]  // Color del texto del encabezado (blanco)
-                    },
-                    columnStyles: {
-                        0: {cellWidth: 20},  // Ancho de la primera columna
-                    },
-                });
-                pdf.setFontSize(8);
-                pdf.text(`Generado por: ${dataG.username} el ${formattedDateDD} a las ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`, 200, 200);
+                    // Aplicar filtros y formato a los datos en el PDF
+                    datosOrdenados.forEach((fila) => {
+                        headers.forEach((columna) => {
+                            const filter = getFilterForColumn(columna);
+                            if (filter && filter !== 'tooltip') {
+                                fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
+                            }
+                        });
+                    });
 
-                // Descargar el PDF
-                pdf.save(`${fileName}.pdf`);
+                    // Generar la tabla para el PDF
+                    let rows = datosOrdenados.map(fila => headers.map(header => fila[header]));
 
-            } else {
-                toast.warn(`Hubo un problema para generar el reporte de ${reporte.Descripcion}. Valide si existe información`, OPTIONS);
+                    // Agregar fila de totales al final del arreglo rows
+                    rows.push(totalsRow);
+
+                    pdf.autoTable({
+                        head: [headers],  // Encabezados de la tabla
+                        body: rows,  // Datos de la tabla
+                        startY: 40,
+                        theme: 'grid',  // Estilo de la tabla (puedes cambiarlo según tus preferencias)
+                        styles: {
+                            fontSize: 8,
+                            cellPadding: 1,
+                            valign: 'middle',
+                            halign: 'center',
+                            overflow: 'linebreak',
+                            lineWidth: 0.1,
+                        },
+                        headStyles: {
+                            fillColor: [1, 41, 112],  // Color de fondo del encabezado (#012970)
+                            textColor: [255, 255, 255]  // Color del texto del encabezado (blanco)
+                        },
+                        columnStyles: {
+                            0: {cellWidth: 20},  // Ancho de la primera columna
+                        },
+                    });
+                    pdf.setFontSize(8);
+                    pdf.text(`Generado por: ${dataG.username} el ${formattedDateDD} a las ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`, 200, 200);
+
+                    // Descargar el PDF
+                    pdf.save(`${fileName}.pdf`);
+
+                } else {
+                    toast.warn(`Hubo un problema para generar el reporte de ${reporte.Descripcion}. Valide si existe información`, OPTIONS);
+                }
+
+                setGuarda(false);
+                reset();
             }
-
-            setGuarda(false);
-            reset();
         }
     });
 
