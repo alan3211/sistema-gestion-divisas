@@ -986,8 +986,13 @@ export const AltaClienteComplementario = memo(() => {
                                                             <button
                                                                 className="btn btn-danger btn-sm"
                                                                 onClick={() => {
-                                                                    setFiles(files.filter(f => f !== file))
-                                                                    setSelectedFile(null);
+                                                                    const newFiles = [...files];
+                                                                    const indexToRemove = newFiles.findIndex(f => f === file);
+                                                                    if (indexToRemove !== -1) {
+                                                                        newFiles.splice(indexToRemove, 1);
+                                                                        setFiles(newFiles);
+                                                                        setSelectedFile(null);
+                                                                    }
                                                                 }}
                                                             >
                                                                 <strong>
@@ -1008,10 +1013,7 @@ export const AltaClienteComplementario = memo(() => {
                                 <div className="card">
                                     <div className="card-body">
                                         {/* Vista previa del archivo */}
-                                        <pre>
-                                            {JSON.stringify(selectedFile)}
-                                        </pre>
-                                        {selectedFile && (
+                                        {(selectedFile && files.length > 0) && (
                                             <div>
                                                 <h4 className="mt-4 fs-5">
                                                     <i className="bi bi-eye-fill me-2"></i>
