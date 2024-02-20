@@ -1,4 +1,4 @@
-import {memo, useContext, useEffect, useState} from "react";
+import {memo, useContext, useEffect, useMemo, useState} from "react";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNumeroTelefono, year} from "../../../utils";
@@ -10,33 +10,32 @@ import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 import {toast} from "react-toastify";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {ModalGenericTool} from "../../commons/modals";
-import {FileUploader} from "react-drag-drop-files";
 import {cargaArchivos} from "../../../services/commons-services";
-
+import {useDropzone} from 'react-dropzone';
 
 
 export const AltaClienteComplementario = memo(() => {
 
-    const {propForm} =  useContext(AltaClienteContext);
-    const {setShowAltaCliente,cliente,setCliente,setContinuaOperacion} = useContext(CompraVentaContext);
+    const {propForm} = useContext(AltaClienteContext);
+    const {setShowAltaCliente, cliente, setCliente, setContinuaOperacion} = useContext(CompraVentaContext);
     const {
         closeModal,
-        } = useAltaComplementario();
+    } = useAltaComplementario();
 
-    const catalogo = useCatalogo([1,3,3,6,12,13,14,10,11,18,25]);
+    const catalogo = useCatalogo([1, 3, 3, 6, 12, 13, 14, 10, 11, 18, 25]);
 
-    const handleValidateFinalForm = propForm.handleSubmit(async(data) => {
+    const handleValidateFinalForm = propForm.handleSubmit(async (data) => {
         data.sucursal = dataG.sucursal.toString();
         data.usuario = dataG.usuario;
 
-        if(data.numero_exterior.includes("SIN NÚMERO EXTERIOR")){
-            data.numero_exterior="";
+        if (data.numero_exterior.includes("SIN NÚMERO EXTERIOR")) {
+            data.numero_exterior = "";
         }
 
-        if(data.origen_recursos !== '5'){
+        if (data.origen_recursos !== '5') {
             data.esp_origen_recursos = '';
         }
-        if(data.destino_recursos !== '7'){
+        if (data.destino_recursos !== '7') {
             data.esp_destino_recursos = '';
         }
 
@@ -44,18 +43,18 @@ export const AltaClienteComplementario = memo(() => {
 
         const dataClientes = await guardaCliente(encryptedBase64);
 
-        if(dataClientes.result_set[0].hasOwnProperty('Mensaje')){
-            toast.warn(dataClientes.result_set[0].Mensaje,OPTIONS);
+        if (dataClientes.result_set[0].hasOwnProperty('Mensaje')) {
+            toast.warn(dataClientes.result_set[0].Mensaje, OPTIONS);
             closeModalAndReturn();
-        }else{
+        } else {
             propForm.setShowCargaDocumentos(true);
-            toast.success(`El registro se ha completado satisfactoriamente con el número de usuario ${ dataClientes.result_set[0].Cliente}.`,OPTIONS)
+            toast.success(`El registro se ha completado satisfactoriamente con el número de usuario ${dataClientes.result_set[0].Cliente}.`, OPTIONS)
             setCliente(dataClientes.result_set[0].Cliente);
             //setShowAltaCliente(false);
         }
     });
 
-    const closeModalAndReturn = () =>{
+    const closeModalAndReturn = () => {
         closeModal();
         propForm.reset();
         propForm.setComplementarios(false);
@@ -63,66 +62,66 @@ export const AltaClienteComplementario = memo(() => {
 
     }
 
-    const [municipios,setMunicipios] = useState([]);
-    const [colonias,setColonias] = useState([]);
-    const [codigoPostal,setCodigoPostal] = useState([]);
+    const [municipios, setMunicipios] = useState([]);
+    const [colonias, setColonias] = useState([]);
+    const [codigoPostal, setCodigoPostal] = useState([]);
 
     useEffect(() => {
-        const getFetch = async() =>{
+        const getFetch = async () => {
             const values = {
-                opcion:1,
+                opcion: 1,
                 estado: propForm.watch("estado"),
-                municipio:'',
-                colonia:''
+                municipio: '',
+                colonia: ''
             }
-            const encryptedData =  encryptRequest(values);
+            const encryptedData = encryptRequest(values);
             const mun = await getLocalidad(encryptedData);
             setMunicipios(mun)
         }
-        if(propForm.watch("estado") !== '0') getFetch();
+        if (propForm.watch("estado") !== '0') getFetch();
     }, [propForm.watch("estado")]);
 
     useEffect(() => {
-        const getFetch = async() =>{
+        const getFetch = async () => {
             const values = {
-                opcion:2,
+                opcion: 2,
                 estado: propForm.watch("estado"),
-                municipio:propForm.watch("municipio"),
-                colonia:''
+                municipio: propForm.watch("municipio"),
+                colonia: ''
             }
-            const encryptedData =  encryptRequest(values);
+            const encryptedData = encryptRequest(values);
             const colonias = await getLocalidad(encryptedData);
             setColonias(colonias)
         }
-        if(propForm.watch("municipio") !== '0') getFetch();
+        if (propForm.watch("municipio") !== '0') getFetch();
     }, [propForm.watch("municipio")]);
 
     useEffect(() => {
-        const getFetch = async() =>{
+        const getFetch = async () => {
             const values = {
-                opcion:3,
+                opcion: 3,
                 estado: propForm.watch("estado"),
-                municipio:propForm.watch("municipio"),
-                colonia:propForm.watch("colonia")
+                municipio: propForm.watch("municipio"),
+                colonia: propForm.watch("colonia")
             }
-            const encryptedData =  encryptRequest(values);
+            const encryptedData = encryptRequest(values);
             const codigo_postal = await getLocalidad(encryptedData);
             setCodigoPostal(codigo_postal)
         }
-        if(propForm.watch("colonia") !== '0') getFetch();
+        if (propForm.watch("colonia") !== '0') getFetch();
     }, [propForm.watch("colonia")]);
 
     const [controlName, setControlName] = useState(false);
 
     const toggleCheck = (value) => {
         setControlName((prevControlName) => {
-                if (prevControlName) {
-                    propForm.setValue("numero_exterior", "");
-                    return false;
-                } else {
-                    propForm.setValue("numero_exterior", "SIN NÚMERO EXTERIOR");
-                    return true;
-                }
+            if (prevControlName) {
+                propForm.setValue("numero_exterior", "");
+                return false;
+            } else {
+                propForm.setValue("numero_exterior", "SIN NÚMERO EXTERIOR");
+                return true;
+            }
         });
     };
 
@@ -135,32 +134,97 @@ export const AltaClienteComplementario = memo(() => {
         setSelectValidationErrorError({generoError: !isValidGenero});
     }, [propForm]);
 
-
     const options = {
-        size:'xl',
+        size: 'xl',
         showModal: propForm.showCargaDocumentos,
         closeModal: () => propForm.setShowCargaDocumentos(false),
-        title: 'Carga de Documentos de usuario',
+        title: 'Carga de Documentos del Usuario',
         icon: 'bi bi-file-earmark-arrow-up m-2',
         subtitle: 'Sube los documentos del usuario para almacenarlos en su expediente.',
     };
 
-    const fileTypes = ["JPEG", "PNG","PDF"];
-    const [file, setFile] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [showContinuaDoc, setShowContinuaDoc] = useState(true);
+    const [files, setFiles] = useState([]);
 
-    const handleChange = async(archivo) => {
-        setFile(archivo);
-        const formData = new FormData();
-        formData.append("usuario_sistema",dataG.usuario);
-        formData.append("sucursal",dataG.sucursal);
-        formData.append("usuario",cliente);
-        formData.append(`Usuario_${cliente}`, file);
+    const handleChange = async (archivo) => {
+         setFiles(archivo);
+         const formData = new FormData();
+         formData.append("usuario_sistema", dataG.usuario);
+         formData.append("sucursal", dataG.sucursal);
+         formData.append("usuario", cliente);
 
-        const response =  await cargaArchivos(formData);
+         const response = await cargaArchivos(formData);
 
-        console.log(response);
+         if(response === 'OK'){
+            setShowContinuaDoc(false);
+         }else{
+            setShowContinuaDoc(true);
+         }
+         console.log(response);
 
+     };
+
+    const [uploading, setUploading] = useState(false);
+
+    const onDrop = acceptedFiles => {
+        setUploading(true);
+        setTimeout(() => {
+            setFiles([...files, ...acceptedFiles]);
+            setUploading(false);
+        }, 1000); // Simulating upload delay
     };
+
+    const baseStyle = {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '20px',
+        borderWidth: 2,
+        borderRadius: 2,
+        borderColor: '#eeeeee',
+        borderStyle: 'dashed',
+        backgroundColor: '#fafafa',
+        color: '#bdbdbd',
+        outline: 'none',
+        transition: 'border .24s ease-in-out'
+    };
+
+    const focusedStyle = {
+        borderColor: '#2196f3'
+    };
+
+    const acceptStyle = {
+        borderColor: '#00e676'
+    };
+
+    const rejectStyle = {
+        borderColor: '#ff1744'
+    };
+
+    const {getRootProps,
+        getInputProps,
+        isFocused,
+        isDragAccept,
+        isDragReject} = useDropzone({onDrop});
+
+    const style = useMemo(() => ({
+        ...baseStyle,
+        ...(isFocused ? focusedStyle : {}),
+        ...(isDragAccept ? acceptStyle : {}),
+        ...(isDragReject ? rejectStyle : {})
+    }), [
+        isFocused,
+        isDragAccept,
+        isDragReject
+    ]);
+
+    // Función para manejar la selección de archivos
+    const handleFileSelection = (file) => {
+        setSelectedFile(file);
+    };
+
 
     return (
         <>
@@ -168,55 +232,56 @@ export const AltaClienteComplementario = memo(() => {
                 <CardLayout title="Datos Complementarios" icon="ri-file-list-2-fill p-2">
                     <div className="row">
                         <div className="col-md-3">
-                                <div className="form-floating mb-3">
-                                    <select
-                                        {...propForm.register("genero",{
-                                            required:{
-                                                value:true,
-                                                message:'Debes de seleccionar al menos un genero.'
-                                            },
-                                            validate: value => {
-                                                const isValid = value !== "";
-                                                setSelectValidationErrorError({generoError: !isValid});
-                                                return isValid || 'Debes seleccionar un genero válido.';
-                                            }
-                                        })}
-                                        className={`form-select ${ selectValidationError.generoError ? 'invalid-input':''}`}
-                                        id="genero"
-                                        name="genero"
-                                        aria-label="GENERO"
-                                        tabIndex="12"
-                                    >
-                                        <option value="0">SELECCIONA UNA OPCIÓN</option>
-                                        {
-                                            catalogo[9]?.map((ele) => (
-                                                <option key={ele.id + '-' + ele.descripcion}
-                                                        value={ele.id}>
-                                                    {ele.descripcion}
-                                                </option>
-                                            ))
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("genero", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un genero.'
+                                        },
+                                        validate: value => {
+                                            const isValid = value !== "";
+                                            setSelectValidationErrorError({generoError: !isValid});
+                                            return isValid || 'Debes seleccionar un genero válido.';
                                         }
-                                    </select>
-                                    <label htmlFor="genero">GENERO</label>
+                                    })}
+                                    className={`form-select ${selectValidationError.generoError ? 'invalid-input' : ''}`}
+                                    id="genero"
+                                    name="genero"
+                                    aria-label="GENERO"
+                                    tabIndex="12"
+                                >
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
                                     {
-                                        selectValidationError.generoError  &&
-                                        <div className="invalid-feedback-custom">Debes de seleccionar un genero válido </div>
+                                        catalogo[9]?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
                                     }
-                                </div>
+                                </select>
+                                <label htmlFor="genero">GENERO</label>
+                                {
+                                    selectValidationError.generoError &&
+                                    <div className="invalid-feedback-custom">Debes de seleccionar un genero
+                                        válido </div>
+                                }
                             </div>
+                        </div>
                         <div className="col-md-3">
                             <div className="form-floating mb-3">
                                 <select
-                                    {...propForm.register("id_actividad_economica",{
-                                        required:{
-                                            value:true,
-                                            message:'Debes de seleccionar al menos una actividad economica.'
+                                    {...propForm.register("id_actividad_economica", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos una actividad economica.'
                                         },
                                         validate: value => {
                                             return value !== "0" || 'Debes seleccionar una actividad economica válida.';
                                         }
                                     })}
-                                    className={`form-select ${!!propForm.errors?.id_actividad_economica ? 'invalid-input':''}`}
+                                    className={`form-select ${!!propForm.errors?.id_actividad_economica ? 'invalid-input' : ''}`}
                                     id="id_actividad_economica"
                                     name="id_actividad_economica"
                                     aria-label="Actividad Económica"
@@ -234,7 +299,8 @@ export const AltaClienteComplementario = memo(() => {
                                 </select>
                                 <label htmlFor="id_actividad_economica">ACTIVIDAD ECONÓMICA</label>
                                 {
-                                    propForm.errors?.id_actividad_economica && <div className="invalid-feedback-custom">{propForm.errors?.id_actividad_economica.message}</div>
+                                    propForm.errors?.id_actividad_economica && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.id_actividad_economica.message}</div>
                                 }
                             </div>
                         </div>
@@ -263,16 +329,16 @@ export const AltaClienteComplementario = memo(() => {
                         <div className="col-md-3">
                             <div className="form-floating mb-3">
                                 <select
-                                    {...propForm.register("estado",{
-                                        required:{
-                                            value:true,
-                                            message:'Debes de seleccionar al menos un estado.'
+                                    {...propForm.register("estado", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un estado.'
                                         },
                                         validate: value => {
                                             return value !== "0" || 'Debes seleccionar un estado válido.';
                                         }
                                     })}
-                                    className={`form-select ${!!propForm.errors?.estado ? 'invalid-input':''}`}
+                                    className={`form-select ${!!propForm.errors?.estado ? 'invalid-input' : ''}`}
                                     id="estado"
                                     name="estado"
                                     aria-label="Estado"
@@ -290,23 +356,24 @@ export const AltaClienteComplementario = memo(() => {
                                 </select>
                                 <label htmlFor="estado">ESTADO</label>
                                 {
-                                    propForm.errors?.estado && <div className="invalid-feedback-custom">{propForm.errors?.estado.message}</div>
+                                    propForm.errors?.estado &&
+                                    <div className="invalid-feedback-custom">{propForm.errors?.estado.message}</div>
                                 }
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="form-floating mb-3">
                                 <select
-                                    {...propForm.register("municipio",{
-                                        required:{
-                                            value:true,
-                                            message:'Debes de seleccionar al menos un municipio.'
+                                    {...propForm.register("municipio", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un municipio.'
                                         },
                                         validate: value => {
                                             return value !== "0" || 'Debes seleccionar un municipio válido.';
                                         }
                                     })}
-                                    className={`form-select ${!!propForm.errors?.municipio ? 'invalid-input':''}`}
+                                    className={`form-select ${!!propForm.errors?.municipio ? 'invalid-input' : ''}`}
                                     id="municipio"
                                     name="municipio"
                                     aria-label="Municipio"
@@ -325,23 +392,24 @@ export const AltaClienteComplementario = memo(() => {
                                 </select>
                                 <label htmlFor="municipio">MUNICIPIO</label>
                                 {
-                                    propForm.errors?.municipio && <div className="invalid-feedback-custom">{propForm.errors?.municipio.message}</div>
+                                    propForm.errors?.municipio &&
+                                    <div className="invalid-feedback-custom">{propForm.errors?.municipio.message}</div>
                                 }
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="form-floating mb-3">
                                 <select
-                                    {...propForm.register("colonia",{
-                                        required:{
-                                            value:true,
-                                            message:'Debes de seleccionar al menos una colonia.'
+                                    {...propForm.register("colonia", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos una colonia.'
                                         },
                                         validate: value => {
                                             return value !== "0" || 'Debes seleccionar una colonia válida.';
                                         }
                                     })}
-                                    className={`form-select ${!!propForm.errors?.colonia ? 'invalid-input':''}`}
+                                    className={`form-select ${!!propForm.errors?.colonia ? 'invalid-input' : ''}`}
                                     id="colonia"
                                     name="colonia"
                                     aria-label="Colonia"
@@ -360,89 +428,92 @@ export const AltaClienteComplementario = memo(() => {
                                 </select>
                                 <label htmlFor="colonia">COLONIA</label>
                                 {
-                                    propForm.errors?.colonia && <div className="invalid-feedback-custom">{propForm.errors?.colonia.message}</div>
+                                    propForm.errors?.colonia &&
+                                    <div className="invalid-feedback-custom">{propForm.errors?.colonia.message}</div>
                                 }
                             </div>
                         </div>
                         <div className="col-md-3">
-                        <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("codigo_postal",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos un código_postal.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar un código postal válido.';
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("codigo_postal", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un código_postal.'
+                                        },
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar un código postal válido.';
+                                        }
+                                    })}
+                                    className={`form-select ${!!propForm.errors?.codigo_postal ? 'invalid-input' : ''}`}
+                                    id="codigo_postal"
+                                    name="codigo_postal"
+                                    aria-label="Código Postal"
+                                    disabled={(propForm.watch('codigo_postal') === '0') && codigoPostal.length === 0}
+                                    tabIndex="19"
+                                >
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    {
+                                        codigoPostal?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
                                     }
-                                })}
-                                className={`form-select ${!!propForm.errors?.codigo_postal ? 'invalid-input':''}`}
-                                id="codigo_postal"
-                                name="codigo_postal"
-                                aria-label="Código Postal"
-                                disabled={(propForm.watch('codigo_postal') === '0') && codigoPostal.length === 0}
-                                tabIndex="19"
-                            >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                </select>
+                                <label htmlFor="codigo_postal">CÓDIGO POSTAL</label>
                                 {
-                                    codigoPostal?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
+                                    propForm.errors?.codigo_postal && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.codigo_postal.message}</div>
                                 }
-                            </select>
-                            <label htmlFor="codigo_postal">CÓDIGO POSTAL</label>
-                            {
-                                propForm.errors?.codigo_postal && <div className="invalid-feedback-custom">{propForm.errors?.codigo_postal.message}</div>
-                            }
+                            </div>
                         </div>
-                    </div>
                     </div>
                     <div className="row">
                         <div className="col-md-2">
-                                <div className="form-floating mb-3">
-                                            <select
-                                                {...propForm.register("codigo_telefono",{
-                                                    required:{
-                                                        value:true,
-                                                        message:'Debes de seleccionar al menos un codigo.'
-                                                    },
-                                                    validate: value => {
-                                                        return value !== "0" || 'Debes seleccionar un codigo válido.';
-                                                    }
-                                                })}
-                                                className={`form-select ${!!propForm.errors?.codigo_telefono ? 'invalid-input':''}`}
-                                                id="codigo_telefono"
-                                                name="codigo_telefono"
-                                                aria-label="Codigo Telefono"
-                                                tabIndex="20"
-                                            >
-                                                <option value="0">SELECCIONA UNA OPCIÓN</option>
-                                                {
-                                                    catalogo[10]?.map((ele) => (
-                                                        <option key={ele.id + '-' + ele.descripcion}
-                                                                value={ele.id}>
-                                                            {ele.descripcion.toUpperCase()}
-                                                        </option>
-                                                    ))
-                                                }
-                                            </select>
-                                            <label htmlFor="codigo_telefono">PREFIJO</label>
-                                            {
-                                                propForm.errors?.codigo_telefono && <div className="invalid-feedback-custom">{propForm.errors?.codigo_telefono.message}</div>
-                                            }
-                                </div>
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("codigo_telefono", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un codigo.'
+                                        },
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar un codigo válido.';
+                                        }
+                                    })}
+                                    className={`form-select ${!!propForm.errors?.codigo_telefono ? 'invalid-input' : ''}`}
+                                    id="codigo_telefono"
+                                    name="codigo_telefono"
+                                    aria-label="Codigo Telefono"
+                                    tabIndex="20"
+                                >
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    {
+                                        catalogo[10]?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion.toUpperCase()}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                                <label htmlFor="codigo_telefono">PREFIJO</label>
+                                {
+                                    propForm.errors?.codigo_telefono && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.codigo_telefono.message}</div>
+                                }
+                            </div>
                         </div>
                         <div className="col-md-2">
                             <div className="form-floating mb-3">
                                 <input
                                     {...propForm.register("telefono", {
                                         validate: (value) => validarNumeroTelefono("Telefono", value),
-                                        maxLength:{
-                                            value:10,
-                                            message:'El campo Teléfono como máximo debe de tener no mas de 10 digitos.'
+                                        maxLength: {
+                                            value: 10,
+                                            message: 'El campo Teléfono como máximo debe de tener no mas de 10 digitos.'
                                         },
                                     })}
                                     type="text"
@@ -454,22 +525,23 @@ export const AltaClienteComplementario = memo(() => {
                                     tabIndex="21"
                                 />
                                 <label htmlFor="telefono">TELÉFONO</label>
-                                {propForm.errors?.telefono && <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>}
+                                {propForm.errors?.telefono &&
+                                    <div className="invalid-feedback-custom">{propForm.errors?.telefono.message}</div>}
                             </div>
                         </div>
 
                         <div className="col-md-5">
                             <div className="form-floating">
                                 <input
-                                    {...propForm.register("calle",{
-                                        required:{
-                                            value:true,
-                                            message:'El campo no puede ser vacio.'
+                                    {...propForm.register("calle", {
+                                        required: {
+                                            value: true,
+                                            message: 'El campo no puede ser vacio.'
                                         },
-                                        validate: (value) => validarAlfaNumerico("Calle",value)
+                                        validate: (value) => validarAlfaNumerico("Calle", value)
                                     })}
                                     type="text"
-                                    className={`form-control ${!!propForm.errors?.calle ? 'invalid-input':''}`}
+                                    className={`form-control ${!!propForm.errors?.calle ? 'invalid-input' : ''}`}
                                     id="calle"
                                     name="calle"
                                     placeholder="Ingresa la calle"
@@ -484,26 +556,27 @@ export const AltaClienteComplementario = memo(() => {
                                 />
                                 <label htmlFor="calle">CALLE, AVENIDA, BOULEVARD,CERRADA</label>
                                 {
-                                    propForm.errors?.calle && <div className="invalid-feedback-custom">{propForm.errors?.calle.message}</div>
+                                    propForm.errors?.calle &&
+                                    <div className="invalid-feedback-custom">{propForm.errors?.calle.message}</div>
                                 }
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="form-floating">
                                 <input
-                                    {...propForm.register("numero_exterior",{
-                                        required:{
-                                            value:true,
-                                            message:'El campo Número Exterior no puede ser vacio.'
+                                    {...propForm.register("numero_exterior", {
+                                        required: {
+                                            value: true,
+                                            message: 'El campo Número Exterior no puede ser vacio.'
                                         },
-                                        maxLength:{
-                                            value:10,
-                                            message:'El campo Número Exterior como máximo debe de tener no mas de 10 caracteres.'
+                                        maxLength: {
+                                            value: 10,
+                                            message: 'El campo Número Exterior como máximo debe de tener no mas de 10 caracteres.'
                                         },
-                                        validate: (value) => validarAlfaNumerico("Número Exterior",value)
+                                        validate: (value) => validarAlfaNumerico("Número Exterior", value)
                                     })}
                                     type="text"
-                                    className={`form-control ${!!propForm.errors?.numero_exterior ? 'invalid-input':''}`}
+                                    className={`form-control ${!!propForm.errors?.numero_exterior ? 'invalid-input' : ''}`}
                                     id="numero_exterior"
                                     name="numero_exterior"
                                     placeholder="Ingresa el Número Exterior"
@@ -519,15 +592,17 @@ export const AltaClienteComplementario = memo(() => {
                                 />
                                 <label htmlFor="numero_exterior">NÚMERO EXTERIOR</label>
                                 {
-                                    propForm.errors?.numero_exterior && <div className="invalid-feedback-custom">{propForm.errors?.numero_exterior.message}</div>
+                                    propForm.errors?.numero_exterior && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.numero_exterior.message}</div>
                                 }
                                 <div className="form-check form-switch">
                                     <input className="form-check-input" type="checkbox" id="numero_exteriorC"
-                                           onClick={()=>toggleCheck('numero_exterior')} checked={controlName}
+                                           onClick={() => toggleCheck('numero_exterior')} checked={controlName}
                                            autoComplete="off"
                                            tabIndex="25"
                                     />
-                                    <label className="form-check-label" htmlFor="numero_exteriorc">SIN NÚMERO EXTERIOR</label>
+                                    <label className="form-check-label" htmlFor="numero_exteriorc">SIN NÚMERO
+                                        EXTERIOR</label>
                                 </div>
                             </div>
                         </div>
@@ -536,15 +611,15 @@ export const AltaClienteComplementario = memo(() => {
                         <div className="col-md-3">
                             <div className="form-floating">
                                 <input
-                                    {...propForm.register("numero_interior",{
-                                        validate: (value) => validarAlfaNumerico("Número Interior",value),
-                                        maxLength:{
-                                            value:10,
-                                            message:'El campo Número Interior como máximo debe de tener no mas de 10 caracteres.'
+                                    {...propForm.register("numero_interior", {
+                                        validate: (value) => validarAlfaNumerico("Número Interior", value),
+                                        maxLength: {
+                                            value: 10,
+                                            message: 'El campo Número Interior como máximo debe de tener no mas de 10 caracteres.'
                                         },
                                     })}
                                     type="text"
-                                    className={`form-control ${!!propForm.errors?.numero_interior ? 'invalid-input':''}`}
+                                    className={`form-control ${!!propForm.errors?.numero_interior ? 'invalid-input' : ''}`}
                                     id="numero_interior"
                                     name="numero_interior"
                                     placeholder="Ingresa el Número Interior"
@@ -559,19 +634,20 @@ export const AltaClienteComplementario = memo(() => {
                                 />
                                 <label htmlFor="numero_interior">NÚMERO INTERIOR</label>
                                 {
-                                    propForm.errors?.numero_interior && <div className="invalid-feedback-custom">{propForm.errors?.numero_interior.message}</div>
+                                    propForm.errors?.numero_interior && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.numero_interior.message}</div>
                                 }
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="form-floating">
                                 <input
-                                    {...propForm.register("vigencia",{
-                                        required:{
-                                            value:true,
-                                          message:'Debes de seleccionar al menos una vigencia.'
-                                        },
-                                    }
+                                    {...propForm.register("vigencia", {
+                                            required: {
+                                                value: true,
+                                                message: 'Debes de seleccionar al menos una vigencia.'
+                                            },
+                                        }
                                     )}
                                     type="date"
                                     className={`form-control ${!!propForm.errors?.vigencia ? 'invalid-input' : ''}`}
@@ -581,7 +657,7 @@ export const AltaClienteComplementario = memo(() => {
                                     autoComplete="off"
                                     min={new Date().toISOString().split('T')[0]}
                                     tabIndex="26"
-                                    max={`${year+10}-12-31`}
+                                    max={`${year + 10}-12-31`}
                                 />
                                 <label htmlFor="vigencia">VIGENCIA IDENTIFICACIÓN</label>
                                 {
@@ -595,244 +671,251 @@ export const AltaClienteComplementario = memo(() => {
 
                 <CardLayout title="Perfil Transaccional" icon="bi bi-file-person-fill p-2">
                     <div className="row">
-                    <div className="col-md-4">
-                        <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("monto",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos un monto.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar un monto válido.';
+                        <div className="col-md-4">
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("monto", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un monto.'
+                                        },
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar un monto válido.';
+                                        }
+                                    })}
+                                    className={`form-select ${!!propForm.errors?.monto ? 'invalid-input' : ''}`}
+                                    id="monto"
+                                    name="monto"
+                                    aria-label="Monto"
+                                    tabIndex="27"
+                                >
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    {
+                                        catalogo[4]?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
                                     }
-                                })}
-                                className={`form-select ${!!propForm.errors?.monto ? 'invalid-input':''}`}
-                                id="monto"
-                                name="monto"
-                                aria-label="Monto"
-                                tabIndex="27"
-                            >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                </select>
+                                <label htmlFor="monto">MONTO</label>
                                 {
-                                    catalogo[4]?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
+                                    propForm.errors?.monto &&
+                                    <div className="invalid-feedback-custom">{propForm.errors?.monto.message}</div>
                                 }
-                            </select>
-                            <label htmlFor="monto">MONTO</label>
-                            {
-                                propForm.errors?.monto && <div className="invalid-feedback-custom">{propForm.errors?.monto.message}</div>
-                            }
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-md-4">
-                        <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("frecuencia",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos una frecuencia.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar una frecuencia válida.';
+                        <div className="col-md-4">
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("frecuencia", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos una frecuencia.'
+                                        },
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar una frecuencia válida.';
+                                        }
+                                    })}
+                                    className={`form-select ${!!propForm.errors?.frecuencia ? 'invalid-input' : ''}`}
+                                    id="frecuencia"
+                                    name="frecuencia"
+                                    aria-label="Frecuencia"
+                                    tabIndex="28"
+                                >
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    {
+                                        catalogo[5]?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
                                     }
-                                })}
-                                className={`form-select ${!!propForm.errors?.frecuencia ? 'invalid-input':''}`}
-                                id="frecuencia"
-                                name="frecuencia"
-                                aria-label="Frecuencia"
-                                tabIndex="28"
-                            >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                </select>
+                                <label htmlFor="frecuencia">FRECUENCIA</label>
                                 {
-                                    catalogo[5]?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
+                                    propForm.errors?.frecuencia &&
+                                    <div className="invalid-feedback-custom">{propForm.errors?.frecuencia.message}</div>
                                 }
-                            </select>
-                            <label htmlFor="frecuencia">FRECUENCIA</label>
-                            {
-                                propForm.errors?.frecuencia && <div className="invalid-feedback-custom">{propForm.errors?.frecuencia.message}</div>
-                            }
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-md-4">
-                        <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("numero_operaciones",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos un número de operaciones.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar un número de operaciones válido.';
+                        <div className="col-md-4">
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("numero_operaciones", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un número de operaciones.'
+                                        },
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar un número de operaciones válido.';
+                                        }
+                                    })}
+                                    className={`form-select ${!!propForm.errors?.numero_operaciones ? 'invalid-input' : ''}`}
+                                    id="numero_operaciones"
+                                    name="numero_operaciones"
+                                    aria-label="# Operaciones"
+                                    tabIndex="29"
+                                >
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    {
+                                        catalogo[6]?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
                                     }
-                                })}
-                                className={`form-select ${!!propForm.errors?.numero_operaciones ? 'invalid-input':''}`}
-                                id="numero_operaciones"
-                                name="numero_operaciones"
-                                aria-label="# Operaciones"
-                                tabIndex="29"
-                            >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                </select>
+                                <label htmlFor="numero_operaciones"># OPERACIONES</label>
                                 {
-                                    catalogo[6]?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
+                                    propForm.errors?.numero_operaciones && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.numero_operaciones.message}</div>
                                 }
-                            </select>
-                            <label htmlFor="numero_operaciones"># OPERACIONES</label>
-                            {
-                                propForm.errors?.numero_operaciones && <div className="invalid-feedback-custom">{propForm.errors?.numero_operaciones.message}</div>
-                            }
+                            </div>
                         </div>
-                    </div>
                     </div>
                     <div className="row">
-                    <div className="col-md-3">
-                        <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("origen_recursos",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos un origen de recursos.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar un origen de recursos válido.';
-                                    }
-                                })}
-                                className={`form-select ${!!propForm.errors?.origen_recursos ? 'invalid-input':''}`}
-                                id="origen_recursos"
-                                name="origen_recursos"
-                                aria-label="Origen Recursos"
-                                tabIndex="30"
-                            >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
-                                {
-                                    catalogo[7]?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
-                                }
-                            </select>
-                            <label htmlFor="origen_recursos">ORIGEN RECURSOS</label>
-                            {
-                                propForm.errors?.origen_recursos && <div className="invalid-feedback-custom">{propForm.errors?.origen_recursos.message}</div>
-                            }
-                        </div>
-                    </div>
-                    {
-                        propForm.watch("origen_recursos") === '5' &&
-                        (<div className="col-md-3">
-                            <div className="form-floating">
-                                <input
-                                    {...propForm.register("esp_origen_recursos",{
-                                        required:{
-                                            value:true,
-                                            message:'El campo Especifica Origen Recursos no puede ser vacio.'
+                        <div className="col-md-3">
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("origen_recursos", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un origen de recursos.'
                                         },
-                                        validate: (value) => validarAlfaNumerico("Especifica Origen Recursos",value)
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar un origen de recursos válido.';
+                                        }
                                     })}
-                                    type="text"
-                                    className={`form-control ${!!propForm.errors?.esp_origen_recursos ? 'invalid-input':''}`}
-                                    id="esp_origen_recursos"
-                                    name="esp_origen_recursos"
-                                    placeholder="Especifique Origen Recursos"
-                                    onChange={(e) => {
-                                        const upperCaseValue = e.target.value.toUpperCase();
-                                        e.target.value = upperCaseValue;
-                                        propForm.setValue("esp_origen_recursos", upperCaseValue);
-                                        propForm.trigger('esp_origen_recursos');
-                                    }}
-                                    autoComplete="off"
-                                    tabIndex="32"
-                                />
-                                <label htmlFor="esp_origen_recursos">ESPECIFIQUE ORIGEN RECURSOS</label>
+                                    className={`form-select ${!!propForm.errors?.origen_recursos ? 'invalid-input' : ''}`}
+                                    id="origen_recursos"
+                                    name="origen_recursos"
+                                    aria-label="Origen Recursos"
+                                    tabIndex="30"
+                                >
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    {
+                                        catalogo[7]?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                                <label htmlFor="origen_recursos">ORIGEN RECURSOS</label>
                                 {
-                                    propForm.errors?.esp_origen_recursos && <div className="invalid-feedback-custom">{propForm.errors?.esp_origen_recursos.message}</div>
+                                    propForm.errors?.origen_recursos && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.origen_recursos.message}</div>
                                 }
                             </div>
-                        </div>)
-                    }
-                    <div className="col-md-3">
-                        <div className="form-floating mb-3">
-                            <select
-                                {...propForm.register("destino_recursos",{
-                                    required:{
-                                        value:true,
-                                        message:'Debes de seleccionar al menos un destino de los recursos.'
-                                    },
-                                    validate: value => {
-                                        return value !== "0" || 'Debes seleccionar un destino de recursos válido.';
-                                    }
-                                })}
-                                className={`form-select ${!!propForm.errors?.destino_recursos ? 'invalid-input':''}`}
-                                id="destino_recursos"
-                                name="destino_recursos"
-                                aria-label="Destino Recursos"
-                                tabIndex="31"
-                            >
-                                <option value="0">SELECCIONA UNA OPCIÓN</option>
-                                {
-                                    catalogo[8]?.map((ele) => (
-                                        <option key={ele.id + '-' + ele.descripcion}
-                                                value={ele.id}>
-                                            {ele.descripcion}
-                                        </option>
-                                    ))
-                                }
-                            </select>
-                            <label htmlFor="destino_recursos">DESTINO RECURSOS</label>
-                            {
-                                propForm.errors?.destino_recursos && <div className="invalid-feedback-custom">{propForm.errors?.destino_recursos.message}</div>
-                            }
                         </div>
-                    </div>
-                    {
-                        propForm.watch("destino_recursos") === '7' &&
-                        (<div className="col-md-3">
-                            <div className="form-floating">
-                                <input
-                                    {...propForm.register("esp_destino_recursos",{
-                                        required:{
-                                            value:true,
-                                            message:'El campo Especifica Destino Recursos no puede ser vacio.'
+                        {
+                            propForm.watch("origen_recursos") === '5' &&
+                            (<div className="col-md-3">
+                                <div className="form-floating">
+                                    <input
+                                        {...propForm.register("esp_origen_recursos", {
+                                            required: {
+                                                value: true,
+                                                message: 'El campo Especifica Origen Recursos no puede ser vacio.'
+                                            },
+                                            validate: (value) => validarAlfaNumerico("Especifica Origen Recursos", value)
+                                        })}
+                                        type="text"
+                                        className={`form-control ${!!propForm.errors?.esp_origen_recursos ? 'invalid-input' : ''}`}
+                                        id="esp_origen_recursos"
+                                        name="esp_origen_recursos"
+                                        placeholder="Especifique Origen Recursos"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            propForm.setValue("esp_origen_recursos", upperCaseValue);
+                                            propForm.trigger('esp_origen_recursos');
+                                        }}
+                                        autoComplete="off"
+                                        tabIndex="32"
+                                    />
+                                    <label htmlFor="esp_origen_recursos">ESPECIFIQUE ORIGEN RECURSOS</label>
+                                    {
+                                        propForm.errors?.esp_origen_recursos && <div
+                                            className="invalid-feedback-custom">{propForm.errors?.esp_origen_recursos.message}</div>
+                                    }
+                                </div>
+                            </div>)
+                        }
+                        <div className="col-md-3">
+                            <div className="form-floating mb-3">
+                                <select
+                                    {...propForm.register("destino_recursos", {
+                                        required: {
+                                            value: true,
+                                            message: 'Debes de seleccionar al menos un destino de los recursos.'
                                         },
-                                        validate: (value) => validarAlfaNumerico("Especifica Destino Recursos",value)
+                                        validate: value => {
+                                            return value !== "0" || 'Debes seleccionar un destino de recursos válido.';
+                                        }
                                     })}
-                                    type="text"
-                                    className={`form-control ${!!propForm.errors?.esp_destino_recursos ? 'invalid-input':''}`}
-                                    id="esp_destino_recursos"
-                                    name="esp_destino_recursos"
-                                    placeholder="Especifique Destino Recursos"
-                                    onChange={(e) => {
-                                        const upperCaseValue = e.target.value.toUpperCase();
-                                        e.target.value = upperCaseValue;
-                                        propForm.setValue("esp_destino_recursos", upperCaseValue);
-                                        propForm.trigger('esp_destino_recursos');
-                                    }}
-                                    autoComplete="off"
-                                    tabIndex="33"
-                                />
-                                <label htmlFor="esp_destino_recursos">ESPECIFIQUE DESTINO RECURSOS</label>
+                                    className={`form-select ${!!propForm.errors?.destino_recursos ? 'invalid-input' : ''}`}
+                                    id="destino_recursos"
+                                    name="destino_recursos"
+                                    aria-label="Destino Recursos"
+                                    tabIndex="31"
+                                >
+                                    <option value="0">SELECCIONA UNA OPCIÓN</option>
+                                    {
+                                        catalogo[8]?.map((ele) => (
+                                            <option key={ele.id + '-' + ele.descripcion}
+                                                    value={ele.id}>
+                                                {ele.descripcion}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                                <label htmlFor="destino_recursos">DESTINO RECURSOS</label>
                                 {
-                                    propForm.errors?.esp_destino_recursos && <div className="invalid-feedback-custom">{propForm.errors?.esp_destino_recursos.message}</div>
+                                    propForm.errors?.destino_recursos && <div
+                                        className="invalid-feedback-custom">{propForm.errors?.destino_recursos.message}</div>
                                 }
                             </div>
-                        </div>)
-                    }
+                        </div>
+                        {
+                            propForm.watch("destino_recursos") === '7' &&
+                            (<div className="col-md-3">
+                                <div className="form-floating">
+                                    <input
+                                        {...propForm.register("esp_destino_recursos", {
+                                            required: {
+                                                value: true,
+                                                message: 'El campo Especifica Destino Recursos no puede ser vacio.'
+                                            },
+                                            validate: (value) => validarAlfaNumerico("Especifica Destino Recursos", value)
+                                        })}
+                                        type="text"
+                                        className={`form-control ${!!propForm.errors?.esp_destino_recursos ? 'invalid-input' : ''}`}
+                                        id="esp_destino_recursos"
+                                        name="esp_destino_recursos"
+                                        placeholder="Especifique Destino Recursos"
+                                        onChange={(e) => {
+                                            const upperCaseValue = e.target.value.toUpperCase();
+                                            e.target.value = upperCaseValue;
+                                            propForm.setValue("esp_destino_recursos", upperCaseValue);
+                                            propForm.trigger('esp_destino_recursos');
+                                        }}
+                                        autoComplete="off"
+                                        tabIndex="33"
+                                    />
+                                    <label htmlFor="esp_destino_recursos">ESPECIFIQUE DESTINO RECURSOS</label>
+                                    {
+                                        propForm.errors?.esp_destino_recursos && <div
+                                            className="invalid-feedback-custom">{propForm.errors?.esp_destino_recursos.message}</div>
+                                    }
+                                </div>
+                            </div>)
+                        }
                     </div>
                     <div className="row">
                         <div className="col-md-12 d-flex justify-content-center">
@@ -858,46 +941,129 @@ export const AltaClienteComplementario = memo(() => {
                 propForm.showCargaDocumentos &&
                 (
                     <ModalGenericTool options={options}>
-                        <div className="modal-content">
-                            <div className="modal-body">
-                                <div className="row justify-content-center align-items-center">
-                                    <div className="col-md-12 text-center">
-                                        <FileUploader
 
-                                            handleChange={handleChange}
+                        <div className="row">
+                            <div className="col-md-8">
+                                <div className="card pt-4">
+                                    <div className="card-body">
+                                        <div {...getRootProps(({style}))}>
+                                            <input {...getInputProps()} />
+                                            {uploading ? (
+                                                <div className="d-flex align-items-center">
+                                                    <div className="spinner-border me-2" role="status">
+                                                        <span className="visually-hidden"><strong>Subiendo archivos...</strong></span>
+                                                    </div>
+                                                    <p className="m-0"><strong>Subiendo archivos...</strong></p>
+                                                </div>
+                                            ) : (
+                                                <p className="text-blue">
+                            <span className="me-2">
+                                <i className="ri ri-upload-2-line"></i>
+                            </span>
+                                                    <strong>Arrastra y suelta archivos aquí, o haz clic para seleccionar archivos</strong>
+                                                </p>
+                                            )}
+                                        </div>
+                                        {files.length > 0 && (
+                                            <div className="mt-4">
+                                                <h4 className="mb-3 fs-5">
+                                                    <i className="bi bi-cloud-upload me-2"></i>
+                                                    Archivos Cargados
+                                                </h4>
+                                                <ul className="list-group">
+                                                    {files.map((file, index) => (
+                                                        <li
+                                                            key={index}
+                                                            className="list-group-item d-flex justify-content-between align-items-center cursor-pointer table-hover"
+                                                            onClick={() => handleFileSelection(file)}
+                                                        >
+                                                            <div>
+                                        <span className="me-2">
+                                            <i className="ri ri-file-line"></i>
+                                        </span>
+                                                                {file.name} - {file.size} bytes
+                                                            </div>
+                                                            <button
+                                                                className="btn btn-danger btn-sm"
+                                                                onClick={() => {
+                                                                    setFiles(files.filter(f => f !== file))
+                                                                    setSelectedFile(null);
+                                                                }}
+                                                            >
+                                                                <strong>
+                                                                    <i className="bi bi-trash me-1"></i>
+                                                                    Eliminar
+                                                                </strong>
+                                                            </button>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
 
-                                            name="file"
-                                            types={fileTypes}
-                                            label="Seleccionar archivo ..."
-                                            style={{ border: '2px dashed #aaa', padding: '20px', borderRadius: '5px' }}
-                                        />
-                                        {file && <p>Archivos subidos: {file.name}</p>}
                                     </div>
                                 </div>
                             </div>
-                            <div className="modal-footer">
-                                <div className="row justify-content-center">
-                                    <div className="col-md-12">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setContinuaOperacion(true);
-                                                setShowAltaCliente(false);
-                                                propForm.setShowCargaDocumentos(false);
-                                            }}
-                                            className="m-2 btn btn-primary"
-                                            tabIndex="37"
-                                            style={{ fontWeight: 'bold' }}
-                                        >
-                                <span className="me-2">
-                                    CONTINUAR OPERACIÓN COMPRA/VENTA
-                                    <span className="bi bi-arrow-right-circle-fill ms-2" role="status" aria-hidden="true"></span>
-                                </span>
-                                        </button>
+                            <div className="col-md-4">
+                                <div className="card">
+                                    <div className="card-body">
+                                        {/* Vista previa del archivo */}
+                                        <pre>
+                                            {JSON.stringify(selectedFile)}
+                                        </pre>
+                                        {selectedFile && (
+                                            <div>
+                                                <h4 className="mt-4 fs-5">
+                                                    <i className="bi bi-eye-fill me-2"></i>
+                                                    Vista Previa del Archivo
+                                                </h4>
+                                                {/* Utiliza un componente de vista previa de archivo */}
+                                                {selectedFile.type.startsWith('image/') ? (
+                                                    <img src={URL.createObjectURL(selectedFile)} alt="Vista previa del archivo" style={{ maxWidth: '100%', maxHeight: '400px' }} />
+                                                ) : selectedFile.type === 'application/pdf' ? (
+                                                    <iframe src={URL.createObjectURL(selectedFile)} width="100%" height="400px"></iframe>
+                                                ) : (
+                                                    <p>No se puede mostrar la vista previa del archivo.</p>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div className="row">
+                            <div className="col-md-4 mx-auto">
+                                <button type="button"  className="m-2 btn btn-success"
+                                        onClick={()=>handleChange(files)}
+                                        style={{fontWeight: 'bold'}}
+                                        tabIndex="37"
+                                        disabled={!(files.length > 0)}>
+                                    <i className="ri ri-upload-2-line me-2"></i>
+                                    SUBIR ARCHIVOS
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setContinuaOperacion(true);
+                                        setShowAltaCliente(false);
+                                        propForm.setShowCargaDocumentos(false);
+                                    }}
+                                    disabled={showContinuaDoc || !(files.length > 0)}
+                                    className="m-2 btn btn-primary"
+                                    tabIndex="38"
+                                    style={{fontWeight: 'bold'}}
+                                >
+                                        <span className="me-2">
+                                            CONTINUAR OPERACIÓN COMPRA/VENTA
+                                            <span className="bi bi-arrow-right-circle-fill ms-2" role="status" aria-hidden="true"></span>
+                                        </span>
+                                </button>
+                            </div>
+                        </div>
+
+
                     </ModalGenericTool>
                 )
             }
