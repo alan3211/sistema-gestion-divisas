@@ -12,6 +12,7 @@ import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContex
 import {ModalGenericTool} from "../../commons/modals";
 import {cargaArchivos} from "../../../services/commons-services";
 import {useDropzone} from 'react-dropzone';
+import {ModalLoading} from "../../commons/modals/ModalLoading";
 
 
 export const AltaClienteComplementario = memo(() => {
@@ -140,29 +141,36 @@ export const AltaClienteComplementario = memo(() => {
         closeModal: () => propForm.setShowCargaDocumentos(false),
         title: 'Carga de Documentos del Usuario',
         icon: 'bi bi-file-earmark-arrow-up m-2',
-        subtitle: 'Sube los documentos del usuario para almacenarlos en su expediente.',
+        subtitle: `Sube los documentos del usuario ${cliente} para almacenarlos en su expediente.`,
     };
 
     const [selectedFile, setSelectedFile] = useState(null);
-    const [showContinuaDoc, setShowContinuaDoc] = useState(true);
+    const [showContinuaDoc, setShowContinuaDoc] = useState(false);
     const [files, setFiles] = useState([]);
 
     const handleChange = async (archivo) => {
+         setShowContinuaDoc(true);
          setFiles(archivo);
          const formData = new FormData();
          formData.append("usuario_sistema", dataG.usuario);
          formData.append("sucursal", dataG.sucursal);
          formData.append("usuario", cliente);
+        files.forEach((file, index) => {
+            formData.append(`archivo`, file);
+        });
 
          const response = await cargaArchivos(formData);
 
          if(response === 'OK'){
-            setShowContinuaDoc(false);
+             setShowContinuaDoc(false);
+             setContinuaOperacion(true);
+             setShowAltaCliente(false);
+             propForm.setShowCargaDocumentos(false);
+             toast.success("Se cargaron los documentos correctamente",OPTIONS)
          }else{
-            setShowContinuaDoc(true);
+            setShowContinuaDoc(false);
+            toast.error("Hubo un problema al cargar la documentación.",OPTIONS)
          }
-         console.log(response);
-
      };
 
     const [uploading, setUploading] = useState(false);
@@ -225,6 +233,13 @@ export const AltaClienteComplementario = memo(() => {
         setSelectedFile(file);
     };
 
+    const optionsLoad = {
+        showModal:!showContinuaDoc,
+        closeCustomModal: ()=> setShowContinuaDoc(true),
+        title:'Guardando documentación...'
+    }
+
+    const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
 
     return (
         <>
@@ -312,6 +327,8 @@ export const AltaClienteComplementario = memo(() => {
                                 options={catalogo[1] || []}
                                 input={propForm.watch("nacionalidad")}
                                 tabIndex="14"
+                                selectedOptionIndex={selectedOptionIndex}
+                                setSelectedOptionIndex={setSelectedOptionIndex}
                             />
                         </div>
                         <div className="col-md-3">
@@ -322,6 +339,8 @@ export const AltaClienteComplementario = memo(() => {
                                 options={catalogo[1] || []}
                                 input={propForm.watch("pais_nacimiento")}
                                 tabIndex="15"
+                                selectedOptionIndex={selectedOptionIndex}
+                                setSelectedOptionIndex={setSelectedOptionIndex}
                             />
                         </div>
                     </div>
@@ -1009,6 +1028,9 @@ export const AltaClienteComplementario = memo(() => {
                                     </div>
                                 </div>
                             </div>
+                            {
+                                showContinuaDoc && <ModalLoading options={optionsLoad} />
+                            }
                             <div className="col-md-4">
                                 <div className="card">
                                     <div className="card-body">
@@ -1044,27 +1066,8 @@ export const AltaClienteComplementario = memo(() => {
                                     <i className="ri ri-upload-2-line me-2"></i>
                                     SUBIR ARCHIVOS
                                 </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setContinuaOperacion(true);
-                                        setShowAltaCliente(false);
-                                        propForm.setShowCargaDocumentos(false);
-                                    }}
-                                    disabled={showContinuaDoc || !(files.length > 0)}
-                                    className="m-2 btn btn-primary"
-                                    tabIndex="38"
-                                    style={{fontWeight: 'bold'}}
-                                >
-                                        <span className="me-2">
-                                            CONTINUAR OPERACIÓN COMPRA/VENTA
-                                            <span className="bi bi-arrow-right-circle-fill ms-2" role="status" aria-hidden="true"></span>
-                                        </span>
-                                </button>
                             </div>
                         </div>
-
 
                     </ModalGenericTool>
                 )

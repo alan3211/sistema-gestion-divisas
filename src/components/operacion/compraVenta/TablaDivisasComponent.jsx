@@ -1,4 +1,11 @@
-import {encryptRequest, formattedDate, formattedDateDD, mensajeSinElementos, validarNumeros} from "../../../utils";
+import {
+    encryptRequest,
+    FormatoMoneda,
+    formattedDate,
+    formattedDateDD,
+    mensajeSinElementos,
+    validarNumeros
+} from "../../../utils";
 import {useFetchTipoCambio} from "../../../hook";
 import {MessageComponent} from "../../commons";
 import {useContext, useState} from "react";
@@ -85,8 +92,8 @@ export const TablaDivisasComponent = () => {
                             <img src={ele.icon} width={30} height={30} className="m-2" alt={ele.Divisa}/>
                             {ele.Divisa}
                         </td>
-                        <td>{ele.Compra}</td>
-                        <td>{ele.Venta}</td>
+                        <td>{FormatoMoneda(parseFloat(ele.Compra))}</td>
+                        <td>{FormatoMoneda(parseFloat(ele.Venta))}</td>
                         <td> <i className="bi bi-sync text-success"></i> {ele["Hora Actualización"]}</td>
                         {
                             dataG.perfil === 'Coordinador Logística' &&

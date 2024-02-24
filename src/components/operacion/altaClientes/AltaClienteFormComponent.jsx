@@ -181,6 +181,14 @@ export const AltaClienteFormComponent = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("apellido_paterno", upperCaseValue);
                                         propForm.trigger('apellido_paterno');
+                                        // Aquí se actualiza la lógica para habilitar/deshabilitar el input
+                                        if(upperCaseValue.trim() === "") {
+                                            setControlName({
+                                                lastName:upperCaseValue.length > 0, // Se inhabilita si hay algún valor en el input
+                                                secondlastName: true, // Esto puede ser otra lógica o condición
+                                            });
+                                        }
+
                                     }}
                                     disabled={propForm.showEdit || controlName.lastName }
                                     autoComplete="off"
@@ -225,6 +233,14 @@ export const AltaClienteFormComponent = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("apellido_materno", upperCaseValue);
                                         propForm.trigger('apellido_materno');
+                                        // Aquí se actualiza la lógica para habilitar/deshabilitar el input
+                                        if(upperCaseValue.trim() === "") {
+                                            setControlName({
+                                                lastName: true, // Se inhabilita si hay algún valor en el input
+                                                secondlastName: upperCaseValue.length > 0, // Esto puede ser otra lógica o condición
+                                            });
+                                        }
+
                                     }}
                                     disabled={propForm.showEdit || controlName.secondlastName }
                                     autoComplete="off"

@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {useContext} from "react";
 import {CargaTipoCambioContext} from "../../../context/CargaTipoCambio/CargaTipoCambioContext";
 import {AltaDivisas} from "./AltaDivisas";
 import {useCatalogo} from "../../../hook";
@@ -9,7 +9,7 @@ import {useNavigate} from "react-router-dom";
 
 export const CargaTipoCambioOpera = ({id}) => {
 
-    const {tipo, register,changePestania,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
+    const {register,handleSubmit, errors,currencies} = useContext(CargaTipoCambioContext);
     const catalogo = useCatalogo([16, 17])
     const navigate = useNavigate();
     let tipoConsulta= 3;

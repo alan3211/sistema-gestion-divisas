@@ -167,7 +167,11 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     const handleInputChange = (e, rowIndex, nombre, denominacion,cantidadBilletes) => {
         const inputValue = e.target.value;
-        const newValue = validarEnteroPositivo(inputValue) ? parseFloat(inputValue) : 0;
+        let newValue = 0;
+        if(inputValue === "") newValue = 0;
+        else{
+            newValue = validarEnteroPositivo(inputValue) ? parseFloat(inputValue) : 0;
+        }
         setValue(nombre,newValue);
         trigger(nombre);
 

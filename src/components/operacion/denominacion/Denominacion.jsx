@@ -62,14 +62,23 @@ export const Denominacion = ({type, moneda, options}) => {
                                                         validacionMN: (value) => {
                                                             console.log("VALOR @ ----> ",value);
                                                             if ([6].includes(dataG.id_perfil)) {
-                                                                if (parseFloat(value) < 0.0){
-                                                                    setValue(`denominacion_${name}`, 0)
-                                                                    return false;
-                                                                }else if (parseFloat(value) > elemento['Billetes Disponibles']){
-                                                                    setValue(`denominacion_${name}`, 0)
-                                                                    return false;
-                                                                }else{
+
+                                                                if(type === 'B'){
+                                                                    if (parseFloat(value) < 0.0){
+                                                                        setValue(`denominacion_${name}`, 0)
+                                                                        return false;
+                                                                    }
                                                                     return validarMoneda(`denominacion_${name}`, value);
+                                                                }else{
+                                                                    if (parseFloat(value) < 0.0){
+                                                                        setValue(`denominacion_${name}`, 0)
+                                                                        return false;
+                                                                    }else if (parseFloat(value) > elemento['Billetes Disponibles']){
+                                                                        setValue(`denominacion_${name}`, 0)
+                                                                        return false;
+                                                                    }else{
+                                                                        return validarMoneda(`denominacion_${name}`, value);
+                                                                    }
                                                                 }
                                                             } else {
                                                                 if(!validarEnteroPositivo(value)) {

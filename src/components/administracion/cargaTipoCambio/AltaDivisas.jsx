@@ -15,16 +15,15 @@ export const AltaDivisas = () => {
         GBR: LibraSVG,
     };
 
-
     return (
-        <div className="row text-center">
-            <div className="table-responsive">
+        <div className="row">
+            <div className="text-center">
                 <table className="table table-bordered table-hover">
                     <thead className="table-dark">
-                    <tr>
-                        <th>Moneda</th>
-                        <th>Compra</th>
-                        <th>Venta</th>
+                    <tr style={{maxWidth:"300px"}}>
+                        <th style={{maxWidth:"100px"}}>Moneda</th>
+                        <th style={{maxWidth:"100px"}}>Compra</th>
+                        <th style={{maxWidth:"100px"}}>Venta</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -35,14 +34,14 @@ export const AltaDivisas = () => {
                         return (
                             <tr key={currency.divisa}>
                                 <td>
-                                    <img src={imageMap[currency.divisa]} width={30} height={30} className="m-2" alt={currency.divisa} />
+                                    <img src={imageMap[currency.divisa]} width={30} height={30} className="m-3" alt={currency.divisa} />
                                     <strong>{currency.divisa}</strong>
                                 </td>
-                                <td>
-                                    <div className="mb-3">
+                                <td style={{ maxWidth: '100px', wordWrap: 'break-word' }}>
+                                    <div>
                                         <input
                                             type="text"
-                                            className={`form-control ${errors && errors[compraName] ? "is-invalid" : ""}`}
+                                            className={`form-control mt-4 ${errors && errors[compraName] ? "is-invalid" : ""}`}
                                             name={compraName}
                                             placeholder="$"
                                             autoComplete="off"
@@ -54,16 +53,18 @@ export const AltaDivisas = () => {
                                         />
                                         {errors && errors[compraName] && (
                                             <div className="invalid-feedback">
-                                                {errors[compraName].message}
+                                                <div style={{ maxWidth: '10px',wordWrap: 'break-word' }}>
+                                                    {errors[compraName].message}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
                                 </td>
-                                <td>
-                                    <div className="mb-3">
+                                <td style={{ maxWidth: '100px', wordWrap: 'break-word' }}>
+                                    <div>
                                         <input
                                             type="text"
-                                            className={`form-control ${errors && errors[ventaName] ? "is-invalid" : ""}`}
+                                            className={`form-control mt-4 ${errors && errors[ventaName] ? "is-invalid" : ""}`}
                                             name={ventaName}
                                             placeholder="$"
                                             autoComplete="off"
@@ -74,8 +75,10 @@ export const AltaDivisas = () => {
                                             })}
                                         />
                                         {errors && errors[ventaName] && (
-                                            <div className="invalid-feedback">
-                                                {errors[ventaName].message}
+                                            <div className="invalid-feedback" style={{ maxWidth: '30px', wordWrap: 'break-word' }}>
+                                                <div style={{ maxWidth: '10px',wordWrap: 'break-word' }}>
+                                                    {errors[ventaName].message}
+                                                </div>
                                             </div>
                                         )}
                                     </div>

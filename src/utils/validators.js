@@ -75,7 +75,7 @@ export const validarNumeros = (name,value) => {
 }
 
 export const validarAlfaNumerico = (name, value) => {
-    const alfanumericoRegex = /^$|^[a-zA-Z\s\d;,.'()//[\]{}!¡"#$%&´*-_+áéíóúÁÉÍÓÚ]+$/;
+    const alfanumericoRegex = /^$|^[a-zA-Z\s\d;,.'()//[\]{}!¡"#$%&´*-_+áéíóúÁÉÍÓÚñÑ]+$/;
     if (!alfanumericoRegex.test(value)) {
         return `El campo ${name} debe contener solo caracteres alfanuméricos y los caracteres especiales permitidos.`;
     }
@@ -168,18 +168,22 @@ export const validarMonedaUSD = (name, value) => {
 };
 
 export const validarEnteroPositivo = (numero) => {
-    // Utilizamos la función isNaN para comprobar si no es un número válido
-    if (isNaN(numero)) {
-        return false;
-    }
-
-    // Convertimos el número a entero
-    var numeroEntero = parseInt(numero);
-
-    // Comprobamos si es un entero positivo o cero
-    if (numeroEntero >= 0 && Number.isInteger(numeroEntero)) {
+    if(numero === ""){
         return true;
-    } else {
-        return false;
+    }else{
+        // Utilizamos la función isNaN para comprobar si no es un número válido
+        if (isNaN(numero)) {
+            return false;
+        }
+
+        // Convertimos el número a entero
+        var numeroEntero = parseInt(numero);
+
+        // Comprobamos si es un entero positivo o cero
+        if (numeroEntero >= 0 && Number.isInteger(numeroEntero)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

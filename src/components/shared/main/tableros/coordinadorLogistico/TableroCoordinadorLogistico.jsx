@@ -34,8 +34,11 @@ export const TableroCoordinadorLogistico = () => {
             setShowDataActividad(true);
             setDatosActividad(result_set);
         }
-
     }
+
+    useEffect(() => {
+        console.log("Actividades")
+    }, [datosActividad]);
 
     useEffect(() => {
         // Simula una notificación periódica

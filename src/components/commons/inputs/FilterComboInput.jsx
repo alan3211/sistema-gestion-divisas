@@ -1,8 +1,9 @@
 import './CombosComponent.css';
 import {useContext, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
+import {Select} from "flowbite-react";
 
-export const FilterComboInput = ({ propFormulario,name, label, options,input,tabIndex}) => {
+export const FilterComboInput = ({ propFormulario,name, label, options,input,tabIndex,selectedOptionIndex, setSelectedOptionIndex}) => {
     const {propForm} =  useContext(AltaClienteContext) || { propForm: propFormulario };
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [inputValue, setInputValue] = useState(input);
@@ -40,9 +41,42 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
         setInputValue(option.descripcion);
         setShowDropdown(false);
         propForm.setValue(name, option.id); // Establece el valor en el formulario
+        propForm.trigger(name);
+    };
+
+    const handleKeyDown = (e) => {
+        // Manejar las teclas de flecha
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setSelectedOptionIndex((prevIndex) => (prevIndex < filteredOptions.length - 1 ? prevIndex + 1 : prevIndex));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setSelectedOptionIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
+        } else if (e.key === 'Enter' && selectedOptionIndex !== -1) {
+            handleOptionClick(filteredOptions[selectedOptionIndex]);
+        }
     };
 
     return (
+        <form className="form-floating mb-3" onSubmit={(e) => e.preventDefault()}>
+            <Select
+                options={options}
+                value={options.find(option => option.descripcion === inputValue)} // Ajusta esto según tus necesidades
+                onChange={(selectedOption) => handleOptionClick(selectedOption)}
+                onInputChange={(inputValue) => setInputValue(inputValue.toUpperCase())}
+                onKeyDown={handleKeyDown}
+                className={`${propForm.errors[name] ? 'is-invalid' : ''}`}
+                placeholder={`Filtrar por ${name}`}
+                tabIndex={tabIndex}
+            />
+            <label htmlFor={name}>{label}</label>
+            {propForm.errors[name] && (
+                <div className="invalid-feedback-custom">{propForm.errors[name].message}</div>
+            )}
+        </form>
+    );
+
+    /*return (
         <form className="form-floating mb-3" onSubmit={(e) => e.preventDefault()}>
             <input
                 type="text"
@@ -61,11 +95,11 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
                 tabIndex={tabIndex}
             />
             {showDropdown && (
-                <div className="combo-dropdown">
-                    {filteredOptions.map((option) => (
+                <div className="combo-dropdown" onKeyDown={handleKeyDown}>
+                    {filteredOptions.map((option, index) => (
                         <div
                             key={option.id}
-                            className="option"
+                            className={`option ${index === selectedOptionIndex ? 'selected' : ''}`}
                             onClick={() => handleOptionClick(option)}
                         >
                             {option.descripcion.toUpperCase()}
@@ -78,5 +112,5 @@ export const FilterComboInput = ({ propFormulario,name, label, options,input,tab
                 <div className="invalid-feedback-custom">{propForm.errors[name].message}</div>
             )}
         </form>
-    );
+    );*/
 };
