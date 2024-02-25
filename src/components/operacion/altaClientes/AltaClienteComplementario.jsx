@@ -1,7 +1,15 @@
 import {memo, useContext, useEffect, useMemo, useState} from "react";
 import {CardLayout} from "../../commons";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {encryptRequest, OPTIONS, validarAlfaNumerico, validarNumeroTelefono, year} from "../../../utils";
+import {
+    encryptRequest,
+    formattedDate,
+    OPTIONS,
+    validaFechas, validaFechaVigencia,
+    validarAlfaNumerico,
+    validarNumeroTelefono,
+    year
+} from "../../../utils";
 import {useCatalogo} from "../../../hook";
 import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
@@ -120,7 +128,7 @@ export const AltaClienteComplementario = memo(() => {
                 propForm.setValue("numero_exterior", "");
                 return false;
             } else {
-                propForm.setValue("numero_exterior", "SIN NÚMERO EXTERIOR");
+                propForm.setValue("numero_exterior", "S/N EXT");
                 return true;
             }
         });
@@ -649,6 +657,7 @@ export const AltaClienteComplementario = memo(() => {
                                                 value: true,
                                                 message: 'Debes de seleccionar al menos una vigencia.'
                                             },
+                                            validate: (fecha) => validaFechaVigencia(fecha)
                                         }
                                     )}
                                     type="date"
@@ -657,7 +666,7 @@ export const AltaClienteComplementario = memo(() => {
                                     name="vigencia"
                                     placeholder="Ingresa la vigencia de la identificación"
                                     autoComplete="off"
-                                    min={new Date().toISOString().split('T')[0]}
+                                    min={formattedDate}
                                     tabIndex="26"
                                     max={`${year + 10}-12-31`}
                                 />

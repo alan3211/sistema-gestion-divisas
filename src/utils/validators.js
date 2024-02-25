@@ -1,3 +1,5 @@
+import {formattedDate} from "./utils";
+
 export const validaFechas = (fecha) => {
     console.log(fecha)
     // Verificar el formato de la fecha
@@ -57,6 +59,48 @@ export const validaFechas = (fecha) => {
     return true;
 };
 
+export const validaFechaVigencia = (fechaString) => {
+    console.log(fechaString);
+    if (fechaString === "") {
+        return 'La fecha ingresada no es válida.';
+    }
+
+    // Obtener la fecha actual (año, mes y día)
+    const fechaActual = new Date();
+    const year = fechaActual.getFullYear();
+    const month = fechaActual.getMonth() + 1;
+    const day = fechaActual.getDate();
+
+    // Construir la fecha actual sin tener en cuenta la zona horaria
+    const fechaActualSinHora = new Date(year, month, day);
+
+    // Convertir la fecha de vigencia en formato YYYY-MM-DD a objeto Date
+    const fecha = fechaString.split("-");
+    const fechaVigencia = new Date(fecha[0],fecha[1],fecha[2]);
+
+    // Verificar si la fecha de vigencia es válida
+    if (!isNaN(fechaVigencia.getTime())) {
+        const vigenciaYear = fechaVigencia.getFullYear();
+        const vigenciaMonth = fechaVigencia.getMonth() + 1;
+        const vigenciaDay = fechaVigencia.getDate();
+
+        // Validar el número de días en el mes
+        if (vigenciaDay > 0 && vigenciaDay <= new Date(vigenciaYear, vigenciaMonth, 0).getDate()) {
+            // Convertir la fecha de vigencia en formato YYYY-MM-DD a objeto Date, sin tener en cuenta la hora
+            fechaVigencia.setHours(0, 0, 0, 0);
+
+            if (fechaVigencia >= fechaActualSinHora) {
+                return true; // La fecha de vigencia es válida
+            } else {
+                return 'La fecha de vigencia no es válida.';
+            }
+        } else {
+            return `La fecha de vigencia no es válida. El mes ${vigenciaMonth} tiene menos de ${vigenciaDay} días.`;
+        }
+    } else {
+        return 'La fecha de vigencia no es válida.';
+    }
+};
 
 export const validarNombreApellido = (name,value) => {
     const nombreRegex = /^$|^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'" ]+$/;
