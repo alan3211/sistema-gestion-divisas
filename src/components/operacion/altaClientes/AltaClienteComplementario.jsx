@@ -126,15 +126,6 @@ export const AltaClienteComplementario = memo(() => {
         });
     };
 
-    const [selectValidationError, setSelectValidationErrorError] = useState({
-        generoError: false,
-    });
-
-    useEffect(() => {
-        const isValidGenero = propForm.watch("genero") !== "";
-        setSelectValidationErrorError({generoError: !isValidGenero});
-    }, [propForm]);
-
     const options = {
         size: 'xl',
         showModal: propForm.showCargaDocumentos,
@@ -239,8 +230,6 @@ export const AltaClienteComplementario = memo(() => {
         title:'Guardando documentación...'
     }
 
-    const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
-
     return (
         <>
             <div className="row g-3">
@@ -255,12 +244,10 @@ export const AltaClienteComplementario = memo(() => {
                                             message: 'Debes de seleccionar al menos un genero.'
                                         },
                                         validate: value => {
-                                            const isValid = value !== "";
-                                            setSelectValidationErrorError({generoError: !isValid});
-                                            return isValid || 'Debes seleccionar un genero válido.';
+                                            return value !== "0" || 'Debes seleccionar una genero válido.';
                                         }
                                     })}
-                                    className={`form-select ${selectValidationError.generoError ? 'invalid-input' : ''}`}
+                                    className={`form-select ${propForm.errors?.genero ? 'invalid-input' : ''}`}
                                     id="genero"
                                     name="genero"
                                     aria-label="GENERO"
@@ -278,7 +265,7 @@ export const AltaClienteComplementario = memo(() => {
                                 </select>
                                 <label htmlFor="genero">GENERO</label>
                                 {
-                                    selectValidationError.generoError &&
+                                    propForm.errors?.genero &&
                                     <div className="invalid-feedback-custom">Debes de seleccionar un genero
                                         válido </div>
                                 }
@@ -327,8 +314,6 @@ export const AltaClienteComplementario = memo(() => {
                                 options={catalogo[1] || []}
                                 input={propForm.watch("nacionalidad")}
                                 tabIndex="14"
-                                selectedOptionIndex={selectedOptionIndex}
-                                setSelectedOptionIndex={setSelectedOptionIndex}
                             />
                         </div>
                         <div className="col-md-3">
@@ -339,8 +324,6 @@ export const AltaClienteComplementario = memo(() => {
                                 options={catalogo[1] || []}
                                 input={propForm.watch("pais_nacimiento")}
                                 tabIndex="15"
-                                selectedOptionIndex={selectedOptionIndex}
-                                setSelectedOptionIndex={setSelectedOptionIndex}
                             />
                         </div>
                     </div>

@@ -23,6 +23,10 @@ import {Logistica} from "./components/operacion/logistica/Logistica";
 import {AltaClienteFinal} from "./components/operacion/altaClientes/AltaClienteFinal";
 import {Reportes} from "./components/reportes/Reportes";
 import {useEffect} from "react";
+import {ReportesRegulatorios} from "./components/pld/regulatorios/ReportesRegulatorios";
+import {AlertasMonitoreo} from "./components/pld/alertasMonitoreo/AlertasMonitoreo";
+import {PerfilTransaccional} from "./components/pld/perfilTransaccional/PerfilTransaccional";
+import {Riesgo} from "./components/pld/riesgo/Riesgo";
 
 export let dataG = JSON.parse(localStorage.getItem('usuario_data')) || {
     sucursal:0,
@@ -73,6 +77,14 @@ const App = () => {
                            element={<MainLayout><Logistica/></MainLayout>}/>
                     <Route exact path="/reportesEstadisticos"
                            element={<MainLayout><Reportes/></MainLayout>}/>
+                    <Route exact path="/reportesRegulatorios"
+                           element={<MainLayout><ReportesRegulatorios/></MainLayout>}/>
+                    <Route exact path="/alertasMonitoreo"
+                           element={<MainLayout><AlertasMonitoreo/></MainLayout>}/>
+                    <Route exact path="/perfilTransaccional"
+                           element={<MainLayout><PerfilTransaccional/></MainLayout>}/>
+                    <Route exact path="/riesgo"
+                           element={<MainLayout><Riesgo/></MainLayout>}/>
                     <Route exact path="/cargaTipoCambio" element={
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>

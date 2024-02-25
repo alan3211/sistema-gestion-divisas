@@ -1,116 +1,110 @@
-import './CombosComponent.css';
-import {useContext, useState} from "react";
-import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
-import {Select} from "flowbite-react";
+import React, { useContext, useState, useEffect } from "react";
+import { AltaClienteContext } from "../../../context/AltaCliente/AltaClienteContext";
+import Select from "react-select";
 
-export const FilterComboInput = ({ propFormulario,name, label, options,input,tabIndex,selectedOptionIndex, setSelectedOptionIndex}) => {
-    const {propForm} =  useContext(AltaClienteContext) || { propForm: propFormulario };
+export const FilterComboInput = ({ propFormulario, name, label, options, tabIndex }) => {
+    // Obtener propForm del contexto o utilizar un valor por defecto
+    const { propForm:{register,values, setValue, errors, trigger}} = useContext(AltaClienteContext) || { propForm: propFormulario };
+
+    // Estado local para opciones filtradas y valor del input
     const [filteredOptions, setFilteredOptions] = useState([]);
-    const [inputValue, setInputValue] = useState(input);
-    const [showDropdown, setShowDropdown] = useState(false);
+    const [inputValue, setInputValue] = useState('');
 
-    const handleInputChange = (e) => {
-        const inputValue = e.target.value.toUpperCase();
-        setInputValue(inputValue);
+    // Transformar las opciones al formato requerido
+    const transformedOptions = options.map(option => ({
+        value: option.id,
+        label: option.descripcion
+    }));
 
-        console.log("INPUT:", inputValue)
-        if (inputValue === '') return;
-
-        console.log("OPTIONS:", options)
-        const filteredOptions = options.filter((option) =>
-            option.descripcion.trim().toUpperCase().includes(inputValue.toUpperCase())
-        );
-        console.log("FILTER:",filteredOptions)
-        // Establecer el error en errors[name] si no hay opciones coincidentes
-        if (filteredOptions.length === 0) {
-            propForm.errors[name] = {
-                type: 'manual',
-                message: `No se encontró ${name === 'sucursal' ? 'una':'un'} ${name} con el filtro ingresado.`
-            };
+    // Efecto para limpiar el valor si hay un error
+    useEffect(() => {
+        if (errors[name]) {
             setInputValue('');
+        }
+    }, [errors[name], name]);
+
+    // Manejar cambio en el input
+    const handleInputChange = (newValue) => {
+        const inputValue2 = newValue ? newValue.toUpperCase() : '';
+        setInputValue(inputValue2);
+
+        // Filtrar opciones
+        const filteredOptions2 = transformedOptions.filter((option) =>
+            option.label.trim().toUpperCase().includes(inputValue2)
+        );
+
+        setFilteredOptions(filteredOptions2);
+
+        // Establecer el error si no hay opciones coincidentes
+        if (filteredOptions2.length === 0) {
+            errors[name] = {
+                type: 'manual',
+                message: `No se encontró ${name === 'sucursal' ? 'una' : 'un'} ${name} con el filtro ingresado.`
+            };
         } else {
-            delete propForm.errors[name]; // Borrar el error si hay opciones coincidentes
+            delete errors[name]; // Borrar el error si hay opciones coincidentes
         }
 
-        setFilteredOptions(filteredOptions);
-        setShowDropdown(filteredOptions.length > 0);
-        propForm.trigger(name);
+        trigger(name); // Activar validación
     };
 
-    const handleOptionClick = (option) => {
-        setInputValue(option.descripcion);
-        setShowDropdown(false);
-        propForm.setValue(name, option.id); // Establece el valor en el formulario
-        propForm.trigger(name);
-    };
-
-    const handleKeyDown = (e) => {
-        // Manejar las teclas de flecha
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            setSelectedOptionIndex((prevIndex) => (prevIndex < filteredOptions.length - 1 ? prevIndex + 1 : prevIndex));
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            setSelectedOptionIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
-        } else if (e.key === 'Enter' && selectedOptionIndex !== -1) {
-            handleOptionClick(filteredOptions[selectedOptionIndex]);
+    // Manejar cambio de opción seleccionada
+    const handleChange = (selectedOption, actionMeta) => {
+        if (actionMeta.action === 'select-option' && selectedOption) {
+            setInputValue(selectedOption.label.toUpperCase());
+            setValue(name, selectedOption.value); // Establecer valor en el formulario
+            trigger(name); // Activar validación
+        } else if (actionMeta.action === 'clear') {
+            setInputValue('');
+            setValue(name, ''); // Limpiar valor en el formulario si se deselecciona
+            trigger(name); // Activar validación
         }
     };
 
     return (
-        <form className="form-floating mb-3" onSubmit={(e) => e.preventDefault()}>
-            <Select
-                options={options}
-                value={options.find(option => option.descripcion === inputValue)} // Ajusta esto según tus necesidades
-                onChange={(selectedOption) => handleOptionClick(selectedOption)}
-                onInputChange={(inputValue) => setInputValue(inputValue.toUpperCase())}
-                onKeyDown={handleKeyDown}
-                className={`${propForm.errors[name] ? 'is-invalid' : ''}`}
-                placeholder={`Filtrar por ${name}`}
-                tabIndex={tabIndex}
-            />
-            <label htmlFor={name}>{label}</label>
-            {propForm.errors[name] && (
-                <div className="invalid-feedback-custom">{propForm.errors[name].message}</div>
-            )}
+        <form onSubmit={(e) => e.preventDefault()}>
+            <div className="form-floating mb-3">
+                <Select
+                    {...register(name, {
+                        required: `El campo ${label} es requerido.`,
+                        maxLength: {
+                            value: name === 'sucursal' ? 5 : 3,
+                            message: `El campo ${name} como máximo debe de tener no más de ${
+                                name === 'sucursal' ? 5 : 3
+                            } caracteres.`,
+                        },
+                    })}
+                    className={`form-select-custom ${errors[name] ? 'is-invalid' : ''}`} // Elimina la clase 'is-invalid' de aquí
+                    onInputChange={handleInputChange}
+                    onChange={handleChange}
+                    options={transformedOptions}
+                    placeholder={label}
+                    tabIndex={tabIndex}
+                    value={values && transformedOptions.find((option) => option.value === values[name])}
+                    noOptionsMessage={() => 'No hay opciones disponibles'}
+                    isClearable
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            display: 'flex',
+                            padding: '0.575rem 0.25rem',
+                            fontSize: '1rem',
+                            fontWeight: 400,
+                            lineHeight: 1.5,
+                            color: 'var(--bs-body-color)',
+                            borderColor: state.isFocused ? 'var(--bs-primary)' : 'var(--bs-gray-400)',
+                            boxShadow: state.isFocused ? '0 0 0 0.25rem rgba(0, 123, 255, 0.25)' : 'none',
+                            border: errors[name] ? '1px solid red' : '1px solid #ced4da', // Aplica un borde rojo en caso de error
+                        }),
+                        menu: (provided, state) => ({
+                            ...provided,
+                            zIndex: 9999,
+                        }),
+                    }}
+                />
+                {errors[name] && <div className="invalid-feedback-custom">{errors[name].message}</div>}
+            </div>
         </form>
-    );
 
-    /*return (
-        <form className="form-floating mb-3" onSubmit={(e) => e.preventDefault()}>
-            <input
-                type="text"
-                {...propForm.register(name, {
-                    required: `El campo ${name} es requerido.`,
-                    maxLength:{
-                        value: name === 'sucursal' ? 5:3,
-                        message:`El campo ${name} como máximo debe de tener no mas de ${name === 'sucursal' ? 5:3} caracteres.`
-                    },
-                })}
-                value={inputValue}
-                onChange={handleInputChange}
-                className={`form-control ${propForm.errors[name] ? 'is-invalid' : ''}`}
-                placeholder={`Filtrar por ${name}`}
-                autoComplete="off"
-                tabIndex={tabIndex}
-            />
-            {showDropdown && (
-                <div className="combo-dropdown" onKeyDown={handleKeyDown}>
-                    {filteredOptions.map((option, index) => (
-                        <div
-                            key={option.id}
-                            className={`option ${index === selectedOptionIndex ? 'selected' : ''}`}
-                            onClick={() => handleOptionClick(option)}
-                        >
-                            {option.descripcion.toUpperCase()}
-                        </div>
-                    ))}
-                </div>
-            )}
-            <label htmlFor={name}>{label}</label>
-            {propForm.errors[name] && (
-                <div className="invalid-feedback-custom">{propForm.errors[name].message}</div>
-            )}
-        </form>
-    );*/
+    );
 };
