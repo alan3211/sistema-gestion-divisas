@@ -9,12 +9,12 @@ import {
     validarAlfaNumerico
 } from "../../../../../utils";
 import {ModalAccionCancelarTool, ModalGenericTool} from "../../../modals";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../../../App";
-import {cancelarEnvioSucursalOperativa} from "../../../../../services/tools-services";
+import {cancelarEnvioSucursalOperativa, obtieneDenominacionesSolicitadas} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
-import {Denominacion} from "../../../../operacion/denominacion";
+import {Denominacion, DenominacionTableCaja} from "../../../../operacion/denominacion";
 import {ModalLoading} from "../../../modals/ModalLoading";
 import {DenominacionContext} from "../../../../../context/denominacion/DenominacionContext";
 import {realizarOperacionSucursal, realizarOperacionSucursalDP} from "../../../../../services/operacion-sucursal";
@@ -38,6 +38,7 @@ export const CancelarEnvioSucursal = ({item, index, refresh}) => {
     });
 
     const [finalizaOperacion, setFinalizaOperacion] = useState(true);
+    const [dataEnviada, setDataEnviada] = useState([]);
 
     const handleCancelarEnvio = async (data) => {
         data.id_operacion = item.ID;
@@ -99,8 +100,16 @@ export const CancelarEnvioSucursal = ({item, index, refresh}) => {
             traspaso: '',
         }
 
-        let denominacionesDotacion = denominacionD.getValues();
-        const formValuesD = getDenominacion(item.Moneda, denominacionesDotacion)
+        let formValuesD=[];
+
+        if(item["No Movimiento"].startsWith("DOTPARC")){
+            let denominacionesDotacion = denominacionD.getValues();
+            formValuesD = getDenominacion(item.Moneda, denominacionesDotacion)
+        }else{
+            console.log(dataEnviada)
+            formValuesD = getDenominacion(item.Moneda, dataEnviada)
+        }
+
         eliminarDenominacionesConCantidadCero(formValuesD);
         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
         denominaciones.divisa = item.Moneda;
@@ -123,6 +132,25 @@ export const CancelarEnvioSucursal = ({item, index, refresh}) => {
             refresh();
         }
     };
+
+    useEffect(() => {
+        if(item["No Movimiento"].startsWith("DOTRAP")){
+            setFinalizaOperacion(false)
+        }
+    }, [item["No Movimiento"]]);
+
+    useEffect(() => {
+        const getDenominacionesSolicitadas = async () => {
+            const values = {
+                ticket: item['No Movimiento']
+            }
+            const encryptedData =  encryptRequest(values);
+            const response =  await obtieneDenominacionesSolicitadas(encryptedData);
+            setDataEnviada(response.result_set)
+        }
+
+        getDenominacionesSolicitadas();
+    }, [item['No Movimiento']]);
 
     return (
         <td key={index} className="text-center">
@@ -222,7 +250,11 @@ export const CancelarEnvioSucursal = ({item, index, refresh}) => {
                 (
                     <ModalGenericTool options={optionsModal}>
                         <>
-                            <Denominacion type="SD" moneda={item.Moneda} options={optionsTable}/>
+                            {
+                                item["No Movimiento"].startsWith("DOTPARC")
+                                ?  <Denominacion type="SD" moneda={item.Moneda} options={optionsTable}/>
+                                : <DenominacionTableCaja moneda={item.Moneda} monto={item.Monto} data={dataEnviada}/>
+                            }
                             <div className="col-md-12 d-flex justify-content-center">
                                 <button type="button" className="btn btn-primary"
                                         onClick={terminarDotacionParcial}

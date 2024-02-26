@@ -17,7 +17,7 @@ export const DenominacionTableCaja = ({data=[],monto,moneda}) => {
                     return (
                         <tr key={`denominacion_${name}`}>
                             <td>{FormatoDenominacion(parseFloat(name))}</td>
-                            <td>{elemento.cantidad ? parseInt(elemento.cantidad) : parseInt(elemento['Billetes Disponibles'])}</td>
+                            <td>{elemento.cantidad >= 0 ? parseFloat(elemento.cantidad) : parseInt(elemento['Billetes Disponibles'])}</td>
                         </tr>
                     )
                 })}

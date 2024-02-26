@@ -36,7 +36,7 @@ export const Denominacion = ({type, moneda, options}) => {
                 <h5 className="p-2"><strong>{title}</strong></h5>
                 <div className="card-body">
                     <div className="table-responsive custom-scrollbar"
-                         style={{maxHeight: "530px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}
+                         style={{maxHeight: "600px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}
                          ref={tableRef}
                     >
                         <table className="table table-bordered table-hover">
