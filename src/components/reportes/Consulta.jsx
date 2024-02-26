@@ -716,7 +716,7 @@ export const Consulta = () => {
 
         if(["Rep_MovimientosCajaDota","Rep_MovimientosCajaDotPar","Rep_MovimientosCajaCierre"].includes(reporte.Proceso)){
             await obtieneDetalle(data)
-        }else {
+        }else{
             const encryptedData = encryptRequest(data);
             const responseData = await consultaReporteFinal(encryptedData);
 

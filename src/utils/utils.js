@@ -25,6 +25,7 @@ horas = horas % 12;
 horas = horas ? horas : 12;
 
 export const formattedDateH = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")} ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`;
+export const formattedDateF = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`;
 
 export const formateaMoneda = (cantidad) =>{
     // Convierte la cadena en un número decimal con 2 decimales

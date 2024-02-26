@@ -4,7 +4,7 @@ import {dataG} from "../../../App";
 import {guardaConfirmacionFactura, obtieneDenominaciones, realizarOperacion, validaDotParcial} from "../../../services";
 import {ModalCambio} from "./ModalCambio";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDate, formattedDateWS,
+    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDate, formattedDateF, formattedDateWS,
     getDenominacion,
     obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarMoneda, validarNumeros
 } from "../../../utils";
@@ -23,9 +23,6 @@ import {LoaderTable} from "../LoaderTable";
 import {getDotaciones} from "../../../services/operacion-caja";
 
 export const ModalDeliverComponent = ({configuration}) =>{
-
-    console.log("Configuracion!: ", configuration);
-
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
     const [showCambio,setShowCambio] = useState(false);
     const [habilita,setHabilita] =  useState({
@@ -60,6 +57,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
     const [ticket, setTicket] = useState('');
     const [data,setData] = useState({});
     const [formData,setFormData] = useState('');
+    const [intervalo,setIntervalo] = useState();
 
 
     //Muestra el título correcto
@@ -161,7 +159,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     const optionsDotRap = {
         title: `Solicitando dotación parcial en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
-        importe:operacion.tipo_operacion === "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto,
+        importe:operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):parseFloat(operacion.monto),
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
@@ -244,6 +242,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         let intervaloId;
         if (ticket !== '') {
             intervaloId = setInterval(validaEstatusDotacionParcial, 5000);
+            setIntervalo(intervaloId);
         }
         return () => clearInterval(intervaloId);
     }, [ticket]);
@@ -251,7 +250,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
     useEffect(()=>{
 
         const valores = {
-            fecha: formattedDate,
+            fecha: formattedDateF,
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
         }
@@ -276,7 +275,17 @@ export const ModalDeliverComponent = ({configuration}) =>{
         console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
-        } else {
+            clearInterval(intervalo);
+            setTicket("")
+        } else if(response === "Solicitado") {
+            setShowMuestraTabla(false);
+        } else if(response === "Cancelada" || response === "Rechazado"){
+            setShowMuestraTabla(false);
+            setShowEspera(false);
+            setShowDotacionRapida(false);
+            clearInterval(intervalo);
+            setTicket("")
+        }else{
             setShowMuestraTabla(false);
         }
     }
@@ -467,7 +476,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                             <Denominacion type="SD"
                                           moneda={operacion.tipo_operacion === "1" ? `MXP` : operacion.moneda}
                                           options={optionsDotRap}/>
-                            <div className="col-md-6 mx-auto">
+                            <div className="col-md-3 mx-auto">
                                 <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_DOTACION_RAPIDA.closeModal}>
                                       <span className="ms-2">
                                         <i className="bi bi-arrow-left me-2"></i>

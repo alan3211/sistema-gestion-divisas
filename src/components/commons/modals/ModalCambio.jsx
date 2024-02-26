@@ -2,12 +2,12 @@ import {Button, Modal} from "react-bootstrap";
 import {useContext, useEffect, useState} from "react";
 import {
     eliminarDenominacionesConCantidadCero,
-    encryptRequest, formattedDateWS,
+    encryptRequest, FormatoMoneda, formattedDate, formattedDateF, formattedDateWS,
     getDenominacion,
     obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarNumeros
 } from "../../../utils";
 import {dataG} from "../../../App";
-import {guardaConfirmacionFactura, obtieneDenominaciones, realizarOperacion} from "../../../services";
+import {guardaConfirmacionFactura, realizarOperacion, validaDotParcial} from "../../../services";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import {Denominacion} from "../../operacion/denominacion";
@@ -16,9 +16,12 @@ import {usePrinter} from "../../../hook";
 import {ModalTicket} from "./ModalTicket";
 import {ModalGenericTool} from "./ModalTools";
 import {ModalLoading} from "./ModalLoading";
-import {realizarOperacionSucursal, realizarSolicitudCambio} from "../../../services/operacion-sucursal";
+import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {useMovimientosDotaciones} from "../../../hook";
 import {useForm} from "react-hook-form";
+import {getDotaciones} from "../../../services/operacion-caja";
+import {TableComponent} from "../tables";
+import {LoaderTable} from "../LoaderTable";
 
 
 export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion,data,habilita,setHabilita,operacionConCambio}) => {
@@ -33,26 +36,31 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     const solicitaDotacionRapidaFormulario =  useForm();
     const [estadoDotacion,setEstadoDotacion] = useState(false);
     const [showModalFactura,setShowModalFactura] = useState(false)
-    const {solicitudDotacionRapida, showDotacionRapida,
-        OPTIONS_DOTACION_RAPIDA} =  useMovimientosDotaciones(
+    const {solicitudDotacionRapida, showDotacionRapida,setShowDotacionRapida,
+        OPTIONS_DOTACION_RAPIDA,} =  useMovimientosDotaciones(
         {
             solicitaDotacionFormulario,
             solicitaDotacionRapidaFormulario,
             setEstadoDotacion,
         });
+    const [showEspera, setShowEspera] = useState(false);
+    const [showMuestraTabla, setShowMuestraTabla] = useState(false);
+    const [ticket, setTicket] = useState('');
+    const [dataTable,setDataTable] = useState({});
+    const [formData,setFormData] = useState('');
+    const [intervalo,setIntervalo] = useState();
 
     const options = {
         title: '',
         importe: redondearNumero(cambio),
         habilita,
         setHabilita,
-        reRender: guarda,
+        reRender: !showEspera,
     }
 
 
-    // Sección de dotación Rapida
+    // Sección de dotación parcial
     const handleDotacionRapida = async()=>{
-        setGuarda(true);
         const moneda = operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda;
 
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
@@ -60,7 +68,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
         const dataFormulario = {};
 
-        dataFormulario.operacion = 'DOTACION RAPIDA';
+        dataFormulario.operacion = 'Solicitud Dotacion Parcial';
         dataFormulario.usuario = dataG.usuario;
         dataFormulario.sucursal = dataG.sucursal;
         dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
@@ -73,9 +81,9 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         const formValuesD = getDenominacion(moneda,denominacionesDotacion)
         eliminarDenominacionesConCantidadCero(formValuesD);
         const denominaciones = obtenerObjetoDenominaciones(formValuesD);
-        denominaciones.divisa = moneda;
+        denominaciones.moneda = moneda;
         denominaciones.tipoOperacion = '0';
-        denominaciones.movimiento = 'DOTACION RAPIDA';
+        denominaciones.movimiento = 'Solicitud Dotacion Parcial';
 
         dataFormulario.denominacion = [
             denominaciones,
@@ -84,18 +92,11 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         console.log("DATA FORM")
         console.log(dataFormulario)
         const encryptedData = encryptRequest(dataFormulario);
+        setTicket(dataFormulario.ticket)
+        await realizarOperacionSucursal(encryptedData);
 
-        const resultado = await realizarOperacionSucursal(encryptedData);
-
-        if(resultado){
-            toast.success(`Se ha realizado la dotación rápida exitosamente.`,OPTIONS);
-            OPTIONS_DOTACION_RAPIDA.closeModal();
-            setGuarda(false);
-            denominacionD.reset();
-        }else{
-            toast.error(`Hubo un problema al realizar la solicitud rápida.`,OPTIONS);
-        }
-
+        toast.warn('Se realizo la notificación de tu solicitud al supervisor.',OPTIONS);
+        setShowEspera(true);
     }
 
     const optionsLoad = {
@@ -105,7 +106,9 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     }
 
     const optionsDotRap = {
-        title: `Solicitando dotación parcial en (${operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda})`,
+        title: `Solicitando dotación parcial por el monto de ${FormatoMoneda(parseFloat(cambio))} en (${operacion.tipo_operacion !== "1" ? `MXP`:operacion.moneda}) `,
+        importe:parseFloat(cambio),
+        calculaValorMonto:parseFloat(cambio),
         habilita,
         setHabilita,
         tipo: 'SD',
@@ -187,6 +190,94 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     }
 
+    useEffect(() => {
+        let intervaloId;
+        if (ticket !== '') {
+            intervaloId = setInterval(validaEstatusDotacionParcial, 5000);
+            setIntervalo(intervaloId);
+        }
+        return () => clearInterval(intervaloId);
+    }, [ticket]);
+
+    useEffect(()=>{
+
+        const valores = {
+            fecha: formattedDateF,
+            usuario: dataG.usuario,
+            sucursal: dataG.sucursal,
+        }
+        const encryptedData = encryptRequest(valores);
+        setFormData(encryptedData);
+
+        const getConsultaDotaciones = async () =>{
+            const data_response = await getDotaciones(encryptedData);
+            data_response.headers = [...data_response.headers,'Acciones'];
+            setDataTable(data_response);
+        }
+        getConsultaDotaciones();
+    },[showMuestraTabla]);
+
+    /*Validar el intervalo para saber si ya cambio el estatus*/
+    const validaEstatusDotacionParcial = async () => {
+        const valores = {
+            opcion: 2,
+            ticket: ticket,
+        }
+        const response = await validaDotParcial(encryptRequest(valores));
+        console.log("RESPUESTA: ", response);
+        if (response === 'Pendiente') {
+            setShowMuestraTabla(true);
+            clearInterval(intervalo);
+            setTicket("")
+        } else if(response === "Solicitado") {
+            setShowMuestraTabla(false);
+        } else if(response === "Cancelada" || response === "Rechazado"){
+            setShowMuestraTabla(false);
+            setShowEspera(false);
+            setShowDotacionRapida(false);
+            clearInterval(intervalo);
+            setTicket("")
+        }else{
+            setShowMuestraTabla(false);
+        }
+    }
+
+    const refreshQuery = async () =>{
+        const data_response = await getDotaciones(formData);
+        data_response.headers = [...data_response.headers,'Acciones'];
+        setDataTable(data_response);
+        setShowEspera(false);
+        setShowDotacionRapida(false);
+
+    }
+
+
+    const optionsCajaTable = {
+        showMostrar:true,
+        excel:true,
+        tableName:'Consulta Dotaciones',
+        buscar: true,
+        paginacion: true,
+        disabledColumns:['Detalle'],
+        disabledColumnsExcel:['Detalle','Acciones'],
+        tools:[
+            {columna:"Estatus",tool:"estatus"},
+            {columna:"Acciones",tool:"acciones-caja",refresh:refreshQuery},
+
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
+    }
+
+    const optionsModal = {
+        size:'xl',
+        showModal: showEspera,
+        closeModal: () => setShowEspera(false),
+        title: 'Solicitud de Dotación Parcial',
+        icon: 'bi bi-cash m-2 text-blue',
+        subtitle: '',
+        waiting:showEspera
+    };
+
     return(
         <>
             <Modal fullscreen show={showModalCambio}>
@@ -236,6 +327,17 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             </Modal>
 
             {
+                showEspera && (
+                    <ModalGenericTool options={optionsModal}>
+                        {showMuestraTabla
+                            ? <TableComponent data={dataTable} options={optionsCajaTable} />
+                            : <LoaderTable title="Esperando respuesta del supervisor..."/>
+                        }
+                    </ModalGenericTool>
+                )
+            }
+
+            {
                 guarda && (
                     <ModalLoading options={optionsLoad}/>
                 )
@@ -274,7 +376,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                             <Denominacion type="SD"
                                           moneda={operacion.tipo_operacion !== "1" ? `MXP` : operacion.moneda}
                                           options={optionsDotRap}/>
-                            <div className="col-md-6 mx-auto">
+                            <div className="col-md-3 mx-auto">
                                 <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_DOTACION_RAPIDA.closeModal}>
                                       <span className="ms-2">
                                         <i className="bi bi-arrow-left me-2"></i>
