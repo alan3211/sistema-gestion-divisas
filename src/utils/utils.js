@@ -192,7 +192,7 @@ export const FormatoMoneda = (cantidad,moneda) => {
             maximumFractionDigits: 2
         });
 
-        return formatoNumero.replace('$', '$ ');
+        return formatoNumero.replace('$', '');
     } else {
         return 'E'; // Opcional: Devuelve una cadena vacía en caso de error.
     }

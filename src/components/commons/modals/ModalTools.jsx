@@ -79,7 +79,7 @@ export const ModalAccionesTool = ({options,children}) => {
     );
 }
 
-export const ModalGenericTool = ({options,children}) => {
+export const ModalGenericTool = ({options,children,footer}) => {
     return (
         <Modal fullscreen show={options.showModal} backdrop="static" keyboard={false}>
             <Modal.Header>
@@ -89,12 +89,15 @@ export const ModalGenericTool = ({options,children}) => {
                         {options.title}
                     </h5>
                 </Modal.Title>
-                {!options.waiting && <button type="button" className="btn-close" onClick={options.closeModal} aria-label="Close"></button>}
+                {!options.waiting && <button type="button" className="btn-close" onClick={options.closeModal} aria-label="Close" style={{ fontSize: '48px' }} ></button>}
             </Modal.Header>
             <Modal.Body>
                 <p>{options.subtitle}</p>
                 {children}
             </Modal.Body>
+            <Modal.Footer>
+                {footer}
+            </Modal.Footer>
         </Modal>
     );
 }

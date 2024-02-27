@@ -38,19 +38,15 @@ export const TableroCoordinadorLogistico = () => {
 
     useEffect(() => {
         console.log("Actividades")
-    }, [datosActividad]);
+        getActividadReciente();
+    }, []);
 
     useEffect(() => {
-        // Simula una notificación periódica
         const interval = setInterval(() => {
-            getActividadReciente()
+            getActividadReciente();
         }, 60000);
 
         return () => clearInterval(interval);
-    }, [datosActividad]);
-
-    useEffect(() => {
-        getActividadReciente();
     }, []);
 
     useEffect(() => {

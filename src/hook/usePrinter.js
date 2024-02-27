@@ -197,7 +197,6 @@ export const usePrinter = (datos) => {
             }
         } else {
             console.log("Problema al imprimir: " + resp)
-
         }
     }
 
