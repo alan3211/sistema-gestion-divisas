@@ -22,6 +22,24 @@ import {cargaArchivos} from "../../../services/commons-services";
 import {useDropzone} from 'react-dropzone';
 import {ModalLoading} from "../../commons/modals/ModalLoading";
 
+const InstructivoCargaDocumentos = () => {
+    return (
+        <div className="card border-primary mb-3">
+            <div className="card-header bg-primary text-white">Instrucciones para cargar documentos</div>
+            <div className="card-body">
+                <h5 className="card-title">Pasos a seguir:</h5>
+                <ol className="list-group list-group-numbered">
+                    <li className="list-group-item">Arrastra y suelta archivos en el área designada o haz clic para seleccionar archivos.</li>
+                    <li className="list-group-item">Una vez que hayas seleccionado los archivos, aparecerán en la lista de <strong>"Archivos Cargados"</strong>.</li>
+                    <li className="list-group-item">Si deseas eliminar un archivo de la lista, haz clic en el botón <strong>"Eliminar"</strong> junto al archivo correspondiente.</li>
+                    <li className="list-group-item">Podrás ver una vista previa una ves dando clic en el archivo seleccionado en la sección <strong>"Vista Previa del Archivo"</strong>.</li>
+                    <li className="list-group-item">Una vez que hayas cargado todos los archivos deseados, presiona el botón <strong>"Subir Archivos"</strong>.</li>
+                </ol>
+            </div>
+        </div>
+    );
+};
+
 
 export const AltaClienteComplementario = memo(() => {
 
@@ -1019,11 +1037,6 @@ export const AltaClienteComplementario = memo(() => {
 
                                     </div>
                                 </div>
-                            </div>
-                            {
-                                showContinuaDoc && <ModalLoading options={optionsLoad} />
-                            }
-                            <div className="col-md-4">
                                 <div className="card">
                                     <div className="card-body">
                                         {/* Vista previa del archivo */}
@@ -1045,6 +1058,12 @@ export const AltaClienteComplementario = memo(() => {
                                         )}
                                     </div>
                                 </div>
+                            </div>
+                            {
+                                showContinuaDoc && <ModalLoading options={optionsLoad} />
+                            }
+                            <div className="col-md-4">
+                                <InstructivoCargaDocumentos/>
                             </div>
                         </div>
 
