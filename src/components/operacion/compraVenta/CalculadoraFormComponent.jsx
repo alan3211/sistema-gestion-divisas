@@ -439,7 +439,7 @@ export const CalculadoraFormComponent = () => {
                                                readOnly
                                                autoComplete="off"
                                         />
-                                        <label htmlFor="floatingCE">CANTIDAD A {datos.tipo_operacion === '1' ? 'ENTREGAR':'RECIBIR'} <i>({datos.tipo_operacion === '1' ? muestraDivisa(2):'MXP'})</i></label>
+                                        <label htmlFor="floatingCE">CANTIDAD A {watch("tipo_operacion") === '1' ? 'ENTREGAR':'RECIBIR'} <i>({datos.tipo_operacion === '1' ? muestraDivisa(2):'MXP'})</i></label>
                             </div>
                         }
                     </div>

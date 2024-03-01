@@ -357,7 +357,7 @@ export const Consulta = () => {
                                 totalsRow.getCell(index).value = total;
                                 totalsRow.font = { bold: true }; // Asegurar que el texto esté en negrita
                                 // Aplicar filtro currency a la columna
-                                worksheet.getColumn(index).numFmt = '$#,##0.00';
+                                worksheet.getColumn(index).numFmt = '#,##0.00';
                             } else {
                                 totalsRow.getCell(index).value = ''; // Dejar vacía la celda de total si la sumatoria es cero
                             }

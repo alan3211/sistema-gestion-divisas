@@ -76,7 +76,7 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
 
     return (
         <form className="table-responsive text-center mt-2 custom-scrollbar"
-              style={{maxHeight: "500px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}
+              style={{maxHeight: "600px", overflowY: "auto",overflowX: "auto",fontSize:"20px"}}
               ref={tableRef}
               onSubmit={(e) => e.preventDefault()}>
             <table className="table table-bordered table-hover">

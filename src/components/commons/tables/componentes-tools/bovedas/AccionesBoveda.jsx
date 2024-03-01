@@ -196,7 +196,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                             setValue("motivo", upperCaseValue);
                                         }}
                                         style={{
-                                            height: '300px',
+                                            minHeight: '100%',
                                             resize: 'none'
                                         }}
                                         tabIndex="1"

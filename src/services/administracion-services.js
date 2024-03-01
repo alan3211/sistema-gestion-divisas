@@ -1,7 +1,7 @@
 import {
-    ADMINISTRACION_CARGATIPOCAMBIO_URL,
+    ADMINISTRACION_CARGATIPOCAMBIO_URL, ADMINISTRACION_USUARIO_ACCIONES_URL,
     ADMINISTRACION_USUARIO_ALTA_URL,
-    ADMINISTRACION_USUARIO_CONSULTA_URL
+    ADMINISTRACION_USUARIO_CONSULTA_URL, TOOLS_ACCIONES_CAJA_URL
 } from "../utils";
 
 // Valida si existe el tipo de cambio en la sucursal indicada
@@ -79,3 +79,28 @@ export const consultaUsuarios = async (formValues) => {
         throw error;
     }
 };
+
+export const accionesUsuarios = async (encryptedData) => {
+    try {
+        const url = `${ADMINISTRACION_USUARIO_ACCIONES_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:encryptedData})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}

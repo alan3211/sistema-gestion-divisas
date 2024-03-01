@@ -8,7 +8,7 @@ import {
     EstatusTool,
     SeleccionarCliente, VerDenominaciones, ImpresionTicket, DetalleDenominaciones, VerSucursales, CancelarOperacion,
     IndicadoresDivisas, AccionesBoveda, CancelarEnvioBoveda, MontoSolicitud, OperacionEstatus, UsuariosSistema,
-    SolicitaDotacion, AccionesRecepcionValores, AccionesEnvioValores, ReporteCaja
+    SolicitaDotacion, AccionesRecepcionValores, AccionesEnvioValores, AccionesUsuariosSistema,
 } from "../componentes-tools";
 
 const toolComponents = {
@@ -34,7 +34,7 @@ const toolComponents = {
     'detalle-solicitud':SolicitaDotacion,
     'acciones-recepcion-valores':AccionesRecepcionValores,
     'acciones-envio-valores': AccionesEnvioValores,
-    'reporte-caja': ReporteCaja
+    'acciones-usuarios-sistema': AccionesUsuariosSistema,
 };
 
 export const getTools = (toolInfo, item, index) => {

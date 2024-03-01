@@ -27,6 +27,7 @@ import {ReportesRegulatorios} from "./components/pld/regulatorios/ReportesRegula
 import {AlertasMonitoreo} from "./components/pld/alertasMonitoreo/AlertasMonitoreo";
 import {PerfilTransaccional} from "./components/pld/perfilTransaccional/PerfilTransaccional";
 import {Riesgo} from "./components/pld/riesgo/Riesgo";
+import {ReportesPrincipal} from "./components/administracion/reportes/ReportesPrincipal";
 
 export let dataG = JSON.parse(localStorage.getItem('usuario_data')) || {
     sucursal:0,
@@ -89,6 +90,7 @@ const App = () => {
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>
                     <Route exact path="/catalogos" element={<MainLayout><Catalogo/></MainLayout>}/>
+                    <Route exact path="/asignacion-reportes" element={<MainLayout><ReportesPrincipal/></MainLayout>}/>
                     <Route exact path="/mi-perfil" element={<MainLayout><PerfilComponent/></MainLayout>}/>
                     <Route path="/*" element={<NotFound/>}/>
                 </Routes>
