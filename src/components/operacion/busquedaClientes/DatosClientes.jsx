@@ -4,15 +4,24 @@ import {useContext, useState} from "react";
 import {CardLayout} from "../../commons";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
+import {convertirFechaADD, encryptRequest, OPTIONS} from "../../../utils";
+import {dataG} from "../../../App";
+import {buscaCliente} from "../../../services";
+import {toast} from "react-toastify";
 
 export const DatosClientes = ({operacion, cliente}) => {
 
     const {showModal, setShowModal, selectedItem, closeModal} = useOperaCliente();
     const [showCustomModal, setShowCustomModal] = useState(false);
-    const {datos} = useContext(CompraVentaContext);
+    const {datos,setContinuaOperacion, busquedaCliente: {
+        setShowCliente,
+    }} = useContext(CompraVentaContext);
 
     console.log("DATOS!!!",datos)
-    datos.Cliente = cliente.Cliente;
+    console.log("DATOS CLIENTE @@@!!!",cliente);
+    console.log("DATOS OPERACION @@@!!!",operacion);
+    datos.Cliente = cliente.Cliente || cliente.Usuario;
+
 
     const configuration = {
         showModal,
@@ -26,7 +35,50 @@ export const DatosClientes = ({operacion, cliente}) => {
     }
 
     const continuaOperacion = async () => {
-        setShowCustomModal(true);
+
+        const valores = {
+            tipo_busqueda: 1,
+            limite_diario: dataG.limite_diario,
+            limite_mensual:dataG.limite_mensual,
+            nombre: '',
+            apellido_paterno:'',
+            apellido_materno:'',
+            fecha_nacimiento:'',
+            cliente: datos.Cliente,
+            tipo_operacion: operacion.tipo_operacion,
+        }
+
+        if (operacion.tipo_operacion === '1') {
+            valores.monto = parseInt(operacion.monto);
+        } else {
+            valores.monto = parseInt(operacion.cantidad_entregar)
+        }
+
+        const encryptedData = encryptRequest(valores);
+        const dataClientes = await buscaCliente(encryptedData);
+        console.log("UN REGISTRO", dataClientes);
+        if (dataClientes.result_set[0].hasOwnProperty('Resultado')) {
+            const mensaje = dataClientes.result_set[0].Resultado;
+            if (mensaje.includes('excede')) {
+                toast.warn(mensaje, OPTIONS);
+            } else {
+                toast.error(mensaje, OPTIONS);
+            }
+            setShowCliente(false);
+            setContinuaOperacion(false);
+        }else{
+            setShowCustomModal(true);
+        }
+    }
+
+    const formatoFecha = () => {
+        let fecha = '';
+        if(cliente.hasOwnProperty('FechaNacimiento')){
+            fecha = convertirFechaADD(cliente.FechaNacimiento);
+        }else if(cliente.hasOwnProperty('Fecha Nacimiento')){
+            fecha = convertirFechaADD(cliente['Fecha Nacimiento']);
+        }
+        return fecha;
     }
 
     return (
@@ -93,14 +145,14 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 type="text"
                                 className="form-control"
                                 id="fechaNacimiento"
-                                value={cliente.FechaNacimiento || cliente['Fecha Nacimiento']}
+                                value={formatoFecha()}
                                 readOnly
                                 autoComplete="off"
                             />
                             <label htmlFor="fechaNacimiento">FECHA NACIMIENTO</label>
                         </div>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <div className="form-floating m-2">
                             <button
                                 type="button"
@@ -109,7 +161,7 @@ export const DatosClientes = ({operacion, cliente}) => {
                                 disabled={Object.keys(operacion).length === 0}
                             >
                                 <span className="me-2">
-                                    <strong>CONTINUAR</strong>
+                                    <strong>CONTINUAR OPERACIÓN COMPRA/VENTA</strong>
                                       <span
                                           className="bi bi-arrow-right-circle-fill ms-2"
                                           role="status"

@@ -9,6 +9,7 @@ export const EstatusTool = ({item, index, columna}) => {
         Aceptado: {icono: 'ri ri-checkbox-circle-line me-2', estilo: 'btn-success'},
         Cotizado: {icono: 'bi bi-calculator me-2', estilo: 'btn-cotizar'},
         "Operación Realizada": {icono: 'ri ri-checkbox-circle-line me-2', estilo: 'btn-success'},
+        Solicitado: {icono: 'bi bi-file-earmark-text me-2', estilo: 'btn-orange'},
     };
 
     const estadoActual = estatus[item[columna]] || {icono: 'ri ri-close-circle-line me-2', estilo: 'btn-danger'};

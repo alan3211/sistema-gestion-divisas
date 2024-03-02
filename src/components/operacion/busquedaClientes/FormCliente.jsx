@@ -46,6 +46,7 @@ export const FormCliente = ({tipo}) => {
         data.tipo_busqueda = tipo === 'cliente' ? 1 : 2
         data.limite_diario = dataG.limite_diario;
         data.limite_mensual = dataG.limite_mensual;
+        data.tipo_cambio =  parseFloat(operacion.tipo_cambio)
 
         if (operacion.tipo_operacion === '1') {
             data.monto = parseInt(operacion.monto);
@@ -71,7 +72,6 @@ export const FormCliente = ({tipo}) => {
                 console.log("UN REGISTRO", dataClientes);
                 if (dataClientes.result_set[0].hasOwnProperty('Resultado')) {
                     const mensaje = dataClientes.result_set[0].Resultado;
-
                     if (mensaje.includes('excede')) {
                         toast.warn(mensaje, OPTIONS);
                     } else {
@@ -103,7 +103,7 @@ export const FormCliente = ({tipo}) => {
     }
 
     return (<>
-            <div className="row g-3">
+            <form className="row g-3" onSubmit={(e) => e.preventDefault()}>
                 {
                     tipo === 'cliente'
                         ? (
@@ -302,7 +302,7 @@ export const FormCliente = ({tipo}) => {
                         <i className="bi bi-search ms-2"></i>
                     </button>
                 </div>
-            </div>
+            </form>
             {
                 showModalAltaUsuario && (
                     <ModalConfirm title={`El usuario no existe registrado en el sistema. ¿Desea realizar un alta de usuario?`}

@@ -1,3 +1,5 @@
+import {formattedDate} from "./utils";
+
 export const validaFechas = (fecha) => {
     console.log(fecha)
     // Verificar el formato de la fecha
@@ -57,6 +59,48 @@ export const validaFechas = (fecha) => {
     return true;
 };
 
+export const validaFechaVigencia = (fechaString) => {
+    console.log(fechaString);
+    if (fechaString === "") {
+        return 'La fecha ingresada no es válida.';
+    }
+
+    // Obtener la fecha actual (año, mes y día)
+    const fechaActual = new Date();
+    const year = fechaActual.getFullYear();
+    const month = fechaActual.getMonth() + 1;
+    const day = fechaActual.getDate();
+
+    // Construir la fecha actual sin tener en cuenta la zona horaria
+    const fechaActualSinHora = new Date(year, month, day);
+
+    // Convertir la fecha de vigencia en formato YYYY-MM-DD a objeto Date
+    const fecha = fechaString.split("-");
+    const fechaVigencia = new Date(fecha[0],fecha[1],fecha[2]);
+
+    // Verificar si la fecha de vigencia es válida
+    if (!isNaN(fechaVigencia.getTime())) {
+        const vigenciaYear = fechaVigencia.getFullYear();
+        const vigenciaMonth = fechaVigencia.getMonth() + 1;
+        const vigenciaDay = fechaVigencia.getDate();
+
+        // Validar el número de días en el mes
+        if (vigenciaDay > 0 && vigenciaDay <= new Date(vigenciaYear, vigenciaMonth, 0).getDate()) {
+            // Convertir la fecha de vigencia en formato YYYY-MM-DD a objeto Date, sin tener en cuenta la hora
+            fechaVigencia.setHours(0, 0, 0, 0);
+
+            if (fechaVigencia >= fechaActualSinHora) {
+                return true; // La fecha de vigencia es válida
+            } else {
+                return 'La fecha de vigencia no es válida.';
+            }
+        } else {
+            return `La fecha de vigencia no es válida. El mes ${vigenciaMonth} tiene menos de ${vigenciaDay} días.`;
+        }
+    } else {
+        return 'La fecha de vigencia no es válida.';
+    }
+};
 
 export const validarNombreApellido = (name,value) => {
     const nombreRegex = /^$|^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'" ]+$/;
@@ -75,7 +119,7 @@ export const validarNumeros = (name,value) => {
 }
 
 export const validarAlfaNumerico = (name, value) => {
-    const alfanumericoRegex = /^$|^[a-zA-Z\s\d;,.'()//[\]{}!¡"#$%&´*-_+áéíóúÁÉÍÓÚ]+$/;
+    const alfanumericoRegex = /^$|^[a-zA-Z\s\d;,.'()//[\]{}!¡"#$%&´*-_+áéíóúÁÉÍÓÚñÑ]+$/;
     if (!alfanumericoRegex.test(value)) {
         return `El campo ${name} debe contener solo caracteres alfanuméricos y los caracteres especiales permitidos.`;
     }
@@ -109,10 +153,81 @@ export const validarNumeroTelefono = (name,value) => {
     return true;
 }
 export const validarMoneda = (name, value) => {
-    const monedaNumberRegex = /^$|^-?\d+(\.\d{1,5})?$/;
-    if (!monedaNumberRegex.test(value)) {
-        return `El campo ${name} no corresponde a una moneda válida.`;
+
+    if(value){
+        // Verificar que no sea un campo vacío
+        if (!value.trim()) {
+            return `El campo ${name} no puede estar vacío.`;
+        }
+
+        // Verificar el formato numérico con dos decimales
+        const monedaNumberRegex = /^$|^-?\d+(\.\d{1,2})?$/;
+        if (!monedaNumberRegex.test(value)) {
+            return `El campo ${name} no corresponde a una moneda válida (Ejemplo 1.00).`;
+        }
+
+        // Verificar que no sea un número negativo
+        if (parseFloat(value) < 0) {
+            return `No se permiten valores negativos en el campo ${name}.`;
+        }
+
+        // Verificar que sea mayor a cero
+        if (parseFloat(value) === 0) {
+            return `El valor en el campo ${name} debe ser mayor a 0.`;
+        }
+
+        return true;
+    }else{
+        return `El campo ${name} no puede estar vacío.`;
     }
-    return true;
 }
 
+export const validarMonedaUSD = (name, value) => {
+    if (value){
+        // Verificar que no sea un campo vacío
+        if (!value.trim()) {
+            return `El campo ${name} no puede estar vacío.`;
+        }
+
+        // Verificar el formato numérico con dos decimales
+        const monedaNumberRegex = /^-?\d+(\.00)?$/;
+        if (!monedaNumberRegex.test(value)) {
+            return `El campo ${name} no corresponde a una moneda válida (Ejemplo 1.00).`;
+        }
+
+        // Verificar que no sea un número negativo
+        if (parseFloat(value) < 0) {
+            return `No se permiten valores negativos en el campo ${name}.`;
+        }
+
+        // Verificar que sea mayor a cero
+        if (parseFloat(value) === 0) {
+            return `El valor en el campo ${name} debe ser mayor a 0.`;
+        }
+
+        return true;
+    }else{
+        return `El campo ${name} no puede estar vacío.`;
+    }
+};
+
+export const validarEnteroPositivo = (numero) => {
+    if(numero === ""){
+        return true;
+    }else{
+        // Utilizamos la función isNaN para comprobar si no es un número válido
+        if (isNaN(numero)) {
+            return false;
+        }
+
+        // Convertimos el número a entero
+        var numeroEntero = parseInt(numero);
+
+        // Comprobamos si es un entero positivo o cero
+        if (numeroEntero >= 0 && Number.isInteger(numeroEntero)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}

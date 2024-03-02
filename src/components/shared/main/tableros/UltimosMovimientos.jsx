@@ -59,7 +59,7 @@ export const UltimosMovimientos = ({data}) => {
                         </li>
                         <li>
                             <a className="dropdown-item">
-                                <form className={`col-12`}>
+                                <form className={`col-12`} onSubmit={(e) => e.preventDefault()}>
                                     <div className="form-floating">
                                         <input
                                             {...register("fecha", {})}

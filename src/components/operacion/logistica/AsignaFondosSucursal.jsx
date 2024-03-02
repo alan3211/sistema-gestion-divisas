@@ -1,11 +1,17 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {encryptRequest, FormatoMoneda, formattedDateWS, nextFocus, opciones, OPTIONS} from "../../../utils";
+import {
+    encryptRequest,
+    FormatoMoneda,
+    formattedDateWS,
+    opciones,
+    OPTIONS,
+    validarEnteroPositivo
+} from "../../../utils";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
 import {dataG} from "../../../App";
 import {enviaDotacionSucursal, getCantidadBilletes} from "../../../services/operacion-logistica";
 import {toast} from "react-toastify";
-import {getLocalidad} from "../../../services";
 
 const denominacionesMXN = ["0.05", "0.10", "0.20", "0.50", "1", "2", "5", "10", "20", "50", "100", "200", "500", "1000"];
 const denominacionesOtras = ["1", "2", "5", "10", "20", "50", "100"];
@@ -13,7 +19,13 @@ const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputCh
     return (
         <td nowrap={true} className="">
             <input
-                {...register(nombre)}
+                {...register(nombre,{
+                    validate:{
+                        validacionMN: (value) => {
+                            return validarEnteroPositivo(value);
+                        }
+                    }
+                })}
                 type="text"
                 name={nombre}
                 id={nombre}
@@ -21,6 +33,7 @@ const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputCh
                 placeholder="$"
                 onChange={(e) => handleInputChange(e, rowIndex, nombre, denominacion,cantidadBilletes)}
                 autoComplete="off"
+
                 //value={billetesFisicos[rowIndex][nombre] || ""}
             />
         </td>
@@ -31,7 +44,10 @@ const InputBilletes = ({ register, denominacion, nombre, rowIndex, handleInputCh
 export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshData,boveda}) => {
     const [guarda, setGuarda] = useState(false);
     const [dataSuc, setDataSuc] = useState([]);
-    const {register, handleSubmit,watch,reset} = useForm();
+    const {register,
+        handleSubmit,
+        watch,reset,
+    trigger,setValue,} = useForm();
     const getPropiedad = (denominacion, sucursal) => {
         let propiedad = "";
         if (denominacion === "0.05") {
@@ -151,7 +167,14 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
     const handleInputChange = (e, rowIndex, nombre, denominacion,cantidadBilletes) => {
         const inputValue = e.target.value;
-        const newValue = /^[0-9]\d*$/.test(inputValue) ? parseFloat(inputValue) : 0;
+        let newValue = 0;
+        if(inputValue === "") newValue = 0;
+        else{
+            newValue = validarEnteroPositivo(inputValue) ? parseFloat(inputValue) : 0;
+        }
+        setValue(nombre,newValue);
+        trigger(nombre);
+
 
         // Actualizar el estado billetesFisicos
         setBilletesFisicos((prevBilletes) => {
@@ -297,7 +320,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
     return (
         <>
             <form className="text-center mt-2" style={{fontSize: "12px"}}>
-                <div className="custom-scrollbar" style={{maxWidth: '100%', overflowX: 'auto'}}>
+                <div className="custom-scrollbar" style={{maxWidth: '100%', overflowX: 'auto'}} onSubmit={(e) => e.preventDefault()}>
                     <table className="table table-bordered table-hover custom-scrollbar">
                         <thead className="table-blue sticky top-0">
                         <tr>
@@ -397,9 +420,9 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                     </table>
                 </div>
                 <div className="col-md-12">
-                    <button type="button" className="m-2 btn btn-primary" onClick={onSubmit} disabled={validaCantidad()}>
+                    <button type="button" className="m-2 btn btn-success" onClick={onSubmit} disabled={validaCantidad()}>
                         <span className="me-2">
-                            DOTAR
+                            DOTAR SUCURSAL
                             <span className="bi bi-cash-stack ms-2" role="status" aria-hidden="true"></span>
                         </span>
                     </button>

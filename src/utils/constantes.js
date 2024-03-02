@@ -1,3 +1,4 @@
+//const URL = 'https://grocerys-back-dev.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
 const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
 //const URL = 'http://192.168.101.45:9000/';
 //const URL = 'http://localhost:9000/';
@@ -20,6 +21,7 @@ export const PERFIL_URL = `${URL}perfil/`;
 export const REPORTES_URL = `${URL}reportes/`;
 export const ADMINISTRACION_URL = `${URL}administracion/`;
 export const TOOLS_URL = `${URL}tools/`;
+export const COMMONS_URL = `${URL}commons/`;
 export const LOGIN_FIN_SESION_URL = `${LOGIN_URL}finSesion`;
 
 
@@ -29,11 +31,13 @@ export const OPERACIONES_VALIDACLIENTE_URL = `${OPERACIONES_URL}validaCliente`
 export const OPERACIONES_TIPOCAMBIO_URL = `${OPERACIONES_URL}tipoCambio`
 export const OPERACIONES_CONSULTA_TIPOCAMBIO_URL = `${OPERACIONES_URL}tipoCambio/consulta`
 export const OPERACIONES_CONVERSION_URL = `${OPERACIONES_URL}conversion`
+export const OPERACIONES_VALIDA_DOTACION_PARCIAL_URL = `${OPERACIONES_URL}valida/dotacion/parcial`
 export const OPERACIONES_BUSCACLIENTE_URL = `${OPERACIONES_URL}buscaCliente`
 export const OPERACIONES_HACEROPERACION_URL = `${OPERACIONES_URL}realiza/preoperacion`
 export const OPERACIONES_REALIZAOPERACION_URL = `${OPERACIONES_URL}realiza/operacion`
 export const OPERACIONES_CONSULTALDENOMINACIONES_URL = `${OPERACIONES_URL}consulta/denominaciones`
 export const OPERACIONES_ENVIAMENSAJES_URL = `${OPERACIONES_URL}envia/mensaje`
+export const OPERACIONES_ENVIAMENSAJES_DOTA_PARCIAL_URL = `${OPERACIONES_URL}envia/mensaje/dotacion/parcial`
 export const OPERACIONES_VALIDA_INFORMACION_URL = `${OPERACIONES_URL}valida/informacion`
 export const OPERACIONES_RESGUARDA_FACTURA_URL = `${OPERACIONES_URL}resguarda/factura`
 
@@ -55,6 +59,7 @@ export const LOGISTICA_CANTIDAD_BILLETES = `${LOGISTICA_URL}consulta/cantidad/bi
 
 /*OPERACION SUCURSAL*/
 export const SUCURSAL_ENVIO_VALORES_URL = `${SUCURSAL_URL}operativa/envio-valores`
+export const SUCURSAL_ENVIO_VALORES_DOTPARCIAL_URL = `${SUCURSAL_URL}operativa/envio-valores/dotacion/parcial`
 export const SUCURSAL_DOTA_CAJA_URL = `${SUCURSAL_URL}operativa/dota-caja`
 export const SUCURSAL_CONSULTA_DOTACIONES_URL = `${SUCURSAL_URL}operativa/consulta-dotacion`
 export const SUCURSAL_ENVIA_VALORES_SUC_URL = `${SUCURSAL_URL}operativa/consulta-dotacion/sucursal/valores`
@@ -65,6 +70,7 @@ export const SUCURSAL_DISPONIBLE_DIVISAS_CAJA_URL = `${SUCURSAL_URL}consulta/dis
 export const SUCURSAL_SOLICITUD_CAMBIO_URL = `${SUCURSAL_URL}solicitud/cambio`
 
 export const SUCURSAL_CIERRE_DIA_URL = `${SUCURSAL_URL}cierre`
+export const SUCURSAL_VALIDACION_CIERRE_CAJA_URL = `${SUCURSAL_URL}cierre/validacion/caja`
 
 /*OPERACION CAJA*/
 export const CAJA_CONSULTA_DOTACIONES_URL = `${CAJA_URL}consulta/dotaciones`
@@ -77,6 +83,7 @@ export const CAJA_CONSULTA_MOVIMIENTOS_URL = `${CAJA_URL}consulta/movimientos`
 export const REPORTES_CONSULTA_URL = `${REPORTES_URL}consulta`
 export const REPORTES_CONSULTA_REPORTES_URL = `${REPORTES_URL}consulta/reporte`
 export const REPORTES_CONSULTA_TITULO_URL = `${REPORTES_URL}consulta/titulo`
+export const REPORTES_CONSULTA_REPORTES_CAJA_URL = `${REPORTES_URL}consulta/reporte/caja`
 
 /* USUARIO PERFIL*/
 export const PERFIL_EDITA_URL = `${PERFIL_URL}actualiza`
@@ -112,7 +119,13 @@ export const TOOLS_SOLICITUD_ENVIO_VALORES_URL = `${TOOLS_URL}solicitud/envio-va
 export const TOOLS_CONSULTA_DENOMINACIONES_SOL_URL = `${TOOLS_URL}consulta/denominaciones/solicitadas`
 export const TOOLS_CONSULTA_DENOMINACIONES_DETALLE_URL = `${TOOLS_URL}detalle/denominaciones`
 
+/*Carga de Archivos*/
+export const TOOLS_CARGA_ARCHIVOS_URL = `${COMMONS_URL}carga/archivos`
+
+
 /*Modulo de administracion*/
 export const ADMINISTRACION_CARGATIPOCAMBIO_URL = `${ADMINISTRACION_URL}cargaTipoCambio`
 export const ADMINISTRACION_USUARIO_ALTA_URL = `${ADMINISTRACION_URL}usuario/alta`
 export const ADMINISTRACION_USUARIO_CONSULTA_URL = `${ADMINISTRACION_URL}usuario/consulta`
+export const ADMINISTRACION_USUARIO_ACCIONES_URL = `${ADMINISTRACION_URL}usuario/acciones`
+export const ADMINISTRACION_USUARIO_ASIGNACION_REPORTES_URL = `${ADMINISTRACION_URL}usuario/asignacion/reportes`

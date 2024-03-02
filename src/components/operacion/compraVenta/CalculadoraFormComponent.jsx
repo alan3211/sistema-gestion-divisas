@@ -1,20 +1,26 @@
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {dataG} from "../../../App";
-import {consultaInformacionCarga, enviaMensaje, hacerOperacion, realizaConversion} from "../../../services";
+import {
+    enviaMensajeDotacionParcial,
+    hacerOperacion,
+    realizaConversion,
+    validaDotParcial
+} from "../../../services";
 import {ModalConfirm, ModalGenericTool} from "../../commons/modals";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {useCatalogo} from "../../../hook";
 import {
-    convertirFecha,
     DENOMINACIONES,
     encryptRequest,
     FormatoMoneda,
     formattedDate,
-    hora,
     OPTIONS, redondearNumero,
-    validarMoneda
+    validarMonedaUSD
 } from "../../../utils";
 import {toast} from "react-toastify";
+import {LoaderTable} from "../../commons/LoaderTable";
+import {getDotaciones} from "../../../services/operacion-caja";
+import {TableComponent} from "../../commons/tables";
 
 
 export const CalculadoraFormComponent = () => {
@@ -31,13 +37,11 @@ export const CalculadoraFormComponent = () => {
         setContinuaOperacion,
         nuevoUsuario, setNuevoUsuario,
         setShowAltaCliente,
-        showModalAltaCliente, setShowModalAltaCliente,
         register,
         handleSubmit,
         errors,
         reset,
         watch,
-        setDatosEscaneo,
         busquedaCliente: {setShowCliente},
         datos,setDatos,
     } = useContext(CompraVentaContext);
@@ -49,6 +53,21 @@ export const CalculadoraFormComponent = () => {
         monto:0.0,
         moneda:''
     }]);
+    const [showEspera, setShowEspera] = useState(false);
+    const [showMuestraTabla, setShowMuestraTabla] = useState(false);
+    const [ticket, setTicket] = useState('');
+    const [data,setData] = useState({});
+    const [formData,setFormData] = useState('');
+    const [intervalo,setIntervalo] = useState();
+
+    useEffect(() => {
+        let intervaloId;
+        if (ticket !== '') {
+            intervaloId = setInterval(validaEstatusDotacionParcial, 5000);
+            setIntervalo(intervaloId);
+        }
+        return () => clearInterval(intervaloId);
+    }, [ticket]);
 
 
     /*Cierra el modal cuando se le da en la "x"*/
@@ -94,8 +113,38 @@ export const CalculadoraFormComponent = () => {
         return valor;
     }
 
+    const validaEstatusDotacionParcial = async () => {
+        const valores = {
+            opcion: 2,
+            ticket: ticket,
+        }
+        const response = await validaDotParcial(encryptRequest(valores));
+        console.log("RESPUESTA: ", response);
+        if (response === 'Pendiente') {
+            setShowMuestraTabla(true);
+        } else if(response === "Solicitado") {
+            setShowMuestraTabla(false);
+        } else if(response === "Cancelada"){
+            setShowMuestraTabla(false);
+            setShowEspera(false);
+            setTicket("");
+            clearInterval(intervalo);
+            toast.info("El supervisor rechazo la dotación parcial por falta de fondos.",OPTIONS)
+        }else{
+            setShowMuestraTabla(false);
+        }
+    }
+
+
+
+
     /*Cuando se le da click en cotizar*/
     const handleSubmitCotizacion = handleSubmit(async (data) => {
+
+        if(data.tipo_operacion === 1){
+            data.moneda = 'MXP'
+        }
+
         data.sucursal = parseInt(dataG.sucursal);
         data.cajero = dataG.usuario;
         data["tipo_cambio"] = obtieneDivisa(tipoDivisa, data);
@@ -115,6 +164,7 @@ export const CalculadoraFormComponent = () => {
             setShowCantidadEntregada(false);
             if (result.result_set[0].Mensaje.includes('Indica')){
                 toast.info(result.result_set[0].Mensaje,OPTIONS);
+                clearForm();
             }else{
                 setShowModalDotacion({
                     show:true,
@@ -123,11 +173,9 @@ export const CalculadoraFormComponent = () => {
                     moneda:result.result_set[0].Moneda,
                 });
             }
-            clearForm();
         }else{
             setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
             data.cantidad_entregar = redondearNumero(parseFloat(result.result_set[0].CantidadEntrega));
-            //data.decimal_sobrante = parseFloat(result.result_set[0].CantidadEntrega) - parseInt(result.result_set[0].CantidadEntrega,10);
             setShowCantidadEntregada(true);
         }
     });
@@ -144,12 +192,10 @@ export const CalculadoraFormComponent = () => {
 
     const preguntaNuevoUsuario = async() => {
         const response = await getOperacion();
-        console.log("RESPONSE: ",response)
         setDatos(response);
         setNuevoUsuario(true);
         setShowModal(false);
     }
-
 
     /*Sirve para continuar la operacion si no es nuevo usuario*/
     const continuarOperacion = async() => {
@@ -160,55 +206,33 @@ export const CalculadoraFormComponent = () => {
     }
 
     const muestraAltaCliente = () =>{
-        setShowModalAltaCliente(true);
         setShowModal(false);
         setNuevoUsuario(false);
-    }
-
-    const capturaManual = () =>{
-        setShowModalAltaCliente(false);
-        setShowAltaCliente(true);
-    }
-
-    const validaInformacion = async()=> {
-        const response = await consultaInformacionCarga(encryptRequest({fecha:formattedDate,usuario:dataG.usuario,sucursal:dataG.sucursal}));
-        const informacion = {
-            colonia: response[0].City,
-            genero: response[0]["Job Title"].substring(4),
-            vigencia: response[0].Company,
-            fecha_nacimiento: convertirFecha(response[0].Department),
-            nombre: response[0]["First Name"],
-            apellido_paterno: response[0]["Last Name"].split(" ")[0],
-            apellido_materno: response[0]["Last Name"].split(" ")[1],
-            estado: response[0].State,
-            calle: response[0].Street,
-            cp: response[0]["ZIP Code"],
-            numero_identificacion: response[1]["First Name"]
-        }
-        console.log(informacion)
-        setDatosEscaneo(informacion);
-        setShowModalAltaCliente(false);
         setShowAltaCliente(true);
     }
 
     const enviarNotificacion = async() => {
+
         const valores = {
-            id:0,
-            accion:1,
             sucursal: dataG.sucursal,
             caja: dataG.usuario,
-            mensaje: `La caja ${dataG.usuario} requiere una dotación de ${showModalDotacion.monto} ${showModalDotacion.moneda} para continuar la operación.`
+            monto: showModalDotacion.monto,
+            moneda: showModalDotacion.moneda,
         }
+
         const encryptedData = encryptRequest(valores)
 
-        const response = await enviaMensaje(encryptedData);
+        const response = await enviaMensajeDotacionParcial(encryptedData);
         toast.warn(response.result_set[0].Mensaje,OPTIONS);
+        console.log("result --> tickets: ",response);
+        setTicket(response.result_set[0].Noticket)
         setShowModalDotacion({
             show:false,
             mensaje:'',
             monto:0.0,
             moneda:'',
         });
+        setShowEspera(true);
     }
 
     /*Guarda la preoperacion*/
@@ -244,22 +268,13 @@ export const CalculadoraFormComponent = () => {
 
     /*Valida la cantidad entregada si rebasa el limite diario de una sucursal*/
     const validaCantidadEntregada = () => {
+        console.warn("mensaje de cantidad")
+        console.warn(cantidad)
         if (parseFloat(cantidad) > dataG.limite_diario) {
             toast.warn(`Esta sucursal solo permite un límite diario de $${dataG.limite_diario} por cliente.`, OPTIONS);
         } else {
             setShowModal(true);
         }
-    }
-
-    const OPTIONS_MODAL = {
-        size: 'lg',
-        showModal: () => setShowModalAltaCliente(true),
-        closeModal: () => {
-            setShowModalAltaCliente(false)
-        },
-        icon:'bi bi-camera text-blue me-2',
-        title:'Escaneo de Documentos',
-        subtitle:'Inicie el proceso de escaneo de documentos. Una vez completado, haga clic en el botón \'Validar Información\' para continuar con el registro del usuario.'
     }
 
     /* Este metodo regresa el titulo para indicar al cajero que necesita realizar */
@@ -271,10 +286,61 @@ export const CalculadoraFormComponent = () => {
         }
     }
 
+    const optionsModal = {
+        size:'xl',
+        showModal: showEspera,
+        closeModal: () => setShowEspera(false),
+        title: 'Solicitud de Dotación Parcial',
+        icon: 'bi bi-cash m-2 text-blue',
+        subtitle: '',
+        waiting:showEspera
+    };
+
+    const refreshQuery = async () =>{
+        const data_response = await getDotaciones(formData);
+        data_response.headers = [...data_response.headers,'Acciones'];
+        setData(data_response);
+        setShowEspera(false);
+    }
+
+
+    const optionsCajaTable = {
+        showMostrar:true,
+        excel:true,
+        tableName:'Consulta Dotaciones',
+        buscar: true,
+        paginacion: true,
+        disabledColumnsExcel:['Detalle','Acciones'],
+        tools:[
+            {columna:"Estatus",tool:"estatus"},
+            {columna:"Acciones",tool:"acciones-caja",refresh:refreshQuery},
+
+        ],
+        filters:[{columna:'Monto',filter:'currency'}]
+    }
+
+    useEffect(()=>{
+
+        const valores = {
+            fecha: formattedDate,
+            usuario: dataG.usuario,
+            sucursal: dataG.sucursal,
+        }
+        const encryptedData = encryptRequest(valores);
+        setFormData(encryptedData);
+
+        const getConsultaDotaciones = async () =>{
+            const data_response = await getDotaciones(encryptedData);
+            data_response.headers = [...data_response.headers,'Acciones'];
+            setData(data_response);
+        }
+        getConsultaDotaciones();
+    },[showMuestraTabla]);
+
 
     return (
         <>
-            <form className="row g-3">
+            <form className="row g-3" onSubmit={(e) => e.preventDefault()}>
                 <div className="row">
                     <div className="col-md-6">
                         <div className="form-floating mb-3">
@@ -355,7 +421,7 @@ export const CalculadoraFormComponent = () => {
                                         message: 'El campo Cantidad a Cotizar no puede estar vacío.'
                                     },
                                     validate: {
-                                        moneda: (value) => validarMoneda("Cantidad a Cotizar", value),
+                                        moneda: (value) => validarMonedaUSD("Cantidad a Cotizar", value),
                                         mayorACero: value => parseFloat(value) > 0 || "La Cantidad a Cotizar debe ser mayor a 0"
                                     }
                                 })}
@@ -382,7 +448,7 @@ export const CalculadoraFormComponent = () => {
                                                readOnly
                                                autoComplete="off"
                                         />
-                                        <label htmlFor="floatingCE">CANTIDAD A {datos.tipo_operacion === '1' ? 'ENTREGAR':'RECIBIR'} <i>({datos.tipo_operacion === '1' ? muestraDivisa(2):'MXP'})</i></label>
+                                        <label htmlFor="floatingCE">CANTIDAD A {watch("tipo_operacion") === '1' ? 'ENTREGAR':'RECIBIR'} <i>({datos.tipo_operacion === '1' ? muestraDivisa(2):'MXP'})</i></label>
                             </div>
                         }
                     </div>
@@ -395,6 +461,7 @@ export const CalculadoraFormComponent = () => {
                         type="button"
                         className="btn btn-success d-flex p-3"
                         onClick={handleSubmitCotizacion}
+                        disabled={parseFloat(cantidad) > dataG.limite_diario}
                     >
                         <i className="bi bi-cash-coin me-2"></i>
                         <strong>COTIZAR</strong>
@@ -421,18 +488,6 @@ export const CalculadoraFormComponent = () => {
                 />)
             }
             {
-                showModalAltaCliente && (
-
-                    <ModalGenericTool options={OPTIONS_MODAL}>
-                        <div className="row">
-
-                            <div className="col-md-12 text-center">
-                                <button className="btn btn-primary me-2" onClick={capturaManual}>CAPTURA MANUAL</button>
-                            </div>
-                        </div>
-                    </ModalGenericTool>)
-            }
-            {
                 showModalDotacion.show && (
                     <ModalConfirm title={showModalDotacion.mensaje}
                                   showModal={showModalDotacion.show}
@@ -440,6 +495,16 @@ export const CalculadoraFormComponent = () => {
                                   hacerOperacion={enviarNotificacion}
                                   closeModalAndReturn={closeModalAndReturn}
                                   icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
+            {
+                showEspera && (
+                    <ModalGenericTool options={optionsModal}>
+                        {showMuestraTabla
+                            ? <TableComponent data={data} options={optionsCajaTable} />
+                            : <LoaderTable title="Esperando respuesta del supervisor..."/>
+                        }
+                    </ModalGenericTool>
                 )
             }
         </>

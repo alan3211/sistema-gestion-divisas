@@ -20,7 +20,7 @@ export const SucursalOperativa = () => {
         {id:'envio-valores',name:'Envío de Valores',icon:'bi bi-truck me-2', element: <EnvioOperaciones opcion={2}/>},
         {id:'dota-caja',name:'Dotar Caja',icon:'ri ri-store-2-line me-2',element:<DotacionCajaSucursal/>},
         {id:'estatus-opera',name:'Estatus Operaciones',icon:'ri ri-dashboard-2-line me-2',element: <EstatusOperacionesSucursal/>},
-        {id:'consultas',name:'Consultas',icon:'ri ri-search-line me-2',element: <ConsultasSucursal/>},
+        {id:'consultas',name:'Consultas de Fondos',icon:'ri ri-search-line me-2',element: <ConsultasSucursal/>},
         {id:'cierre-sucursal',name:'Cierre Sucursal',icon:'bi bi-door-closed-fill me-2',element: <CierreSucursal/>},
     ];
 

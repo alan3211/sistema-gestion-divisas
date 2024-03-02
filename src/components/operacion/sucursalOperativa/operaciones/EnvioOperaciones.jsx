@@ -7,8 +7,7 @@ import {consultaDotacionSucursal, consultaDotacionSucursalVal} from "../../../..
 import {LoaderTable} from "../../../commons/LoaderTable";
 
 export const EnvioOperaciones = ({opcion=1}) => {
-    const { register, handleSubmit, formState: {errors},
-        reset,setValue } = useForm();
+    const { register, handleSubmit, formState: {errors},setValue } = useForm();
     const [showTable,setShowTable] = useState(false);
     const [data,setData] = useState(false);
     const [formData,setFormData] = useState('');
@@ -32,7 +31,6 @@ export const EnvioOperaciones = ({opcion=1}) => {
     }
 
     const toolPerfil = opcion === 1 ? "cancelar-envio-sucursal":"acciones-envio-valores";
-
 
     const options = {
         showMostrar:true,
@@ -61,7 +59,6 @@ export const EnvioOperaciones = ({opcion=1}) => {
         }
         setShowTable(true)
     });
-
 
     return (
         <div className="container justify-content-center align-items-center mt-4">

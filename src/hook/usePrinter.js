@@ -192,9 +192,23 @@ export const usePrinter = (datos) => {
         if (resp === true) {
             mostrar_impresoras();
             console.log("imprimir: " + resp)
+            if(tipo === 0){
+                abreCajon();
+            }
         } else {
             console.log("Problema al imprimir: " + resp)
+        }
+    }
 
+    const abreCajon = async () =>{
+        let nombreImpresora = "EPSON TM-T88VI Receipt";
+        let puerto = 5000;
+        const respuesta = await fetch(`http://localhost:${puerto}/?impresora=${nombreImpresora}`);
+        const respuestaDecodificada = await respuesta.json();
+        if (respuesta.status === 200) {
+            console.log("Cajón abierto");
+        } else {
+            console.error("Error abriendo: " + respuestaDecodificada);
         }
     }
 

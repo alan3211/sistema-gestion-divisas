@@ -1,14 +1,12 @@
 import {useState} from "react";
 import {MessageComponent} from "../MessageComponent";
 import {
-    encryptRequest,
     FormatoMoneda, formattedDate,
     mensajeSinElementos,
     OPTIONS,
 } from "../../../utils";
 
 import './table.css';
-import {useForm} from "react-hook-form";
 import {obtenTitulo} from "../../../services/reportes-services";
 import * as ExcelJS from "exceljs";
 import { saveAs } from 'file-saver';
@@ -170,9 +168,16 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                 }
             });
 
-// Agregar los datos ordenados a la hoja de cálculo
+        // Agregar los datos ordenados a la hoja de cálculo
             datosOrdenados.forEach((fila, index) => {
                 const rowData = headers.map((column) => fila[column]);
+
+                rowData.forEach((valor, index) => {
+                    const column = worksheet.getColumn(index + 1); // Indexamos desde 1
+                    const cellLength = valor ? valor.toString().length : 0;
+                    const currentWidth = column.width || 12; // Si el ancho actual de la columna es 0, usar 12 como valor predeterminado
+                    column.width = Math.max(currentWidth, cellLength + 2); // Ajustar el ancho de la columna
+                });
 
                 // Aplicar filtros
                 filters.forEach((filtro) => {
@@ -198,10 +203,14 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
 
             // Estilo para los encabezados actualizados
             const updatedHeaderRow = worksheet.getRow(3);
-            updatedHeaderRow.eachCell((cell) => {
+            updatedHeaderRow.eachCell((cell,index) => {
                 cell.font = { color: { argb: 'FFFFFF' }, bold: true };
                 cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '012970' } };
                 cell.alignment = { horizontal: 'center' };
+                const column = worksheet.getColumn(index + 1); // Indexamos desde 1
+                const headerLength = headerRow.toString().length;
+                const currentWidth = column.width || 12; // Si el ancho actual de la columna es 0, usar 12 como valor predeterminado
+                column.width = Math.max(currentWidth, headerLength + 2); // Ajustar el ancho de la columna
             });
 
 
@@ -250,9 +259,6 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
         // Eliminar columnas según el array disabledColumnsExcel
         disabledColumnsExcel.forEach((columnToDelete) => {
             const columnIndex = headers.indexOf(columnToDelete);
-            console.log(headers)
-            console.log(columnToDelete)
-            console.log(columnIndex)
 
             if (columnIndex !== -1) {
                 // Eliminar la columna del array de headers
@@ -338,7 +344,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
                             </label>
                         </div>
                     )}
-                    <div className="col-9 col-sm-8 col-md-9 col-lg-10">
+                    <div className="col-12">
                         <div className="row justify-content-end">
                             {buscar && result_set && (
                                 <div className="col-12 col-md-3 col-lg-3 mb-2">

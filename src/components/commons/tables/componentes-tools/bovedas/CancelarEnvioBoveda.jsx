@@ -1,23 +1,29 @@
 /*Herramienta para cancelar desde el perfil de logistica*/
 import {encryptRequest, OPTIONS, validarAlfaNumerico} from "../../../../../utils";
-import {ModalAccionCancelarTool} from "../../../modals";
+import {ModalGenericTool} from "../../../modals";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../../../App";
 import {toast} from "react-toastify";
 import {accionesSolicitudBoveda} from "../../../../../services/operacion-logistica";
+import {accionesSolicitudValores} from "../../../../../services/tools-services";
 
 export const CancelarEnvioBoveda = ({item, index,refresh}) => {
     const [showModal, setShowModal] = useState(false);
     const {register,
         handleSubmit,
         formState: {errors},
+        watch,
         reset,setValue} = useForm();
-    const showModalCancelar = () => {
-        setShowModal(true);
-    };
 
-    const handleCancelarEnvio = async (data) => {
+    const [optionBtn, setOptionBtn] = useState(1);
+
+    const onHandleOptions = (option) => {
+        setOptionBtn(option);
+        setShowModal(true);
+    }
+
+    const handleCancelarEnvio = handleSubmit(async (data) => {
         data.ID = item.ID;
         data.accion = "Cancelado";
         data.usuario = dataG.usuario;
@@ -31,30 +37,66 @@ export const CancelarEnvioBoveda = ({item, index,refresh}) => {
             refresh();
             reset();
         }
-    };
+    });
+
+    const handleConfirmaValores = handleSubmit(async (data) => {
+
+        const values = {
+            ID: item.ID,
+            accion: 'Confirmado',
+            moneda: item.Divisa,
+            motivo: watch("motivo"),
+            operacion: 'CONFIRMA DOTACION BOVEDA',
+            ticket: item['No Movimiento'],
+            usuario: dataG.usuario,
+            tipo_cambio: 0.0,
+            tipo_banco: '',
+            factura: '',
+        }
+
+        const encryptedData = encryptRequest(values);
+        const response = await accionesSolicitudBoveda(encryptedData);
+
+        if (response !== '') {
+            toast.success(response, OPTIONS);
+            setShowModal(false);
+            refresh();
+            reset();
+        }
+    });
 
     const options = {
+        size:'md',
         showModal,
-        closeCustomModal: () => setShowModal(false),
-        title: 'Cancelar Dotación a Bóveda',
-        subtitle: 'Ingrese el motivo por el cual desea cancelar el envío de dotación a la bóveda.',
+        closeModal: () => setShowModal(false),
+        title: (optionBtn === 1) ? 'Confirmación de Valores' :'Cancelar Dotación a Bóveda',
+        icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
+        subtitle: (optionBtn === 1) ? '¿Deseas confirmar los valores para esta boveda?' : 'Ingrese el motivo por el cual desea cancelar el envío de dotación a la bóveda.',
     };
 
     return (
         <td key={index} className="text-center">
+            <button  className="btn btn-primary me-2"
+                     data-bs-toggle="tooltip"
+                     data-bs-placement="top"
+                     title="ACEPTAR"
+                     disabled={item.Estatus !== 'En transito'}
+                     onClick={() => onHandleOptions(1)}>
+                <i className="bi bi-check-circle"></i>
+            </button>
             <button
                 className="btn btn-danger"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
                 title="CANCELAR"
-                disabled={item.Estatus !== 'Por Confirmar'}
-                onClick={showModalCancelar}
+                disabled={item.Estatus !== 'Por Confirmar' && item.Estatus !== 'En Transito' }
+                onClick={() => onHandleOptions(2)}
             >
                 <i className="bi bi-x-circle"></i>
             </button>
             {showModal && (
-                <ModalAccionCancelarTool options={options}>
-                    <div>
+                <ModalGenericTool options={options}>
+                    <>
                         <div className="col-md-12">
                             <div className="form-floating">
                                     <textarea
@@ -83,7 +125,7 @@ export const CancelarEnvioBoveda = ({item, index,refresh}) => {
                                             setValue("motivo", upperCaseValue);
                                         }}
                                         style={{
-                                            height: '300px',
+                                            minHeight: 'calc(100vh - 235px)',
                                             resize: 'none'
                                         }}
                                     />
@@ -94,14 +136,15 @@ export const CancelarEnvioBoveda = ({item, index,refresh}) => {
                                 }
                             </div>
                         </div>
-                        <div className="d-flex justify-content-end mt-2">
-                            <button type="button" className="btn btn-danger" onClick={handleSubmit(handleCancelarEnvio)}>
-                                <i className="bi bi-x-circle me-1"></i>
-                                CANCELAR ENVÍO
+                        <div className="d-flex justify-content-end mt-3">
+                            <button type="button" className={`btn ${optionBtn === 1 ? 'btn-success' : 'btn-danger'}`}
+                                    onClick={optionBtn === 1 ? handleConfirmaValores:handleCancelarEnvio}>
+                                <i className={(optionBtn === 1) ? 'bi bi-check-circle m-2' : 'bi bi-x-circle m-2'}></i>
+                                {optionBtn === 1 ? 'SI, CONFIRMAR VALORES' : 'RECHAZAR'}
                             </button>
                         </div>
-                    </div>
-                </ModalAccionCancelarTool>
+                    </>
+                </ModalGenericTool>
             )}
         </td>
     );

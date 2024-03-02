@@ -2,7 +2,7 @@ import {useCatalogo} from "../../../hook";
 import {useForm} from "react-hook-form";
 import {dataG} from "../../../App";
 import {encryptRequest} from "../../../utils";
-import {accionesUsuario, consultaUsuarios} from "../../../services/administracion-services";
+import {consultaUsuarios} from "../../../services/administracion-services";
 import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
 import {useState} from "react";
 import {TableComponent} from "../../commons/tables";
@@ -18,18 +18,28 @@ export const ConsultaUsuarios = () => {
         watch: propForm.watch,
         reset: propForm.reset,
         setValue: propForm.setValue,
+        trigger: propForm.trigger,
     }
 
     const [usuariosData,setUsuariosData] = useState([]);
     const [showUsuarios,setShowUsuarios] = useState(false);
+    const [formData,setFormData] = useState('');
 
     const consultarUsuarios = propForm.handleSubmit(async (data) => {
         const encryptedData = encryptRequest(data);
+        setFormData(encryptedData)
         const response = await consultaUsuarios(encryptedData);
         setUsuariosData(response);
         setShowUsuarios(true);
         propForm.reset();
     });
+
+    const refresh = async() => {
+        const response = await consultaUsuarios(formData);
+        setUsuariosData(response);
+        setShowUsuarios(true);
+        propForm.reset();
+    }
 
     const options = {
         showMostrar:true,
@@ -37,11 +47,16 @@ export const ConsultaUsuarios = () => {
         excel:true,
         tableName:'Consulta Usuarios',
         paginacion: true,
+        disabledColumns:['ID','Pass'],
+        disabledColumnsExcel:['Acciones','ID','Pass'],
+        tools:[
+            {columna:"Acciones",tool:"acciones-usuarios-sistema",refresh:refresh},
+        ],
     }
 
     return(
         <>
-            <div className="row g-3 mt-3">
+            <form className="row g-3 mt-3" onSubmit={(e)=>e.preventDefault()}>
                 <div className="col-md-5 mx-auto">
                     <FilterComboInput
                         propFormulario={form}
@@ -61,13 +76,13 @@ export const ConsultaUsuarios = () => {
                                     role="status"
                                     aria-hidden="true">
                                     <span className="ms-2">
-                                        Buscar
+                                        BUSCAR
                                     </span>
                                 </span>
                         </button>
                     </div>
                 </div>
-            </div>
+            </form>
             {
                 showUsuarios && (
                     <TableComponent data={usuariosData} options={options}/>

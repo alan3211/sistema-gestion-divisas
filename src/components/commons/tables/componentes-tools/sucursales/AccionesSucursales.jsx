@@ -10,13 +10,14 @@ import {toast} from "react-toastify";
 import {accionesSucursal, getDenominaciones,} from "../../../../../services/tools-services";
 import {useContext, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {Denominacion} from "../../../../operacion/denominacion";
+import {Denominacion, DenominacionTableCaja} from "../../../../operacion/denominacion";
 import {DenominacionContext} from "../../../../../context/denominacion/DenominacionContext";
 import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
 import {DenominacionProvider} from "../../../../../context/denominacion/DenominacionProvider";
 import {ModalLoading} from "../../../modals/ModalLoading";
 import {dataG} from "../../../../../App";
 import {Overlay} from "../../../toast/Overlay";
+import {obtieneDenominaciones} from "../../../../../services";
 
 export const AccionesSucursales = ({item, index, refresh}) => {
     const [guarda, setGuarda] = useState(false);
@@ -130,9 +131,10 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         },
         title: (optionBtn === 1) ? 'Aceptar Operación' : 'Rechazar Operación',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
-        subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y las denominaciones recibidas.'
+        subtitle: (optionBtn === 1) ?  item.Operacion !== 'CIERRE' ? 'Favor de capturar las denominaciones recibidas.':'Favor de validar las denominaciones del cierre de caja.'
             : 'Ingresa el motivo por el cual rechazas el movimiento.',
     };
+
 
     useEffect(() => {
         const getDenominacionesAsignadas =  async () => {
@@ -145,15 +147,33 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }
+
+        const getDenominacionesCierre =  async () => {
+            const valores = {
+                usuario: dataG.usuario,
+                sucursal: dataG.sucursal,
+                moneda: item.Moneda,
+                tipo_movimiento: 'C'
+            }
+            const encryptedData = encryptRequest(valores);
+            const data_denominacion = await obtieneDenominaciones(encryptedData);
+            console.log("Denominacion de la DATA:",data_denominacion)
+            setDatosDenominacion(data_denominacion);
+        }
+
         if(item.Operacion === 'Dotación Sucursal'){
             getDenominacionesAsignadas();
+        }else if(item.Operacion === 'CIERRE'){
+            getDenominacionesCierre();
         }
     }, [item.Moneda,item["No Movimiento"]]);
 
     const validaBtn = () => {
         if(optionBtn === 1){
             if(item.Operacion === 'Dotación Sucursal'){
-                return watch("motivo") === '' || parseFloat(item.Monto) !== parseFloat(totalMonto);
+                return parseFloat(item.Monto) !== parseFloat(totalMonto);
+            }else if(item.Operacion === 'CIERRE'){
+              return false;
             }else{
                 return watch("motivo") === '';
             }
@@ -181,62 +201,29 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
-                                        <div className="col-md-6 mt-5">
-                                            <div className="form-floating">
-                                                <textarea
-                                                    {...register("motivo", {
-                                                        required: {
-                                                            value: true,
-                                                            message: 'El campo Motivo no puede ser vacío.'
-                                                        },
-                                                        minLength: {
-                                                            value: 25,
-                                                            message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
-                                                        },
-                                                        maxLength: {
-                                                            value: 200,
-                                                            message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
-                                                        },
-                                                        validate: (value) => validarAlfaNumerico("Motivo", value)
-                                                    })}
-                                                    className={`form-control ${!!errors?.motivo ? 'is-invalid' : ''}`}
-                                                    id="motivo"
-                                                    name="motivo"
-                                                    placeholder="Ingresa el motivo de cancelación"
-                                                    onChange={(e) => {
-                                                        const upperCaseValue = e.target.value.toUpperCase();
-                                                        e.target.value = upperCaseValue;
-                                                        setValue("motivo", upperCaseValue);
-                                                    }}
-                                                    style={{
-                                                        height: '350px',
-                                                        resize: 'none'
-                                                    }}
-                                                />
-                                                <label htmlFor="motivo">MOTIVO</label>
-                                                {
-                                                    errors?.motivo &&
-                                                    <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
-                                                }
-                                            </div>
-
-                                        </div>
-                                        <div className="col-md-6">
+                                        <div className="col-md-12">
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
-                                                item.Operacion !== 'Dotación Sucursal'
+                                                item.Operacion === 'Nota de Credito'
                                                     ? (<Denominacion
                                                             type={item.Operacion === 'Dotación Sucursal' ? 'D':item.Operacion === 'Nota de Credito' ? 'CNC' :'C'}
                                                             moneda={item.Moneda}
                                                             options={optionsDenominacion}
                                                     />)
-                                                    : (<DenominacionTable
+                                                    : item.Operacion === 'Dotación Sucursal'
+                                                        ? (<DenominacionTable
                                                             setDenominacion={setDenominacion}
                                                             moneda={item.Moneda}
                                                             data={datosDenominacion.result_set}
                                                             monto={item.Monto}
                                                             setTotalMonto={setTotalMonto}
-                                                    />)
+                                                        />)
+
+                                                        : (<DenominacionTableCaja
+                                                                moneda={item.Moneda}
+                                                                data={datosDenominacion.result_set}
+                                                                monto={item.Monto}
+                                                        />)
                                             }
                                         </div>
                                     </div>
@@ -271,7 +258,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                 setValue("motivo", upperCaseValue);
                                             }}
                                             style={{
-                                                height: '300px',
+                                                minHeight: 'calc(100vh - 235px)',
                                                 resize: 'none'
                                             }}
                                         />

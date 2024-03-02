@@ -5,7 +5,7 @@ import {
     obtenerObjetoDenominaciones, OPTIONS,
     validarAlfaNumerico
 } from "../../../../../utils";
-import {accionesCaja, getDenominaciones, getDenominacionesCaja} from "../../../../../services/tools-services";
+import {accionesCaja, getDenominacionesCaja} from "../../../../../services/tools-services";
 import {toast} from "react-toastify";
 import {ModalAccionesTool} from "../../../modals";
 import {DenominacionTableCaja} from "../../../../operacion/denominacion";
@@ -80,7 +80,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
         closeModal: () => {setShowModal(false); reset()},
         title: (optionBtn === 1) ? 'ACEPTAR DOTACIÓN' : 'RECHAZAR DOTACIÓN',
         icon: (optionBtn === 1) ? 'bi bi-check-circle m-2 text-success' : 'bi bi-x-circle m-2 text-danger',
-        subtitle: (optionBtn === 1) ? 'Favor de capturar el motivo y validar las denominaciones recibidas.'
+        subtitle: (optionBtn === 1) ? 'Favor de validar las denominaciones recibidas.'
             : 'Ingresa el motivo por el cual rechazas la dotación.',
     };
 
@@ -120,47 +120,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                             {
                                 optionBtn === 1 && (
                                     <div className="row">
-                                        <div className="col-md-6 mt-3">
-                                            <div className="form-floating">
-                                                <textarea
-                                                    {...register("motivo", {
-                                                        required: {
-                                                            value: true,
-                                                            message: 'El campo Motivo no puede ser vacío.'
-                                                        },
-                                                        minLength: {
-                                                            value: 25,
-                                                            message: 'El campo Motivo como mínimo debe tener más de 25 caracteres.'
-                                                        },
-                                                        maxLength: {
-                                                            value: 200,
-                                                            message: 'El campo Motivo como máximo debe tener no más de 200 caracteres.'
-                                                        },
-                                                        validate: (value) => validarAlfaNumerico("Motivo", value)
-                                                    })}
-                                                    className={`form-control ${!!errors?.motivo ? 'is-invalid' : ''}`}
-                                                    id="motivo"
-                                                    name="motivo"
-                                                    placeholder="Ingresa el motivo de cancelación"
-                                                    onChange={(e) => {
-                                                        const upperCaseValue = e.target.value.toUpperCase();
-                                                        e.target.value = upperCaseValue;
-                                                        setValue("motivo", upperCaseValue);
-                                                    }}
-                                                    style={{
-                                                        height: '350px',
-                                                        resize: 'none'
-                                                    }}
-                                                />
-                                                <label htmlFor="motivo">MOTIVO</label>
-                                                {
-                                                    errors?.motivo &&
-                                                    <div className="invalid-feedback-custom">{errors?.motivo.message}</div>
-                                                }
-                                            </div>
-
-                                        </div>
-                                        <div className="col-md-6">
+                                        <div className="col-md-12">
                                             <DenominacionTableCaja data={data.result_set} monto={item.Monto} moneda={item.Moneda}/>
                                         </div>
                                     </div>

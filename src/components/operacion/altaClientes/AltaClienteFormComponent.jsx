@@ -18,26 +18,13 @@ import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContex
 export const AltaClienteFormComponent = memo(() => {
 
     const {propForm} = useContext(AltaClienteContext);
-    const {datosEscaneo, busquedaCliente:{showCliente,setShowCliente,data},operacion} = useContext(CompraVentaContext);
+    const {busquedaCliente:{showCliente,setShowCliente,data},operacion} = useContext(CompraVentaContext);
     const catalogo = useCatalogo([2]);
     const [showOverlay, setShowOverlay] = useState(false);
     const [controlName, setControlName] = useState({
         lastName:false,
         secondlastName:false,
     });
-
-    useEffect(() => {
-
-        if(Object.keys(datosEscaneo).length !== 0){
-                propForm.setValue("nombre",datosEscaneo.nombre)
-                propForm.setValue("apellido_paterno",datosEscaneo.apellido_paterno)
-                propForm.setValue("apellido_materno",datosEscaneo.apellido_materno)
-                propForm.setValue("fecha_nacimiento",datosEscaneo.fecha_nacimiento)
-                propForm.setValue("numero_identificacion",datosEscaneo.numero_identificacion)
-                propForm.setValue("tipo_identificacion",1)
-        }
-
-    }, []);
 
     const [tipoIdentificacionError, setTipoIdentificacionError] = useState(false);
 
@@ -194,6 +181,14 @@ export const AltaClienteFormComponent = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("apellido_paterno", upperCaseValue);
                                         propForm.trigger('apellido_paterno');
+                                        // Aquí se actualiza la lógica para habilitar/deshabilitar el input
+                                        if(upperCaseValue.trim() === "") {
+                                            setControlName({
+                                                lastName:upperCaseValue.length > 0, // Se inhabilita si hay algún valor en el input
+                                                secondlastName: true, // Esto puede ser otra lógica o condición
+                                            });
+                                        }
+
                                     }}
                                     disabled={propForm.showEdit || controlName.lastName }
                                     autoComplete="off"
@@ -238,6 +233,14 @@ export const AltaClienteFormComponent = memo(() => {
                                         e.target.value = upperCaseValue;
                                         propForm.setValue("apellido_materno", upperCaseValue);
                                         propForm.trigger('apellido_materno');
+                                        // Aquí se actualiza la lógica para habilitar/deshabilitar el input
+                                        if(upperCaseValue.trim() === "") {
+                                            setControlName({
+                                                lastName: true, // Se inhabilita si hay algún valor en el input
+                                                secondlastName: upperCaseValue.length > 0, // Esto puede ser otra lógica o condición
+                                            });
+                                        }
+
                                     }}
                                     disabled={propForm.showEdit || controlName.secondlastName }
                                     autoComplete="off"

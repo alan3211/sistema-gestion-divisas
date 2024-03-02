@@ -24,7 +24,7 @@ export const Catalogo = () => {
         Moneda: <Monedas/>,
         Sucursales: <Sucursales/>,
         Zonas: <Zonas/>,
-        Bancos: <Bancos/>
+        "Bancos/Casa de Cambio": <Bancos/>
     }
 
     const navigate = useNavigate();

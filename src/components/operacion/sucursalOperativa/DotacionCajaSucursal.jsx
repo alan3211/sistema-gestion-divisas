@@ -3,14 +3,22 @@ import {useCatalogo} from "../../../hook";
 import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest, FormatoMoneda,
+    eliminarDenominacionesConCantidadCero,
+    encryptRequest,
+    FormatoMoneda,
     formattedDateWS,
     getDenominacion,
     obtenerObjetoDenominaciones,
-    opciones, OPTIONS, validarMoneda
+    opciones,
+    OPTIONS,
+    validarMoneda, validarMonedaUSD
 } from "../../../utils";
 import {dataG} from "../../../App";
-import {getCantidadDisponible, realizarOperacionSucursalDotacion} from "../../../services/operacion-sucursal";
+import {
+    cierreCajaAnterior,
+    getCantidadDisponible,
+    realizarOperacionSucursalDotacion
+} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
 import {Denominacion} from "../denominacion";
 import {getUsuariosSistema} from "../../../services";
@@ -21,7 +29,7 @@ export const DotacionCajaSucursal = () => {
     const [usuariosCombo,setUsuariosCombo] = useState([]);
     const {register,handleSubmit
         ,formState:{errors},reset,setValue
-        ,watch} = useForm()
+        ,watch,trigger,} = useForm()
     const catalogo = useCatalogo([15]);
     const [showDenominacion,setShowDenominacion] =  useState(false);
     const [habilita,setHabilita] =  useState({
@@ -51,6 +59,18 @@ export const DotacionCajaSucursal = () => {
         showModal: guarda,
         title: `Enviando dotación a la cajero ${watch("cajero")} ...`,
     };
+
+    // Validacion del cierre de cajas anterior.
+    const validaCierreDeCajasAnterior = async() => {
+        const valores = {
+            sucursal: dataG.sucursal,
+            moneda: watch("moneda")
+        }
+        console.log("Valores: ",valores)
+        const encryptedData = encryptRequest(valores);
+        return await cierreCajaAnterior(encryptedData);
+    }
+
 
     const terminarDotacion = handleSubmit(async(data)=>{
 
@@ -158,22 +178,42 @@ export const DotacionCajaSucursal = () => {
         });
     }, [watch("moneda")]);
 
-    const consultaDotaciones = () => {
+    const consultaDotaciones = async () => {
+        console.log("MONEDA");
+        console.log(watch("moneda"));
         if(watch("moneda") === '0'){
+
             setShowDenominacion(false);
             setShowDisponible({
                 isAvailable: false,
                 cantidad: 0
             });
         }else{
-            obtieneDisponibilidad();
-            setShowDenominacion(true);
+            const mensaje = await validaCierreDeCajasAnterior();
+            if (mensaje.includes('cierre de dias anteriores')) {
+                toast.warn(mensaje, OPTIONS);
+                setShowDenominacion(false);
+            } else {
+                obtieneDisponibilidad();
+                setShowDenominacion(true);
+            }
         }
         setMoneda(watch("moneda"));
     }
 
+    const validaMonto = () => {
+        let mensaje;
+        if (watch("moneda") === 'USD') {
+            mensaje = validarMonedaUSD("Monto",watch("monto"));
+        } else {
+            mensaje = validarMoneda("Monto",watch("monto"));
+        }
+        return typeof mensaje === 'string'
+    }
+
+
     return (<>
-        <form className="row m-1 g-3">
+        <form className="row m-1 g-3" onSubmit={(e) => e.preventDefault()}>
             <div className="col-md-3">
                 <div className="form-floating mb-3">
                     <select
@@ -204,32 +244,6 @@ export const DotacionCajaSucursal = () => {
                     <label htmlFor="cajero">CAJEROS</label>
                     {
                         errors?.cajero && <div className="invalid-feedback-custom">{errors?.cajero.message}</div>
-                    }
-                </div>
-            </div>
-            <div className="col-md-3">
-                <div className="form-floating">
-                    <input
-                        {...register("monto",{
-                            required:{
-                                value:true,
-                                message:'El campo Monto no puede ser vacio.'
-                            },
-                            validate: {
-                                validacionMN: (value) => validarMoneda("Monto",value),
-                                mayorACero: value => parseFloat(value) > 0 || "El Monto debe ser mayor a 0",
-                            }
-                        })}
-                        type="text"
-                        className={`form-control ${!!errors?.monto ? 'invalid-input':''}`}
-                        id="monto"
-                        name="monto"
-                        placeholder="Ingresa el monto"
-                        autoComplete="off"
-                    />
-                    <label htmlFor="monto">MONTO</label>
-                    {
-                        errors?.monto && <div className="invalid-feedback-custom">{errors?.monto.message}</div>
                     }
                 </div>
             </div>
@@ -266,9 +280,42 @@ export const DotacionCajaSucursal = () => {
                     }
                 </div>
             </div>
+            <div className="col-md-3">
+                <div className="form-floating">
+                    <input
+                        {...register("monto",{
+                            required:{
+                                value:true,
+                                message:'El campo Monto no puede ser vacio.'
+                            },
+                            validate: {
+                                validacionMN: (value) => validarMoneda("Monto",value),
+                                mayorACero: value => parseFloat(value) > 0 || "El Monto debe ser mayor a 0",
+                            }
+                        })}
+                        type="text"
+                        className={`form-control ${!!errors?.monto ? 'invalid-input':''}`}
+                        id="monto"
+                        name="monto"
+                        placeholder="Ingresa el monto"
+                        autoComplete="off"
+                        onChange={(e) => {
+                            // Actualiza el valor del campo de entrada
+                            e.preventDefault();
+                            setValue("monto", e.target.value);
+                            trigger("monto")
+                        }}
+                    />
+                    <label htmlFor="monto">MONTO</label>
+                    {
+                        errors?.monto && <div className="invalid-feedback-custom">{errors?.monto.message}</div>
+                    }
+                </div>
+            </div>
             <div className="col-md-2 mx-auto mb-2">
                 <button type="button" className="btn btn-primary mt-2"
-                        onClick={consultaDotaciones}>
+                        onClick={consultaDotaciones}
+                        disabled={validaMonto()}>
                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                    GENERAR
                 </button>
@@ -300,9 +347,9 @@ export const DotacionCajaSucursal = () => {
                             <button type="button" className="btn btn-secondary me-3" onClick={nuevoEnvio}>
                                 <i className="bi bi-plus"></i> NUEVA DOTACIÓN
                             </button>
-                            <button type="button" className="btn btn-primary"  onClick={terminarDotacion} disabled={finalizaOperacion || parseFloat(showDisponible.cantidad) === 0}>
+                            <button type="button" className="btn btn-success"  onClick={terminarDotacion} disabled={finalizaOperacion || parseFloat(showDisponible.cantidad) === 0}>
                                 <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
-                                FINALIZAR OPERACIÓN
+                                DOTAR CAJA
                             </button>
                         </div>
                     </>

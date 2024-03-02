@@ -25,6 +25,7 @@ horas = horas % 12;
 horas = horas ? horas : 12;
 
 export const formattedDateH = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")} ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`;
+export const formattedDateF = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`;
 
 export const formateaMoneda = (cantidad) =>{
     // Convierte la cadena en un número decimal con 2 decimales
@@ -52,10 +53,6 @@ export const mensajeSinElementos = {
     icono: 'ri-error-warning-fill'
 }
 
-export const mensajeSinOperaciones = {
-    estilo: 'alert-warning',
-    icono: 'ri-error-warning-fill'
-}
 
 // Función para eliminar objetos con cantidad 0
 export const eliminarDenominacionesConCantidadCero = (denominacionesObj) => {
@@ -165,14 +162,11 @@ export const encryptRequest = (data) => {
     return encryptedBase64
 }
 
-export const recordValues = (values) =>{
-    if(!values.rememberMe){
-        localStorage.setItem("usuario",values.usuario);
-        localStorage.setItem("rememberMe",true);
-    }else{
-        localStorage.removeItem("usuario",values.usuario);
-        localStorage.removeItem("rememberMe",false);
+export const FormatoDenominacion = (value) => {
+    if(['.05','.10','.20','.50',0.05,0.10,0.20,0.50].includes(value)){
+        return `${value } ¢`;
     }
+    return value;
 }
 
 export const DENOMINACIONES = {
@@ -198,7 +192,7 @@ export const FormatoMoneda = (cantidad,moneda) => {
             maximumFractionDigits: 2
         });
 
-        return formatoNumero.replace('$', '$ ');
+        return formatoNumero.replace('$', '');
     } else {
         return 'E'; // Opcional: Devuelve una cadena vacía en caso de error.
     }
@@ -229,7 +223,8 @@ export const getTextDivisa = (divisa) => {
     const divisas = {
         "USD": { plural: "dólares", singular: "dólar" },
         "EUR": { plural: "euros", singular: "euro" },
-        "GBR": { plural: "libras", singular: "libra" }
+        "GBR": { plural: "libras", singular: "libra" },
+        "MXP": { plural: "pesos mexicanos", singular: "peso mexicano" }
     };
 
     // Validación de la divisa
@@ -255,6 +250,23 @@ export const convertirFecha = (input) => {
     // Devolver la fecha en formato yyyy-mm-dd
     return yyyy + '-' + mm + '-' + dd;
 }
+
+export const convertirFechaADD = (input) => {
+    // Dividir la cadena de entrada en año, mes y día
+    var partes = input.split('-');
+
+    // Crear un objeto Date con los componentes de la fecha
+    var fecha = new Date(partes[0], partes[1] - 1, partes[2]);
+
+    // Obtener los componentes de la fecha en formato DD/MM/YYYY
+    var dd = ('0' + fecha.getDate()).slice(-2);
+    var mm = ('0' + (fecha.getMonth() + 1)).slice(-2);
+    var yyyy = fecha.getFullYear();
+
+    // Devolver la fecha en formato DD/MM/YYYY
+    return dd + '/' + mm + '/' + yyyy;
+}
+
 
 export const obtenDia = (mes) => {
     // Verificar si el mes tiene 30 o 31 días
@@ -288,6 +300,18 @@ export const obtenerNombreMes = (mes) => {
         // Devolver un mensaje de error si el número del mes no es válido
         return "Mes no válido";
     }
+}
+
+const esBisiesto = (anio) => (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
+
+export const obtenerDiasEnMes = (mes, anio)=> {
+    // Array con la cantidad de días por mes (sin contar el año bisiesto)
+    const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    // Si el mes es febrero y el año es bisiesto, se actualiza la cantidad de días
+    if (parseInt(mes) === 2 && esBisiesto(anio)) {
+        return 29;
+    }
+    return diasPorMes[parseInt(mes)-1];
 }
 
 export const formatRelativeTime = (hourString) => {

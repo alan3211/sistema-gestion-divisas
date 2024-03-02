@@ -8,7 +8,12 @@ import {accionesUsuario} from "../../../services/administracion-services";
 export const AgregaUsuario = () => {
 
     const catalogo = useCatalogo([21,27]);
-    const {register, handleSubmit, formState: {errors}, reset, watch} = useForm();
+    const {register,
+        handleSubmit,
+        formState: {errors}, reset,
+        watch,
+        setValue,
+    } = useForm();
     const altaDelUsuario = handleSubmit(async (data) => {
         data.tipo_operacion = 1;
         data.usuario_alta = dataG.usuario;
@@ -31,7 +36,7 @@ export const AgregaUsuario = () => {
     });
 
     return (
-        <form className="container justify-content-center align-items-center mt-4">
+        <form className="container justify-content-center align-items-center mt-4" onSubmit={(e) => e.preventDefault()}>
             <div
                 className="text-center mb-4"
             >
@@ -59,6 +64,11 @@ export const AgregaUsuario = () => {
                             name="usuario"
                             placeholder="Ingresa el usuario"
                             autoComplete="off"
+                            onChange={(e) => {
+                                const upperCaseValue = e.target.value.toUpperCase();
+                                e.target.value = upperCaseValue;
+                                setValue("usuario", upperCaseValue);
+                            }}
                         />
                         <label htmlFor="usuario">USUARIO DE SISTEMA</label>
                         {
@@ -90,6 +100,11 @@ export const AgregaUsuario = () => {
                             name="nombre_usuario"
                             placeholder="Ingresa el nombre completo del usuario"
                             autoComplete="off"
+                            onChange={(e) => {
+                                const upperCaseValue = e.target.value.toUpperCase();
+                                e.target.value = upperCaseValue;
+                                setValue("nombre_usuario", upperCaseValue);
+                            }}
                         />
                         <label htmlFor="nombre_usuario">NOMBRE DE USUARIO</label>
                         {

@@ -1,7 +1,7 @@
 import {CircleLoader} from "react-spinners";
 
-export const LoaderTable = ()=>{
-    const title='Cargando Información, espere un momento por favor ...', showModal=true;
+export const LoaderTable = ({title='Cargando Información, espere un momento por favor ...'})=>{
+    const showModal=true;
     return (<div className="row mt-3">
             <div className="justify-content-center mb-4">
                 <div className="col-md-5 mx-auto">

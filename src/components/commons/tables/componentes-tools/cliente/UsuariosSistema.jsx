@@ -1,8 +1,26 @@
 import { Avatar, Dropdown } from "flowbite-react";
 import { useGetUsuariosSistema } from "../../../../../hook/useGetUsuariosSistema";
+import {useEffect, useState} from "react";
+import {encryptRequest} from "../../../../../utils";
+import {getSucursalUsuarios} from "../../../../../services/inicio-services";
 
 export const UsuariosSistema = ({ item, index }) => {
-    const { dataSucUsu } = useGetUsuariosSistema({ opcion: 2, sucursal: item.Sucursal });
+    const [dataSucUsu, setDataSucUsu] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            const valores = {
+                opcion: 2,
+                sucursal: item.Sucursal,
+            };
+            const encryptedData = encryptRequest(valores);
+
+            const response = await getSucursalUsuarios(encryptedData);
+            setDataSucUsu(response);
+        };
+
+        fetchData();
+    }, [item.Sucursal, item["No Usuarios"]]);
+
 
     return (
         <td key={index} className="text-center">

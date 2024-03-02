@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Route, Routes, useNavigate} from "react-router-dom";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 import {MainComponent} from "./components/shared/main/MainComponent";
 
@@ -23,6 +23,11 @@ import {Logistica} from "./components/operacion/logistica/Logistica";
 import {AltaClienteFinal} from "./components/operacion/altaClientes/AltaClienteFinal";
 import {Reportes} from "./components/reportes/Reportes";
 import {useEffect} from "react";
+import {ReportesRegulatorios} from "./components/pld/regulatorios/ReportesRegulatorios";
+import {AlertasMonitoreo} from "./components/pld/alertasMonitoreo/AlertasMonitoreo";
+import {PerfilTransaccional} from "./components/pld/perfilTransaccional/PerfilTransaccional";
+import {Riesgo} from "./components/pld/riesgo/Riesgo";
+import {ReportesPrincipal} from "./components/administracion/reportes/ReportesPrincipal";
 
 export let dataG = JSON.parse(localStorage.getItem('usuario_data')) || {
     sucursal:0,
@@ -42,7 +47,7 @@ const App = () => {
 
     // Al cargar la página, verifica si hay datos de usuario en localStorage y úsalos si están disponibles
     useEffect(() => {
-        const storedUserData = JSON.parse(localStorage.getItem('v'));
+        const storedUserData = JSON.parse(localStorage.getItem('usuario_data'));
         if (storedUserData) {
             dataG = storedUserData;
         }
@@ -55,7 +60,7 @@ const App = () => {
 
     return (
         <div className="app-root content">
-            <Router>
+           <Router>
                 <Routes>
                     <Route exact  path="/" element={<LoginComponent/>}/>
                     <Route exact path="/health" element={<HealthComponent/>}/>
@@ -73,10 +78,19 @@ const App = () => {
                            element={<MainLayout><Logistica/></MainLayout>}/>
                     <Route exact path="/reportesEstadisticos"
                            element={<MainLayout><Reportes/></MainLayout>}/>
+                    <Route exact path="/reportesRegulatorios"
+                           element={<MainLayout><ReportesRegulatorios/></MainLayout>}/>
+                    <Route exact path="/alertasMonitoreo"
+                           element={<MainLayout><AlertasMonitoreo/></MainLayout>}/>
+                    <Route exact path="/perfilTransaccional"
+                           element={<MainLayout><PerfilTransaccional/></MainLayout>}/>
+                    <Route exact path="/riesgo"
+                           element={<MainLayout><Riesgo/></MainLayout>}/>
                     <Route exact path="/cargaTipoCambio" element={
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>
                     <Route exact path="/catalogos" element={<MainLayout><Catalogo/></MainLayout>}/>
+                    <Route exact path="/asignacion-reportes" element={<MainLayout><ReportesPrincipal/></MainLayout>}/>
                     <Route exact path="/mi-perfil" element={<MainLayout><PerfilComponent/></MainLayout>}/>
                     <Route path="/*" element={<NotFound/>}/>
                 </Routes>

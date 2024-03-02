@@ -10,6 +10,7 @@ export const AltaClienteProvider = ({children}) => {
     const [isloading,setIsloading] = useState(false);
     const [dataClientes, setDataClientes ] = useState([]);
     const [showEdit, setShowEdit] = useState(false);
+    const [showCargaDocumentos, setShowCargaDocumentos] = useState(false);
 
     const {
         register,
@@ -40,7 +41,9 @@ export const AltaClienteProvider = ({children}) => {
         getValues,
         trigger,
         showEdit,
-        setShowEdit
+        setShowEdit,
+        showCargaDocumentos,
+        setShowCargaDocumentos,
     }
     return(
         <AltaClienteContext.Provider value={{propForm}}>

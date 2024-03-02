@@ -20,11 +20,11 @@ export const SeleccionarCliente = ({item, index, deps}) => {
 
     return (
         <td key={index} className="text-center">
-            <span className="badge bg-purple-800 m-2 p-2 cursor-pointer"
+            <button className="btn btn-cotizar"
                   onClick={() => hacerOperacion(item)}>
                 <i className="ri-star-line me-2"></i>
                 SELECCIONAR USUARIO
-           </span>
+           </button>
         </td>
     );
 }

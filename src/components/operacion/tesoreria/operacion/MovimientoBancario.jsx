@@ -8,7 +8,13 @@ import {toast} from "react-toastify";
 
 export const MovimientoBancario = ({actualizarSaldo}) => {
 
-    const { register, handleSubmit, formState: {errors}, reset,watch } = useForm();
+    const { register,
+        handleSubmit,
+        formState: {errors},
+        reset,watch,
+        trigger,
+        setValue,
+    } = useForm();
     const catalogo = useCatalogo([19]);
 
     const onSubmitMovimientoBancario = handleSubmit(async (data) => {
@@ -35,7 +41,7 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
     return(
         <>
         <form
-            className="text-center"
+            className="text-center" onSubmit={(e)=> e.preventDefault()}
         >
             <div className="col-md-4 mx-auto">
                 <div className="form-floating mb-3">
@@ -78,16 +84,9 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                 <div className="form-floating mb-3">
                     <input
                         {...register("monto", {
-                            required: {
-                                value: true,
-                                message: "El campo Monto no puede estar vacío.",
-                            },
                             validate: {
                                 moneda: (value) =>
                                     validarMoneda("Monto", value),
-                                mayorACero: (value) =>
-                                    parseFloat(value) > 0 ||
-                                    "El Monto debe ser mayor a 0",
                             },
                         })}
                         type="text"
@@ -98,6 +97,12 @@ export const MovimientoBancario = ({actualizarSaldo}) => {
                         name="monto"
                         placeholder="Ingresa el monto"
                         autoComplete="off"
+                        onChange={(e) => {
+                            // Actualiza el valor del campo de entrada
+                            e.preventDefault();
+                            setValue("monto", e.target.value);
+                            trigger("monto")
+                        }}
                     />
                     <label htmlFor="monto" className="form-label">
                         MONTO

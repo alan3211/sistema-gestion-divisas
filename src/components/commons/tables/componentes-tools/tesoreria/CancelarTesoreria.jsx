@@ -79,7 +79,7 @@ export const CancelarTesoreria = ({item, index,refresh}) => {
                                             setValue("motivo", upperCaseValue);
                                         }}
                                         style={{
-                                            height: '300px',
+                                            minHeight: 'calc(100vh - 235px)',
                                             resize: 'none'
                                         }}
                                     />

@@ -7,7 +7,7 @@ import {
     getDenominacion, obtenerObjetoDenominaciones,
     opciones,
     OPTIONS,
-    validarMoneda
+    validarMoneda, validarMonedaUSD
 } from "../../../utils";
 import {generaSolicitudDotacionBoveda, solicitaDotacionBoveda} from "../../../services/operacion-logistica";
 import {useContext, useState} from "react";
@@ -15,7 +15,6 @@ import {TableComponent} from "../../commons/tables";
 import {ModalGenericTool} from "../../commons/modals";
 import {Denominacion} from "../denominacion";
 import {dataG} from "../../../App";
-import { realizarOperacionSucursalDotacion} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {ModalLoading} from "../../commons/modals/ModalLoading";
@@ -82,7 +81,9 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
         size: 'xl',
         showModal: () => setShowSolicitaDenominacion(true),
         closeModal: () => {
-            setShowSolicitaDenominacion(false)
+            setShowSolicitaDenominacion(false);
+            solicitaDenominacionB.reset();
+            denominacionB.reset();
         },
         icon:'bi bi-currency-exchange text-success me-2',
         title:`Solicita Denominación en ${dataItem.Moneda} para la bóveda de ${dataItem.Boveda} de la ETV ${dataItem.Empresa}`,
@@ -194,18 +195,19 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
             {
                 showSolicitaDenominacion && (
                     <ModalGenericTool options={OPTIONS_SOLICITUD_DOTACION}>
-                        <div className="row m-1 g-3">
+                        <div className="row">
                             <div className="col-md-4 mx-auto">
                                 <div className="form-floating">
                                     <input
                                         {...solicitaDenominacionB.register("monto",{
-                                            required:{
-                                                value:true,
-                                                message:'El campo Monto no puede ser vacio.'
-                                            },
                                             validate: {
-                                                validacionMN: (value) => validarMoneda("Monto",value),
-                                                mayorACero: value => parseFloat(value) > 0 || "El Monto debe ser mayor a 0",
+                                                validacionMoneda: (value) => {
+                                                    if (watch("moneda") === 'USD') {
+                                                        return validarMonedaUSD("Monto",value);
+                                                    } else {
+                                                        return validarMoneda("Monto",value);
+                                                    }
+                                                },
                                             }
                                         })}
                                         type="text"
@@ -214,6 +216,13 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
                                         name="monto"
                                         placeholder="Ingresa el monto"
                                         autoComplete="off"
+                                        onChange={(e) => {
+                                            // Actualiza el valor del campo de entrada
+                                            e.preventDefault();
+                                            solicitaDenominacionB.setValue("monto", e.target.value);
+                                            solicitaDenominacionB.trigger("monto")
+                                        }}
+                                        tabIndex="1"
                                     />
                                     <label htmlFor="monto">MONTO</label>
                                     {
@@ -227,7 +236,10 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
                                     <Denominacion type="B" moneda={dataItem.Moneda} options={optionsSolDot}/>
                                 </div>
                                 <div className="col-md-12 d-flex justify-content-center">
-                                    <button type="button" className="btn btn-primary"  onClick={terminarDotacion} disabled={totalMonto !== parseFloat(solicitaDenominacionB.watch("monto"))}>
+                                    <button type="button"
+                                            className="btn btn-primary"
+                                            onClick={terminarDotacion}
+                                            disabled={totalMonto !== parseFloat(solicitaDenominacionB.watch("monto"))}>
                                         <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
                                         ENVIAR SOLICITUD
                                     </button>

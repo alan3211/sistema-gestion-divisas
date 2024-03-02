@@ -8,6 +8,7 @@ export const Zonas = () => {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: {errors},
     } = useForm();
 
@@ -58,6 +59,11 @@ export const Zonas = () => {
                                     name="descripcion"
                                     placeholder="Ingresa la nueva zona"
                                     autoComplete="off"
+                                    onChange={(e) => {
+                                        const upperCaseValue = e.target.value.toUpperCase();
+                                        e.target.value = upperCaseValue;
+                                        setValue("descripcion", upperCaseValue);
+                                    }}
                                 />
                                 <label htmlFor="descripcion">ZONA</label>
                                 {

@@ -1,4 +1,3 @@
-import {dataG} from "../../../../../App";
 import {encryptRequest} from "../../../../../utils";
 import {getResumenSucursales} from "../../../../../services/operacion-tesoreria";
 
