@@ -102,7 +102,7 @@ export const CancelarEnvioSucursal = ({item, index, refresh}) => {
 
         let formValuesD=[];
 
-        if(item["No Movimiento"].startsWith("DOTPARC")){
+        if(item["No Movimiento"].startsWith("DOTPAR")){
             let denominacionesDotacion = denominacionD.getValues();
             formValuesD = getDenominacion(item.Moneda, denominacionesDotacion)
         }else{
@@ -251,7 +251,7 @@ export const CancelarEnvioSucursal = ({item, index, refresh}) => {
                     <ModalGenericTool options={optionsModal}>
                         <>
                             {
-                                item["No Movimiento"].startsWith("DOTPARC")
+                                item["No Movimiento"].startsWith("DOTPAR")
                                 ?  <Denominacion type="SD" moneda={item.Moneda} options={optionsTable}/>
                                 : <DenominacionTableCaja moneda={item.Moneda} monto={item.Monto} data={dataEnviada}/>
                             }

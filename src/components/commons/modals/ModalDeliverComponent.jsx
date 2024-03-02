@@ -279,13 +279,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
             setTicket("")
         } else if(response === "Solicitado") {
             setShowMuestraTabla(false);
-        } else if(response === "Cancelada" || response === "Rechazado"){
+        } else if(response === "Cancelada"){
             setShowMuestraTabla(false);
             setShowEspera(false);
             setShowDotacionRapida(false);
+            setTicket("");
             clearInterval(intervalo);
-            setTicket("")
-        }else{
+            toast.info("El supervisor rechazo la dotación parcial por falta de fondos.",OPTIONS)
+        } else{
             setShowMuestraTabla(false);
         }
     }

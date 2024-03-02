@@ -227,16 +227,15 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
-            clearInterval(intervalo);
-            setTicket("")
         } else if(response === "Solicitado") {
             setShowMuestraTabla(false);
-        } else if(response === "Cancelada" || response === "Rechazado"){
+        } else if(response === "Cancelada"){
             setShowMuestraTabla(false);
             setShowEspera(false);
             setShowDotacionRapida(false);
+            setTicket("");
             clearInterval(intervalo);
-            setTicket("")
+            toast.info("El supervisor rechazo la dotación parcial por falta de fondos.",OPTIONS)
         }else{
             setShowMuestraTabla(false);
         }

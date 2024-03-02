@@ -58,11 +58,13 @@ export const CalculadoraFormComponent = () => {
     const [ticket, setTicket] = useState('');
     const [data,setData] = useState({});
     const [formData,setFormData] = useState('');
+    const [intervalo,setIntervalo] = useState();
 
     useEffect(() => {
         let intervaloId;
         if (ticket !== '') {
             intervaloId = setInterval(validaEstatusDotacionParcial, 5000);
+            setIntervalo(intervaloId);
         }
         return () => clearInterval(intervaloId);
     }, [ticket]);
@@ -111,7 +113,6 @@ export const CalculadoraFormComponent = () => {
         return valor;
     }
 
-    /*Validar el intervalo para saber si ya cambio el estatus*/
     const validaEstatusDotacionParcial = async () => {
         const valores = {
             opcion: 2,
@@ -121,7 +122,15 @@ export const CalculadoraFormComponent = () => {
         console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
-        } else {
+        } else if(response === "Solicitado") {
+            setShowMuestraTabla(false);
+        } else if(response === "Cancelada"){
+            setShowMuestraTabla(false);
+            setShowEspera(false);
+            setTicket("");
+            clearInterval(intervalo);
+            toast.info("El supervisor rechazo la dotación parcial por falta de fondos.",OPTIONS)
+        }else{
             setShowMuestraTabla(false);
         }
     }

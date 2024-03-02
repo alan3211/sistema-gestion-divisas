@@ -11,18 +11,16 @@ import {ModalLoading} from "../../commons/modals/ModalLoading";
 
 const InstructivoAsignacion = () => {
     return (
-        <div className="card">
+        <div className="card border-primary mb-3">
+            <div className="card-header bg-primary text-white">Instrucciones para asignar reportes</div>
             <div className="card-body">
-                <h5 className="card-title">Instrucciones</h5>
-                <p className="card-text">
-                    Para asignar un reporte a un perfil, sigue estos pasos:
-                </p>
-                <ol className="list-decimal">
-                    <li>Selecciona un tipo de reporte en el menú desplegable.</li>
-                    <li>Da doble clic el perfil desde la sección <strong>"Perfiles"</strong> para moverlo a la sección <strong>"Tipos de Reporte"</strong>.</li>
-                    <li>Una vez asignado, el perfil aparecerá en la lista de <strong>"Tipos de Reporte"</strong>.</li>
-                    <li>Para deshacer la asignación, haz clic en la cruz en la lista de <strong>"Tipos de Reporte"</strong>.</li>
-                    <li>Una vez que hayas terminado de asignar, presiona el botón <strong>"Guardar"</strong>.</li>
+                <h5 className="card-title">Pasos a seguir:</h5>
+                <ol className="list-group list-group-numbered">
+                    <li className="list-group-item">Selecciona un tipo de reporte en el menú desplegable.</li>
+                    <li className="list-group-item">Da doble clic el perfil desde la sección <strong>"Perfiles"</strong> para moverlo a la sección <strong>"Tipos de Reporte"</strong>.</li>
+                    <li className="list-group-item">Una vez asignado, el perfil aparecerá en la lista de <strong>"Tipos de Reporte"</strong>.</li>
+                    <li className="list-group-item">Para deshacer la asignación, haz clic en la cruz en la lista de <strong>"Tipos de Reporte"</strong>.</li>
+                    <li className="list-group-item">Una vez que hayas terminado de asignar, presiona el botón <strong>"Guardar"</strong>.</li>
                 </ol>
             </div>
         </div>
