@@ -122,6 +122,8 @@ export const CalculadoraFormComponent = () => {
         console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
+            setTicket("");
+            clearInterval(intervalo);
         } else if(response === "Solicitado") {
             setShowMuestraTabla(false);
         } else if(response === "Cancelada"){

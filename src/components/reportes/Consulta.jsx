@@ -6,7 +6,7 @@ import {
     formattedDateDD, getTextDivisa,
     obtenerDiasEnMes,
     obtenerNombreMes,
-    OPTIONS
+    OPTIONS, validarAlfaNumerico, validarNombreApellido, validarNumeros, validarNumerosYVacio
 } from "../../utils";
 import {
     consultaReporteCajaContable,
@@ -39,6 +39,7 @@ export const Consulta = () => {
         trigger,
     } = useForm()
     const [currentDate, setCurrentDate] = useState(formattedDate);
+    const [currentDateF, setCurrentDateF] = useState(formattedDate);
     const [guarda, setGuarda] = useState(false);
     const reportesSuc = ["1","4","6","7","8","9","10","11"];
 
@@ -68,10 +69,13 @@ export const Consulta = () => {
         setMeses(monthNames);
     }, []);
 
-
     useEffect(() => {
         setCurrentDate(formattedDate);
+        setCurrentDateF(formattedDate);
         setValue("fecha_operacion",formattedDate);
+        setValue("fecha_operacion_final",formattedDate);
+        setValue("usuario","");
+        setValue("nombre_completo","");
         const currentMonth = new Date().getMonth() + 1; // Se suma 1 porque los meses van de 0 a 11
         const currentYear = new Date().getFullYear();
 
@@ -231,7 +235,9 @@ export const Consulta = () => {
                 let periodo = "";
                 if (reporte.Periodo === 'Diario') {
                     periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
-                } else {
+                } else if(reporte.Periodo === 'DiarioIF'){
+                    periodo = `Por el periodo comprendido entre ${data.fecha_operacion_inicial} al ${data.fecha_operacion_final}`;
+                } else{
                     periodo = `Por el periodo comprendido del 1 al ${obtenerDiasEnMes(data.mes, data.anio)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
                 }
 
@@ -417,7 +423,9 @@ export const Consulta = () => {
                 console.log("REPORTE: ",reporte);
                 if (reporte.Periodo === 'Diario') {
                     periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
-                } else {
+                } else if(reporte.Periodo === 'DiarioIF'){
+                    periodo = `Por el periodo comprendido entre ${data.fecha_operacion_inicial} al ${data.fecha_operacion_final}`;
+                }else {
                     periodo = `Por el periodo comprendido del 1 al ${obtenerDiasEnMes(data.mes, data.anio)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
                 }
 
@@ -559,6 +567,8 @@ export const Consulta = () => {
                     let periodo = "";
                     if (reporte.Periodo === 'Diario') {
                         periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
+                    } else if(reporte.Periodo === 'DiarioIF'){
+                        periodo = `Por el periodo comprendido entre ${data.fecha_operacion_inicial} al ${data.fecha_operacion_final}`;
                     } else {
                         periodo = `Por el periodo comprendido del 1 al ${obtenerDiasEnMes(data.mes, data.anio)} de ${obtenerNombreMes(data.mes)} ${data.anio} `;
                     }
@@ -821,6 +831,8 @@ export const Consulta = () => {
 
                 setGuarda(false);
                 reset();
+                setValue("usuario","");
+                setValue("nombre_completo","");
             }
         }
     });
@@ -894,6 +906,140 @@ export const Consulta = () => {
                                 }
                             </div>
                         </div>)
+                }
+                {
+                    reporte?.Periodo === 'DiarioIF' && reporte?.Periodo !== ''
+                    &&
+                    (
+                        <>
+                            <div className="d-flex align-items-center justify-content-center">
+                                <div className="col-md-3 form-floating mb-3 me-4">
+                                    <input
+                                        {...register("fecha_operacion_inicial",{
+                                            required:{
+                                                value:true,
+                                                message:'El campo Fecha Operación Inicial no puede ser vacio.'
+                                            },
+                                        })}
+                                        type="date"
+                                        className={`form-control ${!!errors?.fecha_operacion_inicial ? 'invalid-input':''}`}
+                                        id="fecha_operacion_inicial"
+                                        name="fecha_operacion_inicial"
+                                        placeholder="Ingresa la fecha de operación Inicial"
+                                        value={currentDate}
+                                        onChange={(e)=> {
+                                            setCurrentDate(e.target.value);
+                                            setValue("fecha_operacion_inicial",currentDate)
+                                            trigger("fecha_operacion_inicial")
+                                        }}
+                                        autoComplete="off"
+                                    />
+                                    <label htmlFor="fecha_operacion">FECHA OPERACIÓN INICIAL</label>
+                                    {
+                                        errors?.fecha_operacion_inicial && <div className="invalid-feedback-custom">{errors?.fecha_operacion_inicial.message}</div>
+                                    }
+                                </div>
+                                <div className="col-md-3 form-floating mb-3 me-2">
+                                    <input
+                                        {...register("fecha_operacion_final",{
+                                            required:{
+                                                value:true,
+                                                message:'El campo Fecha Operación Final no puede ser vacio.'
+                                            },
+                                        })}
+                                        type="date"
+                                        className={`form-control ${!!errors?.fecha_operacion_final ? 'invalid-input':''}`}
+                                        id="fecha_operacion_final"
+                                        name="fecha_operacion_final"
+                                        placeholder="Ingresa la fecha de operación final"
+                                        value={currentDateF}
+                                        onChange={(e)=> {
+                                            setCurrentDateF(e.target.value);
+                                            setValue("fecha_operacion_final",currentDateF)
+                                            trigger("fecha_operacion_final")
+                                        }}
+                                        autoComplete="off"
+                                    />
+                                    <label htmlFor="fecha_operacion">FECHA OPERACIÓN FINAL</label>
+                                    {
+                                        errors?.fecha_operacion_final && <div className="invalid-feedback-custom">{errors?.fecha_operacion_final.message}</div>
+                                    }
+                                </div>
+                            </div>
+                            {
+                                reporte.UsuarioNombre === 'Si'
+                                &&
+                                (
+                                    <div className="d-flex align-items-center justify-content-center">
+                                        <div className="col-md-3 form-floating mb-3 me-4">
+                                            <input
+                                                {...register("usuario", {
+                                                   validate: value => (value ? validarNumerosYVacio("Número de Usuario", value):true) || !!data.nombre_completo,
+                                                    minLength: {
+                                                        value: 2,
+                                                        message: 'El campo Número de Usuario como mínimo debe de tener al menos 2 caracteres.'
+                                                    },
+                                                    maxLength: {
+                                                        value: 10,
+                                                        message: 'El campo Número de Usuario como máximo debe de tener no mas de 10 caracteres.'
+                                                    },
+                                                })}
+                                                type="text"
+                                                className={`form-control ${!!errors?.usuario ? 'invalid-input' : ''}`}
+                                                id="usuario"
+                                                name="usuario"
+                                                placeholder="Ingresa el número del usuario"
+                                                onChange={(e) => {
+                                                    const upperCaseValue = e.target.value.toUpperCase();
+                                                    e.target.value = upperCaseValue;
+                                                    setValue("usuario", upperCaseValue);
+                                                }}
+                                                autoComplete="off"
+                                                disabled={watch("nombre_completo").length > 0}
+                                            />
+                                            <label htmlFor="usuario">NÚMERO DE USUARIO</label>
+                                            {
+                                                errors?.usuario && <div
+                                                    className="invalid-feedback-custom">{errors?.usuario.message}</div>
+                                            }
+                                        </div>
+                                        <div className="col-md-3 form-floating mb-3 me-2">
+                                            <input
+                                                {...register("nombre_completo", {
+                                                    validate: value => validarAlfaNumerico("Nombre Completo", value) || !!data.usuario,
+                                                    minLength: {
+                                                        value: 2,
+                                                        message: 'El campo Nombre Completo como mínimo debe de tener al menos 2 caracteres.'
+                                                    },
+                                                    maxLength: {
+                                                        value: 30,
+                                                        message: 'El campo Nombre Completo como máximo debe de tener no mas de 100 caracteres.'
+                                                    },
+                                                })}
+                                                type="text"
+                                                className={`form-control ${!!errors?.nombre_completo ? 'invalid-input' : ''}`}
+                                                id="nombre_completo"
+                                                name="nombre_completo"
+                                                placeholder="Ingresa el nombre del usuario"
+                                                onChange={(e) => {
+                                                    const upperCaseValue = e.target.value.toUpperCase();
+                                                    e.target.value = upperCaseValue;
+                                                    setValue("nombre_completo", upperCaseValue);
+                                                }}
+                                                autoComplete="off"
+                                                disabled={watch("usuario").length > 0}
+                                            />
+                                            <label htmlFor="nombre_completo">NOMBRE COMPLETO</label>
+                                            {
+                                                errors?.nombre_completo && <div
+                                                    className="invalid-feedback-custom">{errors?.nombre_completo.message}</div>
+                                            }
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </>
+                    )
                 }
                 {  reporte?.Periodo === 'Mensual' && reporte?.Periodo !== ''
                     && (<div className="d-flex align-items-center justify-content-center">

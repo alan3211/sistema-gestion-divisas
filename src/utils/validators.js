@@ -118,6 +118,15 @@ export const validarNumeros = (name,value) => {
     return true;
 }
 
+export const validarNumerosYVacio = (name,value) => {
+    const numerosRegex = /^(\d+|)$/;
+    if (!numerosRegex.test(value)) {
+        return `El campo ${name} debe contener solo números del 0 al 9.`;
+    }
+    return true;
+}
+
+
 export const validarAlfaNumerico = (name, value) => {
     const alfanumericoRegex = /^$|^[a-zA-Z\s\d;,.'()//[\]{}!¡"#$%&´*-_+áéíóúÁÉÍÓÚñÑ]+$/;
     if (!alfanumericoRegex.test(value)) {

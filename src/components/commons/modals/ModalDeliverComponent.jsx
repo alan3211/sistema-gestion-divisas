@@ -159,7 +159,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     const optionsDotRap = {
         title: `Solicitando dotación parcial en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
-        importe:operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):parseFloat(operacion.monto),
+        importe:operacion.tipo_operacion !== "1" ? parseFloat(operacion.monto):redondearNumero(operacion.cantidad_entregar),
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
@@ -275,18 +275,17 @@ export const ModalDeliverComponent = ({configuration}) =>{
         console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
+            setTicket("");
             clearInterval(intervalo);
-            setTicket("")
         } else if(response === "Solicitado") {
             setShowMuestraTabla(false);
         } else if(response === "Cancelada"){
             setShowMuestraTabla(false);
             setShowEspera(false);
-            setShowDotacionRapida(false);
             setTicket("");
             clearInterval(intervalo);
             toast.info("El supervisor rechazo la dotación parcial por falta de fondos.",OPTIONS)
-        } else{
+        }else{
             setShowMuestraTabla(false);
         }
     }
