@@ -74,7 +74,16 @@ export const AltaClienteComplementario = memo(() => {
             toast.warn(dataClientes.result_set[0].Mensaje, OPTIONS);
             closeModalAndReturn();
         } else {
-            propForm.setShowCargaDocumentos(true);
+            console.log("data identificacion");
+            if(parseInt(propForm.watch("tipo_identificacion")) !== 3){
+                propForm.setShowCargaDocumentos(true);
+            }else{
+                propForm.setShowCargaDocumentos(false);
+                setShowContinuaDoc(false);
+                setContinuaOperacion(true);
+                setShowAltaCliente(false);
+            }
+
             toast.success(`El registro se ha completado satisfactoriamente con el número de usuario ${dataClientes.result_set[0].Cliente}.`, OPTIONS)
             setCliente(dataClientes.result_set[0].Cliente);
             //setShowAltaCliente(false);
@@ -958,7 +967,11 @@ export const AltaClienteComplementario = memo(() => {
                                     role="status"
                                     aria-hidden="true">
                                     <span className="ms-2">
-                                        CONTINUAR CON CARGA DE DOCUMENTOS
+                                        {
+                                            parseInt(propForm.watch("tipo_identificacion")) !== 3
+                                            ? 'CONTINUAR CON CARGA DE DOCUMENTOS'
+                                            : 'CONTINUAR CON LA OPERACIÓN'
+                                        }
                                     </span>
                                 </span>
                             </button>

@@ -145,6 +145,11 @@ export const validarMayus = (name, value) => {
 
 export const validarCorreoElectronico = (correo) => {
     console.log(correo);
+
+    if(correo === ""){
+        return true;
+    }
+
     // Expresión regular más permisiva para validar correos electrónicos
     const correoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
