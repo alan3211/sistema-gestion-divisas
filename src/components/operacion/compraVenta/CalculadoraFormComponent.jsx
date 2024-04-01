@@ -69,7 +69,6 @@ export const CalculadoraFormComponent = () => {
         return () => clearInterval(intervaloId);
     }, [ticket]);
 
-
     /*Cierra el modal cuando se le da en la "x"*/
     const closeModal = () => {
         setShowModal(false);
@@ -136,9 +135,6 @@ export const CalculadoraFormComponent = () => {
             setShowMuestraTabla(false);
         }
     }
-
-
-
 
     /*Cuando se le da click en cotizar*/
     const handleSubmitCotizacion = handleSubmit(async (data) => {

@@ -21,6 +21,7 @@ import {ModalLoading} from "./ModalLoading";
 import {TableComponent} from "../tables";
 import {LoaderTable} from "../LoaderTable";
 import {getDotaciones} from "../../../services/operacion-caja";
+import {toastTheme} from "flowbite-react/lib/esm/components/Toast/theme";
 
 export const ModalDeliverComponent = ({configuration}) =>{
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
@@ -31,6 +32,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
     });
     const navigator = useNavigate();
     const [guarda,setGuarda] = useState(false);
+    const [showConfirmaCancelacion,setShowConfirmaCancelacion] = useState(false);
     const {
         denominacionR,
         denominacionE,
@@ -238,6 +240,12 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     }
 
+    const cancelarOperacion = ()=> {
+        setShowConfirmaCancelacion(false);
+        toast.success('Se ha cancelado la operación correctamente.',OPTIONS);
+        navigator("/inicio");
+    }
+
     useEffect(() => {
         let intervaloId;
         if (ticket !== '') {
@@ -401,6 +409,10 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 </Modal.Body>
 
                 <Modal.Footer>
+                    <button className="btn btn-danger" onClick={()=> setShowConfirmaCancelacion(true)}>
+                        <i className="bi bi-x me-2"></i>
+                        CANCELAR OPERACIÓN
+                    </button>
                     <button className="btn btn-orange" onClick={solicitudDotacionRapida}>
                         <i className="bi bi-currency-exchange me-2"></i>
                         DOTACIÓN PARCIAL
@@ -467,6 +479,17 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                  }}
                                  hacerOperacion={guardaFactura}
                                  icon="bi bi-exclamation-triangle-fill text-warning m-2"/>
+                )
+            }
+            {
+                showConfirmaCancelacion && (
+                    <ModalTicket title="¿Deseas cancelar la operación?"
+                                 showModal={showConfirmaCancelacion}
+                                 closeModalAndReturn={()=>{
+                                     setShowConfirmaCancelacion(false);
+                                 }}
+                                 hacerOperacion={cancelarOperacion}
+                                 icon="bi bi-exclamation-triangle-fill text-danger m-2"/>
                 )
             }
             {

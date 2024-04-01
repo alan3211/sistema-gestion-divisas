@@ -1,6 +1,6 @@
 import {TipoCambioComponent} from "./TipoCambioComponent";
 import {CalculadoraDivisasComponent} from "./CalculadoraDivisasComponent";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {BusquedaClientesComponent} from "../busquedaClientes";
 import {Layout} from "../../commons";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
