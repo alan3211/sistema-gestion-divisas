@@ -118,6 +118,15 @@ export const validarNumeros = (name,value) => {
     return true;
 }
 
+export const validarNumerosYVacio = (name,value) => {
+    const numerosRegex = /^(\d+|)$/;
+    if (!numerosRegex.test(value)) {
+        return `El campo ${name} debe contener solo números del 0 al 9.`;
+    }
+    return true;
+}
+
+
 export const validarAlfaNumerico = (name, value) => {
     const alfanumericoRegex = /^$|^[a-zA-Z\s\d;,.'()//[\]{}!¡"#$%&´*-_+áéíóúÁÉÍÓÚñÑ]+$/;
     if (!alfanumericoRegex.test(value)) {
@@ -136,6 +145,11 @@ export const validarMayus = (name, value) => {
 
 export const validarCorreoElectronico = (correo) => {
     console.log(correo);
+
+    if(correo === ""){
+        return true;
+    }
+
     // Expresión regular más permisiva para validar correos electrónicos
     const correoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 

@@ -12,9 +12,11 @@ import {numeroALetras} from "../utils/numerosANombre";
 
 export const usePrinter = (datos) => {
 
-    const [dataTicket, setDataTicket] = useState({});
+    let dataTicket={};
+    let nombreImpresora = "EPSON TM-T88VI Receipt";
+    let api_key = "a3c8f13a-8722-4387-f0bf-0ac2e9dd74f7"
 
-    const getEstructuraTicket = async () => {
+    const getEstructuraTicket = async (tipo) => {
         try {
             const valores = {
                 usuario: datos["No Usuario"],
@@ -23,17 +25,32 @@ export const usePrinter = (datos) => {
             const encryptedData = encryptRequest(valores);
             const response = await obtieneTicket(encryptedData);
             console.log(response);
-            setDataTicket(response.result_set[0]);
+            dataTicket = response.result_set[0];
+
+            const conector = new connetor_plugin()
+            if (tipo === 0) {
+                ticket(0, conector)
+                ticket(1, conector)
+            } else if (tipo === 2) {
+                ticket(2, conector)
+            }else{
+                ticketCajaSucursal(3,conector)
+                ticketCajaSucursal(4,conector)
+            }
+            const resp = await conector.imprimir(nombreImpresora, api_key);
+            if (resp === true) {
+                mostrar_impresoras();
+                console.log("imprimir: " + resp)
+                if(tipo === 0){
+                    abreCajon();
+                }
+            } else {
+                console.log("Problema al imprimir: " + resp)
+            }
         } catch (error) {
             console.error(error);
         }
     }
-
-    useEffect(() => {
-        if(datos['No Usuario'] !== ''){
-            getEstructuraTicket();
-        }
-    }, [datos['No Usuario']]);
 
     // Busca todas las impresoras que estan conectadas al equipo
     const mostrar_impresoras = () => {
@@ -51,13 +68,8 @@ export const usePrinter = (datos) => {
             centPlural: "centavos",
             centSingular: "centavo"
         }
-
-        if(Object.keys(dataTicket).length === 0){
-            if(datos['No Usuario'] !== ''){
-                getEstructuraTicket();
-            }
-        }
-
+        console.log("<-----dataTicket----->")
+        console.log(dataTicket)
         if(dataTicket["Operación"] !== 'COMPRA'){
             currency.plural = getTextDivisa(dataTicket.Divisa).plural;
             currency.singular = getTextDivisa(dataTicket.Divisa).singular;
@@ -110,7 +122,6 @@ export const usePrinter = (datos) => {
         conector.cut("0")
     }
 
-
     //Ticket para Cajero y Administrador Sucursal
     const ticketCajaSucursal = (opcion, conector) => {
         const currency = {
@@ -118,12 +129,6 @@ export const usePrinter = (datos) => {
             singular: "peso mexicano",
             centPlural: "centavos",
             centSingular: "centavo"
-        }
-
-        if(Object.keys(dataTicket).length === 0){
-            if(datos['No Usuario'] !== ''){
-                getEstructuraTicket();
-            }
         }
 
         if(dataTicket["Operación"] !== 'COMPRA'){
@@ -173,36 +178,15 @@ export const usePrinter = (datos) => {
     const imprimeTicketNuevamente = (tipo) => imprimirDoc(tipo);
 
     const imprimirDoc = async (tipo) => {
-        let nombreImpresora = "EPSON TM-T88VI Receipt";
-        let api_key = "a3c8f13a-8722-4387-f0bf-0ac2e9dd74f7"
-
-        const conector = new connetor_plugin()
-
-        if (tipo === 0) {
-            ticket(0, conector)
-            ticket(1, conector)
-        } else if (tipo === 2) {
-            ticket(2, conector)
-        }else{
-            ticketCajaSucursal(3,conector)
-            ticketCajaSucursal(4,conector)
-        }
-
-        const resp = await conector.imprimir(nombreImpresora, api_key);
-        if (resp === true) {
-            mostrar_impresoras();
-            console.log("imprimir: " + resp)
-            if(tipo === 0){
-                abreCajon();
-            }
-        } else {
-            console.log("Problema al imprimir: " + resp)
+        if(datos['No Usuario'] !== ''){
+            const response = await getEstructuraTicket(tipo);
+            console.log(response);
         }
     }
 
     const abreCajon = async () =>{
         let nombreImpresora = "EPSON TM-T88VI Receipt";
-        let puerto = 5000;
+        let puerto = 4568;
         const respuesta = await fetch(`http://localhost:${puerto}/?impresora=${nombreImpresora}`);
         const respuestaDecodificada = await respuesta.json();
         if (respuesta.status === 200) {
