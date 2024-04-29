@@ -1,19 +1,17 @@
 import {useContext, useEffect} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {
-    convertirFecha,
     encryptRequest,
-    formattedDate,
     OPTIONS,
     validaFechas,
     validarNombreApellido,
     validarNumeros
 } from "../../../utils";
-import {buscaCliente, consultaInformacionCarga} from "../../../services";
+import {buscaCliente} from "../../../services";
 import {dataG} from "../../../App";
 import {toast} from "react-toastify";
-import {ModalConfirm, ModalGenericTool} from "../../commons/modals";
-import {useNavigate} from "react-router-dom";
+import {ModalConfirm} from "../../commons/modals";
+import {usePrinter} from "../../../hook";
 
 export const FormCliente = ({tipo}) => {
 
@@ -25,13 +23,15 @@ export const FormCliente = ({tipo}) => {
         reset,
         cliente,
         setCliente, showModalAltaUsuario, setShowModalAltaUsuario,
-         setShowAltaCliente,
+        setShowAltaCliente,
         busquedaCliente: {
             setShowCliente,
             formBuscarCliente,
             setData,
         }
     } = useContext(CompraVentaContext);
+
+    const {imprimeTicketLPB} = usePrinter({});
 
     useEffect(() => {
         formBuscarCliente.setValue("cliente",cliente)
@@ -74,6 +74,11 @@ export const FormCliente = ({tipo}) => {
                     const mensaje = dataClientes.result_set[0].Resultado;
                     if (mensaje.includes('excede')) {
                         toast.warn(mensaje, OPTIONS);
+                    } else if(mensaje.includes('codigo')){
+                        toast.error(mensaje, OPTIONS);
+                    } else if(mensaje.includes('listas')){
+                        toast.error(mensaje, OPTIONS);
+                        imprimeTicketLPB();
                     } else {
                         toast.error(mensaje, OPTIONS);
                         reset();

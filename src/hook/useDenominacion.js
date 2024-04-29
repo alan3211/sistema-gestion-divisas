@@ -211,7 +211,6 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacion.calculateGrandTotal = calculateGrandTotal;
     }
 
-
     return {
         title,data,denominacionMappings,register,trigger,errors,setValue,reset,calculateTotal,
         validacionColor,calculateGrandTotal};

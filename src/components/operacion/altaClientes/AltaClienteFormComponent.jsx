@@ -4,13 +4,13 @@ import {memo, useContext, useEffect, useState} from "react";
 import {AltaClienteContext} from "../../../context/AltaCliente/AltaClienteContext";
 import {validaCliente} from "../../../services";
 import {
-    encryptRequest,
+    encryptRequest, OPTIONS,
     validaFechas,
     validarAlfaNumerico,
     validarCorreoElectronico,
     validarNombreApellido, year
 } from "../../../utils";
-import {useCatalogo} from "../../../hook/";
+import {useCatalogo, usePrinter} from "../../../hook/";
 import {toast} from "react-toastify";
 import {Overlay} from "../../commons/toast/Overlay";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
@@ -18,13 +18,17 @@ import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContex
 export const AltaClienteFormComponent = memo(() => {
 
     const {propForm} = useContext(AltaClienteContext);
-    const {busquedaCliente:{showCliente,setShowCliente,data},operacion} = useContext(CompraVentaContext);
+    const {busquedaCliente:{showCliente,setShowCliente,data},operacion,
+        setShowAltaCliente,setContinuaOperacion,setCantidad,setShowCantidadEntregada,
+    } = useContext(CompraVentaContext);
     const catalogo = useCatalogo([2]);
     const [showOverlay, setShowOverlay] = useState(false);
     const [controlName, setControlName] = useState({
         lastName:false,
         secondlastName:false,
     });
+
+    const {imprimeTicketLPB} = usePrinter({});
 
     const [tipoIdentificacionError, setTipoIdentificacionError] = useState(false);
 
@@ -49,23 +53,44 @@ export const AltaClienteFormComponent = memo(() => {
 
         if (response) {
             if (response.total_rows !== 0) {
-                //Encontro a un cliente similar
-                propForm.setMessageActive(true);
-                propForm.setDataClientes(response);
-                setShowOverlay(true);
-                const mensaje = 'El usuario que intenta dar de alta ya se encuentra en la base de datos. A continuación, se muestran los siguientes usuarios con coincidencias.';
-                toast.info(mensaje, {
-                    position: "top-center",
-                    closeButton: true,
-                    closeOnClick:false,
-                    className: 'overlay-toast',
-                    draggable:false,
-                    autoClose:false,
-                    theme: "colored",
-                    onClose: () => {
-                        setShowOverlay(false); // Oculta el fondo de superposición cuando se cierra el toast
-                    },
-                });
+                if(response.result_set[0].hasOwnProperty('Tipo')){
+                    const tipo = response.result_set[0].Tipo;
+                    const mensaje = response.result_set[0].Resultado;
+                    if(tipo === 1){
+                        toast.error(mensaje, OPTIONS);
+                    } else if(tipo === 2){
+                        toast.error(mensaje, OPTIONS);
+                        imprimeTicketLPB();
+                    }
+                    //No encontro a un cliente
+                    propForm.setMessageActive(false);
+                    propForm.setDataClientes([]);
+                    propForm.setComplementarios(false);
+                    propForm.reset();
+                    setShowCantidadEntregada(false);
+                    setCantidad(0);
+                    setContinuaOperacion(false); // oculta el modulo de busquedaclientes
+                    setShowAltaCliente(false);
+                }else{
+                    //Encontro a un cliente similar
+                    propForm.setMessageActive(true);
+                    propForm.setDataClientes(response);
+                    setShowOverlay(true);
+                    const mensaje = 'El usuario que intenta dar de alta ya se encuentra en la base de datos. A continuación, se muestran los siguientes usuarios con coincidencias.';
+                    toast.info(mensaje, {
+                        position: "top-center",
+                        closeButton: true,
+                        closeOnClick:false,
+                        className: 'overlay-toast',
+                        draggable:false,
+                        autoClose:false,
+                        theme: "colored",
+                        onClose: () => {
+                            setShowOverlay(false); // Oculta el fondo de superposición cuando se cierra el toast
+                        },
+                    });
+                }
+
             } else {
                 //No encontro a un cliente
                 propForm.setMessageActive(false);
@@ -333,19 +358,19 @@ export const AltaClienteFormComponent = memo(() => {
                                     {...propForm.register("numero_identificacion", {
                                         required: {
                                             value: true,
-                                            message: 'El campo Número Identificación no puede ser vacio.'
+                                            message: `El campo Número ${propForm.watch("tipo_identificacion") === '1' || propForm.watch("tipo_identificacion") === '' ? 'Identificación': 'Pasaporte'} no puede ser vacio.`
                                         },
                                         maxLength: {
-                                            value: 25,
-                                            message: 'El campo Número Identificación como máximo debe de tener no mas de 25 caracteres.'
+                                            value: propForm.watch("tipo_identificacion") === '1' ? 25:15,
+                                            message: `El campo Número ${propForm.watch("tipo_identificacion") === '1' || propForm.watch("tipo_identificacion") === '' ? 'Identificación': 'Pasaporte'} como máximo debe de tener no mas de ${propForm.watch("tipo_identificacion") === '1' ? 25:15} caracteres.`
                                         },
-                                        validate: (value) => validarAlfaNumerico("Número de Identificación", value)
+                                        validate: (value) => validarAlfaNumerico(`Número de ${propForm.watch("tipo_identificacion") === '1' || propForm.watch("tipo_identificacion") === '' ? 'Identificación': 'Pasaporte'}`, value)
                                     })}
                                     type="text"
                                     className={`form-control ${!!propForm.errors?.numero_identificacion ? 'invalid-input' : ''}`}
                                     id="numero_identificacion"
                                     name="numero_identificacion"
-                                    placeholder="Número Identificación"
+                                    placeholder={`Número ${propForm.watch("tipo_identificacion") === '1' || propForm.watch("tipo_identificacion") === '' ? 'IDENTIFICACIÓN': 'PASAPORTE'}`}
                                     onChange={(e) => {
                                         const upperCaseValue = e.target.value.toUpperCase();
                                         e.target.value = upperCaseValue;
@@ -356,7 +381,7 @@ export const AltaClienteFormComponent = memo(() => {
                                     autoComplete="off"
                                     tabIndex="6"
                                 />
-                                <label htmlFor="numero_identificacion">NÚMERO IDENTIFICACIÓN</label>
+                                <label htmlFor="numero_identificacion">NÚMERO {propForm.watch("tipo_identificacion") === '1' || propForm.watch("tipo_identificacion") === '' ? 'IDENTIFICACIÓN': 'PASAPORTE'}</label>
                                 {
                                     propForm.errors?.numero_identificacion && <div
                                         className="invalid-feedback-custom">{propForm.errors?.numero_identificacion.message}</div>
