@@ -1,7 +1,7 @@
 import {
     FormatoDenominacion,
     FormatoMoneda,
-    redondearNumero,
+    redondearNumero, validarAlfaNumerico,
     validarEnteroPositivo,
     validarMoneda
 } from "../../../utils";
@@ -67,6 +67,12 @@ export const Denominacion = ({type, moneda, options}) => {
                                                                     if (parseFloat(value) < 0.0){
                                                                         setValue(`denominacion_${name}`, 0)
                                                                         return false;
+                                                                    }
+                                                                    return validarMoneda(`denominacion_${name}`, value);
+                                                                }else if(type === 'CNC'){
+                                                                    if (parseFloat(value) < 0.0){
+                                                                        setValue(`denominacion_${name}`, value)
+                                                                        return true;
                                                                     }
                                                                     return validarMoneda(`denominacion_${name}`, value);
                                                                 }else{

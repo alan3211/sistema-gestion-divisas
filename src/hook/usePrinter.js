@@ -6,8 +6,8 @@ import {
     getTextDivisa,
     opciones
 } from "../utils";
-import {useEffect, useState} from "react";
-import {obtieneTicket} from "../services/tools-services";
+
+import {obtieneDisposicionLPB, obtieneTicket} from "../services/tools-services";
 import {numeroALetras} from "../utils/numerosANombre";
 
 export const usePrinter = (datos) => {
@@ -44,6 +44,33 @@ export const usePrinter = (datos) => {
                 if(tipo === 0){
                     abreCajon();
                 }
+            } else {
+                console.log("Problema al imprimir: " + resp)
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // Genera estructura de ticket LPB
+    const getEstructuraTicketLPB = async () => {
+        try {
+
+            const valores = {
+                usuario: datos["No Usuario"],
+                ticket: datos["No Ticket"]
+            }
+            const encryptedData = encryptRequest(valores);
+            const response = await obtieneDisposicionLPB(encryptedData);
+            console.log(response);
+            dataTicket = response.result_set[0].Disposicion;
+            const conector = new connetor_plugin()
+            ticketLPB(0, conector,dataTicket)
+            ticketLPB(1, conector,dataTicket)
+            const resp = await conector.imprimir(nombreImpresora, api_key);
+            if (resp === true) {
+                mostrar_impresoras();
+                console.log("imprimir: " + resp)
             } else {
                 console.log("Problema al imprimir: " + resp)
             }
@@ -122,6 +149,29 @@ export const usePrinter = (datos) => {
         conector.cut("0")
     }
 
+    //Estructura para el ticket LPB
+    const ticketLPB = (opcion, conector,disposicionLPB) => {
+
+        conector.fontsize("1")
+        conector.textaling("center")
+        conector.text(`${opcion === 0 ? '-- ORIGINAL --' : '-- COPIA USUARIO --'}`)
+        conector.img_url("https://grocerys-front.wittysmoke-209c31ac.eastus.azurecontainerapps.io/static/media/logo.024785155dae25af5d6a.png")
+        conector.fontsize("1")
+        conector.textaling("left")
+        conector.text("------------------------------------------")
+        conector.text(`Fecha: ${formattedDateDD2}    AVISO LPB`)
+        conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas`)
+        conector.text("------------------------------------------")
+        conector.text(disposicionLPB)
+        conector.text("------------------------------------------")
+        conector.feed("2")
+        conector.textaling("center")
+        conector.text(`______________________`)
+        conector.text(` Firma de conformidad `)
+        conector.feed("5")
+        conector.cut("0")
+    }
+
     //Ticket para Cajero y Administrador Sucursal
     const ticketCajaSucursal = (opcion, conector) => {
         const currency = {
@@ -196,9 +246,14 @@ export const usePrinter = (datos) => {
         }
     }
 
+    const imprimeTicketLPB = async () => {
+        const response = await getEstructuraTicketLPB();
+    }
+
     return {
         imprimir:imprimirDoc,
         mostrar_impresoras,
         imprimeTicketNuevamente,
+        imprimeTicketLPB,
     }
 }

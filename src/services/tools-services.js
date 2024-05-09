@@ -17,7 +17,7 @@ import {
     TOOLS_OBTIENE_ACTIVIDAD_RECIENTE_URL,
     TOOLS_OBTIENE_DATOS_TICKET_URL, TOOLS_OBTIENE_DENOMINACIONES_BOVEDA_URL,
     TOOLS_OBTIENE_DENOMINACIONES_CAJA_URL,
-    TOOLS_OBTIENE_DENOMINACIONES_URL,
+    TOOLS_OBTIENE_DENOMINACIONES_URL, TOOLS_OBTIENE_DISPO_LPB_TICKET_URL,
     TOOLS_OBTIENE_NOTIFICACIONES_URL, TOOLS_SOLICITUD_ENVIO_VALORES_URL
 } from "../utils";
 
@@ -274,6 +274,32 @@ export const consultaDetalleDenominaciones = async (encryptedData) => {
 export const obtieneTicket = async (encryptedData) => {
     try {
         const url = `${TOOLS_OBTIENE_DATOS_TICKET_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:encryptedData})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+
+export const obtieneDisposicionLPB = async (encryptedData) => {
+    try {
+        const url = `${TOOLS_OBTIENE_DISPO_LPB_TICKET_URL}`;
 
         const response = await fetch(url, {
             method: 'POST',

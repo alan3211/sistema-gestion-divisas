@@ -1,7 +1,7 @@
-//const URL = 'https://grocerys-back-dev.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+const URL = 'https://grocerys-back-dev.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
 //const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
 //const URL = 'http://192.168.101.45:9000/';
-const URL = 'http://localhost:9000/';
+//const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
@@ -19,6 +19,7 @@ export const SUCURSAL_URL = `${URL}sucursal/`;
 export const CAJA_URL = `${URL}caja/`;
 export const PERFIL_URL = `${URL}perfil/`;
 export const REPORTES_URL = `${URL}reportes/`;
+export const PLD_URL = `${URL}pld/`;
 export const ADMINISTRACION_URL = `${URL}administracion/`;
 export const TOOLS_URL = `${URL}tools/`;
 export const COMMONS_URL = `${URL}commons/`;
@@ -85,6 +86,15 @@ export const REPORTES_CONSULTA_REPORTES_URL = `${REPORTES_URL}consulta/reporte`
 export const REPORTES_CONSULTA_TITULO_URL = `${REPORTES_URL}consulta/titulo`
 export const REPORTES_CONSULTA_REPORTES_CAJA_URL = `${REPORTES_URL}consulta/reporte/caja`
 
+/* PLD */
+/* CONSULTA ALARMAS */
+export const PLD_ALARMA_CONSULTA_URL = `${PLD_URL}consulta/alarmas`
+export const PLD_CONSULTA_ANALISIS_URL = `${PLD_URL}consulta/analisis`
+
+export const PLD_CONSULTA_MOVIMIENTOS_URL = `${PLD_URL}consulta/movimientos`
+export const PLD_GUARDA_ANALISIS_URL = `${PLD_URL}guarda/analisis`
+
+
 /* USUARIO PERFIL*/
 export const PERFIL_EDITA_URL = `${PERFIL_URL}actualiza`
 export const PERFIL_CAMBIA_PASS_URL = `${PERFIL_URL}cambia/password`
@@ -106,6 +116,7 @@ export const TOOLS_MUESTRA_DENOMINACIONES_URL = `${TOOLS_URL}muestra/denominacio
 export const TOOLS_CONSULTA_DETALLE_DENOMINACIOENS_URL = `${TOOLS_URL}consulta/detalle/denominaciones`
 
 export const TOOLS_OBTIENE_DATOS_TICKET_URL = `${TOOLS_URL}consulta/datosTicket`
+export const TOOLS_OBTIENE_DISPO_LPB_TICKET_URL = `${TOOLS_URL}consulta/disposicionLPB`
 export const TOOLS_OBTIENE_NOTIFICACIONES_URL = `${TOOLS_URL}obtiene/notificaciones`
 export const TOOLS_ACTUALIZA_NOTIFICACIONES_URL = `${TOOLS_URL}actualiza/notificaciones`
 export const TOOLS_OBTIENE_ACTIVIDAD_RECIENTE_URL = `${TOOLS_URL}obtiene/actividad-reciente`

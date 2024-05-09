@@ -3,15 +3,23 @@ import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useCatalogo} from "../../../hook";
+import {TableComponent} from "../../commons/tables";
+import {encryptRequest} from "../../../utils";
+import {consultaAlarmas} from "../../../services/pld-services";
 
 export const AlertasMonitoreo = () => {
 
-    const {register,formState:{errors}} =  useForm();
+    const {register,handleSubmit,watch,formState:{errors}} =  useForm();
     const [meses, setMeses] = useState([]);
     const [anios, setAnios] = useState([]);
     const navigate = useNavigate();
     const catalogo = useCatalogo([29])
-    console.log(catalogo)
+
+    const [isLoading,setIsLoading] = useState(false);
+    const [isDetailShow,setIsDetailShow] = useState(false);
+    const [dataAlerta, setDataAlerta] = useState([]);
+    const [dataAlertaDetalle, setDataAlertaDetalle] = useState([]);
+
 
     useEffect(() => {
         // Obtenemos los nombres capitalizados de los meses
@@ -43,6 +51,52 @@ export const AlertasMonitoreo = () => {
         }
     }, [Object.keys(localStorage).length]);
 
+    const optionsAlerta = {
+        showMostrar:true,
+        excel:true,
+        tableName:'Consulta Alarma',
+        buscar: true,
+        paginacion: true,
+        tools:[
+            {columna:"Detalle",tool:"ver-detalle-alarma",deps:{setIsDetailShow,setDataAlertaDetalle}},
+            {columna:"Analisis",tool:"analisis"},
+            {columna:"Reporte",tool:"descarga-reporte"},
+        ],
+        filters:[{columna:"Monto Operado",filter:'currency'},],
+        disabledColumnsExcel:['Detalle','Analisis','Reporte']
+    }
+
+    const optionsAlertaDetalle = {
+        showMostrar:true,
+        excel:true,
+        tableName:'Consulta Detalle Alarma',
+        buscar: true,
+        paginacion: true,
+        filters:[{columna:"Monto Opera",filter:'currency'},{columna:"Tipo Cambio",filter:'currency'}],
+    }
+
+    const consultaAlertas = handleSubmit(async (data) => {
+        console.log(data);
+        setIsLoading(true);
+
+        const valores = {
+            alarma: 1,
+            numero_usuario: ''
+        }
+        const encryptedData = encryptRequest(valores);
+
+        const datosAlarma = await consultaAlarmas(encryptedData);
+        if (datosAlarma.hasOwnProperty("resultSize")) {
+            setDataAlerta([]);
+            setIsLoading(false);
+        } else {
+            setDataAlerta(datosAlarma);
+            setIsLoading(false);
+        }
+
+
+    });
+
     return(
         <Layout moduleName={moduleName}>
             <CardLayout title={moduleName.module} icon={moduleName.icon}>
@@ -67,8 +121,8 @@ export const AlertasMonitoreo = () => {
                                 <option value="">SELECCIONA UNA OPCIÓN</option>
                                 {
                                     catalogo[0]?.map((ele) => (
-                                        <option key={ele.Id + '-' + ele.descripcion}
-                                                value={ele.Id}>
+                                        <option key={ele.id + '-' + ele.descripcion}
+                                                value={ele.id}>
                                             {ele.descripcion}
                                         </option>
                                     ))
@@ -132,12 +186,32 @@ export const AlertasMonitoreo = () => {
                 </div>
                 <div className="d-flex justify-content-center align-items-center">
                     <div className="col-md-12 mx-auto text-center">
-                        <button type="button" className="btn btn-primary mt-2 ms-2 me-2">
+                        <button type="button" className="btn btn-primary mt-2 ms-2 me-2"
+                            onClick={consultaAlertas}
+                        >
                             <span className="bi bi-search me-2" aria-hidden="true"></span>
                             CONSULTAR
                         </button>
                     </div>
                 </div>
+
+                {
+                    !isLoading && <TableComponent data={dataAlerta} options={optionsAlerta}/>
+                }
+
+                {
+                    isDetailShow &&(
+                    <div className="row">
+                        <h5 className="text-blue text-center">
+                            <i className="bi bi-folder-symlink-fill me-2"></i>
+                            <span>Detalle</span>
+                        </h5>
+                        <TableComponent data={dataAlertaDetalle} options={optionsAlertaDetalle}/>
+                    </div>)
+
+                }
+
+
             </CardLayout>
         </Layout>
     );
