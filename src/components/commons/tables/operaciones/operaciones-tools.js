@@ -10,6 +10,9 @@ import {
     IndicadoresDivisas, AccionesBoveda, CancelarEnvioBoveda, MontoSolicitud, OperacionEstatus, UsuariosSistema,
     SolicitaDotacion, AccionesRecepcionValores, AccionesEnvioValores, AccionesUsuariosSistema,
 } from "../componentes-tools";
+import {AlarmasPLD} from "../componentes-tools/pld/alarmas/AlarmasPLD";
+import {Analisis} from "../componentes-tools/pld/analisis/Analisis";
+import {DescargaReporte} from "../componentes-tools/pld/reportes/DescargaReporte";
 
 const toolComponents = {
     estatus: EstatusTool,
@@ -35,6 +38,9 @@ const toolComponents = {
     'acciones-recepcion-valores':AccionesRecepcionValores,
     'acciones-envio-valores': AccionesEnvioValores,
     'acciones-usuarios-sistema': AccionesUsuariosSistema,
+    'ver-detalle-alarma': AlarmasPLD,
+    'analisis': Analisis,
+    'descarga-reporte': DescargaReporte,
 };
 
 export const getTools = (toolInfo, item, index) => {

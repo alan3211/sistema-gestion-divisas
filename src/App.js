@@ -28,6 +28,7 @@ import {AlertasMonitoreo} from "./components/pld/alertasMonitoreo/AlertasMonitor
 import {PerfilTransaccional} from "./components/pld/perfilTransaccional/PerfilTransaccional";
 import {Riesgo} from "./components/pld/riesgo/Riesgo";
 import {ReportesPrincipal} from "./components/administracion/reportes/ReportesPrincipal";
+import {Movimientos} from "./components/pld/consultas/Movimientos";
 
 export let dataG = JSON.parse(localStorage.getItem('usuario_data')) || {
     sucursal:0,
@@ -86,6 +87,8 @@ const App = () => {
                            element={<MainLayout><PerfilTransaccional/></MainLayout>}/>
                     <Route exact path="/riesgo"
                            element={<MainLayout><Riesgo/></MainLayout>}/>
+                    <Route exact path="/consultaMovimientos"
+                           element={<MainLayout><Movimientos/></MainLayout>}/>
                     <Route exact path="/cargaTipoCambio" element={
                         <MainLayout><CargaTipoCambioProvider><CargaTipoCambio/></CargaTipoCambioProvider></MainLayout>}/>
                     <Route exact path="/usuariosSistema" element={<MainLayout><Usuarios/></MainLayout>}/>

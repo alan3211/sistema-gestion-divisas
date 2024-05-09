@@ -98,3 +98,23 @@ export const ModalGenericTool = ({options,children}) => {
         </Modal>
     );
 }
+
+export const ModalGenericPLDTool = ({options,children}) => {
+    return (
+        <Modal size={options.size} centered show={options.showModal} backdrop="static" keyboard={false}>
+            <Modal.Header>
+                <Modal.Title>
+                    <h5 className="card-title">
+                        <i className={options.icon}></i>
+                        {options.title}
+                    </h5>
+                </Modal.Title>
+                {!options.waiting && <button type="button" className="btn-close" onClick={options.closeModal} aria-label="Close" style={{ fontSize: '48px' }} ></button>}
+            </Modal.Header>
+            <Modal.Body style={{ maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
+                <p>{options.subtitle}</p>
+                {children}
+            </Modal.Body>
+        </Modal>
+    );
+}

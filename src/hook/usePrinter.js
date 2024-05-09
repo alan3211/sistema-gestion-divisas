@@ -6,8 +6,8 @@ import {
     getTextDivisa,
     opciones
 } from "../utils";
-import {useEffect, useState} from "react";
-import {obtieneTicket} from "../services/tools-services";
+
+import {obtieneDisposicionLPB, obtieneTicket} from "../services/tools-services";
 import {numeroALetras} from "../utils/numerosANombre";
 
 export const usePrinter = (datos) => {
@@ -55,19 +55,18 @@ export const usePrinter = (datos) => {
     // Genera estructura de ticket LPB
     const getEstructuraTicketLPB = async () => {
         try {
-            /*
+
             const valores = {
                 usuario: datos["No Usuario"],
                 ticket: datos["No Ticket"]
             }
             const encryptedData = encryptRequest(valores);
-            const response = await obtieneTicket(encryptedData);
+            const response = await obtieneDisposicionLPB(encryptedData);
             console.log(response);
-            dataTicket = response.result_set[0];
-            */
+            dataTicket = response.result_set[0].Disposicion;
             const conector = new connetor_plugin()
-            ticketLPB(0, conector)
-            ticketLPB(1, conector)
+            ticketLPB(0, conector,dataTicket)
+            ticketLPB(1, conector,dataTicket)
             const resp = await conector.imprimir(nombreImpresora, api_key);
             if (resp === true) {
                 mostrar_impresoras();
@@ -151,7 +150,7 @@ export const usePrinter = (datos) => {
     }
 
     //Estructura para el ticket LPB
-    const ticketLPB = (opcion, conector) => {
+    const ticketLPB = (opcion, conector,disposicionLPB) => {
 
         conector.fontsize("1")
         conector.textaling("center")
@@ -163,7 +162,7 @@ export const usePrinter = (datos) => {
         conector.text(`Fecha: ${formattedDateDD2}    AVISO LPB`)
         conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas`)
         conector.text("------------------------------------------")
-        conector.text("TEXTO DESCRIPTIVO DE LPB")
+        conector.text(disposicionLPB)
         conector.text("------------------------------------------")
         conector.feed("2")
         conector.textaling("center")
