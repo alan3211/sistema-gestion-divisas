@@ -649,8 +649,10 @@ export const Consulta = () => {
            Si la sucursal es la que esta generando el reporte entonces no le solicites la sucursal directamente,
            solamente agrega el parametro manualmente.
          */
-        if (dataG.id_perfil === 3) {
+        if ([3,4].includes(dataG.id_perfil)) {
             data.sucursal = dataG.sucursal.toString();
+        }else if([1,2,6].includes(dataG.id_perfil)){
+            data.sucursal = "1000";
         }
         const titulo = await obtenTitulo();
 
@@ -667,7 +669,7 @@ export const Consulta = () => {
         //else{
             // Si la sucursal que se llamo fue TODAS entonces se muestra la logica de la paginacion por hojas en el excel y PDF
 
-            if(["Rep_TotalVentaDivisas","Rep_TotalCompraDivisas"].includes(reporte.Proceso) && parseInt(data.sucursal) === 1000) {
+            if(["Rep_TotalVentaDivisas","Rep_TotalCompraDivisas","Rep_UsuariosSistema"].includes(reporte.Proceso) && (parseInt(data.sucursal) === 1000 || parseInt(data.sucursal) === 5056)) {
                 const datosOrdenados = responseData.result_set.map((fila) => {
                     const filaOrdenada = {};
                     responseData.headers.forEach((columna) => {
@@ -771,61 +773,64 @@ export const Consulta = () => {
                         worksheet.addRow(rowData);
                     });
 
-                    // Calcular y agregar los totales
-                    const totalsRow = worksheet.addRow([]);
+                    // Para reporte de usuarios no validar el total
+                    if(data.proceso !== 'Rep_UsuariosSistema') {
+                        // Calcular y agregar los totales
+                        const totalsRow = worksheet.addRow([]);
 
-                    // Establecer el valor de la primera celda como "Totales" y aplicar estilo
-                    const totalsCell = totalsRow.getCell(1);
-                    totalsCell.value = 'Totales';
-                    totalsCell.font = { bold: true }; // Asegurar que el texto esté en negrita
-                    totalsCell.alignment = { horizontal: 'center' }; // Alinear el texto al centro
+                        // Establecer el valor de la primera celda como "Totales" y aplicar estilo
+                        const totalsCell = totalsRow.getCell(1);
+                        totalsCell.value = 'Totales';
+                        totalsCell.font = {bold: true}; // Asegurar que el texto esté en negrita
+                        totalsCell.alignment = {horizontal: 'center'}; // Alinear el texto al centro
 
-                    headerRow.eachCell((headerCell, index) => {
-                        const columnName = headerCell.value;
-                        const keywords = filters.map(filtro => filtro.columna);
-                        const keywordsSinSuma = ['Cambio','Promedio','Saldo','Limite Max','Excedente','Denominacion'];
-                        // Verificar si el nombre de la columna contiene al menos una de las palabras clave
-                        const containsKeyword = keywords.some(keyword => columnName.includes(keyword));
+                        headerRow.eachCell((headerCell, index) => {
+                            const columnName = headerCell.value;
+                            const keywords = filters.map(filtro => filtro.columna);
+                            const keywordsSinSuma = ['Cambio', 'Promedio', 'Saldo', 'Limite Max', 'Excedente', 'Denominacion'];
+                            // Verificar si el nombre de la columna contiene al menos una de las palabras clave
+                            const containsKeyword = keywords.some(keyword => columnName.includes(keyword));
 
-                        if (index > 0 && containsKeyword) {
-                            const columnValues = worksheet.getColumn(index).values.slice(4); // Comenzar desde la quinta fila (después de los encabezados)
-                            let total = 0;
+                            if (index > 0 && containsKeyword) {
+                                const columnValues = worksheet.getColumn(index).values.slice(4); // Comenzar desde la quinta fila (después de los encabezados)
+                                let total = 0;
 
-                            columnValues.forEach((val, rowIndex) => {
-                                if (rowIndex === 0) return; // Ignorar la primera fila (nombre de la columna)
-                                // Verificar si val es un número.
-                                const parsedValue = parseFloat(val.replace(/[^\d.-]/g, ''));
-                                if (!isNaN(parsedValue)) {
-                                    // Verificar si el nombre de la columna es un dígito
-                                    const columnNameIsDigit = /^\d+$/.test(columnName);
-                                    const containsSinSuma = keywordsSinSuma.some(keyword => {
-                                        if(columnName === 'Saldo Inicial USD' || columnName === 'Saldo Inicial MXP' ||
-                                            columnName === 'Saldo Final USD' || columnName === 'Saldo Final MXP'){
-                                            return false;
+                                columnValues.forEach((val, rowIndex) => {
+                                    if (rowIndex === 0) return; // Ignorar la primera fila (nombre de la columna)
+                                    // Verificar si val es un número.
+                                    const parsedValue = parseFloat(val.replace(/[^\d.-]/g, ''));
+                                    if (!isNaN(parsedValue)) {
+                                        // Verificar si el nombre de la columna es un dígito
+                                        const columnNameIsDigit = /^\d+$/.test(columnName);
+                                        const containsSinSuma = keywordsSinSuma.some(keyword => {
+                                            if (columnName === 'Saldo Inicial USD' || columnName === 'Saldo Inicial MXP' ||
+                                                columnName === 'Saldo Final USD' || columnName === 'Saldo Final MXP') {
+                                                return false;
+                                            }
+                                            return columnName.includes(keyword)
+                                        });
+                                        if ((!columnNameIsDigit || rowIndex !== 0) && !containsSinSuma) {
+                                            total += parsedValue;
                                         }
-                                        return columnName.includes(keyword)
-                                    });
-                                    if ((!columnNameIsDigit || rowIndex !== 0) && !containsSinSuma) {
-                                        total += parsedValue;
                                     }
-                                }
-                            })
+                                })
 
-                            if (total !== 0) { // Solo asignar el total si no es cero
-                                totalsRow.getCell(index).value = total;
-                                totalsRow.font = { bold: true }; // Asegurar que el texto esté en negrita
-                                // Verificar si el filtro de la columna es 'currency' y aplicar el formato de moneda si es así
-                                const currencyFilter = filters.find(filtro => filtro.columna === columnName && filtro.filter === 'currency');
-                                if(currencyFilter) {
-                                    worksheet.getColumn(index).numFmt = '$#,##0.00';
+                                if (total !== 0) { // Solo asignar el total si no es cero
+                                    totalsRow.getCell(index).value = total;
+                                    totalsRow.font = {bold: true}; // Asegurar que el texto esté en negrita
+                                    // Verificar si el filtro de la columna es 'currency' y aplicar el formato de moneda si es así
+                                    const currencyFilter = filters.find(filtro => filtro.columna === columnName && filtro.filter === 'currency');
+                                    if (currencyFilter) {
+                                        worksheet.getColumn(index).numFmt = '$#,##0.00';
+                                    }
+                                } else {
+                                    totalsRow.getCell(index).value = ''; // Dejar vacía la celda de total si la sumatoria es cero
                                 }
                             } else {
-                                totalsRow.getCell(index).value = ''; // Dejar vacía la celda de total si la sumatoria es cero
+                                if (index !== 1) totalsRow.getCell(index).value = ''; // Dejar vacías las celdas de los totales para las columnas que no cumplen con los requisitos
                             }
-                        }else {
-                            if(index !== 1) totalsRow.getCell(index).value = ''; // Dejar vacías las celdas de los totales para las columnas que no cumplen con los requisitos
-                        }
-                    });
+                        });
+                    }
 
                     // Construir el blob y descargar el archivo
                     const buffer = await workbook.xlsx.writeBuffer();
@@ -855,64 +860,78 @@ export const Consulta = () => {
                 // Crear una tabla
                 const headers = responseData?.headers;
                 // const dataT = responseData?.result_set.map(fila => headers.map(header => fila[header]));
+                let rows;
+                // Para reporte de usuarios no validar el total
+                console.log("DATA PROCESO: ",data.proceso)
+                if(data.proceso !== 'Rep_UsuariosSistema') {
+                    // Calcular totales
+                    const totalsRow = headers.map((header, index) => {
+                        const keywords = filters.map(filtro => filtro.columna);
+                        const containsKeyword = keywords.some(keyword => header.includes(keyword));
+                        const keywordsSinSuma = ['Cambio', 'Promedio', 'Saldo', 'Limite Max', 'Excedente', 'Denominacion'];
+                        const containsSinSuma = keywordsSinSuma.some(keyword => {
+                            if (header === 'Saldo Inicial USD' || header === 'Saldo Inicial MXP'
+                                || header === 'Saldo Final USD' || header === 'Saldo Final MXP') {
+                                return false;
+                            }
+                            return header.includes(keyword)
+                        });
 
-                // Calcular totales
-                const totalsRow = headers.map((header, index) => {
-                    const keywords = filters.map(filtro => filtro.columna);
-                    const containsKeyword = keywords.some(keyword => header.includes(keyword));
-                    const keywordsSinSuma = ['Cambio','Promedio','Saldo','Limite Max','Excedente','Denominacion'];
-                    const containsSinSuma = keywordsSinSuma.some(keyword => {
-                        if(header === 'Saldo Inicial USD' || header === 'Saldo Inicial MXP'
-                            || header === 'Saldo Final USD' || header === 'Saldo Final MXP'){
-                            return false;
-                        }
-                        return header.includes(keyword)
-                    });
-
-                    if (index > 0 && containsKeyword && !containsSinSuma) {
-                        const total = datosOrdenados.reduce((acc, curr) => acc + (parseFloat(curr[header]) || 0), 0);
-                        return total.toFixed(2);
-                    } else {
-                        if (index === 0) return 'Totales';
-                        else return '';
-                    }
-                });
-
-                // Aplicar filtros y formato a la fila de totales
-                totalsRow.forEach((value, index) => {
-                    const header = headers[index];
-                    const keywordsSinSuma = ['Cambio','Promedio','Saldo','Limite Max','Excedente','Denominacion'];
-                    const containsSinSuma = keywordsSinSuma.some(keyword => {
-                        if(header === 'Saldo Inicial USD' || header === 'Saldo Inicial MXP' ||
-                            header === 'Saldo Final USD' || header === 'Saldo Final MXP'){
-                            return false;
-                        }
-                        return header.includes(keyword)
-                    });
-                    if(!containsSinSuma){
-                        const filter = getFilterForColumn(header);
-                        if (filter && filter !== 'tooltip') {
-                            totalsRow[index] = applyFilter(filter, parseFloat(value));
-                        }
-                    }
-                });
-
-                // Aplicar filtros y formato a los datos en el PDF
-                datosOrdenados.forEach((fila) => {
-                    headers.forEach((columna) => {
-                        const filter = getFilterForColumn(columna);
-                        if (filter && filter !== 'tooltip') {
-                            fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
+                        if (index > 0 && containsKeyword && !containsSinSuma) {
+                            const total = datosOrdenados.reduce((acc, curr) => acc + (parseFloat(curr[header]) || 0), 0);
+                            return total.toFixed(2);
+                        } else {
+                            if (index === 0) return 'Totales';
+                            else return '';
                         }
                     });
-                });
 
-                // Generar la tabla para el PDF
-                let rows = datosOrdenados.map(fila => headers.map(header => fila[header]));
+                    // Aplicar filtros y formato a la fila de totales
+                    totalsRow.forEach((value, index) => {
+                        const header = headers[index];
+                        const keywordsSinSuma = ['Cambio', 'Promedio', 'Saldo', 'Limite Max', 'Excedente', 'Denominacion'];
+                        const containsSinSuma = keywordsSinSuma.some(keyword => {
+                            if (header === 'Saldo Inicial USD' || header === 'Saldo Inicial MXP' ||
+                                header === 'Saldo Final USD' || header === 'Saldo Final MXP') {
+                                return false;
+                            }
+                            return header.includes(keyword)
+                        });
+                        if (!containsSinSuma) {
+                            const filter = getFilterForColumn(header);
+                            if (filter && filter !== 'tooltip') {
+                                totalsRow[index] = applyFilter(filter, parseFloat(value));
+                            }
+                        }
+                    });
 
-                // Agregar fila de totales al final del arreglo rows
-                rows.push(totalsRow);
-
+                    // Aplicar filtros y formato a los datos en el PDF
+                    datosOrdenados.forEach((fila) => {
+                        headers.forEach((columna) => {
+                            const filter = getFilterForColumn(columna);
+                            if (filter && filter !== 'tooltip') {
+                                fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
+                            }
+                        });
+                    });
+                    // Generar la tabla para el PDF
+                    rows = datosOrdenados.map(fila => headers.map(header => fila[header]));
+                    // Agregar fila de totales al final del arreglo rows
+                    rows.push(totalsRow);
+                }else{
+                    console.log("USERS!!!!!")
+                    // Aplicar filtros y formato a los datos en el PDF
+                    datosOrdenados.forEach((fila) => {
+                        headers.forEach((columna) => {
+                            const filter = getFilterForColumn(columna);
+                            if (filter && filter !== 'tooltip') {
+                                fila[columna] = applyFilter(filter, parseFloat(fila[columna]));
+                            }
+                        });
+                    });
+                    // Generar la tabla para el PDF
+                    rows = datosOrdenados.map(fila => headers.map(header => fila[header]));
+                }
                 pdf.autoTable({
                     head: [headers],  // Encabezados de la tabla
                     body: rows,  // Datos de la tabla

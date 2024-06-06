@@ -17,7 +17,7 @@ import {DenominacionProvider} from "../../../../../context/denominacion/Denomina
 import {ModalLoading} from "../../../modals/ModalLoading";
 import {dataG} from "../../../../../App";
 import {Overlay} from "../../../toast/Overlay";
-import {obtieneDenominaciones} from "../../../../../services";
+import {obtieneDenominaciones, obtieneDenominacionesNota} from "../../../../../services";
 
 export const AccionesSucursales = ({item, index, refresh}) => {
     const [guarda, setGuarda] = useState(false);
@@ -46,6 +46,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         habilita,
         setHabilita,
         setTotalMonto,
+        item,
     }
 
     const optionsLoad = {
@@ -138,12 +139,15 @@ export const AccionesSucursales = ({item, index, refresh}) => {
 
     useEffect(() => {
         const getDenominacionesAsignadas =  async () => {
+
+            let data_denominacion =  {};
             const valores = {
-                divisa: item.Moneda,
-                ticket: item["No Movimiento"]
+                    divisa: item.Moneda,
+                    ticket: item["No Movimiento"]
             }
             const encryptedData = encryptRequest(valores);
-            const data_denominacion = await getDenominaciones(encryptedData)
+            data_denominacion = await getDenominaciones(encryptedData)
+
             console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }
@@ -153,10 +157,11 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                 usuario: dataG.usuario,
                 sucursal: dataG.sucursal,
                 moneda: item.Moneda,
-                tipo_movimiento: 'C'
+                tipo_movimiento: 'C',
+                no_movimiento: item["No Movimiento"]
             }
             const encryptedData = encryptRequest(valores);
-            const data_denominacion = await obtieneDenominaciones(encryptedData);
+            const data_denominacion = await obtieneDenominacionesNota(encryptedData);
             console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }

@@ -1,4 +1,4 @@
-import {useOperaCliente} from "../../../hook";
+import {useOperaCliente, usePrinter} from "../../../hook";
 import {ModalDeliverComponent} from "../../commons/modals";
 import {useContext, useState} from "react";
 import {CardLayout} from "../../commons";
@@ -16,6 +16,8 @@ export const DatosClientes = ({operacion, cliente}) => {
     const {datos,setContinuaOperacion, busquedaCliente: {
         setShowCliente,
     }} = useContext(CompraVentaContext);
+
+    const {abreCajon} = usePrinter();
 
     console.log("DATOS!!!",datos)
     console.log("DATOS CLIENTE @@@!!!",cliente);
@@ -67,7 +69,10 @@ export const DatosClientes = ({operacion, cliente}) => {
             setShowCliente(false);
             setContinuaOperacion(false);
         }else{
+            // Abre el cajon para ingresar los billetes
             setShowCustomModal(true);
+            abreCajon();
+            console.log("ABRE CAJON CUANDO muestra el MODAL");
         }
     }
 

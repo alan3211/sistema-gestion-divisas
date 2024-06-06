@@ -255,5 +255,6 @@ export const usePrinter = (datos) => {
         mostrar_impresoras,
         imprimeTicketNuevamente,
         imprimeTicketLPB,
+        abreCajon,
     }
 }

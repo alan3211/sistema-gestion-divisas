@@ -1,7 +1,7 @@
 import {
     CAJA_CONSULTA_URL,
     OPERACIONES_ALTACLIENTE_URL,
-    OPERACIONES_BUSCACLIENTE_URL, OPERACIONES_CONSULTA_TIPOCAMBIO_URL,
+    OPERACIONES_BUSCACLIENTE_URL, OPERACIONES_CONSULTA_TIPOCAMBIO_URL, OPERACIONES_CONSULTALDENOMINACIONES_NOTA_URL,
     OPERACIONES_CONSULTALDENOMINACIONES_URL,
     OPERACIONES_CONVERSION_URL, OPERACIONES_ENVIAMENSAJES_DOTA_PARCIAL_URL,
     OPERACIONES_ENVIAMENSAJES_URL,
@@ -160,6 +160,32 @@ export const obtieneDenominaciones = async (formValues) =>{
         throw error;
     }
 }
+
+export const obtieneDenominacionesNota = async (formValues) =>{
+    try {
+        const url = `${OPERACIONES_CONSULTALDENOMINACIONES_NOTA_URL}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({encryptedData:formValues})
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al backend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
 
 export const hacerOperacion =  async(formValues) => {
     try {
