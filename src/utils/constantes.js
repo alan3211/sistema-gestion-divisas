@@ -37,6 +37,7 @@ export const OPERACIONES_BUSCACLIENTE_URL = `${OPERACIONES_URL}buscaCliente`
 export const OPERACIONES_HACEROPERACION_URL = `${OPERACIONES_URL}realiza/preoperacion`
 export const OPERACIONES_REALIZAOPERACION_URL = `${OPERACIONES_URL}realiza/operacion`
 export const OPERACIONES_CONSULTALDENOMINACIONES_URL = `${OPERACIONES_URL}consulta/denominaciones`
+export const OPERACIONES_CONSULTALDENOMINACIONES_NOTA_URL = `${OPERACIONES_URL}consulta/denominaciones/nota-credito`
 export const OPERACIONES_ENVIAMENSAJES_URL = `${OPERACIONES_URL}envia/mensaje`
 export const OPERACIONES_ENVIAMENSAJES_DOTA_PARCIAL_URL = `${OPERACIONES_URL}envia/mensaje/dotacion/parcial`
 export const OPERACIONES_VALIDA_INFORMACION_URL = `${OPERACIONES_URL}valida/informacion`

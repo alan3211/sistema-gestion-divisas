@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../context/denominacion/DenominacionContext";
-import {obtieneDenominaciones} from "../services";
+import {obtieneDenominaciones, obtieneDenominacionesNota} from "../services";
 import {dataG} from "../App";
 import {encryptRequest, redondearNumero} from "../utils";
 
@@ -13,7 +13,10 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionB,
     } = useContext(DenominacionContext);
 
-    const {title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,sucursal} =  options;
+    const {
+        title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,sucursal,
+        item
+    } =  options;
     let denominacion = {};
 
     if(type === 'R'){
@@ -46,7 +49,9 @@ export const useDenominacion = ({type,moneda,options}) => {
         const cantidad = parseFloat(watchAllInputs[`denominacion_${name}`]) || 0;
         const denominacionValue = parseFloat(elemento.Denominacion);
         if(elemento.hasOwnProperty("Billetes Disponibles")){
-            if([6].includes(dataG.id_perfil)){
+            if(type === 'CNC'){
+                return redondearNumero(parseFloat(cantidad * denominacionValue));
+            }else if([6].includes(dataG.id_perfil)){
                 if (parseFloat(cantidad) < 0.0){
                     return redondearNumero(0.0);
                 }else{
@@ -170,10 +175,23 @@ export const useDenominacion = ({type,moneda,options}) => {
         console.log("DATA")
         console.log(valores);
 
+        if(type === 'CNC'){
+            valores.no_movimiento = item["No Movimiento"];
+        }
+
         const encryptedData = encryptRequest(valores);
 
         if(moneda !== '0'){
-            const denominaciones = await obtieneDenominaciones(encryptedData);
+
+            let denominaciones= [];
+
+            if(type === 'CNC'){
+                denominaciones = await obtieneDenominacionesNota(encryptedData);
+            }else{
+                denominaciones = await obtieneDenominaciones(encryptedData);
+
+            }
+
 
             if(type === 'SD'){
                 console.log("IMPORTE: ",importe)

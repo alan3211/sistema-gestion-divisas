@@ -290,7 +290,6 @@ export const FormCliente = ({tipo}) => {
                             </div>
                         )
                 }
-
                 <div className={`${tipo !== 'cliente' ? 'col-md-12 d-flex justify-content-center' : 'col-md-9'}`}>
                     <button
                         type="button"

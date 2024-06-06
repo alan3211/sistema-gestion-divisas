@@ -80,6 +80,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     const { register,
         handleSubmit,
         setValue,
+        trigger,
         formState: { errors },
         reset } = useForm();
     const [showModal, setShowModal] = useState(false);
@@ -233,6 +234,12 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
             setCierraCajaForm(cierreCaja);
             console.log("LLEGO AQUI")
         } else if(totalDiferencia !== 0 && totalDiferenciaMontos === 0){
+            cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+            setShowDiferencias(true);
+            setCierraCajaForm(cierreCaja)
+            console.log("LLEGO AQUI")
+        } else if(totalDiferencia === 0 && totalDiferenciaMontos !== 0){
+            cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
             setShowDiferencias(true);
             setCierraCajaForm(cierreCaja)
             console.log("LLEGO AQUI")
@@ -426,8 +433,11 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                             placeholder="$"
                                             onChange={(e) => {
                                                 const inputValue = e.target.value;
-                                                const newValue = /^[0-9]\d*$/.test(inputValue) ? inputValue : 0;
-
+                                                let newValue = /^\d*\.?\d+$/.test(inputValue) ? inputValue: "";
+                                                setValue(`${getPropiedad('denominacion',elemento)}`, newValue);
+                                                if(newValue === "") {
+                                                    newValue = 0;
+                                                }
                                                 if(parseInt(newValue) >= 0) {
                                                     setDifParcial((prevDifParcial) => {
                                                         // Crear una copia del estado actual
