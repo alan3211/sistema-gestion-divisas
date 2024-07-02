@@ -203,6 +203,15 @@ export const useDenominacion = ({type,moneda,options}) => {
                         }
                     }
                 }
+            }else if(type === 'D'){
+                for (const key in denominaciones.result_set) {
+                    if (denominaciones.result_set.hasOwnProperty(key)) {
+                        const denominacionValue = parseFloat(denominaciones.result_set[key]["Billetes Disponibles"]);
+                        if (denominacionValue === 0) {
+                            delete denominaciones.result_set[key];
+                        }
+                    }
+                }
             }
 
             setData(denominaciones.result_set);

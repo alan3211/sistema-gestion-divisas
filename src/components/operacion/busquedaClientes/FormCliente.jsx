@@ -12,6 +12,7 @@ import {dataG} from "../../../App";
 import {toast} from "react-toastify";
 import {ModalConfirm} from "../../commons/modals";
 import {usePrinter} from "../../../hook";
+import {consultaLista, obtieneToken} from "../../../services/listas-negras-services";
 
 export const FormCliente = ({tipo}) => {
 
@@ -88,8 +89,14 @@ export const FormCliente = ({tipo}) => {
                     setShowCliente(false);
                     setContinuaOperacion(false);
                 } else {
-                    setShowCliente(true);
-                    setContinuaOperacion(true);
+                    // Valida la lista QSQ
+                   /* const result = await consultaListasProveedor(data);
+                    if(result.success){
+                        toast.error('Error en el sistema, código 6677.', OPTIONS);
+                    }else{*/
+                        setShowCliente(true);
+                        setContinuaOperacion(true);
+                    //}
                 }
             } else {
                 const mensaje = 'A continuación, se muestran los siguientes clientes con coincidencias.';
@@ -100,6 +107,10 @@ export const FormCliente = ({tipo}) => {
             setShowModalAltaUsuario(true); // Me muestra un mensaje de alerta indicandome que el usuario que busque no existe y me pregunta si deseo registrarlo
         }
     });
+
+    const consultaListasProveedor = async (data) => {
+            return await consultaLista(encryptRequest(data));
+    }
 
     const clearBuscaCliente = () => {
         formBuscarCliente.reset();

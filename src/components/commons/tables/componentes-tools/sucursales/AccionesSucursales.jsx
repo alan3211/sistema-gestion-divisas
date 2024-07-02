@@ -13,11 +13,9 @@ import {useForm} from "react-hook-form";
 import {Denominacion, DenominacionTableCaja} from "../../../../operacion/denominacion";
 import {DenominacionContext} from "../../../../../context/denominacion/DenominacionContext";
 import {DenominacionTable} from "../../../../operacion/denominacion/DenominacionTable";
-import {DenominacionProvider} from "../../../../../context/denominacion/DenominacionProvider";
 import {ModalLoading} from "../../../modals/ModalLoading";
 import {dataG} from "../../../../../App";
-import {Overlay} from "../../../toast/Overlay";
-import {obtieneDenominaciones, obtieneDenominacionesNota} from "../../../../../services";
+import {obtieneDenominacionesNota} from "../../../../../services";
 
 export const AccionesSucursales = ({item, index, refresh}) => {
     const [guarda, setGuarda] = useState(false);
@@ -145,6 +143,11 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                     divisa: item.Moneda,
                     ticket: item["No Movimiento"]
             }
+
+
+            console.log("----- DATA DENOMINACIONES ----")
+            console.log(valores);
+
             const encryptedData = encryptRequest(valores);
             data_denominacion = await getDenominaciones(encryptedData)
 
@@ -166,10 +169,27 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             setDatosDenominacion(data_denominacion);
         }
 
+        const getDenominacionesNota =  async () => {
+            const valores = {
+                usuario: dataG.usuario,
+                sucursal: item.Sucursal || dataG.sucursal,
+                moneda: item.Moneda,
+                tipo_movimiento: 'CNC',
+                no_movimiento: item["No Movimiento"]
+            }
+            const encryptedData = encryptRequest(valores);
+            const data_denominacion = await obtieneDenominacionesNota(encryptedData);
+            console.log("Denominacion de la DATA:",data_denominacion)
+            setDatosDenominacion(data_denominacion);
+        }
+
+
         if(item.Operacion === 'Dotación Sucursal'){
             getDenominacionesAsignadas();
         }else if(item.Operacion === 'CIERRE'){
             getDenominacionesCierre();
+        }else if(item.Operacion === 'Nota de Credito'){
+            getDenominacionesNota();
         }
     }, [item.Moneda,item["No Movimiento"]]);
 
@@ -209,7 +229,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                         <div className="col-md-12">
                                             <h5 className="text-center">Monto recibido: <strong>{FormatoMoneda(parseFloat(item.Monto))}</strong> </h5>
                                             {
-                                                item.Operacion === 'Nota de Credito'
+                                                item.Operacion === 'Nota de Credito' && dataG.id_perfil !== 3
                                                     ? (<Denominacion
                                                             type={item.Operacion === 'Dotación Sucursal' ? 'D':item.Operacion === 'Nota de Credito' ? 'CNC' :'C'}
                                                             moneda={item.Moneda}
@@ -223,7 +243,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                                                             monto={item.Monto}
                                                             setTotalMonto={setTotalMonto}
                                                         />)
-
                                                         : (<DenominacionTableCaja
                                                                 moneda={item.Moneda}
                                                                 data={datosDenominacion.result_set}
