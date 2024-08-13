@@ -75,7 +75,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
         dataFormulario.moneda=moneda;
-        dataFormulario.monto= denominacionD.calculateGrandTotal();
+        dataFormulario.monto= parseFloat(denominacionD.calculateGrandTotal());
 
         let denominacionesDotacion = denominacionD.getValues();
         const formValuesD = getDenominacion(moneda,denominacionesDotacion)
@@ -319,7 +319,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                         <i className="bi bi-currency-exchange me-2"></i>
                         DOTACIÓN PARCIAL
                     </button>
-                    <Button variant="primary" disabled={redondearNumero(denominacionC.calculateGrandTotal) != redondearNumero(cambio)} onClick={guardarCambio}>
+                    <Button variant="primary" disabled={redondearNumero(parseFloat(denominacionC.calculateGrandTotal)) != redondearNumero(cambio)} onClick={guardarCambio}>
                         <i className="bi bi-arrow-left-right me-2"></i>
                         ENTREGAR CAMBIO
                     </Button>
@@ -385,7 +385,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                 </button>
 
                                 <button type="button" className="m-2 btn btn-primary" onClick={handleDotacionRapida}
-                                        disabled={denominacionD.calculateGrandTotal() === 0}>
+                                        disabled={parseFloat(denominacionD.calculateGrandTotal()) === 0.0}>
                                       <span className="me-2">
                                         GUARDAR
                                         <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>

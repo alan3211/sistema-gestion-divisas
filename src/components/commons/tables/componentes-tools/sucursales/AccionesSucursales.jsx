@@ -65,7 +65,7 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             operacion:item.Operacion,
             ticket: item['No Movimiento'],
             estatus: (optionBtn === 1) ? 'Aceptado' : 'Rechazado',
-            motivo: watch("motivo"),
+            motivo: watch("motivo") | "",
             usuario: item.Usuario,
             usuario_envia: dataG.usuario,
             sucursal: item.Sucursal,

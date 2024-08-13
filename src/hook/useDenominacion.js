@@ -13,6 +13,8 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionB,
     } = useContext(DenominacionContext);
 
+    console.log("Opciones: ",options);
+
     const {
         title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,sucursal,
         item
@@ -81,17 +83,17 @@ export const useDenominacion = ({type,moneda,options}) => {
         });
 
         if(setTotalMonto){
-            setTotalMonto(grandTotal);
+            setTotalMonto(parseFloat(grandTotal.toFixed(2)));
         }
 
         if(options.hasOwnProperty('setFinalizaOperacion')){
-            if(importe === grandTotal){
+            if(parseFloat(importe) === parseFloat(grandTotal.toFixed(2))){
                 setFinalizaOperacion(false);
             }else{
                 setFinalizaOperacion(true);
             }
         }
-        return grandTotal;
+        return grandTotal.toFixed(2);
     };
 
     // Valida solo cuando hace la operacion del cliente y entrega billetes
@@ -108,17 +110,19 @@ export const useDenominacion = ({type,moneda,options}) => {
 
     const validacionColor = () => {
         const grandTotal = calculateGrandTotal();
+
+        console.log("EL TIPO ES: ",type);
         if (type === 'R') {
-            if (grandTotal === calculaValorMonto) {
+            if (parseFloat(grandTotal) === parseFloat(calculaValorMonto)) {
                 return 'text-success';
-            } else if (grandTotal > calculaValorMonto) {
+            } else if (parseFloat(grandTotal) > parseFloat(calculaValorMonto)) {
                 return 'text-warning';
             } else {
                 return 'text-danger';
             }
         } else if (type === 'C') {
             if (parseFloat(redondearNumero(grandTotal)) === parseFloat(importe)) {
-                denominacionC.calculateGrandTotal = grandTotal;
+                denominacionC.calculateGrandTotal = parseFloat(redondearNumero(grandTotal));
                 return 'text-success';
             } else {
                 return 'text-danger';
@@ -131,7 +135,13 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else {
-            if (grandTotal === parseFloat(importe)) {
+            console.log("Comparacion: ", parseFloat(grandTotal) === parseFloat(importe))
+            console.log("TIPO GRAND TOTAL: ", typeof parseFloat(grandTotal));
+            console.log("TIPO IMPORTE: ", typeof parseFloat(importe));
+            console.log("GRAND TOTAL: ", grandTotal);
+            console.log("IMPORTE: ", importe);
+
+            if (parseFloat(grandTotal) === parseFloat(importe)) {
                 return 'text-success';
             } else {
                 return 'text-danger';
@@ -146,21 +156,21 @@ export const useDenominacion = ({type,moneda,options}) => {
         let isValid;
 
         if(type === 'C'){
-            isValid = calculateGrandTotal() >= importe;
+            isValid = parseFloat(calculateGrandTotal()) >= parseFloat(importe);
             newHabilita.recibe = !isValid;
         }else if (type === 'R') {
-            isValid = calculateGrandTotal() >= calculaValorMonto;
+            isValid = parseFloat(calculateGrandTotal()) >= parseFloat(calculaValorMonto);
             newHabilita.recibe = !isValid;
         } else if (type === 'E') {
-            isValid = calculateGrandTotal() === parseFloat(importe);
+            isValid = parseFloat(calculateGrandTotal()) === parseFloat(importe);
             newHabilita.entrega = !isValid;
         }else if(type === 'B'){
-            isValid = calculateGrandTotal() >= importe;
+            isValid = parseFloat(calculateGrandTotal()) >= parseFloat(importe);
             newHabilita.recibe = !isValid;
         }
 
         setHabilita(newHabilita);
-    }, [calculateGrandTotal(), type]);
+    }, [parseFloat(calculateGrandTotal()), type]);
 
 
     const fetchData = async () => {
@@ -179,6 +189,8 @@ export const useDenominacion = ({type,moneda,options}) => {
             valores.no_movimiento = item["No Movimiento"];
         }
 
+        console.log("VALORES: ", valores);
+
         const encryptedData = encryptRequest(valores);
 
         if(moneda !== '0'){
@@ -189,7 +201,6 @@ export const useDenominacion = ({type,moneda,options}) => {
                 denominaciones = await obtieneDenominacionesNota(encryptedData);
             }else{
                 denominaciones = await obtieneDenominaciones(encryptedData);
-
             }
 
 
