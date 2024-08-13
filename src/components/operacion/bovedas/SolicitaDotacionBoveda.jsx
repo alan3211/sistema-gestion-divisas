@@ -121,7 +121,7 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
         denominaciones.movimiento = 'SOLICITUD BOVEDA';
 
         data.denominacion = [
-            denominaciones,
+                denominaciones,
         ]
 
         console.log("SOLICITA DOTACION A A BOVEDA")

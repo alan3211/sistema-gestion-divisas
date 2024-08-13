@@ -659,7 +659,8 @@ export const Consulta = () => {
         const encryptedData = encryptRequest(data);
         const responseData = await consultaReporteFinal(encryptedData);
         let fileName= nombreArchivo(data);
-
+        console.log("DATA: ", data);
+        console.log("RESPONSE DATA: ", responseData);
         if(responseData.total_rows === 0){
           //  toast.warn("No se ha encontrado información con los parametros ingresados. Te recomendamos verificar si hay operaciones registradas.",OPTIONS);
             creaReporteVacio(titulo,data,fileName,responseData.headers);
@@ -669,7 +670,7 @@ export const Consulta = () => {
         //else{
             // Si la sucursal que se llamo fue TODAS entonces se muestra la logica de la paginacion por hojas en el excel y PDF
 
-            if(["Rep_TotalVentaDivisas","Rep_TotalCompraDivisas","Rep_UsuariosSistema"].includes(reporte.Proceso) && (parseInt(data.sucursal) === 1000 || parseInt(data.sucursal) === 5056)) {
+            if(["Rep_TotalVentaDivisas","Rep_TotalCompraDivisas","Rep_UsuariosSistema","REP_DenominacionesExistentes"].includes(reporte.Proceso) && (parseInt(data.sucursal) === 1000 || parseInt(data.sucursal) === 5056)) {
                 const datosOrdenados = responseData.result_set.map((fila) => {
                     const filaOrdenada = {};
                     responseData.headers.forEach((columna) => {
@@ -677,6 +678,8 @@ export const Consulta = () => {
                     });
                     return filaOrdenada;
                 });
+
+                console.log("Datos ORDENADOS: ",datosOrdenados)
 
                 //if (responseData.total_rows > 0) {
                 const titulo = await obtenTitulo();
@@ -968,7 +971,8 @@ export const Consulta = () => {
                 reset();
                 setValue("usuario","");
                 setValue("nombre_completo","");
-            }else if (parseInt(data.sucursal) === 1000){
+            }
+            else if (parseInt(data.sucursal) === 1000){
                 if (dataG.id_perfil !== 7) {
                     createExcelReport(responseData, titulo, data);
                 }
@@ -1032,6 +1036,8 @@ export const Consulta = () => {
                         // Combinar celdas desde A3 hasta la última columna (por ejemplo, N3)
                         worksheet.mergeCells(`A3:${ultimaLetraColumna}3`);
 
+                        console.log("HEADERS")
+                        console.log(responseData.headers)
                         // Agregar encabezado
                         worksheet.addRow(responseData.headers); // Reemplaza con tus encabezados
                         // Estilo para los encabezados
@@ -1090,7 +1096,7 @@ export const Consulta = () => {
                         headerRow.eachCell((headerCell, index) => {
                             const columnName = headerCell.value;
                             const keywords = filters.map(filtro => filtro.columna);
-                            const keywordsSinSuma = ['Cambio','Promedio','Saldo','Limite Max','Excedente','Denominacion'];
+                            const keywordsSinSuma = ['Cambio','Promedio','Saldo','Limite Max','Excedente','Denominacion','sucursal'];
                             // Verificar si el nombre de la columna contiene al menos una de las palabras clave
                             const containsKeyword = keywords.some(keyword => columnName.includes(keyword));
 
@@ -1106,7 +1112,7 @@ export const Consulta = () => {
                                         // Verificar si el nombre de la columna es un dígito
                                         const columnNameIsDigit = /^\d+$/.test(columnName);
                                         const containsSinSuma = keywordsSinSuma.some(keyword => {
-                                            if(columnName === 'Saldo Inicial USD' || columnName === 'Saldo Inicial MXP' ||
+                                            if(columnName === 'sucursal' || columnName === 'Saldo Inicial USD' || columnName === 'Saldo Inicial MXP' ||
                                                 columnName === 'Saldo Final USD' || columnName === 'Saldo Final MXP'){
                                                 return false;
                                             }

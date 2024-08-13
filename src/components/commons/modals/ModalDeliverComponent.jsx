@@ -117,7 +117,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
             sucursal: dataG.sucursal,
             traspaso: '',
             diferencia:0.0,
-            totalRecibido:denominacionR.calculateGrandTotal(),
+            totalRecibido:parseFloat(denominacionR.calculateGrandTotal()),
             cambio:parseFloat(denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto)),
             denominacion:[
                 obtenerObjetoDenominaciones(formValuesR),
@@ -130,7 +130,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
         const encryptedData = encryptRequest(values);
         setOperacionSinFinalizar(encryptedData);
-        let cambioFinal = denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto);
+        let cambioFinal = parseFloat(denominacionR.calculateGrandTotal()) - parseFloat(calculaValorMonto);
         if (redondearNumero(cambioFinal) > 0) {
             setShowCambio(true);
         } else {
@@ -189,7 +189,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
         dataFormulario.moneda=moneda;
-        dataFormulario.monto= denominacionD.calculateGrandTotal();
+        dataFormulario.monto= parseFloat(denominacionD.calculateGrandTotal());
 
         let denominacionesDotacion = denominacionD.getValues();
         const formValuesD = getDenominacion(moneda,denominacionesDotacion)
@@ -445,7 +445,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 showCambio
                     &&
                     <ModalCambio
-                        cambio={(denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto))}
+                        cambio={(parseFloat(denominacionR.calculateGrandTotal()) - parseFloat(calculaValorMonto))}
                         showModalCambio={showCambio}
                         setShowModalCambio={setShowCambio}
                         operacion={operacion}
@@ -508,7 +508,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                 </button>
 
                                 <button type="button" className="m-2 btn btn-primary" onClick={handleDotacionRapida}
-                                disabled={denominacionD.calculateGrandTotal() === 0}>
+                                disabled={parseFloat(denominacionD.calculateGrandTotal()) === 0.0}>
                                       <span className="me-2">
                                         GUARDAR
                                         <span className="bi bi-save ms-2" role="status" aria-hidden="true"></span>
