@@ -63,7 +63,7 @@ export const FormCliente = ({tipo}) => {
             data.cliente = '';
         }
         data.tipo_operacion =  operacion.tipo_operacion;
-        console.log("DATOS: ", data)
+        console.log("DATOS FORM CLIENTE: ", data)
         const encryptedData = encryptRequest(data);
         const dataClientes = await buscaCliente(encryptedData);
         dataClientes.headers = ['Selecciona', ...dataClientes.headers]
@@ -90,13 +90,13 @@ export const FormCliente = ({tipo}) => {
                     setContinuaOperacion(false);
                 } else {
                     // Valida la lista QSQ
-                   /* const result = await consultaListasProveedor(data);
+                   const result = await consultaListasProveedor(data);
                     if(result.success){
                         toast.error('Error en el sistema, código 6677.', OPTIONS);
-                    }else{*/
+                    }else{
                         setShowCliente(true);
                         setContinuaOperacion(true);
-                    //}
+                    }
                 }
             } else {
                 const mensaje = 'A continuación, se muestran los siguientes clientes con coincidencias.';

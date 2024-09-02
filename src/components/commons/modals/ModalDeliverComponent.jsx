@@ -134,8 +134,16 @@ export const ModalDeliverComponent = ({configuration}) =>{
         if (redondearNumero(cambioFinal) > 0) {
             setShowCambio(true);
         } else {
-            await realizarOperacion(encryptedData);
-            setShowModalFactura(true);
+            const response = await realizarOperacion(encryptedData);
+            console.log(response);
+            if(response.mensaje === ''){
+                setShowModalFactura(true);
+            }else{
+                toast.error(response.mensaje, OPTIONS);
+                setShowModalFactura(false);
+            }
+
+
         }
         setGuarda(false);
     }
