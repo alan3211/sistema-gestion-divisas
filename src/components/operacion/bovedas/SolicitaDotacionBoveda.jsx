@@ -108,6 +108,8 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
         data.ID = dataItem.Id;
+        data.Boveda = dataItem.Boveda;
+        data.Empresa = dataItem.Empresa;
         data.moneda = dataItem.Moneda;
         data.operacion = 'DOTACION BOVEDA';
         data.usuario = dataG.usuario;

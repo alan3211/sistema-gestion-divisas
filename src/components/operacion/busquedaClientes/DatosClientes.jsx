@@ -48,6 +48,7 @@ export const DatosClientes = ({operacion, cliente}) => {
             fecha_nacimiento:'',
             cliente: datos.Cliente,
             tipo_operacion: operacion.tipo_operacion,
+            tipo_cambio: parseFloat(operacion.tipo_cambio)
         }
 
         if (operacion.tipo_operacion === '1') {

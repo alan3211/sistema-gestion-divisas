@@ -163,12 +163,13 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         const totalDifMontos = data.result_set.reduce((total, elemento, index) => {
             const newValue = billetesFisicos[index][getPropiedad('denominacion',elemento)];
             const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;
-            return total + diferenciaMonto;
+            const resultado = parseFloat(total) + parseFloat(diferenciaMonto);
+            return resultado.toFixed(2);
         }, 0);
 
         console.log("Total Diferencias Montos: ",totalDifMontos);
 
-        setTotalDiferenciaMontos(totalDifMontos);
+        setTotalDiferenciaMontos(parseFloat(totalDifMontos));
 
     }, [billetesFisicos]);
 
@@ -233,12 +234,12 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
             setShowDiferencias(true);
             setCierraCajaForm(cierreCaja);
             console.log("LLEGO AQUI")
-        } else if(totalDiferencia !== 0 && totalDiferenciaMontos === 0){
+        } else if(totalDiferencia !== 0 && parseFloat(totalDiferenciaMontos) === 0){
             cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
             setShowDiferencias(true);
             setCierraCajaForm(cierreCaja)
             console.log("LLEGO AQUI")
-        } else if(totalDiferencia === 0 && totalDiferenciaMontos !== 0){
+        } else if(totalDiferencia === 0 && parseFloat(totalDiferenciaMontos) !== 0){
             cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
             setShowDiferencias(true);
             setCierraCajaForm(cierreCaja)
@@ -516,7 +517,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                         </>
                                     ) : ele === 'Diferencia Monto' ? (
                                         <>
-                                            {FormatoMoneda(totalDiferenciaMontos)}
+                                            {FormatoMoneda(parseFloat(totalDiferenciaMontos))}
                                         </>
                                     ) : ele === 'Monto' ? (
                                         <>

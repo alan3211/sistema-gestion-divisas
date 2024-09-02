@@ -270,8 +270,10 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
             opcion: "Dotación Sucursal",
             usuario: dataG.usuario,
             divisa: moneda,
+            boveda: boveda,
             denominaciones: resultado
         }
+        console.log("valores ENVIO DE BOVEDA A SUCURSAL");
         console.log(valores);
 
         const encryptedData = encryptRequest(valores);

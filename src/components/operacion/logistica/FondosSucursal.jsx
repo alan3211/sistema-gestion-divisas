@@ -65,7 +65,7 @@ export const FondosSucursal = () => {
                                         return value !== "0" || 'Debes seleccionar una bóveda válida.';
                                     }
                                 })}
-                                className={`form-select ${!!errors?.estado ? 'invalid-input':''}`}
+                                className={`form-select ${!!errors?.boveda ? 'invalid-input':''}`}
                                 id="boveda"
                                 name="boveda"
                                 aria-label="Boveda"
