@@ -1,7 +1,7 @@
-//const URL = 'https://grocerys-back-dev.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
+const URL = 'https://grocerys-back-dev.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
 //const URL = 'https://grocerys-back.wittysmoke-209c31ac.eastus.azurecontainerapps.io/';
 //const URL = 'http://192.168.101.45:9000/';
-const URL = 'http://localhost:9000/';
+//const URL = 'http://localhost:9000/';
 
 export const LOGIN_URL = `${URL}login/`;
 
