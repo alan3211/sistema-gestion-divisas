@@ -1,0 +1,55 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+- feature/*
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '9e319194-86c2-4c91-8ff7-9d7c0c079d73'
+  imageRepository: 'alan3211/grocerys-front'
+  containerRegistry: 'groceryscentrocambiario.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: '$(Build.SourceBranchName)-$(Build.BuildId)' # Usamos el nombre de la rama como parte del tag
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '21.x'
+        checkLatest: true
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install -g npm@latest
+      displayName: 'Upgrade npm'
+      
+    - script: |
+        npm install
+        npm run build
+      displayName: 'Install and build React app'
+
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
