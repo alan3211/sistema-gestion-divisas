@@ -1,6 +1,7 @@
 import {useContext, useEffect} from "react";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 import {
+    convertirFechaADD,
     encryptRequest,
     OPTIONS,
     validaFechas,
@@ -89,14 +90,29 @@ export const FormCliente = ({tipo}) => {
                     setShowCliente(false);
                     setContinuaOperacion(false);
                 } else {
+                    data.nombre = dataClientes.result_set[0].Nombre;
+                    data.apellido_paterno = dataClientes.result_set[0].ApellidoPaterno;
+                    data.apellido_materno = dataClientes.result_set[0].ApellidoMaterno;
+                    data.fecha_nacimiento = convertirFechaADD(dataClientes.result_set[0].FechaNacimiento);
                     // Valida la lista QSQ
                    const result = await consultaListasProveedor(data);
-                    if(result.success){
-                        toast.error('Error en el sistema, código 6677.', OPTIONS);
-                    }else{
-                        setShowCliente(true);
-                        setContinuaOperacion(true);
-                    }
+                   console.warn(result);
+                   if(result.hasOwnProperty("status")){
+                       if(result.status.includes("No se han encontrado coincidencias")){
+                           toast.info(`Alerta: "${result.status}".`, OPTIONS);
+                           setShowCliente(true);
+                           setContinuaOperacion(true);
+                       }else{
+                           toast.error(`Problema con el servicio de Listas Negras: "${result.status}". Favor de validar con el administrador`, OPTIONS);
+                       }
+                   }else{
+                       if(result.success){
+                           toast.error('Error en el sistema, código 6677.', OPTIONS);
+                       }else{
+                           setShowCliente(true);
+                           setContinuaOperacion(true);
+                       }
+                   }
                 }
             } else {
                 const mensaje = 'A continuación, se muestran los siguientes clientes con coincidencias.';

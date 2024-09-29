@@ -27,10 +27,12 @@ export const AgregaUsuario = () => {
 
         const response = await accionesUsuario(encryptedData);
 
-        if (response !== '') {
+        if (response.includes("ya existe")) {
+            toast.error(response, OPTIONS);
+        }else  if(response !== ''){
             toast.success(response, OPTIONS);
-            reset();
         }
+        reset();
 
 
     });
@@ -53,8 +55,8 @@ export const AgregaUsuario = () => {
                                     message: 'El campo Usuario como mínimo debe de tener al menos 2 caracteres.'
                                 },
                                 maxLength: {
-                                    value: 30,
-                                    message: 'El campo Usuario como máximo debe de tener no mas de 30 caracteres.'
+                                    value: 50,
+                                    message: 'El campo Usuario como máximo debe de tener no mas de 50 caracteres.'
                                 },
                                 validate: (value) => validarAlfaNumerico("Usuario", value)
                             })}
@@ -89,8 +91,8 @@ export const AgregaUsuario = () => {
                                     message: 'El campo Nombre Usuario como mínimo debe de tener al menos 2 caracteres.'
                                 },
                                 maxLength: {
-                                    value: 30,
-                                    message: 'El campo Nombre Usuario como máximo debe de tener no mas de 30 caracteres.'
+                                    value: 50,
+                                    message: 'El campo Nombre Usuario como máximo debe de tener no mas de 50 caracteres.'
                                 },
                                 validate: (value) => validarAlfaNumerico("Nombre Usuario", value)
                             })}

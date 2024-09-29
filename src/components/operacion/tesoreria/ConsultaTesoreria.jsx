@@ -10,7 +10,7 @@ import {isNullOrUndef} from "chart.js/helpers";
 
 export const ConsultaTesoreria = ({type}) => {
 
-  const saldoGeneral = useSaldo();
+  const saldoGeneral = useSaldo(1);
   const [isLoading,setIsLoading] = useState(true);
   const [dataResumen,setDataResumen] = useState([]);
   const [saldoNuevo,setSaldoNuevo] = useState();

@@ -29,6 +29,7 @@ import {PerfilTransaccional} from "./components/pld/perfilTransaccional/PerfilTr
 import {Riesgo} from "./components/pld/riesgo/Riesgo";
 import {ReportesPrincipal} from "./components/administracion/reportes/ReportesPrincipal";
 import {Movimientos} from "./components/pld/consultas/Movimientos";
+import {ValidaContraseña} from "./components/usuario/ValidaContraseña";
 
 export let dataG = JSON.parse(localStorage.getItem('usuario_data')) || {
     sucursal:0,
@@ -95,6 +96,7 @@ const App = () => {
                     <Route exact path="/catalogos" element={<MainLayout><Catalogo/></MainLayout>}/>
                     <Route exact path="/asignacion-reportes" element={<MainLayout><ReportesPrincipal/></MainLayout>}/>
                     <Route exact path="/mi-perfil" element={<MainLayout><PerfilComponent/></MainLayout>}/>
+                    <Route exact path="/cambia-contraseña" element={<><ValidaContraseña/></>}/>
                     <Route path="/*" element={<NotFound/>}/>
                 </Routes>
             </Router>

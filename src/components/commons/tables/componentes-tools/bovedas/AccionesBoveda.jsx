@@ -36,7 +36,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
     const [guarda,setGuarda] = useState(false);
     const [resetear,setResetear] = useState(false);
 
-    const catalogo = useCatalogo([28]);
+    const catalogo = useCatalogo([28,32]);
 
 
     /*Aqui se diferencia entre un boton de aceptar y otro de rechazar*/
@@ -58,9 +58,17 @@ export const AccionesBoveda = ({item, index,refresh}) => {
             ticket: item['No Movimiento'],
             usuario: dataG.usuario,
             tipo_cambio: parseFloat(data.tipo_cambio),
-            tipo_banco: data.tipo_banco,
-            factura: data.factura,
         }
+
+        if(watch("tipo_movimiento") === 'Cuenta Bancaria'){
+            values.tipo_banco = data.tipo_banco;
+            values.factura= data.factura;
+        }else{
+            values.tipo_banco = 'EFECTIVO';
+            values.factura= 'EFECTIVO';
+        }
+
+
         console.log("Denominaciones ingresadas: ", myDenominacion)
 
         if(Object.values(myDenominacion).length !== 0){
@@ -167,7 +175,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                 && (
                     <ModalGenericTool options={options}>
                         <div>
-                            {optionBtn !== 1 &&(
+                            {optionBtn !== 1 && (
                                 <div className="col-md-12">
                                 <div className="form-floating">
                                     <textarea
@@ -212,12 +220,48 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                             {
                                 (optionBtn === 1) && (
                                     <div className="d-flex justify-content-center">
-
                                         <div className="row ">
                                             {
                                                 item.Divisa !== 'MXP' ?
                                                 (<div className="col-3">
                                                     <div className="container justify-content-center align-items-center mt-4">
+                                                        <div className="col-md-12">
+                                                            <div className="form-floating mb-3">
+                                                                <select
+                                                                    {...register("tipo_movimiento", {
+                                                                        required: {
+                                                                            value: true,
+                                                                            message: "Debes de seleccionar al menos una tipo de movimiento.",
+                                                                        },
+                                                                        validate: (value) => {
+                                                                            return (
+                                                                                value !== "0" || "Debes seleccionar una tipo de movimiento válido."
+                                                                            );
+                                                                        },
+                                                                    })}
+                                                                    className={`form-select ${!!errors?.tipo_movimiento ? "invalid-input" : ""}`}
+                                                                    id="tipo_movimiento"
+                                                                    name="tipo_movimiento"
+                                                                    aria-label="tipo_movimiento"
+                                                                >
+                                                                    <option value="">SELECCIONA UNA OPCIÓN</option>
+                                                                    {catalogo[1]?.map((ele) => (
+                                                                        <option
+                                                                            key={ele.id + "-" + ele.descripcion}
+                                                                            value={ele.id}
+                                                                        >
+                                                                            {ele.descripcion}
+                                                                        </option>
+                                                                    ))}
+                                                                </select>
+                                                                <label htmlFor="tipo_movimiento">TIPO DE MOVIMIENTO</label>
+                                                                {errors?.tipo_movimiento && (
+                                                                    <div className="invalid-feedback-custom">
+                                                                        {errors?.tipo_movimiento.message}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
                                                         <div className="col-md-12 form-floating mb-3">
                                                         <input
                                                             {...register("tipo_cambio", {
@@ -249,7 +293,7 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                        <div className="col-md-12">
+                                                        { watch("tipo_movimiento") === 'Cuenta Bancaria' && (<><div className="col-md-12">
                                                             <div className="form-floating mb-3">
                                                                 <select
                                                                     {...register("tipo_banco", {
@@ -326,12 +370,49 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                                                     {errors.factura.message}
                                                                 </div>
                                                             )}
-                                                        </div>
+                                                        </div></>)}
                                                     </div>
                                                 </div>
                                                 ): (
                                                     <div className="col-3">
                                                         <div className="container justify-content-center align-items-center mt-4">
+                                                            <div className="col-md-12">
+                                                                <div className="form-floating mb-3">
+                                                                    <select
+                                                                        {...register("tipo_movimiento", {
+                                                                            required: {
+                                                                                value: true,
+                                                                                message: "Debes de seleccionar al menos una tipo de movimiento.",
+                                                                            },
+                                                                            validate: (value) => {
+                                                                                return (
+                                                                                    value !== "0" || "Debes seleccionar una tipo de movimiento válido."
+                                                                                );
+                                                                            },
+                                                                        })}
+                                                                        className={`form-select ${!!errors?.tipo_movimiento ? "invalid-input" : ""}`}
+                                                                        id="tipo_movimiento"
+                                                                        name="tipo_movimiento"
+                                                                        aria-label="tipo_movimiento"
+                                                                    >
+                                                                        <option value="">SELECCIONA UNA OPCIÓN</option>
+                                                                        {catalogo[1]?.map((ele) => (
+                                                                            <option
+                                                                                key={ele.id + "-" + ele.descripcion}
+                                                                                value={ele.id}
+                                                                            >
+                                                                                {ele.descripcion}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                    <label htmlFor="tipo_movimiento">TIPO DE MOVIMIENTO</label>
+                                                                    {errors?.tipo_movimiento && (
+                                                                        <div className="invalid-feedback-custom">
+                                                                            {errors?.tipo_movimiento.message}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
                                                             <div className="col-md-12">
                                                                 <div className="form-floating mb-3">
                                                                     <select

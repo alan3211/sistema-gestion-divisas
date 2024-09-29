@@ -280,7 +280,10 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
 
         const response = await enviaDotacionSucursal(encryptedData);
 
-        if (response !== '') {
+        if(response.includes("inconsistencias")){
+            toast.error(response, OPTIONS);
+            setGuarda(false)
+        } else if (response !== '') {
             toast.success(response, OPTIONS);
             setGuarda(false)
             reset();

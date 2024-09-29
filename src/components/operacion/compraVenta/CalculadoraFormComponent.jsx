@@ -173,7 +173,7 @@ export const CalculadoraFormComponent = () => {
             }
         }else{
             setCantidad(parseFloat(result.result_set[0].CantidadEntrega));
-            data.cantidad_entregar = redondearNumero(parseFloat(result.result_set[0].CantidadEntrega));
+            data.cantidad_entregar = parseFloat(result.result_set[0].CantidadEntrega);
             setShowCantidadEntregada(true);
         }
     });
