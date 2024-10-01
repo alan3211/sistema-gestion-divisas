@@ -371,8 +371,11 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                         <i className="bi bi-currency-exchange me-2"></i>
                         DOTACIÓN PARCIAL
                     </button>
-                    <Button variant="primary" disabled={(
-                        parseFloat(denominacionC.calculateGrandTotal) != cambio) && (habilita.entrega || habilita.recibe)} onClick={guardarCambio}>
+                    <Button variant="primary" disabled={
+                        isNaN(denominacionC.calculateGrandTotal) ? true
+                            : (parseFloat(denominacionC.calculateGrandTotal) <= cambio) && (habilita.entrega || habilita.recibe)
+                        }
+                        onClick={guardarCambio}>
                         <i className="bi bi-arrow-left-right me-2"></i>
                         ENTREGAR CAMBIO
                     </Button>
