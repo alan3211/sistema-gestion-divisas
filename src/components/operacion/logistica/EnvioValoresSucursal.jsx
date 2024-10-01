@@ -214,12 +214,12 @@ export const EnvioValoresSucursal = () => {
                         </div>
                         <div className="col-md-12 d-flex justify-content-center">
                                 <button className="btn btn-secondary me-3" onClick={nuevoEnvio}>
-                                    <i className="bi bi-box-arrow-up-right"></i> NUEVO ENVÍO
+                                    <i className="bi bi-box-arrow-up-right"></i> NUEVA SOLICITUD DE VALORES
                                 </button>
                                 <button type="button" className="btn btn-primary"
                                         onClick={terminarDotacion} disabled={finalizaOperacion}>
                                     <span className="bi bi-check-circle me-2" aria-hidden="true"></span>
-                                   FINALIZAR OPERACIÓN
+                                   SOLICITAR VALORES
                                 </button>
                         </div>
                     </>

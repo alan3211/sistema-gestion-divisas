@@ -154,6 +154,7 @@ export const Consulta = () => {
         {columna:"Monto Sobrante / Faltante", filter:"currency"},
         {columna:"Importe", filter:"currency"},
         {columna:"Total Factura Individual", filter:"currency"},
+        {columna:"Redondeo", filter:"currency"},
     ];
 
     // Función para obtener el filtro adecuado para una columna
@@ -651,9 +652,10 @@ export const Consulta = () => {
          */
         if ([3,4].includes(dataG.id_perfil)) {
             data.sucursal = dataG.sucursal.toString();
-        }else if([1,2,6].includes(dataG.id_perfil)){
-            data.sucursal = "1000";
         }
+        /*else if([1,2,6].includes(dataG.id_perfil)){
+            data.sucursal = "1000";
+        }*/
         const titulo = await obtenTitulo();
 
         const encryptedData = encryptRequest(data);

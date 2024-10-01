@@ -16,7 +16,7 @@ export const useDenominacion = ({type,moneda,options}) => {
     console.log("Opciones: ",options);
 
     const {
-        title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setTotalMonto,setFinalizaOperacion,sucursal,
+        title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setRedondeo,setTotalMonto,setFinalizaOperacion,sucursal,
         item
     } =  options;
     let denominacion = {};
@@ -52,26 +52,26 @@ export const useDenominacion = ({type,moneda,options}) => {
         const denominacionValue = parseFloat(elemento.Denominacion);
         if(elemento.hasOwnProperty("Billetes Disponibles")){
             if(type === 'CNC'){
-                return redondearNumero(parseFloat(cantidad * denominacionValue));
+                return parseFloat(cantidad * denominacionValue);
             }else if([6].includes(dataG.id_perfil)){
                 if (parseFloat(cantidad) < 0.0){
-                    return redondearNumero(0.0);
+                    return 0.0;
                 }else{
-                    return redondearNumero(parseFloat(cantidad * denominacionValue));
+                    return parseFloat(cantidad * denominacionValue);
                 }
             }else{
                 if(elemento["Billetes Disponibles"] >= cantidad){
                     if (parseFloat(cantidad) < 0.0){
-                        return redondearNumero(0.0);
+                        return 0.0;
                     }else{
-                        return redondearNumero(parseFloat(cantidad * denominacionValue));
+                        return parseFloat(cantidad * denominacionValue);
                     }
                 }else{
-                    return redondearNumero(0.0);
+                    return 0.0;
                 }
             }
         }else{
-            return redondearNumero(parseFloat(cantidad * denominacionValue));
+            return parseFloat(cantidad * denominacionValue);
         }
     };
 
@@ -101,7 +101,7 @@ export const useDenominacion = ({type,moneda,options}) => {
         if (data.hasOwnProperty(key)) {
             const denominacionValue = parseFloat(data[key].Denominacion);
             // || type === 'SD'
-            if ((type === 'E' || type === 'C' || type === 'SD') && denominacionValue > parseFloat(importe)) {
+            if ((type === 'E' || type === 'C' || type === 'SD') && denominacionValue >= parseFloat(importe) +0.30) {
                 delete data[key];
             }
         }
@@ -121,11 +121,25 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else if (type === 'C') {
-            if (parseFloat(redondearNumero(grandTotal)) === parseFloat(importe)) {
-                denominacionC.calculateGrandTotal = parseFloat(redondearNumero(grandTotal));
-                return 'text-success';
-            } else {
-                return 'text-danger';
+            if(moneda === 'MXP'){
+                // Valida diferencia en pesos
+                let diferencia = parseFloat(grandTotal) - parseFloat(importe);
+                console.log(`La diferencia de MXP es : ${diferencia.toFixed(2)}`);
+                if (diferencia.toFixed(2) > -0.30 && diferencia.toFixed(2) < 0.30){
+                    if(parseFloat(diferencia.toFixed(2)) === 0.00){
+                     return "text-success";
+                    }
+                    return 'text-warning';
+                }else {
+                    return 'text-danger';
+                }
+            }else{
+                if (parseFloat(grandTotal) === parseFloat(importe)) {
+                    denominacionC.calculateGrandTotal = parseFloat(grandTotal);
+                    return 'text-success';
+                } else {
+                    return 'text-danger';
+                }
             }
         } else if (type === 'SD') {
 
@@ -141,11 +155,26 @@ export const useDenominacion = ({type,moneda,options}) => {
             console.log("GRAND TOTAL: ", grandTotal);
             console.log("IMPORTE: ", importe);
 
-            if (parseFloat(grandTotal) === parseFloat(importe)) {
-                return 'text-success';
-            } else {
-                return 'text-danger';
+            if(type === "E" && moneda === 'MXP'){
+                // Valida diferencia en pesos
+                let diferencia = parseFloat(grandTotal) - parseFloat(importe);
+                console.log(`La diferencia de MXP es : ${diferencia.toFixed(2)}`);
+                if (diferencia.toFixed(2) > -0.30 && diferencia.toFixed(2) < 0.30){
+                    if(parseFloat(diferencia.toFixed(2)) === 0.00){
+                        return "text-success";
+                    }
+                    return 'text-warning';
+                }else {
+                    return 'text-danger';
+                }
+            }else{
+                if (parseFloat(grandTotal) === parseFloat(importe)) {
+                    return 'text-success';
+                } else {
+                    return 'text-danger';
+                }
             }
+
         }
     };
 
@@ -156,20 +185,40 @@ export const useDenominacion = ({type,moneda,options}) => {
         let isValid;
 
         if(type === 'C'){
-            isValid = parseFloat(calculateGrandTotal()) >= parseFloat(importe);
-            newHabilita.recibe = !isValid;
+            if(moneda === 'MXP') {
+                // Valida diferencia en pesos
+                let diferencia = parseFloat(calculateGrandTotal()) - parseFloat(importe);
+                console.log(`DIFERENCIA!!! ${diferencia.toFixed(2)}`)
+                isValid = parseFloat(diferencia.toFixed(2)) > -0.30 && parseFloat(diferencia.toFixed(2)) < 0.30
+                newHabilita.entrega = !isValid;
+                newHabilita.recibe = !isValid;
+                setRedondeo(diferencia);
+            }else {
+                isValid = parseFloat(calculateGrandTotal()) >= parseFloat(importe);
+                newHabilita.recibe = !isValid;
+            }
         }else if (type === 'R') {
             isValid = parseFloat(calculateGrandTotal()) >= parseFloat(calculaValorMonto);
             newHabilita.recibe = !isValid;
         } else if (type === 'E') {
-            isValid = parseFloat(calculateGrandTotal()) === parseFloat(importe);
-            newHabilita.entrega = !isValid;
+            if(moneda === 'MXP') {
+                // Valida diferencia en pesos
+                let diferencia = parseFloat(calculateGrandTotal()) - parseFloat(importe);
+                isValid = parseFloat(diferencia.toFixed(2)) > -0.30 && parseFloat(diferencia.toFixed(2)) < 0.30
+                newHabilita.entrega = !isValid;
+                newHabilita.recibe = !isValid;
+                setRedondeo(diferencia);
+            }else{
+                isValid = parseFloat(calculateGrandTotal()) === parseFloat(importe);
+                newHabilita.entrega = !isValid;
+            }
         }else if(type === 'B'){
             isValid = parseFloat(calculateGrandTotal()) >= parseFloat(importe);
             newHabilita.recibe = !isValid;
         }
 
         setHabilita(newHabilita);
+        console.log("Habilita: ", newHabilita);
     }, [parseFloat(calculateGrandTotal()), type]);
 
 
@@ -209,7 +258,7 @@ export const useDenominacion = ({type,moneda,options}) => {
                 for (const key in denominaciones.result_set) {
                     if (denominaciones.result_set.hasOwnProperty(key)) {
                         const denominacionValue = parseFloat(denominaciones.result_set[key].Denominacion);
-                        if (denominacionValue >= parseFloat(importe)) {
+                        if (denominacionValue + 0.30 >= parseFloat(importe)) {
                             delete denominaciones.result_set[key];
                         }
                     }

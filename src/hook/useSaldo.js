@@ -1,15 +1,21 @@
 import {useEffect, useState} from "react";
-import {getConsultaSaldoCuenta} from "../services/operacion-tesoreria";
+import {getConsultaSaldoCuenta, getConsultaSaldoCuentaEfectivo} from "../services/operacion-tesoreria";
 
-export const useSaldo =  () => {
+export const useSaldo =  (tipo) => {
 
     const [saldoGeneral,setSaldoGeneral] = useState();
 
     useEffect(() => {
         const getConsultaTesoreria = async ()=> {
-            const {saldo_cuenta} = await getConsultaSaldoCuenta();
-            if (saldo_cuenta){
-                setSaldoGeneral(saldo_cuenta);
+            let res;
+            if(tipo === 1){
+                res = await getConsultaSaldoCuenta();
+            }else{
+                res = await getConsultaSaldoCuentaEfectivo();
+            }
+
+            if (res.saldo_cuenta){
+                setSaldoGeneral(res.saldo_cuenta);
             }else{
                 setSaldoGeneral(0);
             }

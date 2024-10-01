@@ -5,15 +5,22 @@ import {toast} from "react-toastify";
 import {changePass} from "../../services/perfil-usuario-services";
 import {useNavigate} from "react-router-dom";
 
-export const CambiarPassword = () => {
+export const CambiarPassword = ({noPassActual,options}) => {
 
     const navigate = useNavigate();
     const {register,handleSubmit,formState:{errors},reset,watch} =  useForm();
 
     const onSubmitChangePass = handleSubmit(async(data)=>{
+        console.log("DATOS LOGIN",options)
         console.log("Data",data);
         data.sucursal = dataG.sucursal;
         data.usuario = dataG.usuario;
+
+        if(noPassActual){
+            data.password='12345678';
+            data.sucursal=options.sucursal;
+            data.usuario=options.usuario;
+        }
 
         const encryptedData = encryptRequest(data);
 
@@ -35,7 +42,7 @@ export const CambiarPassword = () => {
 
             <div className="text-center  mt-3">
                 <div className="row mb-3">
-                    <div className="col-md-6 mx-auto">
+                    { !noPassActual && <div className="col-md-12 mx-auto">
                         <div className="form-floating">
                             <input
                                 {...register("contrasena_actual", {
@@ -58,10 +65,10 @@ export const CambiarPassword = () => {
                                 <div className="invalid-feedback-custom">{errors?.contrasena_actual.message}</div>
                             }
                         </div>
-                    </div>
+                    </div>}
                 </div>
                 <div className="row mb-3">
-                    <div className="col-md-6 mx-auto">
+                    <div className="col-md-12 mx-auto">
                         <div className="form-floating">
                             <input
                                 {...register("contrasena_nueva", {
@@ -96,7 +103,7 @@ export const CambiarPassword = () => {
                 </div>
 
                 <div className="row mb-3">
-                    <div className="col-md-6 mx-auto">
+                    <div className="col-md-12 mx-auto">
                         <div className="form-floating">
                             <input
                                 {...register("contrasena_confirma", {

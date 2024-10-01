@@ -16,10 +16,8 @@ export const LoginComponent = () => {
     const {
         register,
         handleSubmit,
-        setValue,
         formState:{errors},
         reset,
-        watch,
     } = useForm();
 
     const handleLogin = handleSubmit(async(data) =>{
@@ -32,20 +30,27 @@ export const LoginComponent = () => {
             const decodedToken = jwt_decode(datos.token);
             console.log("USUARIO")
             console.log(decodedToken)
-            if (decodedToken.usuario) {
-                dataG.sucursal = parseInt(decodedToken.sucursal);
-                dataG.username = decodedToken.nombre;
-                dataG.perfil = decodedToken.perfil;
-                dataG.id_perfil = decodedToken.id_perfil;
-                dataG.usuario = decodedToken.usuario;
-                dataG.direccion = decodedToken.direccion;
-                dataG.nombre_sucursal = decodedToken.nombre_sucursal;
-                dataG.limite_diario = decodedToken.limite_diario;
-                dataG.limite_mensual = decodedToken.limite_mensual;
-                dataG.estatus = decodedToken.activo_sesion;
-                dataG.menus = decodedToken.menus;
-                localStorage.setItem("usuario_data",JSON.stringify(dataG));
-                navigator("/inicio");
+            if(decodedToken.valida_contra === 0){
+                // Primera vez
+                navigator("/cambia-contraseña",{state: {
+                    user: decodedToken
+                }});
+            }else{
+                if (decodedToken.usuario) {
+                    dataG.sucursal = parseInt(decodedToken.sucursal);
+                    dataG.username = decodedToken.nombre;
+                    dataG.perfil = decodedToken.perfil;
+                    dataG.id_perfil = decodedToken.id_perfil;
+                    dataG.usuario = decodedToken.usuario;
+                    dataG.direccion = decodedToken.direccion;
+                    dataG.nombre_sucursal = decodedToken.nombre_sucursal;
+                    dataG.limite_diario = decodedToken.limite_diario;
+                    dataG.limite_mensual = decodedToken.limite_mensual;
+                    dataG.estatus = decodedToken.activo_sesion;
+                    dataG.menus = decodedToken.menus;
+                    localStorage.setItem("usuario_data",JSON.stringify(dataG));
+                    navigator("/inicio");
+                }
             }
         }else if(datos.hasOwnProperty('mensaje')){
             reset()

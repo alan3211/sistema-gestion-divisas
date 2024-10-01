@@ -14,7 +14,7 @@ import {Denominacion} from "../../operacion/denominacion";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {usePrinter,useMovimientosDotaciones} from "../../../hook/";
 import {ModalTicket} from "./ModalTicket";
-import {ModalGenericTool} from "./ModalTools";
+import {ModalGenericPLDTool, ModalGenericTool} from "./ModalTools";
 import {useForm} from "react-hook-form";
 import {realizarOperacionSucursal, realizarSolicitudCambio} from "../../../services/operacion-sucursal";
 import {ModalLoading} from "./ModalLoading";
@@ -30,8 +30,10 @@ export const ModalDeliverComponent = ({configuration}) =>{
         recibe: true,
         entrega: true,
     });
+    const [redondeo,setRedondeo] = useState(0.0);
     const navigator = useNavigate();
     const [guarda,setGuarda] = useState(false);
+    const [preguntaRedondeo,setPreguntaRedondeo] = useState(false);
     const [showConfirmaCancelacion,setShowConfirmaCancelacion] = useState(false);
     const {
         denominacionR,
@@ -62,15 +64,29 @@ export const ModalDeliverComponent = ({configuration}) =>{
     const [intervalo,setIntervalo] = useState();
 
 
+    const OPTIONS_PREGUNTA_REDONDEO = {
+        size: 'xl',
+        showModal: () => setPreguntaRedondeo(true),
+        closeModal: () => {
+            setPreguntaRedondeo(false)
+            setGuarda(false);
+        },
+        waiting:true,
+        icon:'bi bi-currency-exchange text-warning me-2',
+        title:'Diferencia en denominación a entregar',
+        subtitle:`Se detecto una diferencia al monto a entregar por ${parseFloat(redondeo).toFixed(2)}. Confirma si corresponde a un redondeo.`
+    }
+
+
     //Muestra el título correcto
     const titulo = `Operación ${operacion.tipo_operacion === "1" ? 'Compra': 'Venta'}`;
 
     // Calcula el valor del monto de la parte decimal con 2 digitos
     const calculaValorMonto = useMemo(() => {
         if (operacion.tipo_operacion === '2') {
-            return redondearNumero(parseFloat(operacion.cantidad_entregar));
+            return parseFloat(operacion.cantidad_entregar);
         }
-        return redondearNumero(operacion.monto);
+        return operacion.monto;
     }, [operacion.cantidad_entregar, operacion.tipo_cambio, operacion.monto, operacion.tipo_operacion]);
 
     // Muestra la divisa correspondiente
@@ -118,6 +134,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
             traspaso: '',
             diferencia:0.0,
             totalRecibido:parseFloat(denominacionR.calculateGrandTotal()),
+            //cambio:parseFloat(denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto)) - redondeo,
             cambio:parseFloat(denominacionR.calculateGrandTotal() - parseFloat(calculaValorMonto)),
             denominacion:[
                 obtenerObjetoDenominaciones(formValuesR),
@@ -128,13 +145,42 @@ export const ModalDeliverComponent = ({configuration}) =>{
         console.log("FINALIZA OPERACION --- values");
         console.log(values);
 
+        console.log(`Se envia el redondeo: ${redondeo}`)
+
+        values.redondeo = redondeo;
         const encryptedData = encryptRequest(values);
         setOperacionSinFinalizar(encryptedData);
+
+        if(redondeo > -0.30 && redondeo < 0.30){
+            if(redondeo !== 0.00){
+                setPreguntaRedondeo(true);
+            }else{
+                let cambioFinal = parseFloat(denominacionR.calculateGrandTotal()) - parseFloat(calculaValorMonto);
+                if (cambioFinal > 0) {
+                    setShowCambio(true);
+                }else {
+                    setPreguntaRedondeo(false);
+                    const response = await realizarOperacion(encryptedData);
+                    console.log(response);
+                    if (response.mensaje === '') {
+                        setShowModalFactura(true);
+                    } else {
+                        toast.error(response.mensaje, OPTIONS);
+                        setShowModalFactura(false);
+                    }
+                }
+                setGuarda(false);
+            }
+        }
+    }
+
+    const enviaFinalOperacion = async() => {
+        setPreguntaRedondeo(false);
         let cambioFinal = parseFloat(denominacionR.calculateGrandTotal()) - parseFloat(calculaValorMonto);
-        if (redondearNumero(cambioFinal) > 0) {
+        if (cambioFinal > 0) {
             setShowCambio(true);
-        } else {
-            const response = await realizarOperacion(encryptedData);
+        }else {
+            const response = await realizarOperacion(operacionSinFinalizar);
             console.log(response);
             if(response.mensaje === ''){
                 setShowModalFactura(true);
@@ -142,15 +188,14 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 toast.error(response.mensaje, OPTIONS);
                 setShowModalFactura(false);
             }
-
-
+            setPreguntaRedondeo(false);
         }
         setGuarda(false);
     }
 
     const options = {
         title: `Recibido del usuario (${muestraDivisa()})`,
-        importe: operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto,
+        importe: operacion.tipo_operacion !== "1" ? operacion.cantidad_entregar:operacion.monto,
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
@@ -159,17 +204,19 @@ export const ModalDeliverComponent = ({configuration}) =>{
 
     const optionsE = {
         title: `Entregado al usuario (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
-        importe:operacion.tipo_operacion === "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto,
+        importe:operacion.tipo_operacion === "1" ? operacion.cantidad_entregar:operacion.monto,
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
+        redondeo,
+        setRedondeo,
         tipo: 'E',
         reRender: !showEspera ,
     }
 
     const optionsDotRap = {
         title: `Solicitando dotación parcial en (${operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda})`,
-        importe:operacion.tipo_operacion !== "1" ? parseFloat(operacion.monto):redondearNumero(operacion.cantidad_entregar),
+        importe:operacion.tipo_operacion !== "1" ? parseFloat(operacion.monto):operacion.cantidad_entregar,
         calculaValorMonto:parseFloat(calculaValorMonto),
         habilita,
         setHabilita,
@@ -179,7 +226,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
     const imprimeTicket = () =>{
         imprimeTicketNuevamente(0)
     }
-
 
     // Sección de dotación parcial
     const handleDotacionRapida = async()=>{
@@ -381,7 +427,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                     name="monto"
                                     className={`form-control mb-1`}
                                     placeholder="Ingresa la cantidad a por el usuario"
-                                    value={operacion.tipo_operacion !== "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto} readOnly
+                                    value={operacion.tipo_operacion !== "1" ? operacion.cantidad_entregar:operacion.monto} readOnly
                                     autoComplete="off"
                                 />
                                 <label htmlFor="monto" className="form-label">CANTIDAD A RECIBIR <i>({operacion.tipo_operacion === '1' ? operacion.moneda:'MXP'})</i></label>
@@ -392,7 +438,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
                                 <input type="text"
                                        className={`form-control mb-1`}
                                        id="floatingCE"
-                                       value={operacion.tipo_operacion === "1" ? redondearNumero(operacion.cantidad_entregar):operacion.monto}
+                                       value={operacion.tipo_operacion === "1" ? operacion.cantidad_entregar:operacion.monto}
                                        readOnly
                                        autoComplete="off"
                                 />
@@ -525,6 +571,27 @@ export const ModalDeliverComponent = ({configuration}) =>{
                             </div>
                         </div>)}
                     </ModalGenericTool>
+                )
+            }
+            {
+                preguntaRedondeo && (
+                    <ModalGenericPLDTool options={OPTIONS_PREGUNTA_REDONDEO}>
+                            <div className="col-md-6 mx-auto">
+                                <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_PREGUNTA_REDONDEO.closeModal}>
+                                      <span className="ms-2">
+                                        <i className="bi bi-x-circle me-2"></i>
+                                        NO
+                                      </span>
+                                </button>
+
+                                <button type="button" className="m-2 btn btn-primary" onClick={enviaFinalOperacion}>
+                                      <span className="ms-2">
+                                        SI
+                                        <span className="bi-check-circle ms-2" role="status" aria-hidden="true"></span>
+                                      </span>
+                                </button>
+                            </div>
+                    </ModalGenericPLDTool>
                 )
             }
         </>

@@ -13,7 +13,7 @@ export const OperacionTesoreria = ({perfil}) => {
     const [selectedOption, setSelectedOption] = useState(perfil === 'T' ?"movBancario": "dotacionSuc");
 
     // Usa useSaldo para obtener el saldo actual
-    const saldoGeneral = useSaldo();
+    const saldoGeneral = useSaldo(1);
 
     const handleRadioChange = ({ target: { value } }) => {
         setSelectedOption(value);
