@@ -672,7 +672,7 @@ export const Consulta = () => {
         //else{
             // Si la sucursal que se llamo fue TODAS entonces se muestra la logica de la paginacion por hojas en el excel y PDF
 
-            if(["Rep_TotalVentaDivisas","Rep_TotalCompraDivisas","Rep_UsuariosSistema","REP_DenominacionesExistentes","Rep_TotalCotizaciones"].includes(reporte.Proceso) && (parseInt(data.sucursal) === 1000 || parseInt(data.sucursal) === 5056)) {
+            if(["Rep_TotalVentaDivisas","Rep_TotalCompraDivisas","Rep_UsuariosSistema","REP_DenominacionesExistentes","Rep_TotalCotizaciones","Rep_VentaMensualUni","Rep_CompraMensualUni"].includes(reporte.Proceso) && (parseInt(data.sucursal) === 1000 || parseInt(data.sucursal) === 5056)) {
                 const datosOrdenados = responseData.result_set.map((fila) => {
                     const filaOrdenada = {};
                     responseData.headers.forEach((columna) => {

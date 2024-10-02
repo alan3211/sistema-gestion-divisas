@@ -5,7 +5,7 @@ import {OperacionTesoreria} from "./operacion/OperacionTesoreria";
 import {ConsultaBovedas} from "../bovedas/ConsultaBovedas";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
-import {ConsultaEfectivo} from "./ConsultaEfectivo";
+import {OperacionEfectivo} from "./operacion/OperacionEfectivo";
 
 export const Tesoreria = () => {
 
@@ -18,7 +18,7 @@ export const Tesoreria = () => {
     const tabs = [
         {id:'consulta',name:'Analisis de Fondos',icon:'bi bi-bar-chart-fill me-2', element: <ConsultaTesoreria type="tesoreria"/>},
         {id:'dota-suc',name:'Operación Tesorería',icon:'ri ri-store-2-line me-2',element:<OperacionTesoreria perfil="T"/>},
-        {id:'dota-efect',name:'Efectivo (USD)',icon:'bi bi-cash me-2',element:<ConsultaEfectivo/>},
+        {id:'dota-efect',name:'Efectivo',icon:'bi bi-cash me-2',element:<OperacionEfectivo/>},
         {id:'estatus-boveda',name:'Fondos Enviados a Boveda',icon:'bi bi-file-earmark-text me-2',element: <ConsultaBovedas perfil="T"/>},
     ];
 

@@ -165,25 +165,43 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
         console.log("Este es el cambio: ", cambio)
 
-        if(redondeo > -0.30 && redondeo < 0.30){
-            if(redondeo !== 0.00){
-                setPreguntaRedondeo(true);
-                setEncryptedDataValues(encryptedData);
+        if(values.divisa === 'USD'){
+            if(parseFloat(denominacionC.calculateGrandTotal) !== cambio){
+                toast.error("El monto ingresado es distinto al requerido, favor de validar.",OPTIONS);
             }else{
-                // Redondeo es cero
                 setPreguntaRedondeo(false);
                 await realizarOperacion(operacionConCambio);
                 setPreguntaRedondeo(false);
                 const resultado = await realizarOperacion(encryptedData);
-                console.log("RESPUESTA 2 DE OPERACION");
-                console.log(resultado);
                 // Validar si tenemos que darle cambio
                 if(resultado){
                     setGuarda(false);
                     setShowModalFactura(true);
                 }
             }
+        }else{
+            // Aplica cuando es cambio en pesos
+            if(redondeo > -0.30 && redondeo < 0.30){
+                if(redondeo !== 0.00){
+                    setPreguntaRedondeo(true);
+                    setEncryptedDataValues(encryptedData);
+                }else{
+                    // Redondeo es cero
+                    setPreguntaRedondeo(false);
+                    await realizarOperacion(operacionConCambio);
+                    setPreguntaRedondeo(false);
+                    const resultado = await realizarOperacion(encryptedData);
+                    // Validar si tenemos que darle cambio
+                    if(resultado){
+                        setGuarda(false);
+                        setShowModalFactura(true);
+                    }
+                }
+            }else{
+                toast.error("El monto ingresado es menor al requerido, favor de validar.",OPTIONS);
+            }
         }
+
       setGuarda(false);
     }
 
@@ -349,7 +367,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                 <input type="text"
                                        className={`form-control mb-1`}
                                        id="floatingCE"
-                                       value={cambio}
+                                       value={parseFloat(cambio).toFixed(2)}
                                        readOnly
                                        autoComplete="off"
                                 />
@@ -372,9 +390,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                         DOTACIÓN PARCIAL
                     </button>
                     <Button variant="primary" disabled={
-                        isNaN(denominacionC.calculateGrandTotal) ? true
-                            : (parseFloat(denominacionC.calculateGrandTotal) <= cambio) && (habilita.entrega || habilita.recibe)
-                        }
+                        (parseFloat(denominacionC.calculateGrandTotal) !== cambio) && (habilita.entrega || habilita.recibe)}
                         onClick={guardarCambio}>
                         <i className="bi bi-arrow-left-right me-2"></i>
                         ENTREGAR CAMBIO

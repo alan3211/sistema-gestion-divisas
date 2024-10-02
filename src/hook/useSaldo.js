@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 import {getConsultaSaldoCuenta, getConsultaSaldoCuentaEfectivo} from "../services/operacion-tesoreria";
+import {encryptRequest} from "../utils";
 
-export const useSaldo =  (tipo) => {
+export const useSaldo =  (tipo,data) => {
 
     const [saldoGeneral,setSaldoGeneral] = useState();
 
@@ -11,7 +12,14 @@ export const useSaldo =  (tipo) => {
             if(tipo === 1){
                 res = await getConsultaSaldoCuenta();
             }else{
-                res = await getConsultaSaldoCuentaEfectivo();
+                console.log("DATA OPERATION ---> ",data)
+                const values = {
+                    moneda: data === 'efectivoUSD' ? 'USD':'MXP'
+                }
+                console.log("VALUES: ", values)
+                const encryptedData = encryptRequest(values);
+                res = await getConsultaSaldoCuentaEfectivo(encryptedData);
+                console.log("VALORES ---> ",res)
             }
 
             if (res.saldo_cuenta){

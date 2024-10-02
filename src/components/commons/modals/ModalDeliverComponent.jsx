@@ -151,6 +151,8 @@ export const ModalDeliverComponent = ({configuration}) =>{
         const encryptedData = encryptRequest(values);
         setOperacionSinFinalizar(encryptedData);
 
+
+
         if(redondeo > -0.30 && redondeo < 0.30){
             if(redondeo !== 0.00){
                 setPreguntaRedondeo(true);

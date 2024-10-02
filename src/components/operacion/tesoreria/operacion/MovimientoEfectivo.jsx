@@ -6,7 +6,7 @@ import {dotaEfectivo, dotaSucursales} from "../../../../services/operacion-tesor
 import {toast} from "react-toastify";
 
 
-export const MovimientoEfectivo = ({actualizarSaldo}) => {
+export const MovimientoEfectivo = ({actualizarSaldo,moneda}) => {
 
     const { register,
         handleSubmit,
@@ -20,7 +20,7 @@ export const MovimientoEfectivo = ({actualizarSaldo}) => {
     const onSubmitMovimientoBancario = handleSubmit(async (data) => {
         data.usuario = dataG.usuario || globalData.usuario;
         data.operacion = watch('tipo_movimiento');
-        data.moneda = 'USD';
+        data.moneda = moneda;
         data.sucursal = dataG.sucursal+"" || globalData.sucursal +"";
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
@@ -111,7 +111,7 @@ export const MovimientoEfectivo = ({actualizarSaldo}) => {
                     )}
                 </div>
             </div>
-            <div className="col-md-4 mx-auto">
+            {moneda === 'USD' && (<div className="col-md-4 mx-auto">
                 <div className="form-floating mb-3">
                     <div className="col-md-12 form-floating mb-3">
                         <input
@@ -145,7 +145,7 @@ export const MovimientoEfectivo = ({actualizarSaldo}) => {
                         )}
                     </div>
                 </div>
-            </div>
+            </div>)}
             <div className="col-md-2 mx-auto">
                 <button
                     type="button"
