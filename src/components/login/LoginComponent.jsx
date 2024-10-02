@@ -1,12 +1,12 @@
 import logo from '../../assets/logo.png';
-import {encryptRequest, OPTIONS, validarAlfaNumerico, year} from "../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico,getElementosFecha} from "../../utils";
 import {useForm} from "react-hook-form";
 import {getUser} from "../../services";
 import {toast} from "react-toastify";
 import {dataG} from "../../App";
 import jwt_decode from 'jwt-decode';
 import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+
 
 
 export const LoginComponent = () => {
@@ -142,7 +142,7 @@ export const LoginComponent = () => {
 
 
                                 <div className="credits text-blue">
-                                    Grocerys Centro Cambiario - {year}
+                                    Grocerys Centro Cambiario - {getElementosFecha().year}
                                 </div>
 
                             </div>

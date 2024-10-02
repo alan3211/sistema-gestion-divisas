@@ -6,7 +6,7 @@ import {formattedDate} from "../../../utils";
 export const TipoCambioComponent = () => {
 
     const title = 'Tipo de Cambio';
-    const [fechaConsulta] = useState(formattedDate)
+    const [fechaConsulta] = useState(formattedDate())
 
     return (
         <div className="card shadow">

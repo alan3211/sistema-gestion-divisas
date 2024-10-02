@@ -34,7 +34,7 @@ export const CargaTipoCambioOpera = ({id}) => {
                     compra: compraValue === "" ? 0.0 : compraValue,
                     venta: ventaValue === "" ? 0.0 : ventaValue,
                     divisa: currency.divisa,
-                    fecha: formattedDate,
+                    fecha: formattedDate(),
                 };
             } else {
                 return null; // No agrega al arreglo si ambos valores son vacíos

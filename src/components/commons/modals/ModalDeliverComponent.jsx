@@ -1,12 +1,12 @@
 import {Button, Modal} from "react-bootstrap";
 import {useContext, useEffect, useMemo, useState} from "react";
 import {dataG} from "../../../App";
-import {guardaConfirmacionFactura, obtieneDenominaciones, realizarOperacion, validaDotParcial} from "../../../services";
+import {guardaConfirmacionFactura, realizarOperacion, validaDotParcial} from "../../../services";
 import {ModalCambio} from "./ModalCambio";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDate, formattedDateF, formattedDateWS,
+    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateF, formattedDateWS,
     getDenominacion,
-    obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarMoneda, validarNumeros
+    obtenerObjetoDenominaciones, opciones, OPTIONS
 } from "../../../utils";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
@@ -16,12 +16,11 @@ import {usePrinter,useMovimientosDotaciones} from "../../../hook/";
 import {ModalTicket} from "./ModalTicket";
 import {ModalGenericPLDTool, ModalGenericTool} from "./ModalTools";
 import {useForm} from "react-hook-form";
-import {realizarOperacionSucursal, realizarSolicitudCambio} from "../../../services/operacion-sucursal";
+import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {ModalLoading} from "./ModalLoading";
 import {TableComponent} from "../tables";
 import {LoaderTable} from "../LoaderTable";
 import {getDotaciones} from "../../../services/operacion-caja";
-import {toastTheme} from "flowbite-react/lib/esm/components/Toast/theme";
 
 export const ModalDeliverComponent = ({configuration}) =>{
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
@@ -241,7 +240,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         dataFormulario.operacion = 'Solicitud Dotacion Parcial';
         dataFormulario.usuario = dataG.usuario;
         dataFormulario.sucursal = dataG.sucursal;
-        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
         dataFormulario.moneda=moneda;
@@ -314,7 +313,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
     useEffect(()=>{
 
         const valores = {
-            fecha: formattedDateF,
+            fecha: formattedDateF(),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
         }

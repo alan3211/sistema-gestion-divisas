@@ -10,7 +10,7 @@ export const useFetchTipoCambio = () => {
 
     const formValues = {
         "sucursal": dataG.sucursal,
-        "fechaCambio": formattedDate
+        "fechaCambio": formattedDate()
     }
 
     const [valorTipoCambio,setValorTipoCambio] =  useState([]);

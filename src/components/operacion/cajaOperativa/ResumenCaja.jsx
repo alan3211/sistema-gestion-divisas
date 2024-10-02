@@ -207,9 +207,9 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         }
 
         if (tipo === 'traspaso') {
-            cierreCaja.ticket = `TRASPASO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+            cierreCaja.ticket = `TRASPASO${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         } else {
-            cierreCaja.ticket = `CIERRE${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+            cierreCaja.ticket = `CIERRE${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         }
 
         const formValuesD = getDenominacion(cierreCaja.moneda, datos)

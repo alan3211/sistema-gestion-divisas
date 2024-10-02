@@ -25,7 +25,7 @@ export const MovimientoEfectivo = ({actualizarSaldo,moneda}) => {
         data.sucursal = dataG.sucursal+"" || globalData.sucursal +"";
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
-        data.ticket = `MOVEFE${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`
+        data.ticket = `MOVEFE${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`
         const encryptedData = encryptRequest(data);
         const response = await dotaEfectivo(encryptedData);
         if(response.mensaje.includes("exitosamente")){

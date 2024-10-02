@@ -1,6 +1,6 @@
 import {encryptRequest, formattedDate, mensajeSinElementos} from "../../../../utils";
 import { MessageComponent } from "../../../commons";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {consultaActividadReciente} from "../../../../services/tools-services";
 
@@ -8,7 +8,7 @@ export const TableroActividad = ({ data, showDataActividad }) => {
     const maxElementsToShow = 3; // Número máximo de elementos antes de mostrar el scroll
     const [dataState, setDataState] = useState(data);
     const [showDataAct, setShowDataAct] = useState(showDataActividad);
-    const [fechaConsulta, setFechaConsulta] = useState(formattedDate);
+    const [fechaConsulta, setFechaConsulta] = useState(formattedDate());
 
     const {register,handleSubmit,watch ,setValue,formState:{errors}} = useForm();
 

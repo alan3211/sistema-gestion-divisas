@@ -1,5 +1,4 @@
 import {Modal} from "react-bootstrap";
-import {formattedDate} from "../../../utils";
 
 export const ModalDetalleTool = ({options,children}) => {
     return (

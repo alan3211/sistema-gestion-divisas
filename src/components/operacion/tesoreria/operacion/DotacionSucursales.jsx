@@ -14,7 +14,7 @@ export const DotacionSucursales = ({actualizarSaldo}) => {
         data.operacion = "Dotación Sucursal";
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
-        data.ticket = `DOTSUC${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`
+        data.ticket = `DOTSUC${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`
         const encryptedData = encryptRequest(data);
         const response = await dotaSucursales(encryptedData);
         if(response.mensaje.includes("exitosamente")){

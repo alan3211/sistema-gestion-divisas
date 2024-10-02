@@ -63,7 +63,7 @@ export const EnvioValoresSucursal = () => {
 
         data.operacion = 'SOLICITA VALORES';
         data.usuario = dataG.usuario;
-        data.ticket = `SOLVAL${data.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        data.ticket = `SOLVAL${data.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         data.noCliente='0';
         data.traspaso='';
 

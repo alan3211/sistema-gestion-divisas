@@ -3,9 +3,6 @@ import {
     encryptRequest, FormatoMoneda,
     formattedDateDD,
     getTextDivisa,
-    obtenerDiasEnMes,
-    obtenerNombreMes,
-    OPTIONS
 } from "../../../../../utils";
 import {dataG} from "../../../../../App";
 import {consultaReporteCajaContable, obtenTitulo} from "../../../../../services/reportes-services";
@@ -241,7 +238,7 @@ export const ReporteCaja = ({item, index, columna, params}) => {
         const blob = new Blob([buffer], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
 
         // Descargar el archivo
-        saveAs(blob, `${dataG.sucursal} - Dotación de Caja ${formattedDateDD}.xlsx`);
+        saveAs(blob, `${dataG.sucursal} - Dotación de Caja ${formattedDateDD()}.xlsx`);
 
     }
 
@@ -377,10 +374,10 @@ export const ReporteCaja = ({item, index, columna, params}) => {
             },
         });
         pdf.setFontSize(8);
-        pdf.text(`Generado por: ${dataG.username} el ${formattedDateDD} a las ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`, 130, 250);
+        pdf.text(`Generado por: ${dataG.username} el ${formattedDateDD()} a las ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`, 130, 250);
 
         // Descargar el PDF
-        pdf.save(`${dataG.sucursal} - Dotación de Caja ${formattedDateDD}.pdf`);
+        pdf.save(`${dataG.sucursal} - Dotación de Caja ${formattedDateDD()}.pdf`);
     }
 
     const onDownloadReport = async () => {

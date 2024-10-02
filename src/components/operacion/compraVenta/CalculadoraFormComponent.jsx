@@ -14,7 +14,7 @@ import {
     encryptRequest,
     FormatoMoneda,
     formattedDate,
-    OPTIONS, redondearNumero,
+    OPTIONS,
     validarMonedaUSD
 } from "../../../utils";
 import {toast} from "react-toastify";
@@ -241,7 +241,7 @@ export const CalculadoraFormComponent = () => {
             tipo_operacion: datos.tipo_operacion ,
             sucursal: dataG.sucursal || 0,
             nombre_operador: dataG.usuario,
-            fecha_operacion: formattedDate,
+            fecha_operacion: formattedDate(),
             hora_operacion: new Date().getHours().toString(),
             monto: parseInt(datos.monto),
             divisa: datos.moneda,
@@ -320,7 +320,7 @@ export const CalculadoraFormComponent = () => {
     useEffect(()=>{
 
         const valores = {
-            fecha: formattedDate,
+            fecha: formattedDate(),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
         }

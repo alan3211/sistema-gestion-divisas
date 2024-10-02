@@ -4,7 +4,6 @@ import {
     formattedDate,
     formattedDateDD,
     mensajeSinElementos,
-    validarNumeros
 } from "../../../utils";
 import {useFetchTipoCambio} from "../../../hook";
 import {MessageComponent} from "../../commons";
@@ -39,7 +38,7 @@ export const TablaDivisasComponent = () => {
     const consultaTipoCambioSucursales = async (divisa) => {
         const values = {
             divisa,
-            fecha:formattedDate
+            fecha:formattedDate()
         }
         setOptionsSucursal((prevOptions) => ({
             ...prevOptions,
@@ -71,7 +70,7 @@ export const TablaDivisasComponent = () => {
         return (
             <MessageComponent estilos={mensajeSinElementos}>
                 No hay información del tipo de cambio
-                para el día: <strong>{formattedDateDD}</strong>
+                para el día: <strong>{formattedDateDD()}</strong>
             </MessageComponent>
         );
     }else{

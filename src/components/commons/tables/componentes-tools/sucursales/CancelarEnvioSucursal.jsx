@@ -3,8 +3,7 @@ import {
     eliminarDenominacionesConCantidadCero,
     encryptRequest,
     FormatoMoneda,
-    formattedDateWS, getDenominacion, obtenerObjetoDenominaciones,
-    opciones,
+    getDenominacion, obtenerObjetoDenominaciones,
     OPTIONS,
     validarAlfaNumerico
 } from "../../../../../utils";

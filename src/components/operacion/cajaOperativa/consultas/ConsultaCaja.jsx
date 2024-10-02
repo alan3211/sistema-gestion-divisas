@@ -81,7 +81,7 @@ export const ConsultaCaja = () => {
             const values = {
                 usuario: dataG.usuario,
                 sucursal: dataG.sucursal,
-                fecha: formattedDate
+                fecha: formattedDate()
             }
             const encryptedData = encryptRequest(values);
             setFormData(encryptedData)

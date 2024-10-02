@@ -8,7 +8,7 @@ import {
     validaFechas,
     validarAlfaNumerico,
     validarCorreoElectronico,
-    validarNombreApellido, year
+    validarNombreApellido, getElementosFecha
 } from "../../../utils";
 import {useCatalogo, usePrinter} from "../../../hook/";
 import {toast} from "react-toastify";
@@ -302,7 +302,7 @@ export const AltaClienteFormComponent = memo(() => {
                                     autoComplete="off"
                                     tabIndex="4"
                                     min="1900-01-01"
-                                    max={`${year}-12-31`}
+                                    max={`${getElementosFecha().year}-12-31`}
                                     required
                                 />
                                 <label htmlFor="fecha_nacimiento">FECHA NACIMIENTO</label>

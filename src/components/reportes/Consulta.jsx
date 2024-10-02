@@ -6,10 +6,9 @@ import {
     formattedDateDD, getTextDivisa,
     obtenerDiasEnMes,
     obtenerNombreMes,
-    OPTIONS, validarAlfaNumerico, validarNombreApellido, validarNumeros, validarNumerosYVacio
+    validarAlfaNumerico, validarNumerosYVacio
 } from "../../utils";
 import {
-    consultaReporteCajaContable,
     consultaReporteContable,
     consultaReporteFinal,
     obtenTitulo
@@ -38,8 +37,8 @@ export const Consulta = () => {
         watch,
         trigger,
     } = useForm()
-    const [currentDate, setCurrentDate] = useState(formattedDate);
-    const [currentDateF, setCurrentDateF] = useState(formattedDate);
+    const [currentDate, setCurrentDate] = useState(formattedDate());
+    const [currentDateF, setCurrentDateF] = useState(formattedDate());
     const [guarda, setGuarda] = useState(false);
     const reportesSuc = ["1","4","6","7","8","9","10","11"];
 
@@ -70,10 +69,10 @@ export const Consulta = () => {
     }, []);
 
     useEffect(() => {
-        setCurrentDate(formattedDate);
-        setCurrentDateF(formattedDate);
-        setValue("fecha_operacion",formattedDate);
-        setValue("fecha_operacion_final",formattedDate);
+        setCurrentDate(formattedDate());
+        setCurrentDateF(formattedDate());
+        setValue("fecha_operacion",formattedDate());
+        setValue("fecha_operacion_final",formattedDate());
         setValue("usuario","");
         setValue("nombre_completo","");
         const currentMonth = new Date().getMonth() + 1; // Se suma 1 porque los meses van de 0 a 11
@@ -512,7 +511,7 @@ export const Consulta = () => {
                 });
                 // Agregar información de generación del reporte
                 pdf.setFontSize(8);
-                pdf.text(`Generado por: ${dataG.username} el ${formattedDateDD} a las ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`, 200, 200);
+                pdf.text(`Generado por: ${dataG.username} el ${formattedDateDD()} a las ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`, 200, 200);
                 counter++;
                 if (counter < Object.keys(registrosPorSucursal).length){
                     pdf.addPage();
@@ -635,7 +634,7 @@ export const Consulta = () => {
                     },
                 });
                 pdf.setFontSize(8);
-            pdf.text(`Generado por: ${dataG.username} el ${formattedDateDD} a las ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`, 200, 200);
+            pdf.text(`Generado por: ${dataG.username} el ${formattedDateDD()} a las ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`, 200, 200);
 
             // Descargar el PDF
             pdf.save(`${fileName}.pdf`);

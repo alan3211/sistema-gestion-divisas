@@ -2,9 +2,9 @@ import {Button, Modal} from "react-bootstrap";
 import {useContext, useEffect, useState} from "react";
 import {
     eliminarDenominacionesConCantidadCero,
-    encryptRequest, FormatoMoneda, formattedDate, formattedDateF, formattedDateWS,
+    encryptRequest, FormatoMoneda, formattedDateF, formattedDateWS,
     getDenominacion,
-    obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarNumeros
+    obtenerObjetoDenominaciones, opciones, OPTIONS
 } from "../../../utils";
 import {dataG} from "../../../App";
 import {guardaConfirmacionFactura, realizarOperacion, validaDotParcial} from "../../../services";
@@ -76,7 +76,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         dataFormulario.operacion = 'Solicitud Dotacion Parcial';
         dataFormulario.usuario = dataG.usuario;
         dataFormulario.sucursal = dataG.sucursal;
-        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
         dataFormulario.moneda=moneda;
@@ -242,7 +242,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     useEffect(()=>{
 
         const valores = {
-            fecha: formattedDateF,
+            fecha: formattedDateF(),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
         }

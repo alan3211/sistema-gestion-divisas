@@ -217,7 +217,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
             // Construir el blob y descargar el archivo
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const fileName = `Consulta-${formattedDate}-${tableName}.xlsx`;
+            const fileName = `Consulta-${formattedDate()}-${tableName}.xlsx`;
 
             // Descargar el archivo
             saveAs(blob, fileName);

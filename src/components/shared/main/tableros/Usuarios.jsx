@@ -7,7 +7,7 @@ export const Usuarios = ({data}) => {
         <div className="col-md-3 mb-4">
             <div className="card customers-card border-0">
                 <div className="card-body text-center p-2">
-                    <h5 className="card-title fw-bolder">Usuarios <span>| {formattedDate}</span></h5>
+                    <h5 className="card-title fw-bolder">Usuarios <span>| {formattedDate()}</span></h5>
                     <p className="text-blue small fw-bold">Total Usuarios {totalVentas}</p>
                     <div className="mt-2">
                         <div className="rounded-circle card-icon d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: '50px', height: '50px' }}>

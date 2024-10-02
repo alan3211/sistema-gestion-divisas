@@ -7,7 +7,7 @@ import {useForm} from "react-hook-form";
 export const UltimosMovimientos = ({data}) => {
 
     const [dataState, setDataState] = useState(data);
-    const [fechaConsulta, setFechaConsulta] = useState(formattedDate);
+    const [fechaConsulta, setFechaConsulta] = useState(formattedDate());
 
     const options = {
         showMostrar:true,

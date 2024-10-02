@@ -1,12 +1,12 @@
 import {encryptRequest, formattedDate} from "../../../../utils";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {consultaComprasTablero} from "../../../../services/tools-services";
 
 export const Compras = ({ data }) => {
 
     const [dataState, setDataState] = useState(data);
-    const [fechaConsulta, setFechaConsulta] = useState(formattedDate);
+    const [fechaConsulta, setFechaConsulta] = useState(formattedDate());
 
     const {register,handleSubmit,setValue,formState:{errors}} = useForm();
 

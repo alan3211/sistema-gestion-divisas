@@ -5,10 +5,10 @@ import {
     encryptRequest,
     formattedDate,
     OPTIONS,
-    validaFechas, validaFechaVigencia,
+    validaFechaVigencia,
     validarAlfaNumerico,
     validarNumeroTelefono,
-    year
+    getElementosFecha
 } from "../../../utils";
 import {useCatalogo} from "../../../hook";
 import {useAltaComplementario} from "../../../hook";
@@ -693,9 +693,9 @@ export const AltaClienteComplementario = memo(() => {
                                     name="vigencia"
                                     placeholder="Ingresa la vigencia de la identificación"
                                     autoComplete="off"
-                                    min={formattedDate}
+                                    min={formattedDate()}
                                     tabIndex="26"
-                                    max={`${year + 10}-12-31`}
+                                    max={`${getElementosFecha().year + 10}-12-31`}
                                 />
                                 <label htmlFor="vigencia">VIGENCIA IDENTIFICACIÓN</label>
                                 {

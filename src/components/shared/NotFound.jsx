@@ -1,5 +1,5 @@
 import logo from "../../assets/logoF.png";
-import {year} from "../../utils";
+import {getElementosFecha} from "../../utils";
 import {useNavigate} from "react-router-dom";
 
 export const NotFound = () => {
@@ -21,7 +21,7 @@ export const NotFound = () => {
                     <img src={logo} alt="Imagen centrada" className="img-fluid" />
                 </div>
                 <div className="credits">
-                    <strong>Grocerys Centro Cambiario - {year}</strong>
+                    <strong>Grocerys Centro Cambiario - {getElementosFecha().year}</strong>
                 </div>
             </section>
 

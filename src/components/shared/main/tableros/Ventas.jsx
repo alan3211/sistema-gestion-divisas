@@ -6,7 +6,7 @@ import {consultaVentasTablero} from "../../../../services/tools-services";
 export const Ventas = ({ data }) => {
 
     const [dataState, setDataState] = useState(data);
-    const [fechaConsulta, setFechaConsulta] = useState(formattedDate);
+    const [fechaConsulta, setFechaConsulta] = useState(formattedDate());
 
     const {register,handleSubmit,setValue,formState:{errors}} = useForm();
 

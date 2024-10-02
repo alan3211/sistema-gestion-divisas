@@ -186,7 +186,7 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
             diferencias: 0,
         }
 
-        cierreCaja.ticket = `CIERREPARCIAL${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        cierreCaja.ticket = `CIERREPARCIAL${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
 
         const formValuesD = getDenominacion(cierreCaja.moneda, datos)
         const formValuesDif = getDiferenciaDenominacion(cierreCaja.moneda, datos)

@@ -245,7 +245,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                 if (denominacion.length > 0) {
                     const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
                     const horaOperacion = horaDelDia.split(":").join("");
-                    const ticket = `DOTSUC${sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+                    const ticket = `DOTSUC${sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
 
                     const objetoSucursal = {
                         ticket,

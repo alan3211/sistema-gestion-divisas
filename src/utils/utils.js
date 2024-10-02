@@ -1,44 +1,61 @@
 import CryptoJS from "crypto-js";
 
-const currentDate = new Date();
+export const getCurrentDate = () => new Date();
+
+export const getElementosFecha = () => {
+    const currentDate = getCurrentDate();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = currentDate.getDate().toString().padStart(2, "0");
+    let hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes().toString().padStart(2, "0");
+    const seconds = currentDate.getSeconds().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return {day,month,year,hours,minutes,seconds,ampm};
+}
+
+export const formattedDate = () => {
+    const {day,month,year} = getElementosFecha();
+    return `${year}-${month}-${day}`;
+}
+
+export const formattedDateWS = () => {
+    const {day,month,year} = getElementosFecha();
+    return `${year}${month}${day}`;
+}
+
+export const formattedDateH = () => {
+    const {day,month,year,hours,minutes,seconds,ampm} = getElementosFecha();
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${ampm}`;
+}
+
+export const formattedDateDD = () => {
+    const {day,month,year} = getElementosFecha();
+    return `${day}-${month}-${year}`;
+}
+
+export const formattedDateDD2 = () => {
+    const {day,month,year} = getElementosFecha();
+    return `${day}/${month}/${year}`;
+}
+
+export const formattedDateF = () => {
+    const {day,month,year} = getElementosFecha();
+    return `${year}-${month}-${day}`;
+}
+
+
+
+
 export const globalData = JSON.parse(localStorage.getItem('usuario_data'))
 
-export const year = currentDate.getFullYear();
-const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-const day = currentDate.getDate().toString().padStart(2, "0");
 export const opciones = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
-export const formattedDate = `${year}-${month}-${day}`;
-export const formattedDateWS = `${year}${month}${day}`;
-export const formattedDateDD = `${day}-${month}-${year}`;
-export const formattedDateDD2 = `${day}/${month}/${year}`;
 
-let horas = currentDate.getHours();
-let minutos = currentDate.getMinutes();
-let segundos = currentDate.getSeconds();
-
-// Determinar si es AM o PM
-const amOpm = horas >= 12 ? 'PM' : 'AM';
-
-// Convertir las horas al formato de 12 horas
-horas = horas % 12;
-horas = horas ? horas : 12;
-
-export const formattedDateH = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")} ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, "0")}:${new Date().getSeconds()}  ${new Date().getHours() >= 12 ? 'PM' : 'AM'}`;
-export const formattedDateF = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`;
-
-export const formateaMoneda = (cantidad) =>{
-    // Convierte la cadena en un número decimal con 2 decimales
-    const numero = parseFloat(cantidad).toFixed(2);
-    // Agrega el símbolo de moneda "$" antes del valor
-    const formatoMoneda = `$ ${numero}`;
-    return formatoMoneda;
-}
 export const TIME_OUT = 1000 * 60; // 1 minuto
 
-export const hora = currentDate.toLocaleTimeString('es-ES', opciones);
-const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
-horaDelDia.split(":").join("");
+export const hora = () => getCurrentDate().toLocaleTimeString('es-ES', opciones).split(":").join("");
 
 export const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);

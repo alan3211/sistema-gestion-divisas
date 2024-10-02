@@ -16,10 +16,10 @@ export const ConsultaBovedas = ({perfil}) => {
     const [currentDate, setCurrentDate] = useState('');
 
     useEffect(() => {
-        setCurrentDate(formattedDate);
-        setValue("fecha",formattedDate)
+        setCurrentDate(formattedDate());
+        setValue("fecha",formattedDate())
         // Realizar la consulta automáticamente al cargar la página
-        onSubmitRecepcion({ fecha: formattedDate });
+        onSubmitRecepcion({ fecha: formattedDate() });
     }, []);
 
     const refreshQuery = async () =>{

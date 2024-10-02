@@ -49,13 +49,13 @@ export const EstatusDotaciones = () => {
 
     useEffect(() => {
         // Obtener la fecha actual en el formato YYYY-MM-DD
-        setValue("fecha_operacion",formattedDate);
+        setValue("fecha_operacion",formattedDate());
         setValue("sucursal","1000");
-        setCurrentDate(formattedDate);
+        setCurrentDate(formattedDate());
         setCurrentSucursal(1000);
 
         let parametros = {
-            fecha_operacion: formattedDate,
+            fecha_operacion: formattedDate(),
             tipo_operacion:"Dotacion Sucursal",
             sucursal:"1000",
         }

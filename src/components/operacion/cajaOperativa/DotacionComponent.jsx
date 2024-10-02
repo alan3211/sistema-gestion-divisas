@@ -7,7 +7,6 @@ import {getDotaciones} from "../../../services/operacion-caja";
 import {TableComponent} from "../../commons/tables";
 import {LoaderTable} from "../../commons/LoaderTable";
 import {useForm} from "react-hook-form";
-import {consultaDotacionSucursal, consultaDotacionSucursalVal} from "../../../services/operacion-sucursal";
 
 export const DotacionComponent = () => {
 
@@ -19,9 +18,9 @@ export const DotacionComponent = () => {
     const [formData,setFormData] = useState('');
 
     useEffect(() => {
-        setCurrentDate(formattedDate);
+        setCurrentDate(formattedDate());
         // Obtener la fecha actual en el formato YYYY-MM-DD
-        setValue("fecha",formattedDate)
+        setValue("fecha",formattedDate())
         // Realizar la consulta automáticamente al cargar la página
         onSubmitRecepcion({ fecha: currentDate});
     }, []);

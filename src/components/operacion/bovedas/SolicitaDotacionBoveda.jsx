@@ -113,7 +113,7 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
         data.moneda = dataItem.Moneda;
         data.operacion = 'DOTACION BOVEDA';
         data.usuario = dataG.usuario;
-        data.ticket = `DOTBOV${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        data.ticket = `DOTBOV${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
 
         let denominacionesDotacion = denominacionB.getValues();
         const formValuesB = getDenominacion(data.moneda,denominacionesDotacion)
