@@ -37,7 +37,7 @@ export const ConsultaCaja = () => {
             {columna:"Estatus",tool:'estatus'},
             { columna: "Denominaciones", tool: 'ver-detalle-denominacion' },
             { columna: "Reimpresión ticket", tool: 'impresion-ticket' },
-            { columna: "Cancelar Operación", tool: 'cancelar-operacion',refresh:refreshQuery },
+            //{ columna: "Cancelar Operación", tool: 'cancelar-operacion',refresh:refreshQuery },
         ]
     }
 

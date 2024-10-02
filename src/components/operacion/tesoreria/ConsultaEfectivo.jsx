@@ -21,6 +21,11 @@ export const ConsultaEfectivo = ({operacion}) =>{
     };
 
     useEffect(() => {
+        actualizarSaldo();
+    }, [operacion]);
+
+
+    useEffect(() => {
         console.log("SALDO ACTUAL: ", saldoGeneral);
         setSaldoNuevo(saldoGeneral !== undefined ? saldoGeneral : 0);
     }, [saldoGeneral]);

@@ -20,6 +20,7 @@ export const MovimientoEfectivo = ({actualizarSaldo,moneda}) => {
     const onSubmitMovimientoBancario = handleSubmit(async (data) => {
         data.usuario = dataG.usuario || globalData.usuario;
         data.operacion = watch('tipo_movimiento');
+        data.tipo_cambio = moneda === 'USD' ? watch('tipo_cambio') : 0.0
         data.moneda = moneda;
         data.sucursal = dataG.sucursal+"" || globalData.sucursal +"";
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
