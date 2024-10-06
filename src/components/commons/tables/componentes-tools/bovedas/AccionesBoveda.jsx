@@ -285,7 +285,8 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                        { watch("tipo_movimiento") === 'Cuenta Bancaria' && (<><div className="col-md-12">
+                                                        { watch("tipo_movimiento") === 'Cuenta Bancaria' &&
+                                                            (<><div className="col-md-12">
                                                             <div className="form-floating mb-3">
                                                                 <select
                                                                     {...register("tipo_banco", {
