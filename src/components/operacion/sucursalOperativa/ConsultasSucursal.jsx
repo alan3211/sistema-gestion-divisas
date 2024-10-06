@@ -44,7 +44,6 @@ export const ConsultasSucursal = () => {
 
         const data_usuarios = await getUsuariosSistema(encryptedData);
 
-        console.log("CAJEROS: ", data_usuarios)
         if (data_usuarios.hasOwnProperty("resultSize")) {
             setUsuariosCombo([]);
         } else {
@@ -79,7 +78,6 @@ export const ConsultasSucursal = () => {
             }
             const encryptedData = encryptRequest(values);
             const result = await consultaCantidadDivisasCaja(encryptedData);
-            console.log("RESULTADO: ", result);
             if(result){
                 setDatosCaj(result);
             }else{
@@ -92,11 +90,10 @@ export const ConsultasSucursal = () => {
     useEffect(() => {
         // Aquí realizas la consulta de movimientos cuando selectedCajero cambie
         const handleConsultaMovimientos = async (data) => {
-            console.log(data);
             const values = {
                 usuario: data.cajero,
                 sucursal: dataG.sucursal,
-                fecha: formattedDate,
+                fecha: formattedDate(),
             };
             const encryptedData = encryptRequest(values);
             const result = await consultaMovimientos(encryptedData);

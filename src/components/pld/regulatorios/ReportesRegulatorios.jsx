@@ -1,8 +1,3 @@
-import {EnvioOperaciones} from "../../operacion/sucursalOperativa/operaciones/EnvioOperaciones";
-import {DotacionCajaSucursal} from "../../operacion/sucursalOperativa/DotacionCajaSucursal";
-import {EstatusOperacionesSucursal} from "../../operacion/sucursalOperativa/operaciones/EstatusOperacionesSucursal";
-import {ConsultasSucursal} from "../../operacion/sucursalOperativa/ConsultasSucursal";
-import {CierreSucursal} from "../../operacion/sucursalOperativa/CierreSucursal";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {CardLayout, Layout} from "../../commons";

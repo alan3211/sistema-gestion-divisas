@@ -9,7 +9,6 @@ export * from './useSaldo'
 export * from './useAltaComplementario'
 export * from './useCatalogo'
 export * from './useDenominacion'
-export * from './useComboInput'
 export * from './useMovimientosDotaciones'
 export * from './usePrinter'
 

@@ -42,7 +42,7 @@ export const MainComponent = () => {
 
     const validaTableros = () => {
         if (
-            [0,6].includes(dataG.id_perfil)
+            [0,6,1].includes(dataG.id_perfil)
         ) {
             return true;
         }

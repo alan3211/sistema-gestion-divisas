@@ -1,12 +1,12 @@
 import logo from '../../assets/logo.png';
-import {encryptRequest, OPTIONS, validarAlfaNumerico, year} from "../../utils";
+import {encryptRequest, OPTIONS, validarAlfaNumerico,getElementosFecha} from "../../utils";
 import {useForm} from "react-hook-form";
 import {getUser} from "../../services";
 import {toast} from "react-toastify";
 import {dataG} from "../../App";
 import jwt_decode from 'jwt-decode';
 import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+
 
 
 export const LoginComponent = () => {
@@ -28,8 +28,6 @@ export const LoginComponent = () => {
             localStorage.setItem("token",datos.token); // Se guarda el token
             localStorage.setItem("refresh_token",datos.refresh_token); // Se guarda el refresh
             const decodedToken = jwt_decode(datos.token);
-            console.log("USUARIO")
-            console.log(decodedToken)
             if(decodedToken.valida_contra === 0){
                 // Primera vez
                 navigator("/cambia-contraseña",{state: {
@@ -142,7 +140,7 @@ export const LoginComponent = () => {
 
 
                                 <div className="credits text-blue">
-                                    Grocerys Centro Cambiario - {year}
+                                    Grocerys Centro Cambiario - {getElementosFecha().year}
                                 </div>
 
                             </div>

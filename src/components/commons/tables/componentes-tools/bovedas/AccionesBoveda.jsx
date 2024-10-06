@@ -68,9 +68,6 @@ export const AccionesBoveda = ({item, index,refresh}) => {
             values.factura= 'EFECTIVO';
         }
 
-
-        console.log("Denominaciones ingresadas: ", myDenominacion)
-
         if(Object.values(myDenominacion).length !== 0){
         // Combina los objetos en uno solo
         const objetoCombinado = myDenominacion.reduce((resultado, objeto) => {
@@ -80,11 +77,8 @@ export const AccionesBoveda = ({item, index,refresh}) => {
             return resultado;
         }, {});
         const formValuesB = getDenominacion(item.Divisa,objetoCombinado)
-        console.log("FORMVALUESB: ",formValuesB)
         eliminarDenominacionesConCantidadCero(formValuesB);
-        console.log("SIN CEROS: ",formValuesB)
         const denominaciones = obtenerObjetoDenominaciones(formValuesB);
-        console.log("DENOMINACIONES: ",denominaciones)
         denominaciones.divisa = item.Divisa;
         denominaciones.movimiento = 'CONFIRMA BOVEDA';
 
@@ -130,14 +124,12 @@ export const AccionesBoveda = ({item, index,refresh}) => {
             }
             const encryptedData = encryptRequest(valores);
             const data_denominacion = await getDenominacionesBoveda(encryptedData)
-            console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }
         getDenominacionesAsignadas();
     }, [ item.Divisa,item["No Movimiento"]]);
 
     const validaBtn = () => {
-        console.log(parseFloat(item["Monto Solicitado"]) !== parseFloat(totalMonto))
         if(optionBtn === 1){
             return watch("motivo") === '' || parseFloat(item["Monto Solicitado"]) !== parseFloat(totalMonto);
         }else {
@@ -293,7 +285,8 @@ export const AccionesBoveda = ({item, index,refresh}) => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                        { watch("tipo_movimiento") === 'Cuenta Bancaria' && (<><div className="col-md-12">
+                                                        { watch("tipo_movimiento") === 'Cuenta Bancaria' &&
+                                                            (<><div className="col-md-12">
                                                             <div className="form-floating mb-3">
                                                                 <select
                                                                     {...register("tipo_banco", {

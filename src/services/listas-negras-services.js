@@ -41,7 +41,6 @@ export const consultaLista =  async(formValues) => {
         }
 
         const data = await response.json();
-        console.log("DATA: ",data);
         return data;
     } catch (error) {
         console.error('Error:', error);

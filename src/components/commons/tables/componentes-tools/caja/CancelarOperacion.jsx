@@ -10,8 +10,7 @@ export const CancelarOperacion = ({item, index, refresh}) => {
 
     const [showModal, setShowModal] = useState(false);
     const cancelarOperacion = async () => {
-        console.log(item)
-
+        
         const valores = {
             ticket: item["No Ticket"],
             usuario: dataG.usuario

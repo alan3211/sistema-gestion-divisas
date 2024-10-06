@@ -1,6 +1,6 @@
 import logo from "../../assets/logoF.png";
 import {useNavigate} from "react-router-dom";
-import {year} from "../../utils";
+import {getElementosFecha} from "../../utils";
 import {useEffect} from "react";
 
 export const HealthComponent = () => {
@@ -35,9 +35,7 @@ export const HealthComponent = () => {
                     <img src={logo} alt="Imagen centrada" className="img-fluid" />
                 </div>
                 <div className="credits">
-                    <strong>Grocerys Centro Cambiario - {year}</strong>
-
-
+                    <strong>Grocerys Centro Cambiario - {getElementosFecha().year}</strong>
                 </div>
             </section>
 

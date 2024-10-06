@@ -27,7 +27,6 @@ export const ConsultaTotalesCajeros = ({ data }) => {
             moneda: elemento.Moneda,
             tipo_operacion: 'DOTACION CAJA',
         };
-        console.log("DETALLE: ", valores)
         const encryptedData = encryptRequest(valores);
         const data_denominacion = await getDetalleDenominaciones(encryptedData);
         setDatos(data_denominacion.result_set);

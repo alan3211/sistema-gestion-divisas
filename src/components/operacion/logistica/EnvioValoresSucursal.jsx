@@ -14,8 +14,8 @@ import {useContext, useEffect, useState} from "react";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
 import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {toast} from "react-toastify";
-import {ModalLoading} from "../../commons/modals/ModalLoading";
-import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
+import {ModalLoading} from "../../commons/modals";
+import {FilterComboInput} from "../../commons/inputs";
 export const EnvioValoresSucursal = () => {
 
     const propForm = useForm();
@@ -63,7 +63,7 @@ export const EnvioValoresSucursal = () => {
 
         data.operacion = 'SOLICITA VALORES';
         data.usuario = dataG.usuario;
-        data.ticket = `SOLVAL${data.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        data.ticket = `SOLVAL${data.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         data.noCliente='0';
         data.traspaso='';
 
@@ -168,7 +168,6 @@ export const EnvioValoresSucursal = () => {
                         {...form.register("monto",{
                             validate: {
                                 validacionMoneda: (value) => {
-                                    console.log("Moneda: ",form.watch("moneda"))
                                     if (form.watch("moneda") === 'USD') {
                                         return validarMonedaUSD("Monto",value);
                                     } else {

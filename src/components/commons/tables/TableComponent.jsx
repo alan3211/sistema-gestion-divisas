@@ -15,7 +15,6 @@ import {Tabla} from "./Tabla";
 import jsPDF from "jspdf";
 
 export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
-    const [resultSet, setResultSet] = useState([]);
     const [perPage, setPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
@@ -217,7 +216,7 @@ export const TableComponent = ({data: {headers, result_set, total_rows}, options
             // Construir el blob y descargar el archivo
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const fileName = `Consulta-${formattedDate}-${tableName}.xlsx`;
+            const fileName = `Consulta-${formattedDate()}-${tableName}.xlsx`;
 
             // Descargar el archivo
             saveAs(blob, fileName);

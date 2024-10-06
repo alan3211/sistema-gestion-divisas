@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { dataG } from "../../../../App";
 import {encryptRequest, formattedDate, obtenerFechaDiaAnterior} from "../../../../utils";
-import {consultaCantidadDivisas, consultaMovimientos, getDotaciones} from "../../../../services/operacion-caja";
+import {consultaCantidadDivisas, consultaMovimientos} from "../../../../services/operacion-caja";
 import { ConsultaTotalesCaja } from "./ConsultaTotalesCaja";
 import { TableComponent } from "../../../commons/tables";
 import {TitleComponent} from "../../../commons";
@@ -37,7 +37,7 @@ export const ConsultaCaja = () => {
             {columna:"Estatus",tool:'estatus'},
             { columna: "Denominaciones", tool: 'ver-detalle-denominacion' },
             { columna: "Reimpresión ticket", tool: 'impresion-ticket' },
-            { columna: "Cancelar Operación", tool: 'cancelar-operacion',refresh:refreshQuery },
+            //{ columna: "Cancelar Operación", tool: 'cancelar-operacion',refresh:refreshQuery },
         ]
     }
 
@@ -81,7 +81,7 @@ export const ConsultaCaja = () => {
             const values = {
                 usuario: dataG.usuario,
                 sucursal: dataG.sucursal,
-                fecha: formattedDate
+                fecha: formattedDate()
             }
             const encryptedData = encryptRequest(values);
             setFormData(encryptedData)
@@ -94,7 +94,6 @@ export const ConsultaCaja = () => {
     }, []);
 
     const handleConsultaMovimientosHistoricos = handleSubmit(async(data)=>{
-        console.log(data);
         const values = {
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,

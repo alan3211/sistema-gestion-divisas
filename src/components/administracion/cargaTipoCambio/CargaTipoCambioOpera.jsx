@@ -34,7 +34,7 @@ export const CargaTipoCambioOpera = ({id}) => {
                     compra: compraValue === "" ? 0.0 : compraValue,
                     venta: ventaValue === "" ? 0.0 : ventaValue,
                     divisa: currency.divisa,
-                    fecha: formattedDate,
+                    fecha: formattedDate(),
                 };
             } else {
                 return null; // No agrega al arreglo si ambos valores son vacíos
@@ -54,7 +54,6 @@ export const CargaTipoCambioOpera = ({id}) => {
         }
 
         updatedData.opcion = tipoConsulta;
-        console.log(updatedData)
 
         if(updatedData.tipoCambio.length === 0){
             toast.error('No se han ingresado tipos de cambio.',OPTIONS);

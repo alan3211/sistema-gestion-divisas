@@ -1,7 +1,4 @@
-import {formattedDate} from "./utils";
-
 export const validaFechas = (fecha) => {
-    console.log(fecha)
     // Verificar el formato de la fecha
     /*const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -60,7 +57,6 @@ export const validaFechas = (fecha) => {
 };
 
 export const validaFechaVigencia = (fechaString) => {
-    console.log(fechaString);
     if (fechaString === "") {
         return 'La fecha ingresada no es válida.';
     }
@@ -144,8 +140,6 @@ export const validarMayus = (name, value) => {
 };
 
 export const validarCorreoElectronico = (correo) => {
-    console.log(correo);
-
     if(correo === ""){
         return true;
     }

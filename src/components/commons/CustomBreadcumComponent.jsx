@@ -1,6 +1,4 @@
 export const CustomBreadcumComponent = ({title,module}) => {
-
-
     return(
         <>
             <div className="pagetitle">

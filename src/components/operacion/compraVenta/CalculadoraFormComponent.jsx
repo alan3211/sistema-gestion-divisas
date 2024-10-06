@@ -14,7 +14,7 @@ import {
     encryptRequest,
     FormatoMoneda,
     formattedDate,
-    OPTIONS, redondearNumero,
+    OPTIONS,
     validarMonedaUSD
 } from "../../../utils";
 import {toast} from "react-toastify";
@@ -108,7 +108,6 @@ export const CalculadoraFormComponent = () => {
                 valor = divisaValor[0].Venta;
             }
         }
-        console.log(valor);
         return valor;
     }
 
@@ -118,7 +117,6 @@ export const CalculadoraFormComponent = () => {
             ticket: ticket,
         }
         const response = await validaDotParcial(encryptRequest(valores));
-        console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
             setTicket("");
@@ -151,7 +149,6 @@ export const CalculadoraFormComponent = () => {
             toast.error(`No se puede cotizar ya que no existe un tipo de cambio para ${DENOMINACIONES[watch("moneda")]}.`, OPTIONS);
             clearForm();
         } else {
-            console.log("OPERACION: ",data)
             setOperacion(data);
             validaCantidadEntregada();
         }
@@ -222,7 +219,6 @@ export const CalculadoraFormComponent = () => {
 
         const response = await enviaMensajeDotacionParcial(encryptedData);
         toast.warn(response.result_set[0].Mensaje,OPTIONS);
-        console.log("result --> tickets: ",response);
         setTicket(response.result_set[0].Noticket)
         setShowModalDotacion({
             show:false,
@@ -235,21 +231,18 @@ export const CalculadoraFormComponent = () => {
 
     /*Guarda la preoperacion*/
     const getOperacion = async () => {
-        console.log("DATOS! ",datos)
         const operacionEnvia = {
             cliente: '',
             tipo_operacion: datos.tipo_operacion ,
             sucursal: dataG.sucursal || 0,
             nombre_operador: dataG.usuario,
-            fecha_operacion: formattedDate,
+            fecha_operacion: formattedDate(),
             hora_operacion: new Date().getHours().toString(),
             monto: parseInt(datos.monto),
             divisa: datos.moneda,
             tipo_cambio: datos.tipo_cambio,
             cantidad_entregar: parseFloat(datos.cantidad_entregar)
         }
-
-        console.log(operacionEnvia);
 
         const encryptedData = encryptRequest(operacionEnvia);
 
@@ -266,8 +259,6 @@ export const CalculadoraFormComponent = () => {
 
     /*Valida la cantidad entregada si rebasa el limite diario de una sucursal*/
     const validaCantidadEntregada = () => {
-        console.warn("mensaje de cantidad")
-        console.warn(cantidad)
         if (parseFloat(cantidad) > dataG.limite_diario) {
             toast.warn(`Esta sucursal solo permite un límite diario de $${dataG.limite_diario} por cliente.`, OPTIONS);
         } else {
@@ -320,7 +311,7 @@ export const CalculadoraFormComponent = () => {
     useEffect(()=>{
 
         const valores = {
-            fecha: formattedDate,
+            fecha: formattedDate(),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
         }

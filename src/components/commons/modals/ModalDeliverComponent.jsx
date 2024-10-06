@@ -1,12 +1,12 @@
 import {Button, Modal} from "react-bootstrap";
 import {useContext, useEffect, useMemo, useState} from "react";
 import {dataG} from "../../../App";
-import {guardaConfirmacionFactura, obtieneDenominaciones, realizarOperacion, validaDotParcial} from "../../../services";
+import {guardaConfirmacionFactura, realizarOperacion, validaDotParcial} from "../../../services";
 import {ModalCambio} from "./ModalCambio";
 import {
-    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDate, formattedDateF, formattedDateWS,
+    eliminarDenominacionesConCantidadCero, encryptRequest, formattedDateF, formattedDateWS,
     getDenominacion,
-    obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarMoneda, validarNumeros
+    obtenerObjetoDenominaciones, opciones, OPTIONS
 } from "../../../utils";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
@@ -16,12 +16,11 @@ import {usePrinter,useMovimientosDotaciones} from "../../../hook/";
 import {ModalTicket} from "./ModalTicket";
 import {ModalGenericPLDTool, ModalGenericTool} from "./ModalTools";
 import {useForm} from "react-hook-form";
-import {realizarOperacionSucursal, realizarSolicitudCambio} from "../../../services/operacion-sucursal";
+import {realizarOperacionSucursal} from "../../../services/operacion-sucursal";
 import {ModalLoading} from "./ModalLoading";
 import {TableComponent} from "../tables";
 import {LoaderTable} from "../LoaderTable";
 import {getDotaciones} from "../../../services/operacion-caja";
-import {toastTheme} from "flowbite-react/lib/esm/components/Toast/theme";
 
 export const ModalDeliverComponent = ({configuration}) =>{
     const {showCustomModal,setShowCustomModal,operacion,datos} = configuration;
@@ -121,8 +120,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
         eliminarDenominacionesConCantidadCero(formValuesR);
         eliminarDenominacionesConCantidadCero(formValuesE);
 
-        console.log("DATOS: ",datos);
-
         const values = {
             cliente: datos.Cliente,
             ticket: datos.ticket,
@@ -142,14 +139,11 @@ export const ModalDeliverComponent = ({configuration}) =>{
             ]
         }
 
-        console.log("FINALIZA OPERACION --- values");
-        console.log(values);
-
-        console.log(`Se envia el redondeo: ${redondeo}`)
-
         values.redondeo = redondeo;
         const encryptedData = encryptRequest(values);
         setOperacionSinFinalizar(encryptedData);
+
+
 
         if(redondeo > -0.30 && redondeo < 0.30){
             if(redondeo !== 0.00){
@@ -161,7 +155,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 }else {
                     setPreguntaRedondeo(false);
                     const response = await realizarOperacion(encryptedData);
-                    console.log(response);
                     if (response.mensaje === '') {
                         setShowModalFactura(true);
                     } else {
@@ -181,7 +174,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
             setShowCambio(true);
         }else {
             const response = await realizarOperacion(operacionSinFinalizar);
-            console.log(response);
             if(response.mensaje === ''){
                 setShowModalFactura(true);
             }else{
@@ -239,7 +231,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
         dataFormulario.operacion = 'Solicitud Dotacion Parcial';
         dataFormulario.usuario = dataG.usuario;
         dataFormulario.sucursal = dataG.sucursal;
-        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
         dataFormulario.moneda=moneda;
@@ -257,8 +249,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
             denominaciones,
         ]
 
-        console.log("DATA FORM")
-        console.log(dataFormulario)
         const encryptedData = encryptRequest(dataFormulario);
         setTicket(dataFormulario.ticket)
         await realizarOperacionSucursal(encryptedData);
@@ -312,7 +302,7 @@ export const ModalDeliverComponent = ({configuration}) =>{
     useEffect(()=>{
 
         const valores = {
-            fecha: formattedDateF,
+            fecha: formattedDateF(),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
         }
@@ -334,7 +324,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
             ticket: ticket,
         }
         const response = await validaDotParcial(encryptRequest(valores));
-        console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
             setTicket("");

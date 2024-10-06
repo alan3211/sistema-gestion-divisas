@@ -1,10 +1,4 @@
-import {ConsultaTesoreria} from "../operacion/tesoreria/ConsultaTesoreria";
-import {Bovedas} from "../operacion/bovedas/Bovedas";
-import {FondosSucursal} from "../operacion/logistica/FondosSucursal";
-import {EstatusDotaciones} from "../operacion/tesoreria/EstatusDotaciones";
-import {RecepcionValores} from "../operacion/tesoreria/RecepcionValores";
 import {CardLayout, Layout} from "../commons";
-import {TabsLayout} from "../commons/tabs";
 import {Consulta} from "./Consulta";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";

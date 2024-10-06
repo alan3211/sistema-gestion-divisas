@@ -60,7 +60,6 @@ export const Denominacion = ({type, moneda, options}) => {
                                                 {...register(`denominacion_${name}`, {
                                                     validate: {
                                                         validacionMN: (value) => {
-                                                            console.log("VALOR @ ----> ",value);
                                                             // Validación de formato: solo permite números, opcionalmente un '-', y un solo '.'
                                                             const regex = /^-?\d*\.?\d+$/;
                                                             if (!regex.test(value)) {

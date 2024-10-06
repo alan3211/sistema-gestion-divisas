@@ -6,7 +6,7 @@ import {dotaEfectivo, dotaSucursales} from "../../../../services/operacion-tesor
 import {toast} from "react-toastify";
 
 
-export const MovimientoEfectivo = ({actualizarSaldo}) => {
+export const MovimientoEfectivo = ({actualizarSaldo,moneda}) => {
 
     const { register,
         handleSubmit,
@@ -20,11 +20,12 @@ export const MovimientoEfectivo = ({actualizarSaldo}) => {
     const onSubmitMovimientoBancario = handleSubmit(async (data) => {
         data.usuario = dataG.usuario || globalData.usuario;
         data.operacion = watch('tipo_movimiento');
-        data.moneda = 'USD';
+        data.tipo_cambio = moneda === 'USD' ? watch('tipo_cambio') : 0.0
+        data.moneda = moneda;
         data.sucursal = dataG.sucursal+"" || globalData.sucursal +"";
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
-        data.ticket = `MOVEFE${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`
+        data.ticket = `MOVEFE${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`
         const encryptedData = encryptRequest(data);
         const response = await dotaEfectivo(encryptedData);
         if(response.mensaje.includes("exitosamente")){
@@ -111,7 +112,7 @@ export const MovimientoEfectivo = ({actualizarSaldo}) => {
                     )}
                 </div>
             </div>
-            <div className="col-md-4 mx-auto">
+            {moneda === 'USD' && (<div className="col-md-4 mx-auto">
                 <div className="form-floating mb-3">
                     <div className="col-md-12 form-floating mb-3">
                         <input
@@ -145,7 +146,7 @@ export const MovimientoEfectivo = ({actualizarSaldo}) => {
                         )}
                     </div>
                 </div>
-            </div>
+            </div>)}
             <div className="col-md-2 mx-auto">
                 <button
                     type="button"

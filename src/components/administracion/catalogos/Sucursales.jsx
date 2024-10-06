@@ -19,7 +19,6 @@ export const Sucursales = () => {
     } = useForm();
 
     const onSubmitCatalogo = handleSubmit(async (data) => {
-        console.log("CATALOGO: ", data);
         data.tipo = 'sucursal';
         const encryptedData = encryptRequest(data);
 
@@ -39,7 +38,6 @@ export const Sucursales = () => {
                 municipio:'',
                 colonia:''
             }
-            console.log(values)
             const encryptedData =  encryptRequest(values);
             const mun = await getLocalidad(encryptedData);
             setMunicipios(mun)

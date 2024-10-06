@@ -24,7 +24,6 @@ export const usePrinter = (datos) => {
             }
             const encryptedData = encryptRequest(valores);
             const response = await obtieneTicket(encryptedData);
-            console.log(response);
             dataTicket = response.result_set[0];
 
             const conector = new connetor_plugin()
@@ -40,7 +39,6 @@ export const usePrinter = (datos) => {
             const resp = await conector.imprimir(nombreImpresora, api_key);
             if (resp === true) {
                 mostrar_impresoras();
-                console.log("imprimir: " + resp)
                 if(tipo === 0){
                     abreCajon();
                 }
@@ -62,7 +60,6 @@ export const usePrinter = (datos) => {
             }
             const encryptedData = encryptRequest(valores);
             const response = await obtieneDisposicionLPB(encryptedData);
-            console.log(response);
             dataTicket = response.result_set[0].Disposicion;
             const conector = new connetor_plugin()
             ticketLPB(0, conector,dataTicket)
@@ -70,7 +67,6 @@ export const usePrinter = (datos) => {
             const resp = await conector.imprimir(nombreImpresora, api_key);
             if (resp === true) {
                 mostrar_impresoras();
-                console.log("imprimir: " + resp)
             } else {
                 console.log("Problema al imprimir: " + resp)
             }
@@ -95,8 +91,6 @@ export const usePrinter = (datos) => {
             centPlural: "centavos",
             centSingular: "centavo"
         }
-        console.log("<-----dataTicket----->")
-        console.log(dataTicket)
         if(dataTicket["Operación"] !== 'COMPRA'){
             currency.plural = getTextDivisa(dataTicket.Divisa).plural;
             currency.singular = getTextDivisa(dataTicket.Divisa).singular;
@@ -114,7 +108,7 @@ export const usePrinter = (datos) => {
         conector.text(`Sucursal: ${dataTicket.Sucursal}`)
         conector.textaling("left")
         conector.text("------------------------------------------")
-        conector.text(`Fecha: ${formattedDateDD2}    Folio: ${dataTicket.Folio}`)
+        conector.text(`Fecha: ${formattedDateDD2()}    Folio: ${dataTicket.Folio}`)
         conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas          # Usuario: ${dataTicket.Usuario}`)
         conector.text("------------------------------------------")
         conector.text(dataTicket["Operación"])
@@ -159,7 +153,7 @@ export const usePrinter = (datos) => {
         conector.fontsize("1")
         conector.textaling("left")
         conector.text("------------------------------------------")
-        conector.text(`Fecha: ${formattedDateDD2}    AVISO LPB`)
+        conector.text(`Fecha: ${formattedDateDD2()}    AVISO LPB`)
         conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas`)
         conector.text("------------------------------------------")
         conector.text(disposicionLPB)
@@ -198,7 +192,7 @@ export const usePrinter = (datos) => {
         conector.text(`Sucursal: ${dataTicket.Sucursal}`)
         conector.textaling("left")
         conector.text("------------------------------------------")
-        conector.text(`Fecha: ${formattedDateDD2}    Folio: ${dataTicket.Folio}`)
+        conector.text(`Fecha: ${formattedDateDD2()}    Folio: ${dataTicket.Folio}`)
         conector.text(`${new Date().toLocaleTimeString('es-ES', opciones)} horas          # Usuario: ${dataTicket.Usuario}`)
         conector.text("------------------------------------------")
         conector.text(dataTicket["Operación"])
@@ -230,7 +224,6 @@ export const usePrinter = (datos) => {
     const imprimirDoc = async (tipo) => {
         if(datos['No Usuario'] !== ''){
             const response = await getEstructuraTicket(tipo);
-            console.log(response);
         }
     }
 

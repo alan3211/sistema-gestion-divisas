@@ -11,8 +11,7 @@ export const CambiarPassword = ({noPassActual,options}) => {
     const {register,handleSubmit,formState:{errors},reset,watch} =  useForm();
 
     const onSubmitChangePass = handleSubmit(async(data)=>{
-        console.log("DATOS LOGIN",options)
-        console.log("Data",data);
+
         data.sucursal = dataG.sucursal;
         data.usuario = dataG.usuario;
 

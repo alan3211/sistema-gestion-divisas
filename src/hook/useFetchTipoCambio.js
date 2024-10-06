@@ -10,7 +10,7 @@ export const useFetchTipoCambio = () => {
 
     const formValues = {
         "sucursal": dataG.sucursal,
-        "fechaCambio": formattedDate
+        "fechaCambio": formattedDate()
     }
 
     const [valorTipoCambio,setValorTipoCambio] =  useState([]);
@@ -45,7 +45,6 @@ export const useFetchTipoCambio = () => {
             valoresTipoCambio.headers.push('Detalle Sucursales')
         }
         setValoresTipoCambio(valoresTipoCambio.headers);
-        console.log(valorTipoCambio);
     }
 
     useEffect( () => {

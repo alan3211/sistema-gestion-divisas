@@ -80,7 +80,6 @@ export const AccionesUsuariosSistema = ({item, index, refresh}) => {
 
     // Metodo para editar al usuario
     const actualizarUsuario = handleSubmit(async(data) => {
-        console.log(data)
             const valores = {
                 opcion:2,
                 usuario: data.usuario,

@@ -13,7 +13,7 @@ export const TableroUsuariosSistema = () => {
                     <div className="card-body">
                         <h5 className="card-title">
                             <i className="bi bi-person-bounding-box me-2"></i>
-                            Usuarios <span>|  {formattedDate}</span>
+                            Usuarios <span>|  {formattedDate()}</span>
                         </h5>
                         {
                             activo && (

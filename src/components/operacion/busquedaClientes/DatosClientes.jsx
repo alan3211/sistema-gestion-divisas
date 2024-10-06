@@ -19,9 +19,6 @@ export const DatosClientes = ({operacion, cliente}) => {
 
     const {abreCajon} = usePrinter();
 
-    console.log("DATOS!!!",datos)
-    console.log("DATOS CLIENTE @@@!!!",cliente);
-    console.log("DATOS OPERACION @@@!!!",operacion);
     datos.Cliente = cliente.Cliente || cliente.Usuario;
 
 
@@ -59,7 +56,6 @@ export const DatosClientes = ({operacion, cliente}) => {
 
         const encryptedData = encryptRequest(valores);
         const dataClientes = await buscaCliente(encryptedData);
-        console.log("UN REGISTRO", dataClientes);
         if (dataClientes.result_set[0].hasOwnProperty('Resultado')) {
             const mensaje = dataClientes.result_set[0].Resultado;
             if (mensaje.includes('excede')) {
@@ -73,7 +69,6 @@ export const DatosClientes = ({operacion, cliente}) => {
             // Abre el cajon para ingresar los billetes
             setShowCustomModal(true);
             abreCajon();
-            console.log("ABRE CAJON CUANDO muestra el MODAL");
         }
     }
 

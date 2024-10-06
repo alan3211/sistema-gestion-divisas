@@ -89,9 +89,6 @@ export const useMonitorSesion = () => {
                             const tiempoExpiracion = decodedToken.exp * 1000; // Convertir a milisegundos
                             const tiempoActual = Date.now();
                             const tiempoRestanteRes = tiempoExpiracion - tiempoActual;
-
-                            console.log("Tiempo Restante MS: ",tiempoRestanteRes)
-                            console.log("Tiempo Restante S: ",parseInt(tiempoRestanteRes / 1000))
                             // Actualizar el estado con el tiempo restante en segundos
                             setTiempoRestante(parseInt(tiempoRestanteRes / 1000));
 

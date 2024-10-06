@@ -13,7 +13,6 @@ export const Zonas = () => {
     } = useForm();
 
     const onSubmitCatalogo = handleSubmit(async (data) => {
-        console.log("CATALOGO: ", data);
         data.tipo = 'zonas';
         const encryptedData = encryptRequest(data);
 

@@ -2,9 +2,9 @@ import {Button, Modal} from "react-bootstrap";
 import {useContext, useEffect, useState} from "react";
 import {
     eliminarDenominacionesConCantidadCero,
-    encryptRequest, FormatoMoneda, formattedDate, formattedDateF, formattedDateWS,
+    encryptRequest, FormatoMoneda, formattedDateF, formattedDateWS,
     getDenominacion,
-    obtenerObjetoDenominaciones, opciones, OPTIONS, redondearNumero, validarNumeros
+    obtenerObjetoDenominaciones, opciones, OPTIONS
 } from "../../../utils";
 import {dataG} from "../../../App";
 import {guardaConfirmacionFactura, realizarOperacion, validaDotParcial} from "../../../services";
@@ -76,7 +76,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         dataFormulario.operacion = 'Solicitud Dotacion Parcial';
         dataFormulario.usuario = dataG.usuario;
         dataFormulario.sucursal = dataG.sucursal;
-        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        dataFormulario.ticket = `DOTRAP${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         dataFormulario.noCliente='0';
         dataFormulario.traspaso='';
         dataFormulario.moneda=moneda;
@@ -94,8 +94,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             denominaciones,
         ]
 
-        console.log("DATA FORM")
-        console.log(dataFormulario)
         const encryptedData = encryptRequest(dataFormulario);
         setTicket(dataFormulario.ticket)
         await realizarOperacionSucursal(encryptedData);
@@ -121,10 +119,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     const guardarCambio = async() => {
         setGuarda(true);
-
-        console.log("data del cambio");
-        console.log(data);
-
         let denominacionesCambio = denominacionC.getValues();
 
         const formValuesC = getDenominacion(operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda,denominacionesCambio);
@@ -139,10 +133,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         formValuesC.movimiento = 'CAMBIO AL USUARIO';
 
         eliminarDenominacionesConCantidadCero(formValuesC);
-
-        console.log("CAMBIO!: ",cambio);
-        console.log("REDONDEO!!",redondeo)
-        console.log("DATOS: ",data);
 
         const values = {
             cliente: data.Cliente,
@@ -159,31 +149,45 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             ],
             redondeo:parseFloat(redondeo)
         }
-        console.log("VALUES DEL CAMBIO: ",values);
         const encryptedData = encryptRequest(values);
 
-
-        console.log("Este es el cambio: ", cambio)
-
-        if(redondeo > -0.30 && redondeo < 0.30){
-            if(redondeo !== 0.00){
-                setPreguntaRedondeo(true);
-                setEncryptedDataValues(encryptedData);
+        if(values.divisa === 'USD'){
+            if(parseFloat(denominacionC.calculateGrandTotal) !== cambio){
+                toast.error("El monto ingresado es distinto al requerido, favor de validar.",OPTIONS);
             }else{
-                // Redondeo es cero
                 setPreguntaRedondeo(false);
                 await realizarOperacion(operacionConCambio);
                 setPreguntaRedondeo(false);
                 const resultado = await realizarOperacion(encryptedData);
-                console.log("RESPUESTA 2 DE OPERACION");
-                console.log(resultado);
                 // Validar si tenemos que darle cambio
                 if(resultado){
                     setGuarda(false);
                     setShowModalFactura(true);
                 }
             }
+        }else{
+            // Aplica cuando es cambio en pesos
+            if(redondeo > -0.30 && redondeo < 0.30){
+                if(redondeo !== 0.00){
+                    setPreguntaRedondeo(true);
+                    setEncryptedDataValues(encryptedData);
+                }else{
+                    // Redondeo es cero
+                    setPreguntaRedondeo(false);
+                    await realizarOperacion(operacionConCambio);
+                    setPreguntaRedondeo(false);
+                    const resultado = await realizarOperacion(encryptedData);
+                    // Validar si tenemos que darle cambio
+                    if(resultado){
+                        setGuarda(false);
+                        setShowModalFactura(true);
+                    }
+                }
+            }else{
+                toast.error("El monto ingresado es menor al requerido, favor de validar.",OPTIONS);
+            }
         }
+
       setGuarda(false);
     }
 
@@ -224,7 +228,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     useEffect(()=>{
 
         const valores = {
-            fecha: formattedDateF,
+            fecha: formattedDateF(),
             usuario: dataG.usuario,
             sucursal: dataG.sucursal,
         }
@@ -246,7 +250,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             ticket: ticket,
         }
         const response = await validaDotParcial(encryptRequest(valores));
-        console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
             setTicket("");
@@ -314,14 +317,11 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     }
 
     const enviaFinalOperacion = async() => {
+        setGuarda(true);
         setPreguntaRedondeo(false)
-        console.log("RESPUESTA 1 DE OPERACION");
-        console.log(operacionConCambio);
         await realizarOperacion(operacionConCambio);
         setPreguntaRedondeo(false);
         const resultado = await realizarOperacion(encryptedDataValues);
-        console.log("RESPUESTA 2 DE OPERACION");
-        console.log(resultado);
         // Validar si tenemos que darle cambio
         if(resultado){
             setGuarda(false);
@@ -349,7 +349,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                                 <input type="text"
                                        className={`form-control mb-1`}
                                        id="floatingCE"
-                                       value={cambio}
+                                       value={parseFloat(cambio).toFixed(2)}
                                        readOnly
                                        autoComplete="off"
                                 />
@@ -372,9 +372,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
                         DOTACIÓN PARCIAL
                     </button>
                     <Button variant="primary" disabled={
-                        isNaN(denominacionC.calculateGrandTotal) ? true
-                            : (parseFloat(denominacionC.calculateGrandTotal) <= cambio) && (habilita.entrega || habilita.recibe)
-                        }
+                        (parseFloat(denominacionC.calculateGrandTotal) !== cambio) && (habilita.entrega || habilita.recibe)}
                         onClick={guardarCambio}>
                         <i className="bi bi-arrow-left-right me-2"></i>
                         ENTREGAR CAMBIO
@@ -455,7 +453,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             {
                 preguntaRedondeo && (
                     <ModalGenericPLDTool options={OPTIONS_PREGUNTA_REDONDEO}>
-                        <div className="col-md-12 mx-auto">
+                        <div className="col-md-6 mx-auto">
                             <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_PREGUNTA_REDONDEO.closeModal}>
                                       <span className="ms-2">
                                         <i className="bi bi-x-circle me-2"></i>

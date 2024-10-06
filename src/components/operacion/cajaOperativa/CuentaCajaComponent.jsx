@@ -22,7 +22,6 @@ export const CuentaCajaComponent = ({tipo}) => {
             }
             const encryptedData = encryptRequest(values)
             const data = await consultaCaja(encryptedData);
-            console.log("CAJA: ",data);
             setData(data);
     }
 
@@ -44,7 +43,7 @@ export const CuentaCajaComponent = ({tipo}) => {
         return (<div className="row d-flex justify-content-center">
             <div className="col-md-4 mb-3">
                 <MessageComponent estilos={mensajeSinElementos}>
-                    No hay información de cierre de este usuario del día: <strong>{formattedDateDD}</strong>
+                    No hay información de cierre de este usuario del día: <strong>{formattedDateDD()}</strong>
                 </MessageComponent>
             </div>
         </div>);

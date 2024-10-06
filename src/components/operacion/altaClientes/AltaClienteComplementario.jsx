@@ -5,22 +5,21 @@ import {
     encryptRequest,
     formattedDate,
     OPTIONS,
-    validaFechas, validaFechaVigencia,
+    validaFechaVigencia,
     validarAlfaNumerico,
     validarNumeroTelefono,
-    year
+    getElementosFecha
 } from "../../../utils";
 import {useCatalogo} from "../../../hook";
 import {useAltaComplementario} from "../../../hook";
 import {dataG} from "../../../App";
 import {getLocalidad, guardaCliente} from "../../../services";
-import {FilterComboInput} from "../../commons/inputs/FilterComboInput";
+import {FilterComboInput} from "../../commons/inputs";
 import {toast} from "react-toastify";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
-import {ModalGenericTool} from "../../commons/modals";
+import {ModalGenericTool,ModalLoading} from "../../commons/modals";
 import {cargaArchivos} from "../../../services/commons-services";
 import {useDropzone} from 'react-dropzone';
-import {ModalLoading} from "../../commons/modals/ModalLoading";
 
 const InstructivoCargaDocumentos = () => {
     return (
@@ -74,19 +73,17 @@ export const AltaClienteComplementario = memo(() => {
             toast.warn(dataClientes.result_set[0].Mensaje, OPTIONS);
             closeModalAndReturn();
         } else {
-            console.log("data identificacion");
-            if(parseInt(propForm.watch("tipo_identificacion")) !== 3){
-                propForm.setShowCargaDocumentos(true);
-            }else{
+            //if(parseInt(propForm.watch("tipo_identificacion")) !== 3){
+            //    propForm.setShowCargaDocumentos(true);
+            //}else{
                 propForm.setShowCargaDocumentos(false);
                 setShowContinuaDoc(false);
                 setContinuaOperacion(true);
                 setShowAltaCliente(false);
-            }
+            //}
 
             toast.success(`El registro se ha completado satisfactoriamente con el número de usuario ${dataClientes.result_set[0].Cliente}.`, OPTIONS)
             setCliente(dataClientes.result_set[0].Cliente);
-            //setShowAltaCliente(false);
         }
     });
 
@@ -693,9 +690,9 @@ export const AltaClienteComplementario = memo(() => {
                                     name="vigencia"
                                     placeholder="Ingresa la vigencia de la identificación"
                                     autoComplete="off"
-                                    min={formattedDate}
+                                    min={formattedDate()}
                                     tabIndex="26"
-                                    max={`${year + 10}-12-31`}
+                                    max={`${getElementosFecha().year + 10}-12-31`}
                                 />
                                 <label htmlFor="vigencia">VIGENCIA IDENTIFICACIÓN</label>
                                 {
@@ -969,7 +966,8 @@ export const AltaClienteComplementario = memo(() => {
                                     <span className="ms-2">
                                         {
                                             parseInt(propForm.watch("tipo_identificacion")) !== 3
-                                            ? 'CONTINUAR CON CARGA DE DOCUMENTOS'
+                                            //? 'CONTINUAR CON CARGA DE DOCUMENTOS'
+                                            ? 'CONTINUAR CON LA OPERACIÓN'
                                             : 'CONTINUAR CON LA OPERACIÓN'
                                         }
                                     </span>

@@ -14,11 +14,11 @@ export const EnvioOperaciones = ({opcion=1}) => {
     const [currentDate, setCurrentDate] = useState('');
 
     useEffect(() => {
-        setCurrentDate(formattedDate);
+        setCurrentDate(formattedDate());
         // Obtener la fecha actual en el formato YYYY-MM-DD
-        setValue("fecha_operacion",formattedDate)
+        setValue("fecha_operacion",formattedDate())
         // Realizar la consulta automáticamente al cargar la página
-        onSubmitRecepcion({ fecha_operacion: formattedDate});
+        onSubmitRecepcion({ fecha_operacion: formattedDate()});
     }, []);
 
     const refreshQuery = async () =>{

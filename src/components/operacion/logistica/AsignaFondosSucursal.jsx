@@ -245,7 +245,7 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
                 if (denominacion.length > 0) {
                     const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
                     const horaOperacion = horaDelDia.split(":").join("");
-                    const ticket = `DOTSUC${sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+                    const ticket = `DOTSUC${sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
 
                     const objetoSucursal = {
                         ticket,
@@ -273,8 +273,6 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
             boveda: boveda,
             denominaciones: resultado
         }
-        console.log("valores ENVIO DE BOVEDA A SUCURSAL");
-        console.log(valores);
 
         const encryptedData = encryptRequest(valores);
 
@@ -315,7 +313,6 @@ export const AsignaFondosSucursal = ({data, moneda,cantidadDisponible,refreshDat
         const encryptedData =  encryptRequest(values);
         const response = await getCantidadBilletes(encryptedData);
         setTotalCantidadBilletes(response.result_set[0])
-        console.log("CANT BILLETES: ", totalCantidadBilletes);
     }
 
     useEffect(() => {

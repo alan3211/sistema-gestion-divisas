@@ -1,8 +1,8 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import logo from "../../assets/logoF.png";
-import {year} from "../../utils";
+import {getElementosFecha} from "../../utils";
 import {CambiarPassword} from "./CambiarPassword";
-import {dataG} from "../../App";
+
 
 export const ValidaContraseña = () =>{
 
@@ -26,7 +26,7 @@ export const ValidaContraseña = () =>{
                     <img src={logo} alt="Imagen centrada" className="img-fluid" />
                 </div>
                 <div className="credits">
-                    <strong>Grocerys Centro Cambiario - {year}</strong>
+                    <strong>Grocerys Centro Cambiario - {getElementosFecha().year}</strong>
                 </div>
             </section>
 

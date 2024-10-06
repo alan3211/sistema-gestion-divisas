@@ -89,8 +89,6 @@ export const AsignaReportes = () => {
     const handleSave = handleSubmit(async(data) => {
         setGuarda(true)
         const selectedReportIds = reportTypes.map(report => report.id).join(',');
-        console.log(data)
-        console.log(selectedReportIds)
 
         const valores = {
             opcion:2,

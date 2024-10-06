@@ -31,16 +31,17 @@ export const getConsultaSaldoCuenta =  async() => {
 }
 
 
-export const getConsultaSaldoCuentaEfectivo =  async() => {
+export const getConsultaSaldoCuentaEfectivo =  async(encryptedData) => {
     try {
         const url = `${TESORERIA_CONSULTA_SALDO_EFECTIVO_URL}`;
 
         const response = await fetch(url, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
             },
+            body: JSON.stringify({encryptedData:encryptedData})
         });
 
         if (!response.ok) {

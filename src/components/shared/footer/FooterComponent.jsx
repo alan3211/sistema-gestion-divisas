@@ -1,5 +1,5 @@
 import {dataG} from "../../../App";
-import {perfiles, year} from "../../../utils";
+import {perfiles, getElementosFecha} from "../../../utils";
 import {onscroll,backtotop} from "../../../js/main";
 import {useEffect, useState} from "react";
 import {obtenTitulo} from "../../../services/reportes-services";
@@ -40,7 +40,8 @@ export const FooterComponent = () =>{
                             {dataEmpresa.nombre}
                         </p>
                     </div>
-                    &copy; Copyright. Todos los derechos reservados 2023 - {year}
+                    &copy; Copyright. Todos los derechos reservados 2023 - {getElementosFecha().year}
+                    <p className="text-center"><strong>Versión 2.2.3</strong></p>
                 </div>
             </footer>
 

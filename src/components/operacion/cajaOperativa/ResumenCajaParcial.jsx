@@ -151,16 +151,12 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
         const totalDif = diferencias.map((valor) => valor.diferencia).reduce((total, valor) => total + valor, 0);
         setTotalDiferencia(totalDif);
 
-        console.log("Total Diferencias: ", totalDif);
-
         //Calcula el total de diferencia de monto
         const totalDifMontos = data.result_set.reduce((total, elemento, index) => {
             const newValue = billetesFisicos[index][getPropiedad('denominacion', elemento)];
             const diferenciaMonto = (elemento.Denominacion * newValue) - elemento.Monto;
             return total + diferenciaMonto;
         }, 0);
-
-        console.log("Total Diferencias Montos: ", totalDifMontos);
 
         setTotalDiferenciaMontos(totalDifMontos);
 
@@ -186,7 +182,7 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
             diferencias: 0,
         }
 
-        cierreCaja.ticket = `CIERREPARCIAL${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        cierreCaja.ticket = `CIERREPARCIAL${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
 
         const formValuesD = getDenominacion(cierreCaja.moneda, datos)
         const formValuesDif = getDiferenciaDenominacion(cierreCaja.moneda, datos)
@@ -215,7 +211,6 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
                 setShowDetalle(false);
                 refresh();
             }
-        console.warn("Cierre Parcial CAJA", cierreCaja)
     });
 
     const validaDiferencia = difParcial.every(objeto => {
@@ -296,9 +291,6 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
                                     onChange={(e) => {
                                         const inputValue = e.target.value;
                                         const newValue = /^[0-9]\d*$/.test(inputValue) ? inputValue : 0;
-                                        console.log("VALOR: ",parseInt(newValue))
-                                        console.log("NO BILLETES: ",parseInt(elemento['No Billetes']))
-                                        console.log("COMPARACION: ",parseInt(newValue) < parseInt(elemento['No Billetes']))
                                         if( parseInt(newValue) > parseInt(elemento['No Billetes'])) {
                                             setBilletesFisicos((prevBilletes) => {
                                                 const newBilletes = [...prevBilletes];
@@ -350,7 +342,6 @@ export const ResumenCajaParcial = ({data, moneda, setShowDetalle, refresh, reset
                                                 newBilletes[index][getPropiedad('denominacion', elemento)] = parseInt(newValue);
                                                 return newBilletes;
                                             });
-                                            console.log("BILLETS FIS: ", billetesFisicos)
                                             const diferencia = elemento['No Billetes'] - newValue;
                                             setValue(`${getPropiedad('diferencia', elemento)}`, diferencia);
                                             const diferenciaMonto = (elemento.Denominacion * newValue) - elemento.Monto;

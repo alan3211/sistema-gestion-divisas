@@ -1,23 +1,31 @@
 import {useEffect, useState} from "react";
 import {useSaldo} from "../../../hook";
 import {getConsultaSaldoCuentaEfectivo} from "../../../services/operacion-tesoreria";
-import {FormatoMoneda} from "../../../utils";
+import {encryptRequest, FormatoMoneda} from "../../../utils";
 import {SyncLoader} from "react-spinners";
 import {MovimientoEfectivo} from "./operacion/MovimientoEfectivo";
 
-export const ConsultaEfectivo = () =>{
+export const ConsultaEfectivo = ({operacion}) =>{
     const [saldoNuevo, setSaldoNuevo] = useState(0); // Inicializa con un valor predeterminado
 
     // Usa useSaldo para obtener el saldo actual
-    const saldoGeneral = useSaldo(2);
+    const saldoGeneral = useSaldo(2,operacion);
 
     const actualizarSaldo = async () => {
-        const {saldo_cuenta} = await getConsultaSaldoCuentaEfectivo();
+        const values = {
+            moneda: operacion === 'efectivoUSD' ? 'USD':'MXP'
+        }
+        const encryptedData = encryptRequest(values);
+        const {saldo_cuenta} = await getConsultaSaldoCuentaEfectivo(encryptedData);
         setSaldoNuevo(saldo_cuenta);
     };
 
     useEffect(() => {
-        console.log("SALDO ACTUAL: ", saldoGeneral);
+        actualizarSaldo();
+    }, [operacion]);
+
+
+    useEffect(() => {
         setSaldoNuevo(saldoGeneral !== undefined ? saldoGeneral : 0);
     }, [saldoGeneral]);
 
@@ -36,7 +44,7 @@ export const ConsultaEfectivo = () =>{
                     )}
                 </h5>
             </div>
-            <MovimientoEfectivo  actualizarSaldo={actualizarSaldo}/>
+            <MovimientoEfectivo moneda={operacion === 'efectivoUSD' ? 'USD':'MXP'}  actualizarSaldo={actualizarSaldo}/>
         </>
     );
 }

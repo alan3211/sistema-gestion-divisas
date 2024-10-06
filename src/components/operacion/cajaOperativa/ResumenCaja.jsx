@@ -50,7 +50,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     });
     const [billetesFisicos, setBilletesFisicos] = useState(billetesFisicosInicial);
     const totalInicial = billetesFisicosInicial.reduce((total, elemento) => {
-        console.log("INICIAL TOTAL: ", Object.values(elemento));
         const valor = parseInt(Object.values(elemento)[0]) || 0;
         return total + valor;
     }, 0);
@@ -157,8 +156,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         const totalDif = diferencias.map((valor) => valor.diferencia).reduce((total, valor) => total + valor, 0);
         setTotalDiferencia(totalDif);
 
-        console.log("Total Diferencias: ",totalDif);
-
         //Calcula el total de diferencia de monto
         const totalDifMontos = data.result_set.reduce((total, elemento, index) => {
             const newValue = billetesFisicos[index][getPropiedad('denominacion',elemento)];
@@ -166,8 +163,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
             const resultado = parseFloat(total) + parseFloat(diferenciaMonto);
             return resultado.toFixed(2);
         }, 0);
-
-        console.log("Total Diferencias Montos: ",totalDifMontos);
 
         setTotalDiferenciaMontos(parseFloat(totalDifMontos));
 
@@ -189,10 +184,7 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
     };
 
     const onSubmit = handleSubmit(async (datos) => {
-        console.log("Array de objetos:", datos);
         const usuario_traspaso = datos.usuario_traspaso || '';
-        console.log("Diferencia", totalDiferencia);
-        console.log("total_billetes", totalBilletesFisicos);
         const horaDelDia = new Date().toLocaleTimeString('es-ES', opciones);
         const horaOperacion = horaDelDia.split(":").join("");
 
@@ -207,9 +199,9 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         }
 
         if (tipo === 'traspaso') {
-            cierreCaja.ticket = `TRASPASO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+            cierreCaja.ticket = `TRASPASO${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         } else {
-            cierreCaja.ticket = `CIERRE${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+            cierreCaja.ticket = `CIERRE${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         }
 
         const formValuesD = getDenominacion(cierreCaja.moneda, datos)
@@ -230,20 +222,17 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
         cierreCaja.totalDiferenciaBilletes = totalDiferencia;
 
         if (totalDiferencia !== 0) {
-            cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+            cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
             setShowDiferencias(true);
             setCierraCajaForm(cierreCaja);
-            console.log("LLEGO AQUI")
         } else if(totalDiferencia !== 0 && parseFloat(totalDiferenciaMontos) === 0){
-            cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+            cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
             setShowDiferencias(true);
             setCierraCajaForm(cierreCaja)
-            console.log("LLEGO AQUI")
         } else if(totalDiferencia === 0 && parseFloat(totalDiferenciaMontos) !== 0){
-            cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+            cierreCaja.ticket_notaCredito = `NOTACREDITO${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
             setShowDiferencias(true);
             setCierraCajaForm(cierreCaja)
-            console.log("LLEGO AQUI")
         } else{
             setShowDiferencias(false);
             const encryptedData = encryptRequest(cierreCaja);
@@ -259,12 +248,9 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                 options.closeCustomModal();
             }
         }
-        console.warn("Cierre CAJA",cierreCaja)
     });
 
     const cierraCajaDiferencias = async() => {
-        console.log("CIERRA CAJA DIF")
-        console.log(cierraCajaForm)
         const encryptedData = encryptRequest(cierraCajaForm);
         setGuarda(true)
         const response = await entregaCaja(encryptedData);
@@ -300,7 +286,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
 
         const data_usuarios = await getUsuariosSistema(encryptedData);
 
-        console.log("CAJEROS: ", data_usuarios)
         if (data_usuarios.hasOwnProperty("resultSize")) {
             setUsuariosCombo([]);
             setShowMessage(true);
@@ -481,7 +466,6 @@ export const ResumenCaja = ({ data, moneda, setShowDetalle, tipo, refresh,resetF
                                                     return newBilletes;
                                                 });
 
-                                                console.log("BILLETS FIS: ", billetesFisicos)
                                                 const diferencia = elemento['No Billetes'] - newValue;
                                                 setValue(`${getPropiedad('diferencia',elemento)}`, diferencia);
                                                 const diferenciaMonto = (elemento.Denominacion * newValue)-elemento.Monto;

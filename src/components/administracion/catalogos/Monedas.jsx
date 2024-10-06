@@ -13,7 +13,6 @@ export const Monedas = () => {
     } = useForm();
 
     const onSubmitCatalogo = handleSubmit(async (data) => {
-        console.log("CATALOGO: ", data);
         data.tipo = 'moneda';
         data.descripcion = data.descripcion.toUpperCase();
         const encryptedData = encryptRequest(data);

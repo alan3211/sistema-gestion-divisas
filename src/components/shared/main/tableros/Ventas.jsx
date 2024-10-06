@@ -6,16 +6,13 @@ import {consultaVentasTablero} from "../../../../services/tools-services";
 export const Ventas = ({ data }) => {
 
     const [dataState, setDataState] = useState(data);
-    const [fechaConsulta, setFechaConsulta] = useState(formattedDate);
+    const [fechaConsulta, setFechaConsulta] = useState(formattedDate());
 
     const {register,handleSubmit,setValue,formState:{errors}} = useForm();
 
     const onHandleDateChange = handleSubmit(async (formData) => {
-        console.log("FECHA CONSULTA: ");
-        console.log(formData.fecha);
         const encryptedData = encryptRequest(formData);
         const response = await consultaVentasTablero(encryptedData);
-        console.log(response);
         if (response.result_set) {
             setDataState(response.result_set[0]);
         } else {

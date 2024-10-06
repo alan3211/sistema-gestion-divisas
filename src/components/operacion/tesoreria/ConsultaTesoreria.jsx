@@ -25,7 +25,6 @@ export const ConsultaTesoreria = ({type}) => {
         }
         const encryptedData = encryptRequest(valores);
         const response =  await getResumenSucursales(encryptedData);
-        console.log(response);
         setDataResumen(response)
         setIsLoading(false);
     }
@@ -35,7 +34,6 @@ export const ConsultaTesoreria = ({type}) => {
     }, []);
 
     useEffect(() => {
-        console.log("SALDO ACTUAL: ", saldoGeneral);
         setSaldoNuevo(saldoGeneral !== undefined ? saldoGeneral : 0);
     }, [saldoGeneral]);
 

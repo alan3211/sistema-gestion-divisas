@@ -49,11 +49,11 @@ export const RecepcionValores = () => {
 
     useEffect(() => {
         // Obtener la fecha actual en el formato YYYY-MM-DD
-        setValue("fecha_operacion",formattedDate);
-        setCurrentDate(formattedDate);
+        setValue("fecha_operacion",formattedDate());
+        setCurrentDate(formattedDate());
 
         let parametros = {
-            fecha_operacion: formattedDate,
+            fecha_operacion: formattedDate(),
         }
         // Realizar la consulta automáticamente al cargar la página
         onSubmitRecepcion(parametros);

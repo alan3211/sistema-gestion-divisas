@@ -18,7 +18,6 @@ export const useForm = (initialValue={},OnValidate) =>{
 
         const err =  OnValidate(formState);
         if(err === null){
-            console.log("Enviando Formulario...");
         }else{
             setErrors(err);
         }

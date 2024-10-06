@@ -1,4 +1,4 @@
-import {encryptRequest, validaFechas, validarNombreApellido, year} from "../../../utils";
+import {encryptRequest, validaFechas, validarNombreApellido, getElementosFecha} from "../../../utils";
 import {useForm} from "react-hook-form";
 import {CardLayout, Layout} from "../../commons";
 import {useState} from "react";
@@ -253,7 +253,7 @@ export const Movimientos = () => {
                                     autoComplete="off"
                                     tabIndex="4"
                                     min="1900-01-01"
-                                    max={`${year}-12-31`}
+                                    max={`${getElementosFecha().year}-12-31`}
                                     required
                                 />
                                 <label htmlFor="fecha_nacimiento">FECHA NACIMIENTO</label>
