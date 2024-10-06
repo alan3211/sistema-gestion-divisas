@@ -58,7 +58,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         setShowModal(true);
     }
     const onEnvioValores = async (data) => {
-        console.log("DATA:",data);
         setGuarda(true);
         const values = {
             id_operacion: item.ID,
@@ -79,7 +78,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         let denominaciones=[];
 
         if(item.Operacion === 'Dotación Sucursal' && optionBtn === 1){
-            console.log(myDenominacion);
             // Combina los objetos en uno solo
             const objetoCombinado = myDenominacion.reduce((resultado, objeto) => {
                 for (const key in objeto) {
@@ -104,9 +102,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
         values.denominacion = [
             denominaciones,
         ]
-
-
-        console.log("VALUES:",values);
 
         const encryptedData = encryptRequest(values);
 
@@ -143,15 +138,8 @@ export const AccionesSucursales = ({item, index, refresh}) => {
                     divisa: item.Moneda,
                     ticket: item["No Movimiento"]
             }
-
-
-            console.log("----- DATA DENOMINACIONES ----")
-            console.log(valores);
-
             const encryptedData = encryptRequest(valores);
             data_denominacion = await getDenominaciones(encryptedData)
-
-            console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }
 
@@ -165,7 +153,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             }
             const encryptedData = encryptRequest(valores);
             const data_denominacion = await obtieneDenominacionesNota(encryptedData);
-            console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }
 
@@ -179,7 +166,6 @@ export const AccionesSucursales = ({item, index, refresh}) => {
             }
             const encryptedData = encryptRequest(valores);
             const data_denominacion = await obtieneDenominacionesNota(encryptedData);
-            console.log("Denominacion de la DATA:",data_denominacion)
             setDatosDenominacion(data_denominacion);
         }
 

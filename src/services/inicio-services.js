@@ -45,7 +45,6 @@ export const validaToken = async (token) => {
         const data = JSON.parse(text);
 
         if (data.hasOwnProperty("error")) {
-            console.log("El token es inválido:", data.error);
             return data;
         }
         return data;

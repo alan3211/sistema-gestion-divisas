@@ -94,8 +94,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             denominaciones,
         ]
 
-        console.log("DATA FORM")
-        console.log(dataFormulario)
         const encryptedData = encryptRequest(dataFormulario);
         setTicket(dataFormulario.ticket)
         await realizarOperacionSucursal(encryptedData);
@@ -121,10 +119,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
 
     const guardarCambio = async() => {
         setGuarda(true);
-
-        console.log("data del cambio");
-        console.log(data);
-
         let denominacionesCambio = denominacionC.getValues();
 
         const formValuesC = getDenominacion(operacion.tipo_operacion === "1" ? `MXP`:operacion.moneda,denominacionesCambio);
@@ -139,10 +133,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
         formValuesC.movimiento = 'CAMBIO AL USUARIO';
 
         eliminarDenominacionesConCantidadCero(formValuesC);
-
-        console.log("CAMBIO!: ",cambio);
-        console.log("REDONDEO!!",redondeo)
-        console.log("DATOS: ",data);
 
         const values = {
             cliente: data.Cliente,
@@ -159,11 +149,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             ],
             redondeo:parseFloat(redondeo)
         }
-        console.log("VALUES DEL CAMBIO: ",values);
         const encryptedData = encryptRequest(values);
-
-
-        console.log("Este es el cambio: ", cambio)
 
         if(values.divisa === 'USD'){
             if(parseFloat(denominacionC.calculateGrandTotal) !== cambio){
@@ -264,7 +250,6 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             ticket: ticket,
         }
         const response = await validaDotParcial(encryptRequest(valores));
-        console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
             setTicket("");
@@ -332,14 +317,11 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
     }
 
     const enviaFinalOperacion = async() => {
+        setGuarda(true);
         setPreguntaRedondeo(false)
-        console.log("RESPUESTA 1 DE OPERACION");
-        console.log(operacionConCambio);
         await realizarOperacion(operacionConCambio);
         setPreguntaRedondeo(false);
         const resultado = await realizarOperacion(encryptedDataValues);
-        console.log("RESPUESTA 2 DE OPERACION");
-        console.log(resultado);
         // Validar si tenemos que darle cambio
         if(resultado){
             setGuarda(false);
@@ -471,7 +453,7 @@ export const ModalCambio = ({cambio,showModalCambio,setShowModalCambio,operacion
             {
                 preguntaRedondeo && (
                     <ModalGenericPLDTool options={OPTIONS_PREGUNTA_REDONDEO}>
-                        <div className="col-md-12 mx-auto">
+                        <div className="col-md-6 mx-auto">
                             <button type="button" className="m-2 btn btn-secondary" onClick={OPTIONS_PREGUNTA_REDONDEO.closeModal}>
                                       <span className="ms-2">
                                         <i className="bi bi-x-circle me-2"></i>

@@ -33,8 +33,8 @@ export const CierreSucursal = () => {
 
     useEffect(() => {
         // Obtener la fecha actual en el formato YYYY-MM-DD
-        setValue("fecha_operacion",formattedDate);
-        setCurrentDate(formattedDate);
+        setValue("fecha_operacion",formattedDate());
+        setCurrentDate(formattedDate());
     }, []);
 
     const optionsLoad = {

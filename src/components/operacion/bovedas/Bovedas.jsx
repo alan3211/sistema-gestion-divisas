@@ -2,7 +2,6 @@ import {useState} from "react";
 
 import {SolicitaDotacionBoveda} from "./SolicitaDotacionBoveda";
 import {ConsultaBovedas} from "./ConsultaBovedas";
-import {DotacionesProvider} from "../../../context/dotaciones/DotacionesProvider";
 import {DenominacionProvider} from "../../../context/denominacion/DenominacionProvider";
 
 export const Bovedas = ({perfil}) => {

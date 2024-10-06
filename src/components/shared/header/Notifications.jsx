@@ -43,9 +43,6 @@ export const Notifications = () => {
         if (total_rows === 0){
             setNotifications([]);
         }else{
-            // Agrega la nueva notificación al estado
-            console.log("Notificaciones!");
-            console.log(result_set);
             setNotifications(result_set);
         }
 

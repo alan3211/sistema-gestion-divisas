@@ -105,7 +105,6 @@ export const CancelarEnvioSucursal = ({item, index, refresh}) => {
             let denominacionesDotacion = denominacionD.getValues();
             formValuesD = getDenominacion(item.Moneda, denominacionesDotacion)
         }else{
-            console.log(dataEnviada)
             formValuesD = getDenominacion(item.Moneda, dataEnviada)
         }
 

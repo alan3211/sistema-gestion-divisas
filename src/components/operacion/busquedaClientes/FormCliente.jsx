@@ -13,7 +13,7 @@ import {dataG} from "../../../App";
 import {toast} from "react-toastify";
 import {ModalConfirm} from "../../commons/modals";
 import {usePrinter} from "../../../hook";
-import {consultaLista, obtieneToken} from "../../../services/listas-negras-services";
+import {consultaLista} from "../../../services/listas-negras-services";
 
 export const FormCliente = ({tipo}) => {
 
@@ -44,7 +44,6 @@ export const FormCliente = ({tipo}) => {
     }, [cliente]);
 
     const handleValidateForm = formBuscarCliente.handleSubmit(async (data) => {
-        console.log(data)
         data.tipo_busqueda = tipo === 'cliente' ? 1 : 2
         data.limite_diario = dataG.limite_diario;
         data.limite_mensual = dataG.limite_mensual;
@@ -64,14 +63,11 @@ export const FormCliente = ({tipo}) => {
             data.cliente = '';
         }
         data.tipo_operacion =  operacion.tipo_operacion;
-        console.log("DATOS FORM CLIENTE: ", data)
         const encryptedData = encryptRequest(data);
         const dataClientes = await buscaCliente(encryptedData);
         dataClientes.headers = ['Selecciona', ...dataClientes.headers]
-        console.log(dataClientes)
         if (dataClientes.total_rows > 0) {
             if (dataClientes.total_rows === 1) {
-                console.log("UN REGISTRO", dataClientes);
                 if (dataClientes.result_set[0].hasOwnProperty('Resultado')) {
                     const mensaje = dataClientes.result_set[0].Resultado;
                     if (mensaje.includes('excede')) {

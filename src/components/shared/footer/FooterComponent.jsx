@@ -41,6 +41,7 @@ export const FooterComponent = () =>{
                         </p>
                     </div>
                     &copy; Copyright. Todos los derechos reservados 2023 - {getElementosFecha().year}
+                    <p className="text-center"><strong>Versión 2.2.2</strong></p>
                 </div>
             </footer>
 

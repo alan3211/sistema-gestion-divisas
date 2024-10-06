@@ -10,7 +10,6 @@ export const TipoConsultas = () => {
     const [selectedOption, setSelectedOption] = useState('dotacion');
 
     const handleRadioChange = ({target:{value}}) => {
-        console.log("DE!",value)
         setSelectedOption(value);
     };
 

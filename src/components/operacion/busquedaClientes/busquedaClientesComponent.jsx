@@ -1,6 +1,6 @@
 import {useContext, useState} from "react";
 import './busquedaClientes.css';
-import {CardLayout,} from "../../commons";
+import {CardLayout} from "../../commons";
 import {FormCliente} from "./FormCliente";
 import {ClienteCoincidenciaComponent} from "./ClienteCoincidenciaComponent";
 import {DatosClientes} from "./DatosClientes";

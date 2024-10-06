@@ -13,7 +13,7 @@ export const Identificaciones = () => {
     } = useForm();
 
     const onSubmitCatalogo = handleSubmit(async (data) => {
-        console.log("CATALOGO: ", data);
+
         data.tipo = 'identificacion';
         const encryptedData = encryptRequest(data);
 

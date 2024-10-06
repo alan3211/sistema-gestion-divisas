@@ -12,7 +12,7 @@ import {
 } from "../../../utils";
 import {useCatalogo, usePrinter} from "../../../hook/";
 import {toast} from "react-toastify";
-import {Overlay} from "../../commons/toast/Overlay";
+import {Overlay} from "../../commons/toast";
 import {CompraVentaContext} from "../../../context/compraVenta/CompraVentaContext";
 
 export const AltaClienteFormComponent = memo(() => {

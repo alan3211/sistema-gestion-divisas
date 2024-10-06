@@ -6,8 +6,6 @@ export const DotacionesProvider = ({children}) => {
     const [montoSolicitado,setMontoSolicitado] = useState([]);
 
     const addMonto = (nuevoMonto) => {
-        console.log("Agregando monto:", nuevoMonto);
-
         // Verificar si el monto ya existe en el array
         const existeMonto = montoSolicitado.find(
             (monto) =>
@@ -28,7 +26,6 @@ export const DotacionesProvider = ({children}) => {
             // Si el monto no existe, agregarlo al array
             setMontoSolicitado((prevMontos) => [...prevMontos, nuevoMonto]);
         }
-        console.log("Montos después de agregar:", montoSolicitado);
     };
 
     const cleanMontos = () => setMontoSolicitado([]);

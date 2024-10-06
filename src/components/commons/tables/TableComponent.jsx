@@ -15,7 +15,6 @@ import {Tabla} from "./Tabla";
 import jsPDF from "jspdf";
 
 export const TableComponent = ({data: {headers, result_set, total_rows}, options}) => {
-    const [resultSet, setResultSet] = useState([]);
     const [perPage, setPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");

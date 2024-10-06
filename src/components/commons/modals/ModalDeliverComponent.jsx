@@ -120,8 +120,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
         eliminarDenominacionesConCantidadCero(formValuesR);
         eliminarDenominacionesConCantidadCero(formValuesE);
 
-        console.log("DATOS: ",datos);
-
         const values = {
             cliente: datos.Cliente,
             ticket: datos.ticket,
@@ -141,11 +139,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
             ]
         }
 
-        console.log("FINALIZA OPERACION --- values");
-        console.log(values);
-
-        console.log(`Se envia el redondeo: ${redondeo}`)
-
         values.redondeo = redondeo;
         const encryptedData = encryptRequest(values);
         setOperacionSinFinalizar(encryptedData);
@@ -162,7 +155,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
                 }else {
                     setPreguntaRedondeo(false);
                     const response = await realizarOperacion(encryptedData);
-                    console.log(response);
                     if (response.mensaje === '') {
                         setShowModalFactura(true);
                     } else {
@@ -182,7 +174,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
             setShowCambio(true);
         }else {
             const response = await realizarOperacion(operacionSinFinalizar);
-            console.log(response);
             if(response.mensaje === ''){
                 setShowModalFactura(true);
             }else{
@@ -258,8 +249,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
             denominaciones,
         ]
 
-        console.log("DATA FORM")
-        console.log(dataFormulario)
         const encryptedData = encryptRequest(dataFormulario);
         setTicket(dataFormulario.ticket)
         await realizarOperacionSucursal(encryptedData);
@@ -335,7 +324,6 @@ export const ModalDeliverComponent = ({configuration}) =>{
             ticket: ticket,
         }
         const response = await validaDotParcial(encryptRequest(valores));
-        console.log("RESPUESTA: ", response);
         if (response === 'Pendiente') {
             setShowMuestraTabla(true);
             setTicket("");

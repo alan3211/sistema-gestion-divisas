@@ -28,8 +28,6 @@ export const LoginComponent = () => {
             localStorage.setItem("token",datos.token); // Se guarda el token
             localStorage.setItem("refresh_token",datos.refresh_token); // Se guarda el refresh
             const decodedToken = jwt_decode(datos.token);
-            console.log("USUARIO")
-            console.log(decodedToken)
             if(decodedToken.valida_contra === 0){
                 // Primera vez
                 navigator("/cambia-contraseña",{state: {

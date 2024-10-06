@@ -66,7 +66,6 @@ export const DotacionCajaSucursal = () => {
             sucursal: dataG.sucursal,
             moneda: watch("moneda")
         }
-        console.log("Valores: ",valores)
         const encryptedData = encryptRequest(valores);
         return await cierreCajaAnterior(encryptedData);
     }
@@ -81,7 +80,7 @@ export const DotacionCajaSucursal = () => {
         data.operacion = 'Dotacion Caja';
         data.usuario = dataG.usuario;
         data.sucursal = dataG.sucursal;
-        data.ticket = `DOTCAJA${dataG.sucursal}${dataG.usuario}${formattedDateWS}${horaOperacion}`;
+        data.ticket = `DOTCAJA${dataG.sucursal}${dataG.usuario}${formattedDateWS()}${horaOperacion}`;
         data.traspaso='';
 
         let denominacionesDotacion = denominacionD.getValues();
@@ -163,7 +162,6 @@ export const DotacionCajaSucursal = () => {
             });
             setShowDenominacion(false);
         }
-        console.log(showDisponible);
     };
 
     useEffect(()=>{
@@ -179,8 +177,6 @@ export const DotacionCajaSucursal = () => {
     }, [watch("moneda")]);
 
     const consultaDotaciones = async () => {
-        console.log("MONEDA");
-        console.log(watch("moneda"));
         if(watch("moneda") === '0'){
 
             setShowDenominacion(false);

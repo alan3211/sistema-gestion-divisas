@@ -18,7 +18,6 @@ export const useCaja = () => {
         }
         const encryptedData = encryptRequest(values)
         const data = await consultaCaja(encryptedData);
-        console.log("CAJA: ",data);
         setData(data);
         setShowTable(true);
 

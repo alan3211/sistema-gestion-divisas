@@ -134,8 +134,6 @@ export const getDenominacion = (divisa = 'MXP', replaceValues) => {
             cantidad: getDenominacionCantidad(nombre)
         };
     }
-
-    console.log("OBJ DENOMINACION ",denominacionObj);
     return denominacionObj;
 };
 

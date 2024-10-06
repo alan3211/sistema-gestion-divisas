@@ -53,8 +53,6 @@ export const DenominacionTable = ({ data = [], monto, moneda,setTotalMonto,setDe
         );
         setTotalMonto(total);
         setTotalGeneral(total);
-        console.log("DENOMINACIONES TABLE---")
-        console.log(billetesFisicos)
         setDenominacion(billetesFisicos)
 
         if(resetea){

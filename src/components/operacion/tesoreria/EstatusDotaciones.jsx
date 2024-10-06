@@ -39,7 +39,6 @@ export const EstatusDotaciones = () => {
 
     const onSubmitEstatus = handleSubmit(async (data) => {
         data.tipo_operacion = "Dotacion Sucursal";
-        console.log("Data: ",data)
         const encryptedData = encryptRequest(data);
         setFormData(encryptedData);
         const response = await estatusOperaciones(encryptedData);

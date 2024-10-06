@@ -9,6 +9,9 @@ import {Compras} from "../Compras";
 import {useEstadisticas} from "../../../../../hook/useEstadisticas";
 import {UltimosMovimientos} from "../UltimosMovimientos";
 import {TableroUsuariosSistema} from "../TableroUsuariosSistema";
+import {MovimientosSucursal} from "../MovimientosSucursal";
+import {TableroDotacionesCaja} from "../TableroDotacionesCaja";
+import {ReporteCompraVenta} from "../ReporteCompraVenta";
 
 export const TableroCoordinadorLogistico = () => {
 
@@ -16,7 +19,7 @@ export const TableroCoordinadorLogistico = () => {
     const [showDataActividad, setShowDataActividad] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    const estadistica = useEstadisticas([2, 3, 4]);
+    const estadistica = useEstadisticas([2, 3, 4,5,6,7]);
     const getActividadReciente = async () => {
 
         const valores = {
@@ -37,7 +40,6 @@ export const TableroCoordinadorLogistico = () => {
     }
 
     useEffect(() => {
-        console.log("Actividades")
         getActividadReciente();
     }, []);
 
@@ -74,9 +76,26 @@ export const TableroCoordinadorLogistico = () => {
                         <CompraVentaProvider><TipoCambioComponent/></CompraVentaProvider>
                     </div>
                 </div>
+
+                <div className="row">
+                    <div className="col-md-12">
+                        <ReporteCompraVenta data={estadistica[5] || {}}/>
+                    </div>
+                </div>
+
+
                 <div className="row">
                     <div className="col-md-12">
                         <TableroUsuariosSistema/>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-md-6">
+                        <MovimientosSucursal data={estadistica[3] || {}}/>
+                    </div>
+                    <div className="col-md-6">
+                        <TableroDotacionesCaja data={estadistica[4] || {}}/>
                     </div>
                 </div>
 

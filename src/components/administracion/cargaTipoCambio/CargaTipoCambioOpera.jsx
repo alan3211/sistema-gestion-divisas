@@ -54,7 +54,6 @@ export const CargaTipoCambioOpera = ({id}) => {
         }
 
         updatedData.opcion = tipoConsulta;
-        console.log(updatedData)
 
         if(updatedData.tipoCambio.length === 0){
             toast.error('No se han ingresado tipos de cambio.',OPTIONS);

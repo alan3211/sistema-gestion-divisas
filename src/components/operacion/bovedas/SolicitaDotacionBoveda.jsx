@@ -12,17 +12,16 @@ import {
 import {generaSolicitudDotacionBoveda, solicitaDotacionBoveda} from "../../../services/operacion-logistica";
 import {useContext, useState} from "react";
 import {TableComponent} from "../../commons/tables";
-import {ModalGenericTool} from "../../commons/modals";
+import {ModalGenericTool,ModalLoading} from "../../commons/modals";
 import {Denominacion} from "../denominacion";
 import {dataG} from "../../../App";
 import {toast} from "react-toastify";
 import {DenominacionContext} from "../../../context/denominacion/DenominacionContext";
-import {ModalLoading} from "../../commons/modals/ModalLoading";
+
 
 export const SolicitaDotacionBoveda = ({perfil}) => {
     const {
         register,
-        reset,
         formState: {errors},
         setValue,
         watch,
@@ -43,7 +42,6 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
 
     const onSubmitDotacionBoveda = async () => {
         const selectedMoneda = watch("moneda");
-        console.log("Moneda seleccionada:", selectedMoneda);
         const values = {
             moneda: selectedMoneda,
         };
@@ -126,8 +124,6 @@ export const SolicitaDotacionBoveda = ({perfil}) => {
                 denominaciones,
         ]
 
-        console.log("SOLICITA DOTACION A A BOVEDA")
-        console.log(data)
         const encryptedData = encryptRequest(data);
         const resultado = await generaSolicitudDotacionBoveda(encryptedData);
 

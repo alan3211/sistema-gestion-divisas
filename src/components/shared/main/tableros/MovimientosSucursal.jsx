@@ -1,10 +1,10 @@
 import {encryptRequest, formattedDate} from "../../../../utils";
 import {TableComponent} from "../../../commons/tables";
 import {useEffect, useState} from "react";
-import {consultaUltimosMovimientos} from "../../../../services/tools-services";
+import {consultaMovimientosPorSucursal} from "../../../../services/tools-services";
 import {useForm} from "react-hook-form";
 
-export const UltimosMovimientos = ({data}) => {
+export const MovimientosSucursal = ({data}) => {
 
     const [dataState, setDataState] = useState(data);
     const [fechaConsulta, setFechaConsulta] = useState(formattedDate());
@@ -13,18 +13,18 @@ export const UltimosMovimientos = ({data}) => {
         showMostrar:true,
         excel:true,
         buscar:true,
-        tableName:'Ultimos Movimientos de Compra/Venta',
+        tableName:'Movimientos de Compra/Venta por surcursal',
         paginacion: true,
         tools:[
             {columna:"Estatus",tool:"estatus"},
         ],
         filters:[
-            {columna:"Monto",filter:'currency'},
-            {columna:"Monto Entregado",filter:'currency'},
+            {columna:"Monto Compras",filter:'currency'},
+            {columna:"Monto Ventas",filter:'currency'},
         ],
     }
 
-    const {register,handleSubmit,watch ,setValue,formState:{errors}} = useForm();
+    const {register,handleSubmit,setValue,formState:{errors}} = useForm();
 
     useEffect(() => {
         // Este efecto se ejecutará cada vez que cambie la fechaConsulta
@@ -33,7 +33,7 @@ export const UltimosMovimientos = ({data}) => {
 
     const onHandleDateChange = handleSubmit(async (formData) => {
         const encryptedData = encryptRequest(formData);
-        const response = await consultaUltimosMovimientos(encryptedData);
+        const response = await consultaMovimientosPorSucursal(encryptedData);
         if (response.result_set) {
             setDataState(response);
         } else {
@@ -85,8 +85,8 @@ export const UltimosMovimientos = ({data}) => {
                 </div>
                 <div className="card-body">
                     <h5 className="card-title">
-                        <i className="bi bi-currency-exchange me-2"></i>
-                        Últimos Movimientos <span>|  { fechaConsulta }</span>
+                        <i className="bx bx-store me-2"></i>
+                        Movimientos por Sucursal <span>|  { fechaConsulta }</span>
                     </h5>
                     <TableComponent data={dataState} options={options} />
                 </div>

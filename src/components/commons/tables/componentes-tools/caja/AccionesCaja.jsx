@@ -51,7 +51,6 @@ export const AccionesCaja = ({item, index, refresh}) => {
         }
 
         const denominaciones = obtenerObjetoDenominaciones(data.result_set);
-        console.log("DENOMINACIONES",denominaciones);
         denominaciones.divisa = values.moneda;
         denominaciones.tipoOperacion = '0';
         denominaciones.movimiento = 'DOTACION CAJA';
@@ -59,8 +58,6 @@ export const AccionesCaja = ({item, index, refresh}) => {
         values.denominacion = [
             denominaciones,
         ]
-
-        console.log("VALUES",values);
 
         const encryptedData = encryptRequest(values);
 
@@ -95,8 +92,7 @@ export const AccionesCaja = ({item, index, refresh}) => {
                 ticket: item["No Movimiento"]
             }
             const encryptedData = encryptRequest(valores);
-            const data_denominacion = await getDenominacionesCaja(encryptedData)
-            console.log(data_denominacion)
+            const data_denominacion = await getDenominacionesCaja(encryptedData);
             setData(data_denominacion);
         }
         getDenominacionesAsignadas();

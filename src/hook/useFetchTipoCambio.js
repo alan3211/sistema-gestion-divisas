@@ -45,7 +45,6 @@ export const useFetchTipoCambio = () => {
             valoresTipoCambio.headers.push('Detalle Sucursales')
         }
         setValoresTipoCambio(valoresTipoCambio.headers);
-        console.log(valorTipoCambio);
     }
 
     useEffect( () => {

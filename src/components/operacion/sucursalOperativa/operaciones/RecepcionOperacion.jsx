@@ -15,10 +15,10 @@ export const RecepcionOperacion = () => {
     const [currentDate, setCurrentDate] = useState('');
 
     useEffect(() => {
-        setCurrentDate(formattedDate);
-        setValue("fecha_operacion",formattedDate)
+        setCurrentDate(formattedDate());
+        setValue("fecha_operacion",formattedDate())
         // Realizar la consulta automáticamente al cargar la página
-        onSubmitRecepcion({ fecha: formattedDate });
+        onSubmitRecepcion({ fecha: formattedDate() });
     }, []);
 
     const refreshQuery = async () =>{

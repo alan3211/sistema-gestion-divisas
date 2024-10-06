@@ -8,11 +8,11 @@ import {TipoCambioComponent} from "../../operacion/compraVenta";
 import {dataG} from "../../../App";
 import {CompraVentaProvider} from "../../../context/compraVenta/CompraVentaProvider";
 import {TableroCoordinadorLogistico} from "./tableros/coordinadorLogistico/TableroCoordinadorLogistico";
+import {TableroAdministrador} from "./tableros/administrador/TableroAdministrador";
 
 export const TableroComponent = () => {
     const [isLoading, setIsLoading] = useState(true);
     const estadistica = useEstadisticas([2, 3, 1, 4]);
-    console.log(estadistica);
 
     useEffect(() => {
         if (estadistica && estadistica.length !== 0) {
@@ -31,19 +31,9 @@ export const TableroComponent = () => {
                 </nav>
             </div>
 
-            {/*     {(!isLoading && [0,6].includes(dataG.id_perfil)) && (
-                <section className="section dashboard">
-                    <div className="row justify-content-center">
-                        <Ventas data={estadistica[0]?.result_set?.[0] || {}} />
-                        <Compras data={estadistica[1]?.result_set?.[0] || {}} />
-                        <Usuarios data={estadistica[2]?.result_set?.[0] ||{} } />
-                        <UltimosMovimientos data={estadistica[3] || []} />
-                    </div>
-                </section>
-            )}*/}
-
-            {(!isLoading && [0,6].includes(dataG.id_perfil))&& (<TableroCoordinadorLogistico/>)}
-
+            { (!isLoading && [0,6].includes(dataG.id_perfil)) ? (<TableroCoordinadorLogistico/>)
+                : (!isLoading && [1].includes(dataG.id_perfil)) && (<TableroAdministrador/>)
+            }
         </main>
     );
 };

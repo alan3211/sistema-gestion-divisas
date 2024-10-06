@@ -76,9 +76,7 @@ export const AlertasMonitoreo = () => {
     }
 
     const consultaAlertas = handleSubmit(async (data) => {
-        console.log(data);
         setIsLoading(true);
-
         const valores = {
             alarma: 1,
             numero_usuario: ''

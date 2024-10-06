@@ -22,7 +22,6 @@ export const CuentaCajaComponent = ({tipo}) => {
             }
             const encryptedData = encryptRequest(values)
             const data = await consultaCaja(encryptedData);
-            console.log("CAJA: ",data);
             setData(data);
     }
 

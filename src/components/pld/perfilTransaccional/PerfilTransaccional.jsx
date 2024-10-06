@@ -12,8 +12,6 @@ export const PerfilTransaccional = () => {
     const navigate = useNavigate();
     const catalogo = useCatalogo([30])
 
-    console.log(catalogo)
-
     useEffect(() => {
         // Obtenemos los nombres capitalizados de los meses
         const monthNames = Array.from({ length: 12 }, (_, index) => {

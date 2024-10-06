@@ -13,8 +13,6 @@ export const useDenominacion = ({type,moneda,options}) => {
         denominacionB,
     } = useContext(DenominacionContext);
 
-    console.log("Opciones: ",options);
-
     const {
         title,importe,importeFinal,calculaValorMonto,habilita,setHabilita,setRedondeo,setTotalMonto,setFinalizaOperacion,sucursal,
         item
@@ -111,7 +109,6 @@ export const useDenominacion = ({type,moneda,options}) => {
     const validacionColor = () => {
         const grandTotal = calculateGrandTotal();
 
-        console.log("EL TIPO ES: ",type);
         if (type === 'R') {
             if (parseFloat(grandTotal) === parseFloat(calculaValorMonto)) {
                 return 'text-success';
@@ -124,7 +121,6 @@ export const useDenominacion = ({type,moneda,options}) => {
             if(moneda === 'MXP'){
                 // Valida diferencia en pesos
                 let diferencia = parseFloat(grandTotal) - parseFloat(importe);
-                console.log(`La diferencia de MXP es : ${diferencia.toFixed(2)}`);
                 if (diferencia.toFixed(2) > -0.30 && diferencia.toFixed(2) < 0.30){
                     if(parseFloat(diferencia.toFixed(2)) === 0.00){
                      return "text-success";
@@ -149,16 +145,9 @@ export const useDenominacion = ({type,moneda,options}) => {
                 return 'text-danger';
             }
         } else {
-            console.log("Comparacion: ", parseFloat(grandTotal) === parseFloat(importe))
-            console.log("TIPO GRAND TOTAL: ", typeof parseFloat(grandTotal));
-            console.log("TIPO IMPORTE: ", typeof parseFloat(importe));
-            console.log("GRAND TOTAL: ", grandTotal);
-            console.log("IMPORTE: ", importe);
-
             if(type === "E" && moneda === 'MXP'){
                 // Valida diferencia en pesos
                 let diferencia = parseFloat(grandTotal) - parseFloat(importe);
-                console.log(`La diferencia de MXP es : ${diferencia.toFixed(2)}`);
                 if (diferencia.toFixed(2) > -0.30 && diferencia.toFixed(2) < 0.30){
                     if(parseFloat(diferencia.toFixed(2)) === 0.00){
                         return "text-success";
@@ -188,7 +177,6 @@ export const useDenominacion = ({type,moneda,options}) => {
             if(moneda === 'MXP') {
                 // Valida diferencia en pesos
                 let diferencia = parseFloat(calculateGrandTotal()) - parseFloat(importe);
-                console.log(`DIFERENCIA!!! ${diferencia.toFixed(2)}`)
                 isValid = parseFloat(diferencia.toFixed(2)) > -0.30 && parseFloat(diferencia.toFixed(2)) < 0.30
                 newHabilita.entrega = !isValid;
                 newHabilita.recibe = !isValid;
@@ -218,7 +206,6 @@ export const useDenominacion = ({type,moneda,options}) => {
         }
 
         setHabilita(newHabilita);
-        console.log("Habilita: ", newHabilita);
     }, [parseFloat(calculateGrandTotal()), type]);
 
 
@@ -231,14 +218,9 @@ export const useDenominacion = ({type,moneda,options}) => {
             tipo_movimiento: type
         }
 
-        console.log("DATA")
-        console.log(valores);
-
         if(type === 'CNC'){
             valores.no_movimiento = item["No Movimiento"];
         }
-
-        console.log("VALORES: ", valores);
 
         const encryptedData = encryptRequest(valores);
 
@@ -254,7 +236,6 @@ export const useDenominacion = ({type,moneda,options}) => {
 
 
             if(type === 'SD'){
-                console.log("IMPORTE: ",importe)
                 for (const key in denominaciones.result_set) {
                     if (denominaciones.result_set.hasOwnProperty(key)) {
                         const denominacionValue = parseFloat(denominaciones.result_set[key].Denominacion);
@@ -285,7 +266,6 @@ export const useDenominacion = ({type,moneda,options}) => {
     },[moneda,type])
 
     useEffect(() => {
-        console.log("RERENDER")
         fetchData();
     }, [options.reRender]);
 

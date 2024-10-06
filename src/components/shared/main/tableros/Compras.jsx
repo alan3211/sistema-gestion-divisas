@@ -13,7 +13,6 @@ export const Compras = ({ data }) => {
     const onHandleDateChange = handleSubmit(async (formData) => {
         const encryptedData = encryptRequest(formData);
         const response = await consultaComprasTablero(encryptedData);
-        console.log(response);
         if (response.result_set) {
             setDataState(response.result_set[0]);
         } else {

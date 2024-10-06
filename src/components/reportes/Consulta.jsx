@@ -199,10 +199,6 @@ export const Consulta = () => {
     const createExcelReport = async (responseData,titulo,data) => {
         let fileName= nombreArchivo(data);
 
-        // Se ordenan los datos que se encontraron por sucursal
-        console.log("responseData")
-        console.log(responseData);
-
        const datosOrdenados = responseData.result_set.map((fila) => {
             const filaOrdenada = {};
             responseData.headers.forEach((columna) => {
@@ -222,9 +218,6 @@ export const Consulta = () => {
                 }
                 registrosPorSucursal[noSucursal].push(registro);
             });
-
-            console.log("registrosPorSucursal")
-            console.log(registrosPorSucursal)
 
             // Crear un nuevo libro de Excel
             const workbook = new ExcelJS.Workbook();
@@ -421,7 +414,6 @@ export const Consulta = () => {
                 const sucursalData = registrosPorSucursal[sucursal];
 
                 let periodo = "";
-                console.log("REPORTE: ",reporte);
                 if (reporte.Periodo === 'Diario') {
                     periodo = `Por el periodo comprendido al ${data.fecha_operacion}`;
                 } else if(reporte.Periodo === 'DiarioIF'){
@@ -660,8 +652,6 @@ export const Consulta = () => {
         const encryptedData = encryptRequest(data);
         const responseData = await consultaReporteFinal(encryptedData);
         let fileName= nombreArchivo(data);
-        console.log("DATA: ", data);
-        console.log("RESPONSE DATA: ", responseData);
         if(responseData.total_rows === 0){
           //  toast.warn("No se ha encontrado información con los parametros ingresados. Te recomendamos verificar si hay operaciones registradas.",OPTIONS);
             creaReporteVacio(titulo,data,fileName,responseData.headers);
@@ -679,8 +669,6 @@ export const Consulta = () => {
                     });
                     return filaOrdenada;
                 });
-
-                console.log("Datos ORDENADOS: ",datosOrdenados)
 
                 //if (responseData.total_rows > 0) {
                 const titulo = await obtenTitulo();
@@ -866,7 +854,6 @@ export const Consulta = () => {
                 // const dataT = responseData?.result_set.map(fila => headers.map(header => fila[header]));
                 let rows;
                 // Para reporte de usuarios no validar el total
-                console.log("DATA PROCESO: ",data.proceso)
                 if(data.proceso !== 'Rep_UsuariosSistema') {
                     // Calcular totales
                     const totalsRow = headers.map((header, index) => {
@@ -923,7 +910,6 @@ export const Consulta = () => {
                     // Agregar fila de totales al final del arreglo rows
                     rows.push(totalsRow);
                 }else{
-                    console.log("USERS!!!!!")
                     // Aplicar filtros y formato a los datos en el PDF
                     datosOrdenados.forEach((fila) => {
                         headers.forEach((columna) => {
@@ -1037,8 +1023,7 @@ export const Consulta = () => {
                         // Combinar celdas desde A3 hasta la última columna (por ejemplo, N3)
                         worksheet.mergeCells(`A3:${ultimaLetraColumna}3`);
 
-                        console.log("HEADERS")
-                        console.log(responseData.headers)
+
                         // Agregar encabezado
                         worksheet.addRow(responseData.headers); // Reemplaza con tus encabezados
                         // Estilo para los encabezados
